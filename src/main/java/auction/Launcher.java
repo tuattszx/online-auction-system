@@ -1,4 +1,4 @@
-package vnu.uet.onlineauctionsystem;
+package auction;
 
 import javafx.application.Application;
 

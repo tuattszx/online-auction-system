@@ -1,10 +1,7 @@
-module vnu.uet.onlineauctionsystem {
+module onlineauctionsystem {
     requires javafx.controls;
     requires javafx.fxml;
 
-    requires org.controlsfx.controls;
-    requires com.dlsc.formsfx;
-
-    opens vnu.uet.onlineauctionsystem to javafx.fxml;
-    exports vnu.uet.onlineauctionsystem;
+    opens auction to javafx.fxml; // Rất quan trọng để load được Controller
+    exports auction;
 }
