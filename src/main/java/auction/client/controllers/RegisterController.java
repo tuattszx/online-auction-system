@@ -1,10 +1,15 @@
 package auction.client.controllers;
 
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
+
+import javafx.event.ActionEvent;
+
 public class RegisterController {
     @FXML
     private  TextField txtUserName;
@@ -43,6 +48,11 @@ public class RegisterController {
             showAlert(Alert.AlertType.ERROR,"Lỗi đăng ký","Mật khẩu không trùng khớp");
         }
     }
+    @FXML
+    public void onBackToLoginClick(ActionEvent event){
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        MainAuctionController.switchScene(stage, "login-view.fxml", "Hệ thống Đấu giá - Đăng nhập");
+    }
     private void showAlert(Alert.AlertType alertType, String title, String message) {
         Alert alert = new Alert(alertType);
         alert.setTitle(title);
@@ -50,4 +60,5 @@ public class RegisterController {
         alert.setContentText(message);
         alert.showAndWait();
     }
+
 }

@@ -2,6 +2,7 @@ module auction {
     requires javafx.controls;
     requires javafx.fxml;
     requires java.sql;
+    requires java.desktop;
 
     // Cấp quyền cho JavaFX đọc các file Controller trong package mới
     opens auction.client.controllers to javafx.fxml;

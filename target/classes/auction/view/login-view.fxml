@@ -16,6 +16,6 @@
             <Font size="15.0" />
          </font>
       </Label>
-      <Button layoutX="272.0" layoutY="287.0" mnemonicParsing="false" text="Sign up" />
+      <Button layoutX="272.0" layoutY="287.0" mnemonicParsing="false" text="Sign up" onAction="#onSignUpClick" />
    </children>
 </AnchorPane>

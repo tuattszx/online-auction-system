@@ -8,7 +8,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class MainAuctionController extends Application {
-    private void switchScene(Stage stage, String fxml, String title){
+    public static void switchScene(Stage stage, String fxml, String title){
         try{
             FXMLLoader fxmlLoader = new FXMLLoader(MainAuctionController.class.getResource("/auction/view/" + fxml));
             Scene scene = new Scene(fxmlLoader.load(), 720, 540);
