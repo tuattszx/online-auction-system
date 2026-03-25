@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auction.client.controllers.RegisterController">
+   <children>
+      <TextField fx:id="txtUserName" layoutX="213.0" layoutY="44.0" prefHeight="25.0" prefWidth="174.0" />
+      <Label layoutX="159.0" layoutY="48.0" />
+      <Label layoutX="131.0" layoutY="48.0" prefHeight="17.0" prefWidth="56.0" text="UserName" />
+      <TextField fx:id="txtEmail" layoutX="213.0" layoutY="93.0" prefHeight="25.0" prefWidth="174.0" />
+      <Button layoutX="248.0" layoutY="249.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="104.0" text="Sign up" />
+      <Button layoutX="356.0" layoutY="319.0" mnemonicParsing="false" text="Sign in" />
+      <Label layoutX="145.0" layoutY="97.0" text="Email" />
+      <Label layoutX="134.0" layoutY="148.0" text="Password" />
+      <PasswordField fx:id="txtPassword" layoutX="213.0" layoutY="144.0" prefHeight="25.0" prefWidth="174.0" />
+      <PasswordField fx:id="txtRePassword" layoutX="213.0" layoutY="191.0" prefHeight="25.0" prefWidth="174.0" />
+      <Label layoutX="114.0" layoutY="195.0" text="RewritePassword" />
+      <Label layoutX="201.0" layoutY="323.0" text="Do you have an account?" />
+   </children>
+</AnchorPane>

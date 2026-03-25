@@ -1,4 +1,4 @@
-package auction;
+package auction.client.controllers;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -7,13 +7,11 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
-public class HelloApplication extends Application {
+public class MainAuctionController extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         // Trỏ đúng vào file FXML của bạn trong folder auction
-        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("login-view.fxml"));
-
-        // Thiết lập kích thước cửa sổ (ví dụ 400x300)
+        FXMLLoader fxmlLoader = new FXMLLoader(MainAuctionController.class.getResource("/auction/view/login-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 720, 540);
 
         stage.setTitle("Hệ thống Đấu giá - Đăng nhập");
