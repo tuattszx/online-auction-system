@@ -31,7 +31,6 @@ public class LoginController {
             showAlert(Alert.AlertType.ERROR, "Lỗi đăng nhập", "Mật khẩu không được để trống!");
             return;
         }
-
         // Logic xử lý đăng nhập (Ví dụ tạm thời)
         if (username.equals("admin") && password.equals("123456")) {
             showAlert(Alert.AlertType.INFORMATION, "Thành công", "Đăng nhập thành công!");
