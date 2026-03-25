@@ -35,6 +35,7 @@ public class RegisterController {
         }
         if (email == null || email.isEmpty()){
             showAlert(Alert.AlertType.ERROR,"Lỗi đăng ký", "Email cần được nhập");
+            return;
         }
 
         if (password == null || password.isEmpty()) {
@@ -43,9 +44,11 @@ public class RegisterController {
         }
         if (repass ==null || repass.isEmpty()){
             showAlert(Alert.AlertType.ERROR,"Lỗi đăng ký", "Cần nhập lại mâtj khẩu");
+            return;
         }
-        if (password != repass){
+        if (!password.equals(repass)){
             showAlert(Alert.AlertType.ERROR,"Lỗi đăng ký","Mật khẩu không trùng khớp");
+            return;
         }
     }
     @FXML
