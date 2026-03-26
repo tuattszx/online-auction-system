@@ -1,21 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.net.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auction.client.controllers.LoginController">
+<AnchorPane prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auction.client.controllers.LoginController">
+
+   <stylesheets>
+      <URL value="@../css/style.css" />
+   </stylesheets>
+
    <children>
-      <Label layoutX="140.0" layoutY="133.0" text="Tài khoản" />
-      <Label layoutX="140.0" layoutY="165.0" prefHeight="17.0" prefWidth="62.0" text="Mật khẩu" />
-      <TextField fx:id="txtUsername" layoutX="203.0" layoutY="129.0" prefHeight="25.0" prefWidth="210.0" />
-      <PasswordField fx:id="txtPassword" layoutX="203.0" layoutY="161.0" prefHeight="25.0" prefWidth="210.0" />
-      <Button fx:id="btnLogin" layoutX="250.0" layoutY="214.0" mnemonicParsing="false" onAction="#onLoginButtonClick" prefHeight="25.0" prefWidth="100.0" text="Sign in" />
-      <Label layoutX="293.0" layoutY="251.0" text="or" textFill="#706c6c">
+      <Label layoutX="262.0" layoutY="83.0" text="Tài khoản" />
+      <Label layoutX="263.0" layoutY="126.0" prefHeight="17.0" prefWidth="51.0" text="Mật khẩu" />
+      <TextField fx:id="txtUsername" layoutX="323.0" layoutY="79.0" prefHeight="25.0" prefWidth="210.0" styleClass="text-input" />
+      <PasswordField fx:id="txtPassword" layoutX="323.0" layoutY="122.0" prefHeight="25.0" prefWidth="210.0" styleClass="text-input" />
+      <Button fx:id="btnLogin" layoutX="368.0" layoutY="207.0" mnemonicParsing="false" onAction="#onLoginButtonClick" prefHeight="25.0" prefWidth="118.0" text="Đăng nhập" />
+      <Label layoutX="293.0" layoutY="251.0" textFill="#706c6c">
          <font>
             <Font size="15.0" />
          </font>
       </Label>
-      <Button layoutX="272.0" layoutY="287.0" mnemonicParsing="false" text="Sign up" onAction="#onSignUpClick" />
+      <Button layoutX="369.0" layoutY="331.0" mnemonicParsing="false" onAction="#onSignUpClick" prefHeight="25.0" prefWidth="118.0" text="Đăng ký" />
+
+      <Button fx:id="btnForgotPassword" layoutX="369.0" layoutY="258.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="118.0" styleClass="forgot-btn" text="Quên mật khẩu" />
    </children>
 </AnchorPane>
