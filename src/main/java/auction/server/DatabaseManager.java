@@ -1,4 +1,4 @@
-package auction.server.dao;
+package auction.server;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -20,6 +20,5 @@ public class DatabaseManager {
         }
     }
     public static void main(String[] args) {
-
     }
 }
