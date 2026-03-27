@@ -39,6 +39,7 @@ public class Item extends BaseEntity {
     public void setDescription(String description) { this.description = description; }
 
     public long getStartingPrice() { return startingPrice; }
+    public void setStartingPrice(long startingPrice){this.startingPrice=startingPrice;}
 
     public long getCurrentPrice() { return currentPrice; }
     public void setCurrentPrice(long currentPrice) { this.currentPrice = currentPrice; }
@@ -57,8 +58,19 @@ public class Item extends BaseEntity {
     public void setEndTime(LocalDateTime endTime) { this.endTime = endTime; }
 
     public int getSellerId() { return sellerId; }
-
+    public void setSellerId(int sellerId) {this.sellerId=sellerId;}
 
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
+
+    @Override
+    public String toString(){
+        return "Item{" +
+                "id=" + getID() +
+                ", name='" + name + '\'' +
+                ", currentPrice=" + currentPrice +
+                ", status='" + status + '\'' +
+                ", endTime=" + endTime +
+                '}';
+    }
 }
