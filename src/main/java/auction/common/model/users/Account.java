@@ -9,7 +9,9 @@ public abstract class Account extends BaseEntity {
     private String role;
     private String email;
 
-    public Account(){}
+    public Account(){
+        super();
+    }
 
     public Account(int id, String username, String password, String role,String email){
         super(id);

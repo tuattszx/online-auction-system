@@ -3,7 +3,9 @@ package auction.common.model.users;
 public class User extends Account{
     private long balance;
     private String address;
-    public User (){}
+    public User (){
+        super();
+    }
     public User(int id,String username,String password,String role,String email,String address,long balance){
         super(id, username, password, role, email);
         this.balance=0;
