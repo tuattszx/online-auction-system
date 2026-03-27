@@ -10,36 +10,33 @@ import javafx.stage.Stage;
 
 import javafx.event.ActionEvent;
 
+import static auction.server.DatabaseManager.checkLogin;
+
 public class LoginController {
 
     @FXML
     private TextField txtUsername;
-    // giong ben fx:id
     @FXML
     private PasswordField txtPassword;
-
     @FXML
     private Button btnLogin;
-
+    @FXML
+    private Button btnSignUp;
+    @FXML
+    private Button btnForgotPassword;
     @FXML
     public void onLoginButtonClick() {
         String username = txtUsername.getText();
         String password = txtPassword.getText();
-
-        if (username == null || username.isEmpty()) {
-            showAlert(Alert.AlertType.ERROR, "Lỗi đăng nhập", "Tài khoản không được để trống!");
+        if (username == null || username.isEmpty() || password == null || password.isEmpty()) {
+            showAlert(Alert.AlertType.ERROR, "Lỗi!", "Vui lòng nhập đầy đủ thông tin");
             return;
         }
-
-        if (password == null || password.isEmpty()) {
-            showAlert(Alert.AlertType.ERROR, "Lỗi đăng nhập", "Mật khẩu không được để trống!");
-            return;
+        if (checkLogin(username, password)){
+            showAlert(Alert.AlertType.INFORMATION, "Thông báo", "Đăng nhập thành công");
         }
-        // Logic xử lý đăng nhập (Ví dụ tạm thời)
-        if (username.equals("admin") && password.equals("123456")) {
-            showAlert(Alert.AlertType.INFORMATION, "Thành công", "Đăng nhập thành công!");
-        } else {
-            showAlert(Alert.AlertType.ERROR, "Thất bại", "Sai tài khoản hoặc mật khẩu!");
+        else{
+            showAlert(Alert.AlertType.ERROR, "Lỗi!", "Sai tài khoản hoặc mật khẩu");
         }
     }
     @FXML

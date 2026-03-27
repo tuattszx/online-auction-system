@@ -22,7 +22,7 @@
             <Font size="15.0" />
          </font>
       </Label>
-      <Button layoutX="369.0" layoutY="331.0" mnemonicParsing="false" onAction="#onSignUpClick" prefHeight="25.0" prefWidth="118.0" text="Đăng ký" />
+      <Button layoutX="369.0" layoutY="331.0" mnemonicParsing="false" onAction="#onSignUpClick" prefHeight="25.0" prefWidth="118.0" text="Đăng ký" fx:id = "btnSignUp"/>
 
       <Button fx:id="btnForgotPassword" layoutX="369.0" layoutY="258.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="118.0" styleClass="forgot-btn" text="Quên mật khẩu" />
    </children>
