@@ -1,5 +1,7 @@
 package auction.client.controllers;
 
+import auction.common.model.users.User;
+import auction.common.Message;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
@@ -50,6 +52,9 @@ public class RegisterController {
             showAlert(Alert.AlertType.ERROR,"Lỗi đăng ký","Mật khẩu không trùng khớp");
             return;
         }
+        User newUser = new User(0, userName, password, "USER", email, "N/A", 0);
+        Message regMsg = new Message("REGISTER",newUser);
+       // ClientNetwork.getInstance().sendMessage(regMsg);
     }
     @FXML
     public void onBackToLoginClick(ActionEvent event){
