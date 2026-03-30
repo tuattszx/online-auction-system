@@ -10,7 +10,7 @@ import javafx.stage.Stage;
 
 import javafx.event.ActionEvent;
 
-import static auction.server.DatabaseManager.checkLogin;
+import static auction.server.dao.UserDao.CheckLogin;
 
 public class LoginController {
 
@@ -32,7 +32,7 @@ public class LoginController {
             showAlert(Alert.AlertType.ERROR, "Lỗi!", "Vui lòng nhập đầy đủ thông tin");
             return;
         }
-        if (checkLogin(username, password)){
+        if (CheckLogin(username, password)){
             showAlert(Alert.AlertType.INFORMATION, "Thông báo", "Đăng nhập thành công");
         }
         else{
