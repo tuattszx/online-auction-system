@@ -10,6 +10,8 @@ import javafx.stage.Stage;
 
 import javafx.event.ActionEvent;
 
+import static auction.server.DatabaseManager.registerUser;
+
 public class RegisterController {
     @FXML
     private  TextField txtUserName;
@@ -43,12 +45,19 @@ public class RegisterController {
             return;
         }
         if (repass ==null || repass.isEmpty()){
-            showAlert(Alert.AlertType.ERROR,"Lỗi đăng ký", "Cần nhập lại mâtj khẩu");
+            showAlert(Alert.AlertType.ERROR,"Lỗi đăng ký", "Cần nhập lại mật khẩu");
             return;
         }
         if (!password.equals(repass)){
             showAlert(Alert.AlertType.ERROR,"Lỗi đăng ký","Mật khẩu không trùng khớp");
             return;
+        }
+        if (registerUser(userName, password, email)){
+            showAlert(Alert.AlertType.INFORMATION, "Thành công", "Đăng ký tài khoản thành công!");
+            Stage stage = (Stage) txtUserName.getScene().getWindow();
+            MainAuctionController.switchScene(stage, "login-view.fxml", "Hệ thống Đấu giá - Đăng nhập");
+        } else {
+            showAlert(Alert.AlertType.ERROR, "Lỗi đăng ký", "Tên tài khoản đã tồn tại hoặc có lỗi xảy ra.");
         }
     }
     @FXML
