@@ -40,28 +40,8 @@ public class DatabaseManager {
         }
     }
 
-    private static boolean emailExists(String email) {
-        String sql = "SELECT COUNT(*) FROM users WHERE email = ?";
-        try (Connection conn = getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, email);
-            try (ResultSet rs = pstmt.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getInt(1) > 0;
-                }
-            }
-        } catch (SQLException e) {
-            System.err.println("Lỗi kiểm tra email tồn tại: " + e.getMessage());
-        }
-        return false;
-    }
 
     public static boolean registerUser(String username, String password, String email) {
-        if (emailExists(email)) {
-            System.out.println("Email đã tồn tại: " + email);
-            return false; // Email already exists
-        }
-
         String sql = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
         try {
             Connection conn = getConnection();
