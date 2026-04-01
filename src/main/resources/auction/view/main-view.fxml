@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -11,44 +13,62 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-
 <AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="MainController">
    <children>
       <VBox layoutY="-3.0" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
          <children>
-            <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" spacing="20.0">
+            <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" spacing="20.0" style="-fx-background-color: midnightblue;">
                <children>
-                  <Label fx:id="lbbalance" text="&quot;số dư:1.000$&quot;" />
-                  <Label fx:id="lbusername" text="&quot;Chào:Admin&quot;" />
+                  <Label fx:id="lbbalance" text="&quot;số dư:1.000$&quot;" textFill="WHITE" />
+                  <Label fx:id="lbusername" text="&quot;Chào:Admin&quot;" textFill="#ededed" />
                </children>
             </HBox>
-            <HBox prefHeight="100.0" prefWidth="200.0">
+            <HBox alignment="BOTTOM_CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0" style="-fx-background-color: midnightblue;">
                <children>
-                  <Button fx:id="btntrangsuc" mnemonicParsing="false" text="trang sức" textFill="#2b1616">
+                  <Button fx:id="btntrangsuc" mnemonicParsing="false" style="-fx-background-color: Khaki;" text="trang sức" textFill="#2b1616">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>
                   </Button>
-                  <Button fx:id="btndongho" mnemonicParsing="false" text="đồng hồ">
+                  <Button fx:id="btndongho" mnemonicParsing="false" style="-fx-background-color: Khaki;" text="đồng hồ">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>
                   </Button>
-                  <Button fx:id="btnthoitrang" mnemonicParsing="false" text="thời trang">
+                  <Button fx:id="btnthoitrang" mnemonicParsing="false" style="-fx-background-color: Khaki;" text="thời trang">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>
                   </Button>
-                  <Button fx:id="btnsach" mnemonicParsing="false" text="sách">
+                  <Button fx:id="btnsach" mnemonicParsing="false" style="-fx-background-color: Khaki;" text="sách">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>
                   </Button>
+                  <HBox alignment="BOTTOM_LEFT" layoutY="-10.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="50.0" prefWidth="200.0" spacing="15.0" style="-fx-border-color: #cccccc; -fx-border-radius: 15; -fx-background-radius: 15; -fx-background-color: white; -fx-background-color: white; -fx-translate-y: 7;">
+                     <padding>
+                        <Insets bottom="15.0" left="15.0" right="15.0" />
+                     </padding>
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                     <children>
+                        <ImageView fitHeight="12.0" fitWidth="42.0" layoutY="10.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true" style="-fx-translate-y: 4;" y="10.0">
+                           <image>
+                              <Image url="@../../images(1).jpg" />
+                           </image>
+                        </ImageView>
+                        <TextField fx:id="txtsearch" prefHeight="25.0" prefWidth="141.0" style="-fx-translate-y: 8;" />
+                     </children>
+                  </HBox>
                </children>
+               <padding>
+                  <Insets bottom="22.0" right="2.0" top="2.0" />
+               </padding>
             </HBox>
             <ScrollPane fitToWidth="true" hbarPolicy="ALWAYS" prefHeight="350.0" prefWidth="800.0" vbarPolicy="ALWAYS" VBox.vgrow="ALWAYS">
                <content>
-                  <FlowPane fx:id="flitems" hgap="20.0" prefWidth="860.0" vgap="20.0">
+                  <FlowPane fx:id="flitems" alignment="CENTER" hgap="20.0" prefWidth="860.0" vgap="20.0">
                      <children>
                         <VBox alignment="CENTER" prefHeight="75.0" prefWidth="100.0" style="-fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 5; -fx-padding: 10; -fx-background-color: pink;">
                            <children>
