@@ -45,7 +45,7 @@ public class RegisterController {
             return;
         }
         if (repass ==null || repass.isEmpty()){
-            showAlert(Alert.AlertType.ERROR,"Lỗi đăng ký", "Cần nhập lại mâtj khẩu");
+            showAlert(Alert.AlertType.ERROR,"Lỗi đăng ký", "Cần nhập lại mật khẩu");
             return;
         }
         if (!password.equals(repass)){
