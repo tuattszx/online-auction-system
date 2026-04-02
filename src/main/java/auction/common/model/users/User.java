@@ -5,12 +5,12 @@ public class User extends Account{
     private String address;
     public User (){
         super();
+        this.setRole("USER");
     }
-    public User(int id,String username,String password,String role,String email,String address,long balance){
-        super(id, username, password, role, email);
-        this.balance=0;
+    public User(int id,String username,String password,String email,String address,long balance){
+        super(id, username, password, "USER", email);
         this.address=address;
-        this.balance=balance;
+        this.setBalance(balance);
     }
 
     public String getAddress() {
@@ -27,5 +27,17 @@ public class User extends Account{
         if (balance >= 0) {
             this.balance = balance;
         }
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + getID() +
+                ", username='" + getUsername() + '\'' +
+                ", email='" + getEmail() + '\'' +
+                ", role='" + getRole() + '\'' +
+                ", address='" + address + '\'' +
+                ", balance=" + balance +
+                '}';
     }
 }
