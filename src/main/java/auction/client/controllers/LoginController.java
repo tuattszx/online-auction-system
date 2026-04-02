@@ -25,7 +25,7 @@ public class LoginController {
     @FXML
     private Button btnForgotPassword;
     @FXML
-    public void onLoginButtonClick() {
+    public void onLoginButtonClick(ActionEvent event) {
         String username = txtUsername.getText();
         String password = txtPassword.getText();
         if (username == null || username.isEmpty() || password == null || password.isEmpty()) {
@@ -34,6 +34,8 @@ public class LoginController {
         }
         if (CheckLogin(username, password)){
             showAlert(Alert.AlertType.INFORMATION, "Thông báo", "Đăng nhập thành công");
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            MainAuctionController.switchScene(stage, "main-view.fxml", "Hệ thống Đấu giá - Trang chủ");
         }
         else{
             showAlert(Alert.AlertType.ERROR, "Lỗi!", "Sai tài khoản hoặc mật khẩu");
