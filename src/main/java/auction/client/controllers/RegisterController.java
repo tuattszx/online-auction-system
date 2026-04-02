@@ -54,7 +54,12 @@ public class RegisterController {
             return;
         }
 
-        if (registerUser(userName, password, email)){
+        User newUser=new User();
+        newUser.setUsername(userName);
+        newUser.setPassword(password);
+        newUser.setEmail(email);
+
+        if (registerUser(newUser)){
             showAlert(Alert.AlertType.INFORMATION, "Thành công", "Đăng ký tài khoản thành công!");
             Stage stage = (Stage) txtUserName.getScene().getWindow();
             SwitchScene.switchScene(stage, "login-view.fxml", "Hệ thống Đấu giá - Đăng nhập");
