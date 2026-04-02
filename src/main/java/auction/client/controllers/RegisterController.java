@@ -55,7 +55,7 @@ public class RegisterController {
         if (registerUser(userName, password, email)){
             showAlert(Alert.AlertType.INFORMATION, "Thành công", "Đăng ký tài khoản thành công!");
             Stage stage = (Stage) txtUserName.getScene().getWindow();
-            MainAuctionController.switchScene(stage, "login-view.fxml", "Hệ thống Đấu giá - Đăng nhập");
+            SwitchScene.switchScene(stage, "login-view.fxml", "Hệ thống Đấu giá - Đăng nhập");
         } else {
             showAlert(Alert.AlertType.ERROR, "Lỗi đăng ký", "Tên tài khoản đã tồn tại hoặc có lỗi xảy ra.");
         }
@@ -63,7 +63,7 @@ public class RegisterController {
     @FXML
     public void onBackToLoginClick(ActionEvent event){
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        MainAuctionController.switchScene(stage, "login-view.fxml", "Hệ thống Đấu giá - Đăng nhập");
+        SwitchScene.switchScene(stage, "login-view.fxml", "Hệ thống Đấu giá - Đăng nhập");
     }
     private void showAlert(Alert.AlertType alertType, String title, String message) {
         Alert alert = new Alert(alertType);

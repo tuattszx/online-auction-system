@@ -48,7 +48,7 @@
                      <children>
                         <ImageView fitHeight="12.0" fitWidth="42.0" layoutY="10.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true" style="-fx-translate-y: 4;" y="10.0">
                            <image>
-                              <Image url="@../../images(1).jpg" />
+                              <Image url="@../img/images(1).jpg" />
                            </image>
                         </ImageView>
                         <TextField fx:id="txtsearch" prefHeight="25.0" prefWidth="141.0" promptText="Tìm kiếm..." style="-fx-translate-y: 8;" />
@@ -67,7 +67,7 @@
                            <children>
                               <ImageView fx:id="imitem" fitHeight="50.0" fitWidth="148.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@../../images.jpg" />
+                                    <Image url="@../img/images.jpg" />
                                  </image>
                               </ImageView>
                               <Label fx:id="lbitemname" text="AnyaForger" />
@@ -78,7 +78,7 @@
                            <children>
                               <ImageView fx:id="imitem1" fitHeight="50.0" fitWidth="148.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@../../images.jpg" />
+                                    <Image url="@../img/images.jpg" />
                                  </image>
                               </ImageView>
                               <Label fx:id="lbitemname1" text="AnyaForger" />
@@ -89,7 +89,7 @@
                            <children>
                               <ImageView fx:id="imitem11" fitHeight="50.0" fitWidth="148.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@../../images.jpg" />
+                                    <Image url="@../img/images.jpg" />
                                  </image>
                               </ImageView>
                               <Label fx:id="lbitemname11" text="AnyaForger" />
@@ -100,7 +100,7 @@
                            <children>
                               <ImageView fx:id="imitem111" fitHeight="50.0" fitWidth="148.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@../../images.jpg" />
+                                    <Image url="@../img/images.jpg" />
                                  </image>
                               </ImageView>
                               <Label fx:id="lbitemname111" text="AnyaForger" />
@@ -111,7 +111,7 @@
                            <children>
                               <ImageView fx:id="imitem1111" fitHeight="50.0" fitWidth="148.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@../../images.jpg" />
+                                    <Image url="@../img/images.jpg" />
                                  </image>
                               </ImageView>
                               <Label fx:id="lbitemname1111" text="AnyaForger" />
@@ -122,7 +122,7 @@
                            <children>
                               <ImageView fx:id="imitem11111" fitHeight="50.0" fitWidth="148.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@../../images.jpg" />
+                                    <Image url="@../img/images.jpg" />
                                  </image>
                               </ImageView>
                               <Label fx:id="lbitemname11111" text="AnyaForger" />
@@ -133,7 +133,7 @@
                            <children>
                               <ImageView fx:id="imitem111111" fitHeight="50.0" fitWidth="148.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@../../images.jpg" />
+                                    <Image url="@../img/images.jpg" />
                                  </image>
                               </ImageView>
                               <Label fx:id="lbitemname111111" text="AnyaForger" />
@@ -144,7 +144,7 @@
                            <children>
                               <ImageView fx:id="imitem1111111" fitHeight="50.0" fitWidth="148.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@../../images.jpg" />
+                                    <Image url="@../img/images.jpg" />
                                  </image>
                               </ImageView>
                               <Label fx:id="lbitemname1111111" text="AnyaForger" />
@@ -155,7 +155,7 @@
                            <children>
                               <ImageView fx:id="imitem11111111" fitHeight="50.0" fitWidth="148.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@../../images.jpg" />
+                                    <Image url="@../img/images.jpg" />
                                  </image>
                               </ImageView>
                               <Label fx:id="lbitemname11111111" text="AnyaForger" />
@@ -166,7 +166,7 @@
                            <children>
                               <ImageView fx:id="imitem111111111" fitHeight="50.0" fitWidth="148.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@../../images.jpg" />
+                                    <Image url="@../img/images.jpg" />
                                  </image>
                               </ImageView>
                               <Label fx:id="lbitemname111111111" text="AnyaForger" />
@@ -177,7 +177,7 @@
                            <children>
                               <ImageView fx:id="imitem1111111111" fitHeight="50.0" fitWidth="148.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@../../images.jpg" />
+                                    <Image url="@../img/images.jpg" />
                                  </image>
                               </ImageView>
                               <Label fx:id="lbitemname1111111111" text="AnyaForger" />
@@ -188,7 +188,7 @@
                            <children>
                               <ImageView fx:id="imitem11111111111" fitHeight="50.0" fitWidth="148.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@../../images.jpg" />
+                                    <Image url="@../img/images.jpg" />
                                  </image>
                               </ImageView>
                               <Label fx:id="lbitemname11111111111" text="AnyaForger" />
@@ -199,7 +199,7 @@
                            <children>
                               <ImageView fx:id="imitem111111111111" fitHeight="50.0" fitWidth="148.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@../../images.jpg" />
+                                    <Image url="@../img/images.jpg" />
                                  </image>
                               </ImageView>
                               <Label fx:id="lbitemname111111111111" text="AnyaForger" />
@@ -210,7 +210,7 @@
                            <children>
                               <ImageView fx:id="imitem1111111111111" fitHeight="50.0" fitWidth="148.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@../../images.jpg" />
+                                    <Image url="@../img/images.jpg" />
                                  </image>
                               </ImageView>
                               <Label fx:id="lbitemname1111111111111" text="AnyaForger" />
@@ -221,7 +221,7 @@
                            <children>
                               <ImageView fx:id="imitem11111111111111" fitHeight="50.0" fitWidth="148.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@../../images.jpg" />
+                                    <Image url="@../img/images.jpg" />
                                  </image>
                               </ImageView>
                               <Label fx:id="lbitemname11111111111111" text="AnyaForger" />
@@ -232,7 +232,7 @@
                            <children>
                               <ImageView fx:id="imitem111111111111111" fitHeight="50.0" fitWidth="148.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@../../images.jpg" />
+                                    <Image url="@../img/images.jpg" />
                                  </image>
                               </ImageView>
                               <Label fx:id="lbitemname111111111111111" text="AnyaForger" />

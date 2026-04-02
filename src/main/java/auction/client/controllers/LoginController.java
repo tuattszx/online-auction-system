@@ -35,7 +35,7 @@ public class LoginController {
         if (CheckLogin(username, password)){
             showAlert(Alert.AlertType.INFORMATION, "Thông báo", "Đăng nhập thành công");
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            MainAuctionController.switchScene(stage, "main-view.fxml", "Hệ thống Đấu giá - Trang chủ");
+            SwitchScene.switchScene(stage, "main-view.fxml", "Hệ thống Đấu giá - Trang chủ");
         }
         else{
             showAlert(Alert.AlertType.ERROR, "Lỗi!", "Sai tài khoản hoặc mật khẩu");
@@ -44,7 +44,7 @@ public class LoginController {
     @FXML
     public void onSignUpClick(ActionEvent event) {
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        MainAuctionController.switchScene(stage, "register-view.fxml", "Hệ thống Đấu giá - Đăng ký");
+        SwitchScene.switchScene(stage, "register-view.fxml", "Hệ thống Đấu giá - Đăng ký");
     }
     private void showAlert(Alert.AlertType alertType, String title, String message) {
         Alert alert = new Alert(alertType);
