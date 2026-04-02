@@ -1,5 +1,6 @@
 package auction.client.controllers;
 
+import auction.common.model.users.User;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
@@ -10,7 +11,7 @@ import javafx.stage.Stage;
 
 import javafx.event.ActionEvent;
 
-import static auction.server.DatabaseManager.registerUser;
+import static auction.server.dao.UserDao.registerUser;
 
 public class RegisterController {
     @FXML
@@ -52,6 +53,7 @@ public class RegisterController {
             showAlert(Alert.AlertType.ERROR,"Lỗi đăng ký","Mật khẩu không trùng khớp");
             return;
         }
+
         if (registerUser(userName, password, email)){
             showAlert(Alert.AlertType.INFORMATION, "Thành công", "Đăng ký tài khoản thành công!");
             Stage stage = (Stage) txtUserName.getScene().getWindow();
