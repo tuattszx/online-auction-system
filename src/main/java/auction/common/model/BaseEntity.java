@@ -3,7 +3,7 @@ package auction.common.model;
 import java.io.Serializable;
 
 public abstract class BaseEntity implements Serializable {
-    private int id;
+    protected int id;
 
     public BaseEntity(){}
 
@@ -11,7 +11,11 @@ public abstract class BaseEntity implements Serializable {
         this.id=id;
     }
 
-    public int getID() {
+    public int getId() {
         return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }

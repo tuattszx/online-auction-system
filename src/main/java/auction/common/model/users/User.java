@@ -32,7 +32,7 @@ public class User extends Account{
     @Override
     public String toString() {
         return "User{" +
-                "id=" + getID() +
+                "id=" + getId() +
                 ", username='" + getUsername() + '\'' +
                 ", email='" + getEmail() + '\'' +
                 ", role='" + getRole() + '\'' +

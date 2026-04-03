@@ -24,7 +24,7 @@ public class Admin extends Account{
     @Override
     public String toString() {
         return "Admin{" +
-                "id=" + getID() +
+                "id=" + getId() +
                 ", username='" + getUsername() + '\'' +
                 ", email='" + getEmail() + '\'' +
                 ", role='" + getRole() + '\'' +
