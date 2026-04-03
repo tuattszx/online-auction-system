@@ -10,6 +10,7 @@ import java.sql.SQLException;
 import static auction.server.DatabaseManager.getConnection;
 
 public class UserDao{
+
     public static boolean CheckLogin(String userName,String password){
         String sql="SELECT * FROM users WHERE username=? AND password=?";
         try(Connection conn=getConnection();
@@ -25,6 +26,7 @@ public class UserDao{
             return false;
         }
     }
+
     public static boolean registerUser(User user) {
         String sql = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
 
@@ -42,5 +44,42 @@ public class UserDao{
             e.printStackTrace();
             return false;
         }
+    }
+
+    public static boolean updateBalance(int id,long amount){
+        String sql= "UPDATE users SET balance = balance + ? WHERE ID = ?";
+        try (Connection conn= getConnection();
+            PreparedStatement pstmt= conn.prepareStatement(sql)){
+
+            pstmt.setLong(1,amount);
+            pstmt.setInt(2,id);
+
+            int rowsAffected = pstmt.executeUpdate();
+            return rowsAffected > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static long getBalance(int id){
+        String sql="SELECT balance FROM users WHERE id=?";
+        try(Connection conn= getConnection();
+            PreparedStatement pstmt=conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, id);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getLong("balance");
+                }
+            }
+        }
+        catch (SQLException e){
+            System.err.println("Lỗi khi lấy số dư: " + e.getMessage());
+        }
+
+        return -1;
     }
 }
