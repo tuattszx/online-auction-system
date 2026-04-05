@@ -1,24 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.PasswordField?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: pink;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auction.client.controllers.RegisterController">
+<?import java.net.URL?>
+<AnchorPane prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: pink;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auction.client.controllers.RegisterController">
+
+   <stylesheets>
+      <URL value="@../css/style.css" />
+   </stylesheets>
    <children>
       <TextField fx:id="txtUserName" layoutX="213.0" layoutY="44.0" prefHeight="25.0" prefWidth="174.0" />
       <Label layoutX="159.0" layoutY="48.0" />
-      <Label layoutX="131.0" layoutY="48.0" prefHeight="17.0" prefWidth="56.0" text="UserName" />
+      <Label layoutX="110.0" layoutY="48.0" prefHeight="17.0" prefWidth="56.0" text="Tài khoản" />
       <TextField fx:id="txtEmail" layoutX="213.0" layoutY="93.0" prefHeight="25.0" prefWidth="174.0" />
-      <Button layoutX="248.0" layoutY="249.0" mnemonicParsing="false" onAction="#onSignupButtonClick" prefHeight="25.0" prefWidth="104.0" text="Sign up" />
-      <Button layoutX="356.0" layoutY="319.0" mnemonicParsing="false" onAction="#onBackToLoginClick" text="Sign in" />
-      <Label layoutX="145.0" layoutY="97.0" text="Email" />
-      <Label layoutX="134.0" layoutY="148.0" text="Password" />
+      <Button layoutX="248.0" layoutY="249.0" mnemonicParsing="false" onAction="#onSignupButtonClick" prefHeight="25.0" prefWidth="104.0" text="Đăng ký" />
+      <Button layoutX="356.0" layoutY="319.0" mnemonicParsing="false" onAction="#onBackToLoginClick" text="Đăng nhập" />
+      <Label layoutX="126.0" layoutY="97.0" text="Email" />
+      <Label layoutX="121.0" layoutY="148.0" text="Mật khẩu" />
       <PasswordField fx:id="txtPassword" layoutX="213.0" layoutY="144.0" prefHeight="25.0" prefWidth="174.0" />
       <PasswordField fx:id="txtRePassword" layoutX="213.0" layoutY="191.0" prefHeight="25.0" prefWidth="174.0" />
-      <Label layoutX="114.0" layoutY="195.0" text="RewritePassword" />
-      <Label layoutX="201.0" layoutY="323.0" text="Do you have an account?" />
+      <Label layoutX="102.0" layoutY="195.0" text="Nhập lại mật khẩu" />
+      <Label layoutX="201.0" layoutY="323.0" text="Bạn đã có tài khoản?" />
    </children>
 </AnchorPane>
