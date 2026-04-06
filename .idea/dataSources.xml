@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="@b99ipdmf7qqs8ydf6oel-mysql.services.clever-cloud.com" uuid="96f89332-f547-45ad-9be7-abc80b916aaa">
+    <data-source source="LOCAL" name="b99ipdmf7qqs8ydf6oel@b99ipdmf7qqs8ydf6oel-mysql.services.clever-cloud.com" uuid="96f89332-f547-45ad-9be7-abc80b916aaa">
       <driver-ref>mysql.8</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
