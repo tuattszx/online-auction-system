@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.MenuButton?>
-<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextField?>
@@ -21,102 +17,26 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
+
 <AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ItemviewController">
    <children>
-      <BorderPane prefHeight="411.0" prefWidth="600.0">
+      <BorderPane layoutY="-7.0" prefHeight="411.0" prefWidth="600.0">
          <top>
-            <HBox prefHeight="39.0" prefWidth="600.0" BorderPane.alignment="CENTER">
-               <children>
-                  <HBox alignment="CENTER_LEFT" layoutY="-7.0" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="59.0" prefWidth="600.0" spacing="10.0" style="-fx-background-color: white; -fx-border-color: grey; -fx-border-width: 0 2 2 0;">
-                     <padding>
-                        <Insets left="20.0" right="20.0" />
-                     </padding>
-                     <children>
-                        <ImageView fitHeight="49.0" fitWidth="73.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../img/logo-uet.jpg" />
-                           </image>
-                           <cursor>
-                              <Cursor fx:constant="HAND" />
-                           </cursor>
-                        </ImageView>
-                        <MenuButton mnemonicParsing="false" style="-fx-background-color: white;" text="categories">
-                          <items>
-                            <MenuItem mnemonicParsing="false" text="Action 1" />
-                            <MenuItem mnemonicParsing="false" text="Action 2" />
-                          </items>
-                           <font>
-                              <Font size="13.0" />
-                           </font>
-                           <cursor>
-                              <Cursor fx:constant="HAND" />
-                           </cursor>
-                        </MenuButton>
-                        <HBox alignment="CENTER_LEFT" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="35.0" prefWidth="229.0" style="-fx-border-radius: 20; -fx-border-color: grey; -fx-background-color: white;">
-                           <children>
-                              <ImageView fitHeight="27.0" fitWidth="23.0" nodeOrientation="RIGHT_TO_LEFT" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../img/search-icon-png-11.png" />
-                                 </image>
-                              </ImageView>
-                              <TextField fx:id="txtsearch" promptText="searching..." style="-fx-background-color: white;" />
-                           </children>
-                           <opaqueInsets>
-                              <Insets left="5.0" />
-                           </opaqueInsets>
-                           <padding>
-                              <Insets left="10.0" />
-                           </padding>
-                        </HBox>
-                        <Button mnemonicParsing="false" prefHeight="27.0" prefWidth="49.0" style="-fx-background-color: white;" text="sell">
-                           <font>
-                              <Font name="System Bold" size="13.0" />
-                           </font>
-                           <cursor>
-                              <Cursor fx:constant="HAND" />
-                           </cursor>
-                        </Button>
-                        <HBox alignment="CENTER" prefHeight="41.0" prefWidth="45.0">
-                           <children>
-                              <ImageView fitHeight="54.0" fitWidth="29.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../img/images.png" />
-                                 </image>
-                                 <cursor>
-                                    <Cursor fx:constant="HAND" />
-                                 </cursor>
-                              </ImageView>
-                           </children>
-                        </HBox>
-                        <HBox alignment="CENTER" prefHeight="53.0" prefWidth="53.0" style="-fx-background-radius: 20;">
-                           <children>
-                              <ImageView fitHeight="37.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../img/pngtree-blue-user-icon-profile-and-account-vector-design-vector-sign-vector-png-image_46129432.jpg" />
-                                 </image>
-                              </ImageView>
-                           </children>
-                           <cursor>
-                              <Cursor fx:constant="HAND" />
-                           </cursor>
-                        </HBox>
-                     </children>
-                  </HBox>
-               </children></HBox>
+            <HBox prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
          </top>
          <right>
             <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="ALWAYS" pannable="true" prefHeight="319.0" prefWidth="600.0" vbarPolicy="ALWAYS" BorderPane.alignment="CENTER">
                <content>
-                  <VBox fx:id="hbo" prefHeight="462.0" prefWidth="584.0" style="-fx-background-color: lightgrey;">
+                  <VBox fx:id="hbo" prefHeight="293.0" prefWidth="587.0" style="-fx-background-color: lightgrey;">
                      <children>
-                        <HBox prefHeight="64.0" prefWidth="584.0" VBox.vgrow="ALWAYS">
+                        <HBox prefHeight="51.0" prefWidth="577.0">
                            <children>
-                              <Label prefHeight="49.0" prefWidth="415.0" text="SpyxFamily - AnyaForger" textFill="#383131">
+                              <Label prefHeight="31.0" prefWidth="379.0" text="SpyxFamily - AnyaForger" textFill="#383131">
                                  <font>
                                     <Font name="System Bold" size="21.0" />
                                  </font>
                               </Label>
-                              <HBox alignment="CENTER" prefHeight="49.0" prefWidth="207.0" spacing="5.0" style="-fx-background-color: WhiteSmoke; -fx-padding: 10; -fx-alignment: center; -fx-background-radius: 5;">
+                              <HBox alignment="CENTER" prefHeight="49.0" prefWidth="223.0" spacing="5.0" style="-fx-background-color: WhiteSmoke; -fx-padding: 10; -fx-alignment: center; -fx-background-radius: 5;">
                                  <children>
                                     <Separator layoutX="105.0" layoutY="20.0" orientation="VERTICAL" prefHeight="200.0" />
                                     <VBox alignment="CENTER" layoutX="20.0" layoutY="20.0" maxWidth="1.7976931348623157E308" prefHeight="200.0" prefWidth="100.0">
@@ -167,7 +87,7 @@
                         </HBox>
                         <HBox alignment="TOP_RIGHT" minHeight="-Infinity" prefHeight="250.0" prefWidth="584.0" VBox.vgrow="NEVER">
                            <children>
-                              <StackPane prefHeight="277.0" prefWidth="393.0" style="-fx-background-color: white; -fx-background-radius: 5; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);;" HBox.hgrow="ALWAYS">
+                              <StackPane prefHeight="270.0" prefWidth="372.0" style="-fx-background-color: white; -fx-background-radius: 5; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);;" HBox.hgrow="ALWAYS">
                                  <children>
                                     <ImageView fitHeight="150.0" fitWidth="600.0" pickOnBounds="true" preserveRatio="true" StackPane.alignment="CENTER">
                                        <image>
@@ -192,9 +112,9 @@
                                           </Label>
                                           <HBox alignment="CENTER" prefHeight="50.0" prefWidth="225.0" spacing="10.0">
                                              <children>
-                                                <Button fx:id="btprice1" mnemonicParsing="false" prefHeight="33.0" prefWidth="68.0" style="-fx-border-radius: 50;" text="90000$" />
-                                                <Button fx:id="btprice2" mnemonicParsing="false" prefHeight="31.0" prefWidth="63.0" style="-fx-border-radius: 20;" text="910000$" />
-                                                <Button fx:id="btprice3" mnemonicParsing="false" prefHeight="33.0" prefWidth="59.0" style="-fx-border-radius: 20;" text="92000$" />
+                                                <Button mnemonicParsing="false" prefHeight="33.0" prefWidth="68.0" style="-fx-border-radius: 50;" text="90000$" />
+                                                <Button mnemonicParsing="false" prefHeight="31.0" prefWidth="63.0" style="-fx-border-radius: 20;" text="910000$" />
+                                                <Button mnemonicParsing="false" prefHeight="33.0" prefWidth="59.0" style="-fx-border-radius: 20;" text="92000$" />
                                              </children>
                                           </HBox>
                                           <HBox alignment="CENTER" prefHeight="54.0" prefWidth="215.0" spacing="10.0">

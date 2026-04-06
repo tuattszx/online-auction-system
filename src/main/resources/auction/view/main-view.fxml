@@ -71,7 +71,7 @@
                <content>
                   <FlowPane fx:id="flitems" alignment="CENTER" hgap="20.0" prefWidth="860.0" vgap="20.0">
                      <children>
-                        <VBox alignment="CENTER" prefHeight="75.0" prefWidth="100.0" style="-fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 5; -fx-padding: 10; -fx-background-color: pink;">
+                        <VBox alignment="CENTER" onMouseClicked="#onItemClick" prefHeight="75.0" prefWidth="100.0" style="-fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 5; -fx-padding: 10; -fx-background-color: pink; -fx-cursor: hand;">
                            <children>
                               <ImageView fx:id="imitem" fitHeight="50.0" fitWidth="148.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
@@ -82,7 +82,7 @@
                               <Label fx:id="lbitemprice" text="price:10000000$" />
                            </children>
                         </VBox>
-                        <VBox alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="75.0" prefWidth="100.0" style="-fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 5; -fx-padding: 10; -fx-background-color: pink;">
+                        <VBox alignment="CENTER" layoutX="10.0" layoutY="10.0" onMouseClicked="#onItemClick" prefHeight="75.0" prefWidth="100.0" style="-fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 5; -fx-padding: 10; -fx-background-color: pink; -fx-cursor: hand;">
                            <children>
                               <ImageView fx:id="imitem1" fitHeight="50.0" fitWidth="148.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
@@ -93,7 +93,7 @@
                               <Label fx:id="lbitemprice1" text="price:10000000$" />
                            </children>
                         </VBox>
-                        <VBox alignment="CENTER" layoutX="130.0" layoutY="10.0" prefHeight="75.0" prefWidth="100.0" style="-fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 5; -fx-padding: 10; -fx-background-color: pink;">
+                        <VBox alignment="CENTER" layoutX="130.0" layoutY="10.0" onMouseClicked="#onItemClick" prefHeight="75.0" prefWidth="100.0" style="-fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 5; -fx-padding: 10; -fx-background-color: pink; -fx-cursor: hand;">
                            <children>
                               <ImageView fx:id="imitem11" fitHeight="50.0" fitWidth="148.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
@@ -104,7 +104,7 @@
                               <Label fx:id="lbitemprice11" text="price:10000000$" />
                            </children>
                         </VBox>
-                        <VBox alignment="CENTER" layoutX="250.0" layoutY="10.0" prefHeight="75.0" prefWidth="100.0" style="-fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 5; -fx-padding: 10; -fx-background-color: pink;">
+                        <VBox alignment="CENTER" layoutX="250.0" layoutY="10.0" onMouseClicked="#onItemClick" prefHeight="75.0" prefWidth="100.0" style="-fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 5; -fx-padding: 10; -fx-background-color: pink; -fx-cursor: hand;">
                            <children>
                               <ImageView fx:id="imitem111" fitHeight="50.0" fitWidth="148.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
@@ -115,7 +115,7 @@
                               <Label fx:id="lbitemprice111" text="price:10000000$" />
                            </children>
                         </VBox>
-                        <VBox alignment="CENTER" layoutX="370.0" layoutY="10.0" prefHeight="75.0" prefWidth="100.0" style="-fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 5; -fx-padding: 10; -fx-background-color: pink;">
+                        <VBox alignment="CENTER" layoutX="370.0" layoutY="10.0" onMouseClicked="#onItemClick" prefHeight="75.0" prefWidth="100.0" style="-fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 5; -fx-padding: 10; -fx-background-color: pink; -fx-cursor: hand;">
                            <children>
                               <ImageView fx:id="imitem1111" fitHeight="50.0" fitWidth="148.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
@@ -126,7 +126,7 @@
                               <Label fx:id="lbitemprice1111" text="price:10000000$" />
                            </children>
                         </VBox>
-                        <VBox alignment="CENTER" layoutX="10.0" layoutY="137.0" prefHeight="75.0" prefWidth="100.0" style="-fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 5; -fx-padding: 10; -fx-background-color: pink;">
+                        <VBox alignment="CENTER" layoutX="10.0" layoutY="137.0" onMouseClicked="#onItemClick" prefHeight="75.0" prefWidth="100.0" style="-fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 5; -fx-padding: 10; -fx-background-color: pink; -fx-cursor: hand;">
                            <children>
                               <ImageView fx:id="imitem11111" fitHeight="50.0" fitWidth="148.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
@@ -137,7 +137,7 @@
                               <Label fx:id="lbitemprice11111" text="price:10000000$" />
                            </children>
                         </VBox>
-                        <VBox alignment="CENTER" layoutX="130.0" layoutY="137.0" prefHeight="75.0" prefWidth="100.0" style="-fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 5; -fx-padding: 10; -fx-background-color: pink;">
+                        <VBox alignment="CENTER" layoutX="130.0" layoutY="137.0" onMouseClicked="#onItemClick" prefHeight="75.0" prefWidth="100.0" style="-fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 5; -fx-padding: 10; -fx-background-color: pink; -fx-cursor: hand;">
                            <children>
                               <ImageView fx:id="imitem111111" fitHeight="50.0" fitWidth="148.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
@@ -148,7 +148,7 @@
                               <Label fx:id="lbitemprice111111" text="price:10000000$" />
                            </children>
                         </VBox>
-                        <VBox alignment="CENTER" layoutX="250.0" layoutY="137.0" prefHeight="75.0" prefWidth="100.0" style="-fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 5; -fx-padding: 10; -fx-background-color: pink;">
+                        <VBox alignment="CENTER" layoutX="250.0" layoutY="137.0" onMouseClicked="#onItemClick" prefHeight="75.0" prefWidth="100.0" style="-fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 5; -fx-padding: 10; -fx-background-color: pink; -fx-cursor: hand;">
                            <children>
                               <ImageView fx:id="imitem1111111" fitHeight="50.0" fitWidth="148.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
@@ -159,7 +159,7 @@
                               <Label fx:id="lbitemprice1111111" text="price:10000000$" />
                            </children>
                         </VBox>
-                        <VBox alignment="CENTER" layoutX="370.0" layoutY="137.0" prefHeight="75.0" prefWidth="100.0" style="-fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 5; -fx-padding: 10; -fx-background-color: pink;">
+                        <VBox alignment="CENTER" layoutX="370.0" layoutY="137.0" onMouseClicked="#onItemClick" prefHeight="75.0" prefWidth="100.0" style="-fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 5; -fx-padding: 10; -fx-background-color: pink; -fx-cursor: hand;">
                            <children>
                               <ImageView fx:id="imitem11111111" fitHeight="50.0" fitWidth="148.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
@@ -170,7 +170,7 @@
                               <Label fx:id="lbitemprice11111111" text="price:10000000$" />
                            </children>
                         </VBox>
-                        <VBox alignment="CENTER" layoutX="10.0" layoutY="265.0" prefHeight="75.0" prefWidth="100.0" style="-fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 5; -fx-padding: 10; -fx-background-color: pink;">
+                        <VBox alignment="CENTER" layoutX="10.0" layoutY="265.0" onMouseClicked="#onItemClick" prefHeight="75.0" prefWidth="100.0" style="-fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 5; -fx-padding: 10; -fx-background-color: pink; -fx-cursor: hand;">
                            <children>
                               <ImageView fx:id="imitem111111111" fitHeight="50.0" fitWidth="148.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
@@ -181,7 +181,7 @@
                               <Label fx:id="lbitemprice111111111" text="price:10000000$" />
                            </children>
                         </VBox>
-                        <VBox alignment="CENTER" layoutX="130.0" layoutY="265.0" prefHeight="75.0" prefWidth="100.0" style="-fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 5; -fx-padding: 10; -fx-background-color: pink;">
+                        <VBox alignment="CENTER" layoutX="130.0" layoutY="265.0" onMouseClicked="#onItemClick" prefHeight="75.0" prefWidth="100.0" style="-fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 5; -fx-padding: 10; -fx-background-color: pink; -fx-cursor: hand;">
                            <children>
                               <ImageView fx:id="imitem1111111111" fitHeight="50.0" fitWidth="148.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
@@ -192,7 +192,7 @@
                               <Label fx:id="lbitemprice1111111111" text="price:10000000$" />
                            </children>
                         </VBox>
-                        <VBox alignment="CENTER" layoutX="250.0" layoutY="265.0" prefHeight="75.0" prefWidth="100.0" style="-fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 5; -fx-padding: 10; -fx-background-color: pink;">
+                        <VBox alignment="CENTER" layoutX="250.0" layoutY="265.0" onMouseClicked="#onItemClick" prefHeight="75.0" prefWidth="100.0" style="-fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 5; -fx-padding: 10; -fx-background-color: pink; -fx-cursor: hand;">
                            <children>
                               <ImageView fx:id="imitem11111111111" fitHeight="50.0" fitWidth="148.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
@@ -203,7 +203,7 @@
                               <Label fx:id="lbitemprice11111111111" text="price:10000000$" />
                            </children>
                         </VBox>
-                        <VBox alignment="CENTER" layoutX="370.0" layoutY="265.0" prefHeight="75.0" prefWidth="100.0" style="-fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 5; -fx-padding: 10; -fx-background-color: pink;">
+                        <VBox alignment="CENTER" layoutX="370.0" layoutY="265.0" onMouseClicked="#onItemClick" prefHeight="75.0" prefWidth="100.0" style="-fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 5; -fx-padding: 10; -fx-background-color: pink; -fx-cursor: hand;">
                            <children>
                               <ImageView fx:id="imitem111111111111" fitHeight="50.0" fitWidth="148.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
@@ -214,7 +214,7 @@
                               <Label fx:id="lbitemprice111111111111" text="price:10000000$" />
                            </children>
                         </VBox>
-                        <VBox alignment="CENTER" layoutX="10.0" layoutY="392.0" prefHeight="75.0" prefWidth="100.0" style="-fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 5; -fx-padding: 10; -fx-background-color: pink;">
+                        <VBox alignment="CENTER" layoutX="10.0" layoutY="392.0" onMouseClicked="#onItemClick" prefHeight="75.0" prefWidth="100.0" style="-fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 5; -fx-padding: 10; -fx-background-color: pink; -fx-cursor: hand;">
                            <children>
                               <ImageView fx:id="imitem1111111111111" fitHeight="50.0" fitWidth="148.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
@@ -225,7 +225,7 @@
                               <Label fx:id="lbitemprice1111111111111" text="price:10000000$" />
                            </children>
                         </VBox>
-                        <VBox alignment="CENTER" layoutX="130.0" layoutY="392.0" prefHeight="75.0" prefWidth="100.0" style="-fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 5; -fx-padding: 10; -fx-background-color: pink;">
+                        <VBox alignment="CENTER" layoutX="130.0" layoutY="392.0" onMouseClicked="#onItemClick" prefHeight="75.0" prefWidth="100.0" style="-fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 5; -fx-padding: 10; -fx-background-color: pink; -fx-cursor: hand;">
                            <children>
                               <ImageView fx:id="imitem11111111111111" fitHeight="50.0" fitWidth="148.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
@@ -236,7 +236,7 @@
                               <Label fx:id="lbitemprice11111111111111" text="price:10000000$" />
                            </children>
                         </VBox>
-                        <VBox alignment="CENTER" layoutX="250.0" layoutY="392.0" prefHeight="75.0" prefWidth="100.0" style="-fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 5; -fx-padding: 10; -fx-background-color: pink;">
+                        <VBox alignment="CENTER" layoutX="250.0" layoutY="392.0" onMouseClicked="#onItemClick" prefHeight="75.0" prefWidth="100.0" style="-fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 5; -fx-padding: 10; -fx-background-color: pink; -fx-cursor: hand;">
                            <children>
                               <ImageView fx:id="imitem111111111111111" fitHeight="50.0" fitWidth="148.0" pickOnBounds="true" preserveRatio="true">
                                  <image>

@@ -6,6 +6,7 @@ import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.stage.Stage;
 
@@ -40,6 +41,12 @@ public class MainViewController {
     public void onProfileClick(ActionEvent event) throws IOException {
         ViewManager.switchScene(event, "profile-view.fxml", "Hồ sơ cá nhân");
     }
+
+    @FXML
+    public void onItemClick(MouseEvent event) {
+        ViewManager.switchScene(event, "item-view.fxml", "Chi tiết sản phẩm");
+    }
+
     @FXML
     private void onSearchAction() {
         String query = txtsearch.getText();
