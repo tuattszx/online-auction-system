@@ -6,12 +6,20 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
+<?import java.net.URL?>
 <AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auction.client.controllers.MainViewController">
+   <stylesheets>
+      <URL value="@../css/style.css" />
+   </stylesheets>
    <children>
       <VBox layoutY="-3.0" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
          <children>
             <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" spacing="20.0" style="-fx-background-color: midnightblue;">
+               <padding>
+                  <Insets right="25" />
+               </padding>
                <children>
+
                   <Label fx:id="lbbalance" text="&quot;số dư:1.000$&quot;" textFill="WHITE" />
                   <Label fx:id="lbusername" text="&quot;Chào:Admin&quot;" textFill="#ededed" />
                </children>

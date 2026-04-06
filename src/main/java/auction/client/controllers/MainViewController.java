@@ -26,8 +26,9 @@ public class MainViewController {
 
     @FXML
     public void initialize() {
-        // Initialization logic for the main view
-        // e.g., loading items from the database or setting user info
+        if (UserSession.loggedInUser != null){
+            lbusername.setText("Chào: " + UserSession.loggedInUser);
+        }
     }
 
     @FXML
@@ -35,5 +36,4 @@ public class MainViewController {
         String query = txtsearch.getText();
         // Implement search logic
     }
-
 }

@@ -11,7 +11,10 @@ import javafx.stage.Stage;
 import javafx.event.ActionEvent;
 
 import static auction.server.dao.UserDao.CheckLogin;
-
+import auction.client.controllers.MainViewController;
+class UserSession{
+    public static String loggedInUser;
+}
 public class LoginController {
 
     @FXML
@@ -34,6 +37,7 @@ public class LoginController {
         }
         if (CheckLogin(username, password)){
             showAlert(Alert.AlertType.INFORMATION, "Thông báo", "Đăng nhập thành công");
+            UserSession.loggedInUser = username;
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             SwitchScene.switchScene(stage, "main-view.fxml", "Hệ thống Đấu giá - Trang chủ");
         }
