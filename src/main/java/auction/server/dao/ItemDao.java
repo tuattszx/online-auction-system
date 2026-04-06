@@ -16,7 +16,6 @@ public class ItemDao {
             PreparedStatement pstmt=conn.prepareStatement(sql)){
 
             pstmt.setString(1,item.getName());
-            pstmt.setString(1, item.getName());
             pstmt.setString(2, item.getDescription());
             pstmt.setLong(3, item.getStartingPrice());
             pstmt.setLong(4, item.getStartingPrice());
@@ -117,5 +116,58 @@ public class ItemDao {
         }
 
         return list;
+    }
+
+    public static List<Item> searchItems(String keyword) {
+        List<Item> list = new ArrayList<>();
+        String sql = "SELECT * FROM ITEMS WHERE (name LIKE ? OR description LIKE ?) " +
+                "AND  status = 'OPEN' ORDER BY created_time DESC";
+
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            String searchPattern = "%" + keyword + "%";
+            pstmt.setString(1, searchPattern);
+            pstmt.setString(2, searchPattern);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    list.add(mapResultSetToItem(rs));
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Lỗi tìm kiếm Item: " + e.getMessage());
+        }
+        return list;
+    }
+
+    public static boolean updateCurrentPrice(int itemId, long newPrice) {
+        String sql = "UPDATE ITEMS SET current_price = ? WHERE id = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setLong(1, newPrice);
+            pstmt.setInt(2, itemId);
+
+            return pstmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.err.println("Lỗi cập nhật giá Item: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public static boolean updateStatus(int itemId, String status) {
+        String sql = "UPDATE ITEMS SET status = ? WHERE id = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, status);
+            pstmt.setInt(2, itemId);
+
+            return pstmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }
