@@ -1,16 +1,22 @@
 package auction.client.controllers;
 
 import javafx.fxml.FXML;
+import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.FlowPane;
+import javafx.stage.Stage;
+
+import javafx.event.ActionEvent;
+import java.io.IOException;
 
 public class MainViewController {
     @FXML
     private Label lbbalance;
     @FXML
-    private Label lbusername;
+    private Button btusername;
     @FXML
     private TextField txtsearch;
     @FXML
@@ -27,10 +33,13 @@ public class MainViewController {
     @FXML
     public void initialize() {
         if (UserSession.loggedInUser != null){
-            lbusername.setText("Chào: " + UserSession.loggedInUser);
+            btusername.setText("Chào: " + UserSession.loggedInUser);
         }
     }
-
+    @FXML
+    public void onProfileClick(ActionEvent event) throws IOException {
+        ViewManager.switchScene(event, "profile-view.fxml", "Hồ sơ cá nhân");
+    }
     @FXML
     private void onSearchAction() {
         String query = txtsearch.getText();

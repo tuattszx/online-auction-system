@@ -12,6 +12,9 @@ import javafx.event.ActionEvent;
 
 import static auction.server.dao.UserDao.CheckLogin;
 import auction.client.controllers.MainViewController;
+
+import java.io.IOException;
+
 class UserSession{
     public static String loggedInUser;
 }
@@ -38,17 +41,18 @@ public class LoginController {
         if (CheckLogin(username, password)){
             showAlert(Alert.AlertType.INFORMATION, "Thông báo", "Đăng nhập thành công");
             UserSession.loggedInUser = username;
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            SwitchScene.switchScene(stage, "main-view.fxml", "Hệ thống Đấu giá - Trang chủ");
+            //Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            ViewManager.clearCache();
+            ViewManager.switchScene(event, "main-view.fxml", "Hệ thống Đấu giá - Trang chủ");
         }
         else{
             showAlert(Alert.AlertType.ERROR, "Lỗi!", "Sai tài khoản hoặc mật khẩu");
         }
     }
     @FXML
-    public void onSignUpClick(ActionEvent event) {
-        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        SwitchScene.switchScene(stage, "register-view.fxml", "Hệ thống Đấu giá - Đăng ký");
+    public void onSignUpClick(ActionEvent event) throws IOException {
+        //Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        ViewManager.switchScene(event, "register-view.fxml", "Hệ thống Đấu giá - Đăng ký");
     }
     private void showAlert(Alert.AlertType alertType, String title, String message) {
         Alert alert = new Alert(alertType);

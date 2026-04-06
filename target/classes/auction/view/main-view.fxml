@@ -20,8 +20,8 @@
                </padding>
                <children>
 
-                  <Label fx:id="lbbalance" text="&quot;số dư:1.000$&quot;" textFill="WHITE" />
-                  <Label fx:id="lbusername" text="&quot;Chào:Admin&quot;" textFill="#ededed" />
+                  <Label fx:id="lbbalance" text="Số dư: 1.000$" textFill="WHITE" style="-fx-background-color: transparent;" />
+                  <Button fx:id="btusername" text="Chào: Admin" textFill="#ededed" style="-fx-background-color: transparent;" onAction="#onProfileClick" />
                </children>
             </HBox>
             <HBox alignment="BOTTOM_CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0" style="-fx-background-color: midnightblue;">
