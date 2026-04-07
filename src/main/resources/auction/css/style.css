@@ -6,7 +6,11 @@
     -fx-background-radius: 3px;
     -fx-text-fill: #555;
 }
-
+.label-account {
+    -fx-font-family: "Montserrat";
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+}
 .forgot-btn:hover {
     -fx-background-color: #f0f0f0;
     -fx-text-fill: #0078d4;
