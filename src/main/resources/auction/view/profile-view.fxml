@@ -4,6 +4,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.MenuItem?>
@@ -18,7 +19,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auction.client.controllers.ProfileController">
+<AnchorPane prefHeight="614.0" prefWidth="691.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auction.client.controllers.ProfileController">
    <stylesheets>
        <URL value="@../css/style.css" />
       <URL value="@../css/style.css" />
@@ -26,7 +27,7 @@
    <children>
       <BorderPane layoutX="-2.0" layoutY="-1.0" maxHeight="1.7976931348623157E308" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: white;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <top>
-            <HBox alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="112.0" prefWidth="685.0" spacing="10.0" style="-fx-background-color: white; -fx-border-color: grey; -fx-border-width: 0 0 2 0;" BorderPane.alignment="CENTER">
+            <HBox alignment="CENTER_LEFT" maxHeight="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="112.0" spacing="10.0" style="-fx-background-color: white; -fx-border-color: grey; -fx-border-width: 0 0 2 0;" BorderPane.alignment="CENTER">
                <padding>
                   <Insets left="20.0" right="20.0" />
                </padding>
@@ -119,173 +120,208 @@
                </children>
             </HBox>
          </top>
-         <left>
-            <VBox alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefWidth="200.0" spacing="15.0" style="-fx-border-color: white;" BorderPane.alignment="CENTER">
-               <padding>
-                  <Insets left="15.0" top="20.0" />
-               </padding>
-               <children>
-                  <HBox alignment="CENTER_LEFT" prefHeight="29.0" prefWidth="185.0" spacing="10.0">
-                     <children>
-                        <Region minHeight="-Infinity" prefHeight="23.0" prefWidth="2.0" style="-fx-background-color: navy blue;" />
-                        <Label text="Account">
-                           <font>
-                              <Font name="Arial Rounded MT Bold" size="15.0" />
-                           </font>
-                        </Label>
-                     </children>
-                     <cursor>
-                        <Cursor fx:constant="HAND" />
-                     </cursor>
-                  </HBox>
-                  <HBox alignment="CENTER_LEFT" layoutX="25.0" layoutY="30.0" prefHeight="29.0" prefWidth="185.0" spacing="10.0">
-                     <children>
-                        <Region minHeight="-Infinity" prefHeight="23.0" prefWidth="2.0" style="-fx-background-color: navy blue;" />
-                        <Label text="Adresses">
-                           <font>
-                              <Font name="Arial Rounded MT Bold" size="15.0" />
-                           </font>
-                        </Label>
-                     </children>
-                     <cursor>
-                        <Cursor fx:constant="HAND" />
-                     </cursor>
-                  </HBox>
-                  <HBox alignment="CENTER_LEFT" layoutX="25.0" layoutY="75.0" prefHeight="29.0" prefWidth="185.0" spacing="10.0">
-                     <children>
-                        <Region minHeight="-Infinity" prefHeight="23.0" prefWidth="2.0" style="-fx-background-color: navy blue;" />
-                        <Label text="Payment">
-                           <font>
-                              <Font name="Arial Rounded MT Bold" size="15.0" />
-                           </font>
-                        </Label>
-                     </children>
-                     <cursor>
-                        <Cursor fx:constant="HAND" />
-                     </cursor>
-                  </HBox>
-                  <HBox alignment="CENTER_LEFT" layoutX="25.0" layoutY="119.0" prefHeight="29.0" prefWidth="185.0" spacing="10.0">
-                     <children>
-                        <Region minHeight="-Infinity" prefHeight="23.0" prefWidth="2.0" style="-fx-background-color: navy blue;" />
-                        <Label text="Email &amp; Notifications">
-                           <font>
-                              <Font name="Arial Rounded MT Bold" size="15.0" />
-                           </font>
-                        </Label>
-                     </children>
-                     <cursor>
-                        <Cursor fx:constant="HAND" />
-                     </cursor>
-                  </HBox>
-                  <HBox alignment="CENTER_LEFT" layoutX="25.0" layoutY="164.0" prefHeight="29.0" prefWidth="185.0" spacing="10.0">
-                     <children>
-                        <Region minHeight="-Infinity" prefHeight="23.0" prefWidth="2.0" style="-fx-background-color: navy blue;" />
-                        <Label text="Verification">
-                           <font>
-                              <Font name="Arial Rounded MT Bold" size="15.0" />
-                           </font>
-                        </Label>
-                     </children>
-                     <cursor>
-                        <Cursor fx:constant="HAND" />
-                     </cursor>
-                  </HBox>
-               </children>
-            </VBox>
-         </left>
          <center>
-            <ScrollPane hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: white;" vbarPolicy="ALWAYS" BorderPane.alignment="CENTER">
-               <content>
-                  <VBox prefHeight="289.0" prefWidth="475.0" style="-fx-background-color: white; -fx-border-color: white;">
-                     <children>
-                        <Label text="Account">
-                           <font>
-                              <Font name="Arial Rounded MT Bold" size="24.0" />
-                           </font>
-                        </Label>
-                        <Region prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
-                        <VBox prefHeight="48.0" prefWidth="443.0">
-                           <children>
-                              <Label text="Name" />
-                              <Label fx:id="lbname" text="admin">
-                                 <font>
-                                    <Font size="17.0" />
-                                 </font>
-                              </Label>
-                              <Label text="Change" textFill="#1541c5">
-                                 <font>
-                                    <Font name="System Bold" size="13.0" />
-                                 </font>
-                                 <cursor>
-                                    <Cursor fx:constant="HAND" />
-                                 </cursor>
-                              </Label>
-                           </children>
-                        </VBox>
-                        <Region layoutX="31.0" layoutY="39.0" prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
-                        <VBox layoutX="31.0" layoutY="41.0" prefHeight="48.0" prefWidth="443.0">
-                           <children>
-                              <Label text="username" />
-                              <Label fx:id="lbname1" text="admin">
-                                 <font>
-                                    <Font size="17.0" />
-                                 </font>
-                              </Label>
-                              <Label text="you can't change your user name">
-                                 <font>
-                                    <Font size="11.0" />
-                                 </font>
-                                 <cursor>
-                                    <Cursor fx:constant="DEFAULT" />
-                                 </cursor>
-                              </Label>
-                           </children>
-                        </VBox>
-                        <Region layoutX="31.0" layoutY="103.0" prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
-                        <VBox layoutX="31.0" layoutY="41.0" prefHeight="48.0" prefWidth="443.0">
-                           <children>
-                              <Label text="email" />
-                              <Label fx:id="lbname2" text="admin@gmail.com">
-                                 <font>
-                                    <Font size="17.0" />
-                                 </font>
-                              </Label>
-                              <Label text="Change" textFill="#1541c5">
-                                 <font>
-                                    <Font name="System Bold" size="13.0" />
-                                 </font>
-                                 <cursor>
-                                    <Cursor fx:constant="HAND" />
-                                 </cursor>
-                              </Label>
-                           </children>
-                        </VBox>
-                        <Region layoutX="31.0" layoutY="164.0" prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
-                        <VBox layoutX="31.0" layoutY="165.0" prefHeight="48.0" prefWidth="443.0">
-                           <children>
-                              <Label text="password" />
-                              <Label fx:id="lbname21" text="********">
-                                 <font>
-                                    <Font size="17.0" />
-                                 </font>
-                              </Label>
-                              <Label text="Change" textFill="#1541c5">
-                                 <font>
-                                    <Font name="System Bold" size="13.0" />
-                                 </font>
-                                 <cursor>
-                                    <Cursor fx:constant="HAND" />
-                                 </cursor>
-                              </Label>
-                           </children>
-                        </VBox>
-                     </children>
+            <HBox alignment="CENTER" prefHeight="100.0" BorderPane.alignment="CENTER">
+               <children>
+                  <VBox alignment="TOP_CENTER" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="507.0" spacing="15.0" style="-fx-border-color: white;" HBox.hgrow="ALWAYS">
                      <padding>
-                        <Insets left="20.0" right="10.0" />
+                        <Insets left="15.0" top="20.0" />
                      </padding>
+                     <children>
+                        <HBox fx:id="btnAccount" alignment="CENTER_LEFT" onMouseClicked="#handleSidebarClick" prefHeight="29.0" prefWidth="185.0" spacing="10.0">
+                           <children>
+                              <Region fx:id="accountIndicator" minHeight="-Infinity" prefHeight="23.0" prefWidth="2.0" style="-fx-background-color: navy blue;" />
+                              <Label text="Account">
+                                 <font>
+                                    <Font name="Arial Rounded MT Bold" size="15.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </HBox>
+                        <HBox fx:id="btnAddresses" alignment="CENTER_LEFT" layoutX="25.0" layoutY="30.0" onMouseClicked="#handleSidebarClick" prefHeight="29.0" prefWidth="185.0" spacing="10.0">
+                           <children>
+                              <Region fx:id="addressesIndicator" minHeight="-Infinity" prefHeight="23.0" prefWidth="2.0" style="-fx-background-color: navy blue;" visible="false" />
+                              <Label text="Adresses">
+                                 <font>
+                                    <Font name="Arial Rounded MT Bold" size="15.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </HBox>
+                        <HBox fx:id="btnPayment" alignment="CENTER_LEFT" layoutX="25.0" layoutY="75.0" onMouseClicked="#handleSidebarClick" prefHeight="29.0" prefWidth="185.0" spacing="10.0">
+                           <children>
+                              <Region fx:id="paymentIndicator" minHeight="-Infinity" prefHeight="23.0" prefWidth="2.0" style="-fx-background-color: navy blue;" visible="false" />
+                              <Label text="Payment">
+                                 <font>
+                                    <Font name="Arial Rounded MT Bold" size="15.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </HBox>
+                        <HBox fx:id="btnEmail" alignment="CENTER_LEFT" layoutX="25.0" layoutY="119.0" onMouseClicked="#handleSidebarClick" prefHeight="29.0" prefWidth="185.0" spacing="10.0">
+                           <children>
+                              <Region fx:id="emailIndicator" minHeight="-Infinity" prefHeight="23.0" prefWidth="2.0" style="-fx-background-color: navy blue;" visible="false" />
+                              <Label text="Email &amp; Notifications">
+                                 <font>
+                                    <Font name="Arial Rounded MT Bold" size="15.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </HBox>
+                        <HBox fx:id="btnVeri" alignment="CENTER_LEFT" layoutX="25.0" layoutY="164.0" onMouseClicked="#handleSidebarClick" prefHeight="29.0" prefWidth="185.0" spacing="10.0">
+                           <children>
+                              <Region fx:id="VeriIndicator" minHeight="-Infinity" prefHeight="23.0" prefWidth="2.0" style="-fx-background-color: navy blue;" visible="false" />
+                              <Label text="Verification">
+                                 <font>
+                                    <Font name="Arial Rounded MT Bold" size="15.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </HBox>
+                     </children>
                   </VBox>
-               </content>
-            </ScrollPane>
+                  <ScrollPane fitToWidth="true" hbarPolicy="NEVER" maxWidth="1.7976931348623157E308" pannable="true" prefHeight="507.0" style="-fx-border-color: white;" vbarPolicy="ALWAYS" HBox.hgrow="ALWAYS">
+                     <content>
+                        <VBox maxWidth="1.7976931348623157E308" prefHeight="700.0" spacing="3.0" style="-fx-background-color: white; -fx-border-color: white;">
+                           <children>
+                              <Label text="Account">
+                                 <font>
+                                    <Font name="Arial Rounded MT Bold" size="24.0" />
+                                 </font>
+                              </Label>
+                              <Region prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
+                              <VBox prefHeight="63.0" prefWidth="865.0">
+                                 <children>
+                                    <Label text="Name" />
+                                    <Label fx:id="lbname" text="admin">
+                                       <font>
+                                          <Font size="17.0" />
+                                       </font>
+                                    </Label>
+                                    <Label text="Change" textFill="#1541c5">
+                                       <font>
+                                          <Font name="System Bold" size="13.0" />
+                                       </font>
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor>
+                                    </Label>
+                                 </children>
+                              </VBox>
+                              <Region layoutX="31.0" layoutY="39.0" prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
+                              <VBox layoutX="31.0" layoutY="41.0" prefHeight="48.0" prefWidth="443.0">
+                                 <children>
+                                    <Label text="username" />
+                                    <Label fx:id="lbusername" text="admin">
+                                       <font>
+                                          <Font size="17.0" />
+                                       </font>
+                                    </Label>
+                                    <Label text="you can't change your user name">
+                                       <font>
+                                          <Font size="11.0" />
+                                       </font>
+                                       <cursor>
+                                          <Cursor fx:constant="DEFAULT" />
+                                       </cursor>
+                                    </Label>
+                                 </children>
+                              </VBox>
+                              <Region layoutX="31.0" layoutY="103.0" prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
+                              <VBox layoutX="31.0" layoutY="41.0" prefHeight="48.0" prefWidth="443.0">
+                                 <children>
+                                    <Label text="email" />
+                                    <Label fx:id="lbemail" text="admin@gmail.com">
+                                       <font>
+                                          <Font size="17.0" />
+                                       </font>
+                                    </Label>
+                                    <Label text="Change" textFill="#1541c5">
+                                       <font>
+                                          <Font name="System Bold" size="13.0" />
+                                       </font>
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor>
+                                    </Label>
+                                 </children>
+                              </VBox>
+                              <Region layoutX="31.0" layoutY="164.0" prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
+                              <VBox layoutX="31.0" layoutY="165.0" prefHeight="101.0" prefWidth="443.0">
+                                 <children>
+                                    <Label text="password" />
+                                    <Label fx:id="lbname21" text="********">
+                                       <font>
+                                          <Font size="17.0" />
+                                       </font>
+                                    </Label>
+                                    <Label text="Change" textFill="#1541c5">
+                                       <font>
+                                          <Font name="System Bold" size="13.0" />
+                                       </font>
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor>
+                                    </Label>
+                                    <Region prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
+                                    <VBox prefHeight="48.0" prefWidth="443.0">
+                                       <children>
+                                          <Label text="phone number" />
+                                          <Label fx:id="lbphonenumber" text="01234566">
+                                             <font>
+                                                <Font size="17.0" />
+                                             </font>
+                                          </Label>
+                                          <Label text="Change" textFill="#1541c5">
+                                             <font>
+                                                <Font name="System Bold" size="13.0" />
+                                             </font>
+                                             <cursor>
+                                                <Cursor fx:constant="HAND" />
+                                             </cursor>
+                                          </Label>
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </VBox>
+                              <Region layoutX="31.0" layoutY="164.0" prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
+                              <VBox layoutX="31.0" layoutY="41.0" prefHeight="48.0" prefWidth="443.0">
+                                 <children>
+                                    <Label text="language" />
+                                    <ComboBox maxWidth="1.7976931348623157E308" prefHeight="37.0" prefWidth="443.0" promptText="english" style="-fx-border-color: white; -fx-background-color: lightgray;" />
+                                 </children>
+                              </VBox>
+                              <Region prefHeight="1.0" prefWidth="443.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
+                              <VBox layoutX="31.0" layoutY="356.0" prefHeight="48.0" prefWidth="443.0">
+                                 <children>
+                                    <Label text="bidding currency" />
+                                    <ComboBox maxWidth="1.7976931348623157E308" prefHeight="37.0" prefWidth="443.0" promptText="dollar" style="-fx-border-color: white; -fx-background-color: lightgray;" />
+                                 </children>
+                              </VBox>
+                           </children>
+                           <padding>
+                              <Insets left="20.0" right="10.0" />
+                           </padding>
+                        </VBox>
+                     </content>
+                  </ScrollPane>
+               </children>
+            </HBox>
          </center>
       </BorderPane>
    </children>
