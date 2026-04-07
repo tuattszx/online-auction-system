@@ -170,4 +170,53 @@ public class ItemDao {
             return false;
         }
     }
+
+    public static boolean deleteItem(int id){
+        return  updateStatus(id,"DELETED");
+    }
+
+    public static boolean updateItem(Item item) {
+        String sql = "UPDATE ITEMS SET name = ?, description = ?,start_price=?, id_category = ?,start_time=?, end_time = ? WHERE id = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, item.getName());
+            pstmt.setString(2, item.getDescription());
+            pstmt.setLong(3, item.getStartingPrice());
+            pstmt.setInt(4, item.getCategoryId());
+            pstmt.setTimestamp(5,item.getStartTime() != null ? Timestamp.valueOf(item.getStartTime()) : null);
+            pstmt.setTimestamp(6, item.getEndTime() != null ? Timestamp.valueOf(item.getEndTime()) : null);
+            pstmt.setInt(7, item.getId());
+
+            return pstmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static List<Item> getItemsBySeller(int sellerId) {
+        List<Item> itemList = new ArrayList<>();
+        String sql = "SELECT * FROM ITEMS WHERE id_seller = ? ORDER BY created_time DESC";
+
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, sellerId);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    Item item = mapResultSetToItem(rs);
+                    itemList.add(item);
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Lỗi khi lấy danh sách sản phẩm của người bán (ID: " + sellerId + "): " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return itemList;
+    }
+
+
 }
