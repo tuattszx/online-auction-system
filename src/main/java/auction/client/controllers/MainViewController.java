@@ -34,7 +34,7 @@ public class MainViewController {
     @FXML
     public void initialize() {
         if (UserSession.loggedInUser != null){
-            btusername.setText("Chào: " + UserSession.loggedInUser);
+            btusername.setText("Chào: " + UserSession.loggedInUser.getUsername());
         }
     }
     @FXML

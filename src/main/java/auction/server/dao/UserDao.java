@@ -8,20 +8,20 @@ import static auction.server.DatabaseManager.getConnection;
 
 public class UserDao{
 
-    public static boolean CheckLogin(String userName,String password){
+    public static User CheckLogin(String userName,String password){
         String sql="SELECT * FROM users WHERE username=? AND password=?";
         try(Connection conn=getConnection();
             PreparedStatement pstmt= conn.prepareStatement(sql)) {
             pstmt.setString(1, userName);
             pstmt.setString(2, password);
             try (ResultSet rs = pstmt.executeQuery()) {
-                return rs.next();
+                if (rs.next()) return mapResultSetToUser(rs);
             }
         }
             catch (SQLException e){
             System.err.println("Lỗi checkLogin: " + e.getMessage());
-            return false;
         }
+        return null;
     }
 
     public static boolean registerUser(User user) {
@@ -70,6 +70,7 @@ public class UserDao{
         user.setBalance(rs.getLong("balance"));
         user.setRole(rs.getString("ROLE"));
         user.setAddress(rs.getString("ADDRESS"));
+
 
         Timestamp timestamp = rs.getTimestamp("created_at");
         if (timestamp != null) {

@@ -1,5 +1,6 @@
 package auction.client.controllers;
 
+import auction.common.model.users.User;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
@@ -16,7 +17,7 @@ import auction.client.controllers.MainViewController;
 import java.io.IOException;
 
 class UserSession{
-    public static String loggedInUser;
+    public static User loggedInUser;
 }
 public class LoginController {
 
@@ -38,9 +39,10 @@ public class LoginController {
             showAlert(Alert.AlertType.ERROR, "Lỗi!", "Vui lòng nhập đầy đủ thông tin");
             return;
         }
-        if (CheckLogin(username, password)){
+        User user= CheckLogin(username,password);
+        if (user != null){
             showAlert(Alert.AlertType.INFORMATION, "Thông báo", "Đăng nhập thành công");
-            UserSession.loggedInUser = username;
+            UserSession.loggedInUser = user;
             //Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             ViewManager.clearCache();
             ViewManager.switchScene(event, "main-view.fxml", "Hệ thống Đấu giá - Trang chủ");
