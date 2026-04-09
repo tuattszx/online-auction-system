@@ -3,6 +3,8 @@ package auction.common.model.users;
 public class User extends Account{
     private long balance;
     private String address;
+    private String phoneNumber;
+
     public User (){
         super();
         this.setRole("USER");
@@ -28,6 +30,9 @@ public class User extends Account{
             this.balance = balance;
         }
     }
+
+    public void setPhoneNumber(String phoneNumber) {this.phoneNumber = phoneNumber;}
+    public String getPhoneNumber() {return phoneNumber;}
 
     @Override
     public String toString() {

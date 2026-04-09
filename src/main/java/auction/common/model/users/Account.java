@@ -10,6 +10,7 @@ public abstract class Account extends BaseEntity {
     private String password;
     private String role;
     private String email;
+    private String displayName;
     private LocalDateTime creatTime;
 
     public Account(){
@@ -28,11 +29,13 @@ public abstract class Account extends BaseEntity {
     public String getPassword() { return password; }
     public String getRole() { return role; }
     public String getEmail() { return email; }
+    public String getDisplayName() {return displayName;}
     public LocalDateTime getCreatTime(){ return creatTime;}
 
     public void setUsername(String username) { this.username = username; }
     public void setPassword(String password) { this.password = password; }
     public void setEmail(String email) { this.email = email; }
     public void setRole(String role) { this.role=role;}
+    public void setDisplayName(String displayName) {this.displayName=displayName;}
     public void setCreatTime(LocalDateTime localDateTime) {this.creatTime=localDateTime;}
 }

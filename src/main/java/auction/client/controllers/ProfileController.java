@@ -1,5 +1,7 @@
 package auction.client.controllers;
+import auction.common.model.users.User;
 import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.fxml.FXML;
@@ -9,6 +11,16 @@ import java.util.Arrays;
 import java.util.List;
 
 public class ProfileController  {
+    @FXML
+    public Label lbname;
+    @FXML
+    public Label lbusername;
+    @FXML
+    public Label lbemail;
+    @FXML
+    public Label lbname21;
+    @FXML
+    public Label lbphonenumber;
     @FXML
     private HBox btnAccount;
 
@@ -30,6 +42,22 @@ public class ProfileController  {
         allIndicators = Arrays.asList(accountIndicator, addressesIndicator, paymentIndicator,VeriIndicator,emailIndicator);
         // Mặc định hiện cái đầu tiên (Account)
         showIndicator(accountIndicator);
+
+        User user = UserSession.loggedInUser;
+
+        if (user!= null){
+            lbname.setText(user.getDisplayName());
+            lbusername.setText(user.getUsername());
+            lbemail.setText(user.getEmail());
+
+            char[] repeat = new char[user.getPassword().length()];
+            java.util.Arrays.fill(repeat, '*');
+            String result = new String(repeat);
+            lbname21.setText(result);
+
+            lbphonenumber.setText(user.getPhoneNumber());
+
+        }
     }
     private void showIndicator(Region activeIndicator) {
         // Ẩn tất cả gạch xanh đi

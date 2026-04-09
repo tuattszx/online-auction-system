@@ -25,7 +25,7 @@ public class UserDao{
     }
 
     public static boolean registerUser(User user) {
-        String sql = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO users (username, password, email,dis_name) VALUES (?, ?, ?, ?)";
 
         try (Connection conn = getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -33,6 +33,7 @@ public class UserDao{
             pstmt.setString(1, user.getUsername());
             pstmt.setString(2, user.getPassword());
             pstmt.setString(3, user.getEmail());
+            pstmt.setString(4,user.getUsername());
 
             int rowsAffected = pstmt.executeUpdate();
             return rowsAffected > 0;
@@ -70,6 +71,8 @@ public class UserDao{
         user.setBalance(rs.getLong("balance"));
         user.setRole(rs.getString("ROLE"));
         user.setAddress(rs.getString("ADDRESS"));
+        user.setDisplayName(rs.getString("dis_name"));
+        user.setPhoneNumber(rs.getString("phone_number"));
 
 
         Timestamp timestamp = rs.getTimestamp("created_at");
@@ -138,13 +141,15 @@ public class UserDao{
         }
     }
 
-    public static boolean updateProfile(int userId, String newEmail, String newAddress) {
-        String sql = "UPDATE users SET EMAIL = ?, ADDRESS=? WHERE ID = ?";
+    public static boolean updateProfile(int userId, String newName, String newEmail, String newAddress,String newPhoneNumber) {
+        String sql = "UPDATE users SET dis_name=?, EMAIL = ?, ADDRESS=?, phone_number=? WHERE ID = ?";
         try (Connection conn = getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, newEmail);
-            pstmt.setString(2, newAddress);
-            pstmt.setInt(3,userId);
+            pstmt.setString(1,newName);
+            pstmt.setString(2, newEmail);
+            pstmt.setString(3, newAddress);
+            pstmt.setString(4,newPhoneNumber);
+            pstmt.setInt(5,userId);
 
             return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {
