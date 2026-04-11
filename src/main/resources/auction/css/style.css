@@ -6,6 +6,11 @@
     -fx-background-radius: 3px;
     -fx-text-fill: #555;
 }
+.root-pane {
+    -fx-background-image: url("../img/login.png");
+    -fx-background-size: cover;
+    -fx-background-position: center;
+}
 .label-account {
     -fx-font-family: "Montserrat";
     -fx-font-weight: bold;
