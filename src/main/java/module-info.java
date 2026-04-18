@@ -13,4 +13,6 @@ module auction {
     exports auction.client.controllers;
 //    exports auction.server;
 //    exports auction.common;
+    requires com.zaxxer.hikari;
+    requires org.slf4j;
 }
