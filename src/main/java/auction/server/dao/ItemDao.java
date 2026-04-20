@@ -53,6 +53,13 @@ public class ItemDao {
         item.setSellerId(rs.getInt("id_seller"));
         item.setStatus(rs.getString("status"));
 
+        int bidderId = rs.getInt("id_current_bidder");
+        if (rs.wasNull()) {
+            item.setCurrentBidderId(null);
+        } else {
+            item.setCurrentBidderId(bidderId);
+        }
+
         int categoryId=rs.getInt("id_category");
         if (categoryId >0) item.setCategoryId(categoryId);
 
@@ -218,4 +225,22 @@ public class ItemDao {
         return itemList;
     }
 
+    public static boolean placeBid(int idItem,long newPrice,int id_bidder){
+        String sql="UPDATE ITEMS SET current_price=?, id_current_bidder=? WHERE id=? and current_price<?";
+
+        try(Connection conn=getConnection();
+            PreparedStatement pstmt= conn.prepareStatement(sql)) {
+
+            pstmt.setLong(1,newPrice);
+            pstmt.setInt(2, id_bidder);
+            pstmt.setInt(3,idItem);
+            pstmt.setLong(4,newPrice);
+
+            return pstmt.executeUpdate()>0;
+        }
+        catch (SQLException e){
+            e.printStackTrace();
+            return false;
+        }
+    }
 }

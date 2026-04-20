@@ -1,38 +1,70 @@
 package auction.server;
 
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+
 import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 
 
 public class DatabaseManager {
-    private static final String HOST = "b99ipdmf7qqs8ydf6oel-mysql.services.clever-cloud.com";
-    private static final String DB_NAME = "b99ipdmf7qqs8ydf6oel";
-    private static final String USER = "undbtnmtrkodctzy";
-    private static final String PASS = "kHMJ9qPTCTiPkEuE3Max";
-    private static final String URL = "jdbc:mysql://" + HOST + ":3306/" + DB_NAME;
-    private static Connection connection = null;
+    private static final String HOST = "gateway01.ap-southeast-1.prod.aws.tidbcloud.com";
+    private static final String PORT = "4000";
+    private static final String USER = "GRmFoHTy82Wuncw.root";
+    private static final String PASS = "5lthvbCLcBtIfZ2C";
+    private static final String DB_NAME = "test";
+
+    private static final String URL = "jdbc:mysql://" + HOST + ":" + PORT + "/" + DB_NAME + "?useSSL=true&trustServerCertificate=true";
+
+    private static HikariDataSource dataSource;
     static {
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-        } catch (ClassNotFoundException e) {
+            HikariConfig config = new HikariConfig();
+
+            config.setJdbcUrl(URL);
+            config.setUsername(USER);
+            config.setPassword(PASS);
+            config.setDriverClassName("com.mysql.cj.jdbc.Driver");
+
+            config.setMaximumPoolSize(10);
+            config.setMinimumIdle(2);
+            config.setConnectionTimeout(30000);
+            config.setIdleTimeout(600000);
+            config.setMaxLifetime(1800000);
+            config.addDataSourceProperty("cachePrepStmts", "true");
+            config.addDataSourceProperty("prepStmtCacheSize", "250");
+            config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
+
+            dataSource = new HikariDataSource(config);
+        } catch (Exception e) {
             System.err.println("Không tìm thấy MySQL Driver: " + e.getMessage());
         }
     }
     public static Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(URL, USER, PASS);
+        if (dataSource==null){
+            throw new SQLException();
+        }
+        return dataSource.getConnection();
     }
 
     public static void main(String[] args) {
-        try (Connection conn = getConnection()) {
-            if (conn != null && !conn.isClosed()) {
-                System.out.println("Kết nối cơ sở dữ liệu thành công!");
-            }
-        } catch (SQLException e) {
+        long start = System.currentTimeMillis();
+        try (Connection conn1 = getConnection();) {
+            System.out.println("Lần 1 lấy kết nối mất: " + (System.currentTimeMillis() - start) + "ms");
+
+        }
+        catch (SQLException e){
             e.printStackTrace();
         }
+
+        long start2 = System.currentTimeMillis();
+        try (Connection conn2 = getConnection();){
+            System.out.println("Lần 2 lấy kết nối mất: " + (System.currentTimeMillis() - start2) + "ms");
+        }
+        catch (SQLException e){
+            e.printStackTrace();
+        }
+
     }
 }

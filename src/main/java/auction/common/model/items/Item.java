@@ -13,6 +13,7 @@ public class Item extends BaseEntity {
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private int sellerId;
+    private Integer currentBidderId;
     private String status;
     private LocalDateTime createdTime;
     private int categoryId;
@@ -66,6 +67,9 @@ public class Item extends BaseEntity {
 
     public int getSellerId() { return sellerId; }
     public void setSellerId(int sellerId) {this.sellerId=sellerId;}
+
+    public Integer getCurrentBidderId() {return currentBidderId;}
+    public void setCurrentBidderId(Integer currentBidderId) {this.currentBidderId = currentBidderId;}
 
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
