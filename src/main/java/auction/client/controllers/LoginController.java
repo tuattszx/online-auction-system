@@ -1,5 +1,7 @@
 package auction.client.controllers;
 
+import auction.client.ClientNetwork;
+import auction.common.message.Message;
 import auction.common.model.users.User;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -52,24 +54,26 @@ public class LoginController {
             );
         }
     }
+    // Trong LoginController.java
+    ClientNetwork network = new ClientNetwork();
+
     @FXML
-    public void onLoginButtonClick(ActionEvent event) {
-        String username = txtUsername.getText();
-        String password = txtPassword.getText();
-        if (username == null || username.isEmpty() || password == null || password.isEmpty()) {
-            showAlert(Alert.AlertType.ERROR, "Lỗi!", "Vui lòng nhập đầy đủ thông tin");
-            return;
-        }
-        User user= CheckLogin(username,password);
-        if (user != null){
-            showAlert(Alert.AlertType.INFORMATION, "Thông báo", "Đăng nhập thành công");
-            UserSession.loggedInUser = user;
-            //Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            ViewManager.clearCache();
-            ViewManager.switchScene(event, "main-view.fxml", "Hệ thống Đấu giá - Trang chủ");
-        }
-        else{
-            showAlert(Alert.AlertType.ERROR, "Lỗi!", "Sai tài khoản hoặc mật khẩu");
+    public void onLoginButtonClick() {
+        try {
+            network.connect();
+            User user = new User(); // Tạo object user từ TextField
+            user.setUsername(txtUsername.getText());
+            user.setPassword(txtPassword.getText());
+
+            Message response = network.sendRequest(new Message("LOGIN", user));
+
+            if ("SUCCESS".equals(response.getStatus())) {
+                showAlert(Alert.AlertType.INFORMATION, "Thành công", "Đăng nhập qua Server thành công!");
+            } else {
+                showAlert(Alert.AlertType.ERROR, "Thất bại", "Sai tài khoản hoặc mật khẩu!");
+            }
+        } catch (IOException e) {
+            showAlert(Alert.AlertType.ERROR, "Lỗi", "Không thể kết nối tới Server!");
         }
     }
     @FXML
