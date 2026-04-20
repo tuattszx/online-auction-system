@@ -4,19 +4,16 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 
 
 public class DatabaseManager {
-    private static final String HOST = "mysql-1190fe6e-bduc10612-e69b.g.aivencloud.com";
-    private static final String PORT = "18689";
-    private static final String USER = "avnadmin";
-    private static final String PASS = "AVNS_L_eIVZuMWqUZ1W3O9oI";
-    private static final String DB_NAME = "defaultdb";
+    private static final String HOST = "gateway01.ap-southeast-1.prod.aws.tidbcloud.com";
+    private static final String PORT = "4000";
+    private static final String USER = "GRmFoHTy82Wuncw.root";
+    private static final String PASS = "5lthvbCLcBtIfZ2C";
+    private static final String DB_NAME = "test";
 
     private static final String URL = "jdbc:mysql://" + HOST + ":" + PORT + "/" + DB_NAME + "?useSSL=true&trustServerCertificate=true";
 
@@ -53,8 +50,6 @@ public class DatabaseManager {
 
     public static void main(String[] args) {
         long start = System.currentTimeMillis();
-
-        // Lần 1: Tốn thời gian khởi tạo Pool (có thể mất 1-2s)
         try (Connection conn1 = getConnection();) {
             System.out.println("Lần 1 lấy kết nối mất: " + (System.currentTimeMillis() - start) + "ms");
 
@@ -62,11 +57,8 @@ public class DatabaseManager {
         catch (SQLException e){
             e.printStackTrace();
         }
-         // Trả lại vào pool
 
-        // Lần 2: Lấy từ Pool ra dùng tiếp
         long start2 = System.currentTimeMillis();
-
         try (Connection conn2 = getConnection();){
             System.out.println("Lần 2 lấy kết nối mất: " + (System.currentTimeMillis() - start2) + "ms");
         }
