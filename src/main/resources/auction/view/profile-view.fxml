@@ -93,6 +93,9 @@
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor>
+                     <font>
+                        <Font name="System Bold" size="15.0" />
+                     </font>
                   </Label>
                   <Region layoutX="499.0" layoutY="10.0" minWidth="-Infinity" prefHeight="200.0" prefWidth="0.0" HBox.hgrow="ALWAYS" />
                   <HBox alignment="CENTER" prefHeight="53.0" prefWidth="53.0" style="-fx-background-radius: 20;">
@@ -219,9 +222,9 @@
                   </VBox>
                   <ScrollPane fitToWidth="true" hbarPolicy="NEVER" maxWidth="1.7976931348623157E308" pannable="true" style="-fx-border-color: white;" vbarPolicy="ALWAYS" HBox.hgrow="ALWAYS">
                      <content>
-                        <StackPane maxWidth="900.0">
+                        <StackPane maxWidth="1000.0" prefWidth="1000.0">
                            <children>
-                              <VBox fx:id="paneAddresses" layoutX="10.0" layoutY="10.0" maxWidth="1.7976931348623157E308" prefHeight="700.0" spacing="3.0" style="-fx-background-color: white; -fx-border-color: white;">
+                              <VBox fx:id="paneAddresses" layoutX="10.0" layoutY="10.0" maxWidth="1.7976931348623157E308" prefHeight="700.0" spacing="3.0" style="-fx-background-color: white; -fx-border-color: white;" visible="false">
                                  <children>
                                     <Label text="Adresses">
                                        <font>
@@ -297,7 +300,7 @@
                                     <Insets left="20.0" right="10.0" />
                                  </padding>
                               </VBox>
-                              <VBox fx:id="paneAccount" maxWidth="1.7976931348623157E308" prefHeight="700.0" spacing="3.0" style="-fx-background-color: white; -fx-border-color: white;" visible="false">
+                              <VBox fx:id="paneAccount" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="499.0" spacing="3.0" style="-fx-background-color: white; -fx-border-color: white;" visible="false">
                                  <children>
                                     <Label text="Account">
                                        <font>
@@ -420,7 +423,7 @@
                                     <Insets left="20.0" right="10.0" />
                                  </padding>
                               </VBox>
-                              <VBox fx:id="panePayment" maxWidth="1.7976931348623157E308" prefHeight="700.0" spacing="3.0" style="-fx-background-color: white; -fx-border-color: white;" visible="false">
+                              <VBox fx:id="panePayment" maxWidth="1.7976931348623157E308" prefHeight="700.0" spacing="3.0" style="-fx-background-color: white; -fx-border-color: white;">
                                  <children>
                                     <Label text="Payment details">
                                        <font>
@@ -457,19 +460,19 @@
                                     <Insets left="20.0" right="10.0" />
                                  </padding>
                               </VBox>
-                              <VBox fx:id="paneEmails" layoutX="10.0" layoutY="10.0" maxWidth="1.7976931348623157E308" prefHeight="700.0" spacing="3.0" style="-fx-background-color: white; -fx-border-color: white;">
+                              <VBox fx:id="paneEmails" layoutX="10.0" layoutY="10.0" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="505.0" spacing="3.0" style="-fx-background-color: white; -fx-border-color: white;">
                                  <children>
                                     <Label text="Emails &amp; Notifications">
                                        <font>
                                           <Font name="Arial Rounded MT Bold" size="24.0" />
                                        </font>
                                     </Label>
-                                    <Region prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
+                                    <Region maxWidth="1.7976931348623157E308" prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
                                     <VBox prefHeight="76.0" prefWidth="441.0">
                                        <children>
-                                          <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0">
+                                          <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" prefHeight="100.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
                                              <children>
-                                                <VBox alignment="CENTER_LEFT" prefHeight="76.0" prefWidth="375.0" HBox.hgrow="ALWAYS">
+                                                <VBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" prefHeight="76.0" prefWidth="397.0" HBox.hgrow="ALWAYS">
                                                    <children>
                                                       <Label text="Bid Outbid">
                                                          <font>
@@ -495,9 +498,9 @@
                                     <Region layoutX="31.0" layoutY="39.0" prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
                                     <VBox layoutX="31.0" layoutY="47.0" prefHeight="76.0" prefWidth="441.0">
                                        <children>
-                                          <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0">
+                                          <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" prefHeight="100.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
                                              <children>
-                                                <VBox alignment="CENTER_LEFT" prefHeight="76.0" prefWidth="375.0" HBox.hgrow="ALWAYS">
+                                                <VBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" prefHeight="76.0" prefWidth="375.0" HBox.hgrow="ALWAYS">
                                                    <children>
                                                       <Label text="Auction Won">
                                                          <font>
@@ -521,11 +524,11 @@
                                        </children>
                                     </VBox>
                                     <Region layoutX="31.0" layoutY="127.0" prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
-                                    <VBox layoutX="31.0" layoutY="131.0" prefHeight="76.0" prefWidth="441.0">
+                                    <VBox layoutX="31.0" layoutY="131.0" maxWidth="1.7976931348623157E308" prefHeight="76.0" prefWidth="441.0">
                                        <children>
-                                          <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0">
+                                          <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" prefHeight="100.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
                                              <children>
-                                                <VBox alignment="CENTER_LEFT" prefHeight="76.0" prefWidth="375.0" HBox.hgrow="ALWAYS">
+                                                <VBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" prefHeight="76.0" prefWidth="375.0" HBox.hgrow="ALWAYS">
                                                    <children>
                                                       <Label text="New Message">
                                                          <font>
@@ -549,11 +552,11 @@
                                        </children>
                                     </VBox>
                                     <Region layoutX="31.0" layoutY="127.0" prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
-                                    <VBox layoutX="31.0" layoutY="215.0" prefHeight="76.0" prefWidth="441.0">
+                                    <VBox layoutX="31.0" layoutY="215.0" maxWidth="1.7976931348623157E308" prefHeight="76.0" prefWidth="441.0">
                                        <children>
-                                          <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0">
+                                          <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" prefHeight="100.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
                                              <children>
-                                                <VBox alignment="CENTER_LEFT" prefHeight="76.0" prefWidth="375.0" HBox.hgrow="ALWAYS">
+                                                <VBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" prefHeight="76.0" prefWidth="375.0" HBox.hgrow="ALWAYS">
                                                    <children>
                                                       <Label text="Payment Success">
                                                          <font>
