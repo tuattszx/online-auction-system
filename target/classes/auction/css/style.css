@@ -35,3 +35,13 @@
     -fx-background-radius: 7;
     -fx-border-radius: 7;
 }
+.searchable-combo-box .combo-box-base,
+.searchable-combo-box .text-field {
+    -fx-background-color: #f0f2f5 !important;
+    -fx-background-insets: 0;
+    -fx-background-radius: 5;
+}
+.searchable-combo-box {
+    -fx-background-color: #f0f2f5 !important;
+    -fx-border-color: transparent;
+}

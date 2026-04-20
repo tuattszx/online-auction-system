@@ -9,6 +9,7 @@
 <?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -16,8 +17,13 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.text.TextFlow?>
+<?import org.controlsfx.control.SearchableComboBox?>
+<?import org.controlsfx.control.ToggleSwitch?>
 
 <AnchorPane prefHeight="614.0" prefWidth="691.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auction.client.controllers.ProfileController">
    <stylesheets>
@@ -25,14 +31,14 @@
       <URL value="@../css/style.css" />
    </stylesheets>
    <children>
-      <BorderPane layoutX="-2.0" layoutY="-1.0" maxHeight="1.7976931348623157E308" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: white;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <BorderPane layoutX="-2.0" layoutY="-1.0" maxHeight="1.7976931348623157E308" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: white;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <top>
-            <HBox alignment="CENTER_LEFT" maxHeight="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="112.0" spacing="10.0" style="-fx-background-color: white; -fx-border-color: grey; -fx-border-width: 0 0 2 0;" BorderPane.alignment="CENTER">
+            <HBox alignment="CENTER_LEFT" maxHeight="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="91.0" prefWidth="696.0" spacing="10.0" style="-fx-background-color: white; -fx-border-color: grey; -fx-border-width: 0 0 2 0;" BorderPane.alignment="CENTER">
                <padding>
                   <Insets left="20.0" right="20.0" />
                </padding>
                <children>
-                  <VBox alignment="BOTTOM_CENTER" prefHeight="93.0" prefWidth="79.0" spacing="10.0" HBox.hgrow="ALWAYS">
+                  <VBox alignment="CENTER" prefHeight="93.0" prefWidth="79.0" spacing="10.0" HBox.hgrow="ALWAYS">
                      <children>
                         <ImageView fitHeight="49.0" fitWidth="73.0" onMouseClicked="#OnMouseBacktoMain" pickOnBounds="true" preserveRatio="true">
                            <image>
@@ -42,9 +48,9 @@
                               <Cursor fx:constant="HAND" />
                            </cursor>
                         </ImageView>
-                        <Label prefHeight="30.0" prefWidth="87.0" text="   Hello admin" textAlignment="CENTER">
+                        <Label alignment="CENTER" prefHeight="30.0" prefWidth="87.0" textAlignment="CENTER" textFill="#2125ff">
                            <font>
-                              <Font name="Bodoni MT Condensed" size="20.0" />
+                              <Font name="Arial Rounded MT Bold" size="16.0" />
                            </font>
                         </Label>
                      </children>
@@ -73,7 +79,7 @@
                               <Image url="@../img/search-icon-png-11.png" />
                            </image>
                         </ImageView>
-                        <TextField fx:id="txtsearch" promptText="searching..." style="-fx-background-color: white;" />
+                        <TextField fx:id="txtsearch" promptText="searching..." style="-fx-background-color: white; -fx-border-color: transparent;" />
                      </children>
                      <opaqueInsets>
                         <Insets left="5.0" />
@@ -83,14 +89,43 @@
                      </padding>
                   </HBox>
                   <Region minWidth="-Infinity" prefHeight="200.0" prefWidth="0.0" HBox.hgrow="ALWAYS" />
-                  <Button mnemonicParsing="false" prefHeight="27.0" prefWidth="49.0" style="-fx-background-color: white;" text="sell">
-                     <font>
-                        <Font name="System Bold" size="13.0" />
-                     </font>
+                  <Label fx:id="lbsell" prefHeight="18.0" prefWidth="35.0" style="-fx-text-fill: #0052FF;" text="sell">
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor>
-                  </Button>
+                  </Label>
+                  <Region layoutX="499.0" layoutY="10.0" minWidth="-Infinity" prefHeight="200.0" prefWidth="0.0" HBox.hgrow="ALWAYS" />
+                  <HBox alignment="CENTER" prefHeight="53.0" prefWidth="53.0" style="-fx-background-radius: 20;">
+                     <children>
+                        <ImageView fitHeight="37.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../img/pngtree-blue-user-icon-profile-and-account-vector-design-vector-sign-vector-png-image_46129432.jpg" />
+                           </image>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </ImageView>
+                     </children>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </HBox>
+                  <Region minWidth="-Infinity" prefHeight="200.0" prefWidth="0.0" HBox.hgrow="ALWAYS" />
+                  <HBox alignment="CENTER" layoutX="551.0" layoutY="10.0" prefHeight="53.0" prefWidth="53.0" style="-fx-background-radius: 20;">
+                     <children>
+                        <ImageView fitHeight="22.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../img/chuong.jpg" />
+                           </image>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </ImageView>
+                     </children>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </HBox>
                   <Region minWidth="-Infinity" prefHeight="200.0" prefWidth="0.0" HBox.hgrow="ALWAYS" />
                   <HBox alignment="CENTER" prefHeight="41.0" prefWidth="45.0">
                      <children>
@@ -104,26 +139,13 @@
                         </ImageView>
                      </children>
                   </HBox>
-                  <Region minWidth="-Infinity" prefHeight="200.0" prefWidth="0.0" HBox.hgrow="ALWAYS" />
-                  <HBox alignment="CENTER" prefHeight="53.0" prefWidth="53.0" style="-fx-background-radius: 20;">
-                     <children>
-                        <ImageView fitHeight="37.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../img/pngtree-blue-user-icon-profile-and-account-vector-design-vector-sign-vector-png-image_46129432.jpg" />
-                           </image>
-                        </ImageView>
-                     </children>
-                     <cursor>
-                        <Cursor fx:constant="HAND" />
-                     </cursor>
-                  </HBox>
                </children>
             </HBox>
          </top>
          <center>
-            <HBox alignment="CENTER" prefHeight="100.0" BorderPane.alignment="CENTER">
+            <HBox alignment="CENTER" BorderPane.alignment="CENTER">
                <children>
-                  <VBox alignment="TOP_CENTER" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="507.0" spacing="15.0" style="-fx-border-color: white;" HBox.hgrow="ALWAYS">
+                  <VBox alignment="TOP_CENTER" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="579.0" prefWidth="203.0" spacing="15.0" style="-fx-border-color: white;" HBox.hgrow="ALWAYS">
                      <padding>
                         <Insets left="15.0" top="20.0" />
                      </padding>
@@ -195,94 +217,98 @@
                         </HBox>
                      </children>
                   </VBox>
-                  <ScrollPane fitToWidth="true" hbarPolicy="NEVER" maxWidth="1.7976931348623157E308" pannable="true" prefHeight="507.0" style="-fx-border-color: white;" vbarPolicy="ALWAYS" HBox.hgrow="ALWAYS">
+                  <ScrollPane fitToWidth="true" hbarPolicy="NEVER" maxWidth="1.7976931348623157E308" pannable="true" style="-fx-border-color: white;" vbarPolicy="ALWAYS" HBox.hgrow="ALWAYS">
                      <content>
-                        <VBox maxWidth="1.7976931348623157E308" prefHeight="700.0" spacing="3.0" style="-fx-background-color: white; -fx-border-color: white;">
+                        <StackPane maxWidth="900.0">
                            <children>
-                              <Label text="Account">
-                                 <font>
-                                    <Font name="Arial Rounded MT Bold" size="24.0" />
-                                 </font>
-                              </Label>
-                              <Region prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
-                              <VBox prefHeight="63.0" prefWidth="865.0">
+                              <VBox fx:id="paneAddresses" layoutX="10.0" layoutY="10.0" maxWidth="1.7976931348623157E308" prefHeight="700.0" spacing="3.0" style="-fx-background-color: white; -fx-border-color: white;">
                                  <children>
-                                    <Label text="Name" />
-                                    <Label fx:id="lbname" text="admin">
+                                    <Label text="Adresses">
                                        <font>
-                                          <Font size="17.0" />
+                                          <Font name="Arial Rounded MT Bold" size="24.0" />
                                        </font>
-                                    </Label>
-                                    <Label text="Change" textFill="#1541c5">
-                                       <font>
-                                          <Font name="System Bold" size="13.0" />
-                                       </font>
-                                       <cursor>
-                                          <Cursor fx:constant="HAND" />
-                                       </cursor>
-                                    </Label>
-                                 </children>
-                              </VBox>
-                              <Region layoutX="31.0" layoutY="39.0" prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
-                              <VBox layoutX="31.0" layoutY="41.0" prefHeight="48.0" prefWidth="443.0">
-                                 <children>
-                                    <Label text="username" />
-                                    <Label fx:id="lbusername" text="admin">
-                                       <font>
-                                          <Font size="17.0" />
-                                       </font>
-                                    </Label>
-                                    <Label text="you can't change your user name">
-                                       <font>
-                                          <Font size="11.0" />
-                                       </font>
-                                       <cursor>
-                                          <Cursor fx:constant="DEFAULT" />
-                                       </cursor>
-                                    </Label>
-                                 </children>
-                              </VBox>
-                              <Region layoutX="31.0" layoutY="103.0" prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
-                              <VBox layoutX="31.0" layoutY="41.0" prefHeight="48.0" prefWidth="443.0">
-                                 <children>
-                                    <Label text="email" />
-                                    <Label fx:id="lbemail" text="admin@gmail.com">
-                                       <font>
-                                          <Font size="17.0" />
-                                       </font>
-                                    </Label>
-                                    <Label text="Change" textFill="#1541c5">
-                                       <font>
-                                          <Font name="System Bold" size="13.0" />
-                                       </font>
-                                       <cursor>
-                                          <Cursor fx:constant="HAND" />
-                                       </cursor>
-                                    </Label>
-                                 </children>
-                              </VBox>
-                              <Region layoutX="31.0" layoutY="164.0" prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
-                              <VBox layoutX="31.0" layoutY="165.0" prefHeight="101.0" prefWidth="443.0">
-                                 <children>
-                                    <Label text="password" />
-                                    <Label fx:id="lbname21" text="********">
-                                       <font>
-                                          <Font size="17.0" />
-                                       </font>
-                                    </Label>
-                                    <Label text="Change" textFill="#1541c5">
-                                       <font>
-                                          <Font name="System Bold" size="13.0" />
-                                       </font>
-                                       <cursor>
-                                          <Cursor fx:constant="HAND" />
-                                       </cursor>
                                     </Label>
                                     <Region prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
-                                    <VBox prefHeight="48.0" prefWidth="443.0">
+                                    <VBox prefHeight="63.0" prefWidth="865.0">
                                        <children>
-                                          <Label text="phone number" />
-                                          <Label fx:id="lbphonenumber" text="01234566">
+                                          <Label text="SHIPPING ADRESS">
+                                             <font>
+                                                <Font size="10.0" />
+                                             </font>
+                                          </Label>
+                                          <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="30.0" VBox.vgrow="ALWAYS">
+                                             <children>
+                                                <VBox prefHeight="45.0" prefWidth="249.0" HBox.hgrow="ALWAYS">
+                                                   <children>
+                                                      <Label text="FIST NAME">
+                                                         <font>
+                                                            <Font size="10.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <TextField maxWidth="500.0" prefHeight="35.0" prefWidth="225.0" style="-fx-background-color: #f0f2f5; -fx-border-color: transparent; -fx-background-radius: 0;" VBox.vgrow="ALWAYS" />
+                                                   </children>
+                                                </VBox>
+                                                <VBox HBox.hgrow="ALWAYS">
+                                                   <children>
+                                                      <Label text="LAST NAME" textFill="#baa3a3">
+                                                         <font>
+                                                            <Font size="10.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <TextField prefHeight="35.0" prefWidth="226.0" style="-fx-background-color: #f0f2f5; -fx-border-color: transparent; -fx-background-radius: 0;" VBox.vgrow="ALWAYS" />
+                                                   </children>
+                                                </VBox>
+                                             </children>
+                                          </HBox>
+                                       </children>
+                                    </VBox>
+                                    <Region layoutX="31.0" layoutY="39.0" prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
+                                    <VBox layoutX="31.0" layoutY="41.0" prefHeight="48.0" prefWidth="443.0">
+                                       <children>
+                                          <Label text="Phone number">
+                                             <font>
+                                                <Font size="10.0" />
+                                             </font>
+                                          </Label>
+                                          <TextField prefHeight="35.0" prefWidth="441.0" style="-fx-background-color: #f0f2f5; -fx-border-color: transparent; -fx-background-radius: 0;" />
+                                       </children>
+                                    </VBox>
+                                    <Region layoutX="31.0" layoutY="103.0" prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
+                                    <VBox layoutX="31.0" layoutY="119.0" prefHeight="48.0" prefWidth="443.0">
+                                       <children>
+                                          <Label text="Country">
+                                             <font>
+                                                <Font size="10.0" />
+                                             </font>
+                                          </Label>
+                                          <SearchableComboBox fx:id="countryPicker" style="-fx-background-color: #f0f2f5;" styleClass="searchable-combo-box" />
+                                       </children>
+                                    </VBox>
+                                    <Region layoutX="31.0" layoutY="164.0" prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
+                                    <VBox layoutX="31.0" layoutY="165.0" prefHeight="101.0" prefWidth="443.0">
+                                       <children>
+                                          <Label text="Delivery Address" />
+                                          <TextArea prefHeight="47.0" prefWidth="441.0" promptText="ddd" style="-fx-background-color: #f0f2f5; -fx-border-color: #f0f2f5; -fx-background-radius: 0; -fx-control-inner-background: #f0f2f5; -fx-border-width: 0;" />
+                                       </children>
+                                    </VBox>
+                                    <Button mnemonicParsing="false" prefHeight="37.0" prefWidth="101.0" style="-fx-border-radius: 0; -fx-background-radius: 0; -fx-background-color: #0052ff; -fx-text-fill: white;" text="Save settings" />
+                                 </children>
+                                 <padding>
+                                    <Insets left="20.0" right="10.0" />
+                                 </padding>
+                              </VBox>
+                              <VBox fx:id="paneAccount" maxWidth="1.7976931348623157E308" prefHeight="700.0" spacing="3.0" style="-fx-background-color: white; -fx-border-color: white;" visible="false">
+                                 <children>
+                                    <Label text="Account">
+                                       <font>
+                                          <Font name="Arial Rounded MT Bold" size="24.0" />
+                                       </font>
+                                    </Label>
+                                    <Region prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
+                                    <VBox prefHeight="63.0" prefWidth="865.0">
+                                       <children>
+                                          <Label text="Name" />
+                                          <Label fx:id="lbname" text="admin">
                                              <font>
                                                 <Font size="17.0" />
                                              </font>
@@ -297,27 +323,313 @@
                                           </Label>
                                        </children>
                                     </VBox>
+                                    <Region layoutX="31.0" layoutY="39.0" prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
+                                    <VBox layoutX="31.0" layoutY="41.0" prefHeight="48.0" prefWidth="443.0">
+                                       <children>
+                                          <Label text="username" />
+                                          <Label fx:id="lbusername" text="admin">
+                                             <font>
+                                                <Font size="17.0" />
+                                             </font>
+                                          </Label>
+                                          <Label text="you can't change your user name">
+                                             <font>
+                                                <Font size="11.0" />
+                                             </font>
+                                             <cursor>
+                                                <Cursor fx:constant="DEFAULT" />
+                                             </cursor>
+                                          </Label>
+                                       </children>
+                                    </VBox>
+                                    <Region layoutX="31.0" layoutY="103.0" prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
+                                    <VBox layoutX="31.0" layoutY="41.0" prefHeight="48.0" prefWidth="443.0">
+                                       <children>
+                                          <Label text="email" />
+                                          <Label fx:id="lbemail" text="admin@gmail.com">
+                                             <font>
+                                                <Font size="17.0" />
+                                             </font>
+                                          </Label>
+                                          <Label text="Change" textFill="#1541c5">
+                                             <font>
+                                                <Font name="System Bold" size="13.0" />
+                                             </font>
+                                             <cursor>
+                                                <Cursor fx:constant="HAND" />
+                                             </cursor>
+                                          </Label>
+                                       </children>
+                                    </VBox>
+                                    <Region layoutX="31.0" layoutY="164.0" prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
+                                    <VBox layoutX="31.0" layoutY="165.0" prefHeight="101.0" prefWidth="443.0">
+                                       <children>
+                                          <Label text="password" />
+                                          <Label fx:id="lbname21" text="********">
+                                             <font>
+                                                <Font size="17.0" />
+                                             </font>
+                                          </Label>
+                                          <Label text="Change" textFill="#1541c5">
+                                             <font>
+                                                <Font name="System Bold" size="13.0" />
+                                             </font>
+                                             <cursor>
+                                                <Cursor fx:constant="HAND" />
+                                             </cursor>
+                                          </Label>
+                                          <Region prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
+                                          <VBox prefHeight="48.0" prefWidth="443.0">
+                                             <children>
+                                                <Label text="phone number" />
+                                                <Label fx:id="lbphonenumber" text="01234566">
+                                                   <font>
+                                                      <Font size="17.0" />
+                                                   </font>
+                                                </Label>
+                                                <Label text="Change" textFill="#1541c5">
+                                                   <font>
+                                                      <Font name="System Bold" size="13.0" />
+                                                   </font>
+                                                   <cursor>
+                                                      <Cursor fx:constant="HAND" />
+                                                   </cursor>
+                                                </Label>
+                                             </children>
+                                          </VBox>
+                                       </children>
+                                    </VBox>
+                                    <Region layoutX="31.0" layoutY="164.0" prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
+                                    <VBox layoutX="31.0" layoutY="41.0" prefHeight="48.0" prefWidth="443.0">
+                                       <children>
+                                          <Label text="language" />
+                                          <ComboBox maxWidth="1.7976931348623157E308" prefHeight="37.0" prefWidth="443.0" promptText="english" style="-fx-border-color: white; -fx-background-color: lightgray;" />
+                                       </children>
+                                    </VBox>
+                                    <Region prefHeight="1.0" prefWidth="443.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
+                                    <VBox layoutX="31.0" layoutY="356.0" prefHeight="48.0" prefWidth="443.0">
+                                       <children>
+                                          <Label text="bidding currency" />
+                                          <ComboBox maxWidth="1.7976931348623157E308" prefHeight="37.0" prefWidth="443.0" promptText="dollar" style="-fx-border-color: white; -fx-background-color: lightgray;" />
+                                       </children>
+                                    </VBox>
+                                    <Region layoutX="31.0" layoutY="445.0" opacity="0.0" prefHeight="37.0" prefWidth="441.0" style="-fx-background-color: lightgray; -ox-border-color: light grey; hfx-max-height: 20;" />
+                                    <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="101.0" style="-fx-border-radius: 0; -fx-background-radius: 0; -fx-background-color: #0052ff; -fx-text-fill: white;" text="Save settings" />
                                  </children>
+                                 <padding>
+                                    <Insets left="20.0" right="10.0" />
+                                 </padding>
                               </VBox>
-                              <Region layoutX="31.0" layoutY="164.0" prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
-                              <VBox layoutX="31.0" layoutY="41.0" prefHeight="48.0" prefWidth="443.0">
+                              <VBox fx:id="panePayment" maxWidth="1.7976931348623157E308" prefHeight="700.0" spacing="3.0" style="-fx-background-color: white; -fx-border-color: white;" visible="false">
                                  <children>
-                                    <Label text="language" />
-                                    <ComboBox maxWidth="1.7976931348623157E308" prefHeight="37.0" prefWidth="443.0" promptText="english" style="-fx-border-color: white; -fx-background-color: lightgray;" />
+                                    <Label text="Payment details">
+                                       <font>
+                                          <Font name="Arial Rounded MT Bold" size="24.0" />
+                                       </font>
+                                    </Label>
+                                    <Region prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
+                                    <VBox prefHeight="76.0" prefWidth="441.0">
+                                       <children>
+                                          <Label text="Credit card" />
+                                          <Label prefHeight="15.0" prefWidth="101.0" text="Card holder's name">
+                                             <font>
+                                                <Font size="11.0" />
+                                             </font>
+                                          </Label>
+                                          <TextField prefHeight="57.0" prefWidth="441.0" style="-fx-background-color: #f0f2f5; -fx-border-color: transparent; -fx-background-radius: 0;" />
+                                       </children>
+                                    </VBox>
+                                    <Region layoutX="31.0" layoutY="39.0" prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
+                                    <VBox layoutX="31.0" layoutY="47.0" prefHeight="63.0" prefWidth="865.0">
+                                       <children>
+                                          <Label text="card holder's number">
+                                             <font>
+                                                <Font size="11.0" />
+                                             </font>
+                                          </Label>
+                                          <TextField prefHeight="57.0" prefWidth="441.0" style="-fx-background-color: #f0f2f5; -fx-border-color: transparent; -fx-background-radius: 0;" />
+                                       </children>
+                                    </VBox>
+                                    <Region layoutX="31.0" layoutY="127.0" prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
+                                    <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="101.0" style="-fx-border-radius: 0; -fx-background-radius: 0; -fx-background-color: #0052FF; -fx-text-fill: white;" text="Save settings" />
                                  </children>
+                                 <padding>
+                                    <Insets left="20.0" right="10.0" />
+                                 </padding>
                               </VBox>
-                              <Region prefHeight="1.0" prefWidth="443.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
-                              <VBox layoutX="31.0" layoutY="356.0" prefHeight="48.0" prefWidth="443.0">
+                              <VBox fx:id="paneEmails" layoutX="10.0" layoutY="10.0" maxWidth="1.7976931348623157E308" prefHeight="700.0" spacing="3.0" style="-fx-background-color: white; -fx-border-color: white;">
                                  <children>
-                                    <Label text="bidding currency" />
-                                    <ComboBox maxWidth="1.7976931348623157E308" prefHeight="37.0" prefWidth="443.0" promptText="dollar" style="-fx-border-color: white; -fx-background-color: lightgray;" />
+                                    <Label text="Emails &amp; Notifications">
+                                       <font>
+                                          <Font name="Arial Rounded MT Bold" size="24.0" />
+                                       </font>
+                                    </Label>
+                                    <Region prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
+                                    <VBox prefHeight="76.0" prefWidth="441.0">
+                                       <children>
+                                          <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0">
+                                             <children>
+                                                <VBox alignment="CENTER_LEFT" prefHeight="76.0" prefWidth="375.0" HBox.hgrow="ALWAYS">
+                                                   <children>
+                                                      <Label text="Bid Outbid">
+                                                         <font>
+                                                            <Font name="System Bold" size="14.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <Label text="Alerts users to place a new bid when outpriced.">
+                                                         <font>
+                                                            <Font size="11.0" />
+                                                         </font>
+                                                      </Label>
+                                                   </children>
+                                                </VBox>
+                                                <ToggleSwitch>
+                                                   <cursor>
+                                                      <Cursor fx:constant="HAND" />
+                                                   </cursor>
+                                                </ToggleSwitch>
+                                             </children>
+                                          </HBox>
+                                       </children>
+                                    </VBox>
+                                    <Region layoutX="31.0" layoutY="39.0" prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
+                                    <VBox layoutX="31.0" layoutY="47.0" prefHeight="76.0" prefWidth="441.0">
+                                       <children>
+                                          <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0">
+                                             <children>
+                                                <VBox alignment="CENTER_LEFT" prefHeight="76.0" prefWidth="375.0" HBox.hgrow="ALWAYS">
+                                                   <children>
+                                                      <Label text="Auction Won">
+                                                         <font>
+                                                            <Font name="System Bold" size="14.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <Label text="Notifies the winner to proceed with payment.">
+                                                         <font>
+                                                            <Font size="11.0" />
+                                                         </font>
+                                                      </Label>
+                                                   </children>
+                                                </VBox>
+                                                <ToggleSwitch>
+                                                   <cursor>
+                                                      <Cursor fx:constant="HAND" />
+                                                   </cursor>
+                                                </ToggleSwitch>
+                                             </children>
+                                          </HBox>
+                                       </children>
+                                    </VBox>
+                                    <Region layoutX="31.0" layoutY="127.0" prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
+                                    <VBox layoutX="31.0" layoutY="131.0" prefHeight="76.0" prefWidth="441.0">
+                                       <children>
+                                          <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0">
+                                             <children>
+                                                <VBox alignment="CENTER_LEFT" prefHeight="76.0" prefWidth="375.0" HBox.hgrow="ALWAYS">
+                                                   <children>
+                                                      <Label text="New Message">
+                                                         <font>
+                                                            <Font name="System Bold" size="14.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <Label text="Updates users on new inquiries from buyers or sellers.">
+                                                         <font>
+                                                            <Font size="11.0" />
+                                                         </font>
+                                                      </Label>
+                                                   </children>
+                                                </VBox>
+                                                <ToggleSwitch>
+                                                   <cursor>
+                                                      <Cursor fx:constant="HAND" />
+                                                   </cursor>
+                                                </ToggleSwitch>
+                                             </children>
+                                          </HBox>
+                                       </children>
+                                    </VBox>
+                                    <Region layoutX="31.0" layoutY="127.0" prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
+                                    <VBox layoutX="31.0" layoutY="215.0" prefHeight="76.0" prefWidth="441.0">
+                                       <children>
+                                          <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0">
+                                             <children>
+                                                <VBox alignment="CENTER_LEFT" prefHeight="76.0" prefWidth="375.0" HBox.hgrow="ALWAYS">
+                                                   <children>
+                                                      <Label text="Payment Success">
+                                                         <font>
+                                                            <Font name="System Bold" size="14.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <Label text="Confirms successful transaction and updates order status.">
+                                                         <font>
+                                                            <Font size="11.0" />
+                                                         </font>
+                                                      </Label>
+                                                   </children>
+                                                </VBox>
+                                                <ToggleSwitch>
+                                                   <cursor>
+                                                      <Cursor fx:constant="HAND" />
+                                                   </cursor>
+                                                </ToggleSwitch>
+                                             </children>
+                                          </HBox>
+                                       </children>
+                                    </VBox>
+                                    <Region layoutX="31.0" layoutY="127.0" prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
+                                    <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="101.0" style="-fx-border-radius: 0; -fx-background-radius: 0; -fx-background-color: #0052FF; -fx-text-fill: white;" text="Save settings" />
                                  </children>
+                                 <padding>
+                                    <Insets left="20.0" right="10.0" />
+                                 </padding>
+                              </VBox>
+                              <VBox fx:id="paneVerification" layoutX="10.0" layoutY="10.0" maxWidth="1.7976931348623157E308" prefHeight="700.0" spacing="3.0" style="-fx-background-color: white; -fx-border-color: white;" visible="false">
+                                 <children>
+                                    <Label text="Verification">
+                                       <font>
+                                          <Font name="Arial Rounded MT Bold" size="24.0" />
+                                       </font>
+                                    </Label>
+                                    <Region prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
+                                    <HBox alignment="CENTER_LEFT" prefHeight="63.0" prefWidth="441.0">
+                                       <children>
+                                          <Label maxWidth="500.0" prefHeight="19.0" prefWidth="228.0" text="EMAIL" HBox.hgrow="ALWAYS">
+                                             <font>
+                                                <Font name="System Bold" size="12.0" />
+                                             </font>
+                                          </Label>
+                                          <HBox alignment="CENTER_LEFT" prefHeight="48.0" prefWidth="389.0" spacing="10.0">
+                                             <children>
+                                                <ImageView fitHeight="25.0" fitWidth="21.0" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                      <Image url="@../img/verified.png" />
+                                                   </image></ImageView>
+                                                <TextFlow maxWidth="250.0" prefHeight="43.0" prefWidth="238.0" HBox.hgrow="ALWAYS">
+                                                   <Text style="-fx-fill: #24b47e; -fx-font-weight: bold;" text="Your email address has been successfully verified. ">
+                                                      <font>
+                                                         <Font size="11.0" />
+                                                      </font></Text>
+                                                   <Text style="-fx-fill: #6b7c93;" text="To activate your account, your email address needs to be verified.">
+                                                      <font>
+                                                         <Font size="11.0" />
+                                                      </font></Text>
+                                                   <padding>
+                                                      <Insets bottom="10.0" top="10.0" />
+                                                   </padding>
+                                                </TextFlow>
+                                             </children>
+                                          </HBox>
+                                       </children>
+                                    </HBox>
+                                    <Region layoutX="31.0" layoutY="39.0" prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
+                                    <VBox layoutX="31.0" layoutY="47.0" prefHeight="63.0" prefWidth="865.0" />
+                                 </children>
+                                 <padding>
+                                    <Insets left="20.0" right="10.0" />
+                                 </padding>
                               </VBox>
                            </children>
-                           <padding>
-                              <Insets left="20.0" right="10.0" />
-                           </padding>
-                        </VBox>
+                        </StackPane>
                      </content>
                   </ScrollPane>
                </children>

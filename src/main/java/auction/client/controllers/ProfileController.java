@@ -1,5 +1,7 @@
 package auction.client.controllers;
 import auction.common.model.users.User;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
@@ -10,7 +12,11 @@ import javafx.scene.input.MouseEvent;
 import java.util.Arrays;
 import java.util.List;
 
+import javafx.scene.layout.VBox;
+import org.controlsfx.control.SearchableComboBox;
 public class ProfileController  {
+    @FXML
+    private SearchableComboBox<String> countryPicker;
     @FXML
     public Label lbname;
     @FXML
@@ -35,15 +41,38 @@ public class ProfileController  {
     private HBox btnVeri;
     @FXML
     private Region accountIndicator, addressesIndicator, paymentIndicator,emailIndicator,VeriIndicator;
+    @FXML private VBox paneAccount;
+    @FXML private VBox paneAddresses;
+    @FXML private VBox panePayment;
+    @FXML private VBox paneEmails;
+    @FXML private VBox paneVerification;
     private List<Region> allIndicators;
-
+    private void hideAllPanes(VBox targetPane) {
+        VBox[] allPanes = {paneAccount, paneAddresses, panePayment, paneEmails, paneVerification};
+        for (VBox pane : allPanes) {
+            if (pane != null) {
+                pane.setVisible(false);
+                pane.setManaged(false);
+            }
+        }
+        if (targetPane != null) {
+            targetPane.setVisible(true);
+            targetPane.setManaged(true);
+        }
+    }
     public void initialize() {
-        // Gom tất cả gạch xanh vào một List
+        // hiện gạch xanh
         allIndicators = Arrays.asList(accountIndicator, addressesIndicator, paymentIndicator,VeriIndicator,emailIndicator);
-        // Mặc định hiện cái đầu tiên (Account)
         showIndicator(accountIndicator);
-
+        hideAllPanes(paneAccount);
         User user = UserSession.loggedInUser;
+        // chọn ngôn ngữ trong adress
+        ObservableList<String> countries = FXCollections.observableArrayList(
+                "Vietnam", "United States", "Japan", "United Kingdom", "France", "Germany"
+        );
+        countryPicker.setItems(countries);
+
+        countryPicker.setValue("Vietnam");
 
         if (user!= null){
             lbname.setText(user.getDisplayName());
@@ -83,14 +112,21 @@ public class ProfileController  {
         // 3. Bật gạch xanh tương ứng lên
         if (id.equals("btnAccount")) {
             accountIndicator.setVisible(true);
+            hideAllPanes(paneAccount);
         } else if (id.equals("btnAddresses")) {
             addressesIndicator.setVisible(true);
+            hideAllPanes(paneAddresses);
         } else if (id.equals("btnPayment")) {
             paymentIndicator.setVisible(true);
+            hideAllPanes(panePayment);
         }else if (id.equals("btnEmail")) {
-            emailIndicator.setVisible(true);}
+            emailIndicator.setVisible(true);
+            hideAllPanes(paneEmails);
+        }
         else if (id.equals("btnVeri")) {
-            VeriIndicator.setVisible(true);}
+            VeriIndicator.setVisible(true);
+            hideAllPanes(paneVerification);
+        }
     }
     @FXML
     public void onBackToMainClick(javafx.event.ActionEvent event) {

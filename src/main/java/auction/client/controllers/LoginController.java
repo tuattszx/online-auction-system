@@ -3,11 +3,12 @@ package auction.client.controllers;
 import auction.common.model.users.User;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.scene.image.Image;
 
 import javafx.event.ActionEvent;
 
@@ -20,7 +21,10 @@ class UserSession{
     public static User loggedInUser;
 }
 public class LoginController {
-
+    @FXML
+    private StackPane centerContainer;
+    @FXML
+    private VBox loginVBox;
     @FXML
     private TextField txtUsername;
     @FXML
@@ -31,6 +35,23 @@ public class LoginController {
     private Button btnSignUp;
     @FXML
     private Button btnForgotPassword;
+    @FXML
+    public void initialize() {
+        changeImage("/auction/img/pxfuel.jpg");
+    }
+    public void changeImage(String newPath) {
+        var resource = getClass().getResource(newPath);
+        if (resource != null) {
+            String url = resource.toExternalForm();
+            // Dùng CSS để ép ảnh phủ kín (cover) và luôn nằm giữa
+            centerContainer.setStyle(
+                    "-fx-background-image: url('" + url + "'); " +
+                            "-fx-background-position: center center; " +
+                            "-fx-background-repeat: no-repeat; " +
+                            "-fx-background-size: cover;"
+            );
+        }
+    }
     @FXML
     public void onLoginButtonClick(ActionEvent event) {
         String username = txtUsername.getText();
@@ -56,6 +77,7 @@ public class LoginController {
         //Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         ViewManager.switchScene(event, "register-view.fxml", "Hệ thống Đấu giá - Đăng ký");
     }
+
     private void showAlert(Alert.AlertType alertType, String title, String message) {
         Alert alert = new Alert(alertType);
         alert.setTitle(title);
