@@ -12,7 +12,9 @@ public class Message implements Serializable {
         this.command = command;
         this.data = data;
     }
-
+    public Message(String status){
+        this.status = status;
+    }
     // Getters và Setters
     public String getCommand() { return command; }
     public Object getData() { return data; }

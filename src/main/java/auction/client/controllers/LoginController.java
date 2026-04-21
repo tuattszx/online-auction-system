@@ -79,14 +79,25 @@ public class LoginController {
 
         loginTask.setOnSucceeded(e -> {
             Message response = loginTask.getValue();
-            if (response != null && "SUCCESS".equals(response.getStatus()) && response.getData() != null) {
-                // Lưu vào static field để các màn hình sau có thể dùng
-                UserSession.loggedInUser = (User) response.getData();
+            resetUI(); // Luôn reset UI trước khi xử lý tiếp
 
-                ViewManager.switchScene(event, "main-view.fxml", "Trang chủ");
-            } else {
-                resetUI();
-                showAlert(Alert.AlertType.ERROR, "Thất bại", "Tài khoản/Mật khẩu không đúng!");
+            switch (response.getStatus()) {
+                case "SUCCESS":
+                    Account.loggedInAccount = (Account) response.getData();
+                    ViewManager.switchScene(event, "main-view.fxml", "Trang chủ");
+                    break;
+
+                case "SERVER_OFFLINE":
+                    showAlert(Alert.AlertType.ERROR, "Lỗi kết nối", "Máy chủ hiện không hoạt động. Vui lòng thử lại sau!");
+                    break;
+
+                case "FAILED":
+                    showAlert(Alert.AlertType.WARNING, "Thất bại", "Tài khoản hoặc mật khẩu không chính xác!");
+                    break;
+
+                default:
+                    showAlert(Alert.AlertType.ERROR, "Lỗi", "Đã xảy ra lỗi không xác định!");
+                    break;
             }
         });
         loginTask.setOnFailed(e -> {
