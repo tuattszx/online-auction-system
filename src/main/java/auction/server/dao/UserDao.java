@@ -25,7 +25,7 @@ public class UserDao{
     }
 
     public static boolean registerUser(User user) {
-        String sql = "INSERT INTO users (username, password, email,dis_name) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO users (username, password, email,dis_name,phone_number) VALUES (?, ?, ?, ?, ?)";
 
         try (Connection conn = getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -33,7 +33,8 @@ public class UserDao{
             pstmt.setString(1, user.getUsername());
             pstmt.setString(2, user.getPassword());
             pstmt.setString(3, user.getEmail());
-            pstmt.setString(4,user.getUsername());
+            pstmt.setString(4,user.getDisplayName());
+            pstmt.setString(5,user.getPhoneNumber());
 
             int rowsAffected = pstmt.executeUpdate();
             return rowsAffected > 0;

@@ -96,9 +96,11 @@ public class RegisterController {
         }
 
         User newUser=new User();
+        newUser.setDisplayName(fullname);
         newUser.setUsername(userName);
         newUser.setPassword(password);
         newUser.setEmail(email);
+        newUser.setPhoneNumber(phone);
 
         if (registerUser(newUser)){
             showAlert(Alert.AlertType.INFORMATION, "Thành công", "Đăng ký tài khoản thành công!");
