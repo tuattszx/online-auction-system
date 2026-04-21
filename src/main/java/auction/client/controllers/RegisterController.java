@@ -7,6 +7,8 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 import javafx.event.ActionEvent;
@@ -16,7 +18,8 @@ import static auction.server.dao.UserDao.registerUser;
 public class RegisterController {
     @FXML
     private  TextField txtUserName;
-
+    @FXML
+    private  TextField txtFullName;
     @FXML
     private  TextField txtEmail;
 
@@ -26,6 +29,8 @@ public class RegisterController {
     @FXML
     private  PasswordField txtRePassword;
 
+    @FXML
+    private StackPane centerContainer;
     @FXML
     public void onSignupButtonClick(ActionEvent event){
         String userName=txtUserName.getText();
@@ -67,7 +72,7 @@ public class RegisterController {
         }
     }
     @FXML
-    public void onBackToLoginClick(ActionEvent event){
+    public void onBackToLoginClick(MouseEvent event){
         ViewManager.switchScene(event, "login-view.fxml", "Hệ thống Đấu giá - Đăng nhập");
     }
     private void showAlert(Alert.AlertType alertType, String title, String message) {
@@ -76,6 +81,22 @@ public class RegisterController {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
+    }
+    public void changeImage(String newPath) {
+        var resource = getClass().getResource(newPath);
+        if (resource != null) {
+            String url = resource.toExternalForm();
+            // Dùng CSS để ép ảnh phủ kín (cover) và luôn nằm giữa
+            centerContainer.setStyle(
+                    "-fx-background-image: url('" + url + "'); " +
+                            "-fx-background-position: center center; " +
+                            "-fx-background-repeat: no-repeat; " +
+                            "-fx-background-size: cover;"
+            );
+        }
+    }
+    public void initialize() {
+        changeImage("/auction/img/pxfuel.jpg");
     }
 
 }
