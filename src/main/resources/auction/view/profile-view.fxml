@@ -98,20 +98,17 @@
                      </font>
                   </Label>
                   <Region layoutX="499.0" layoutY="10.0" minWidth="-Infinity" prefHeight="200.0" prefWidth="0.0" HBox.hgrow="ALWAYS" />
-                  <HBox alignment="CENTER" prefHeight="53.0" prefWidth="53.0" style="-fx-background-radius: 20;">
+                  <HBox alignment="CENTER" prefHeight="41.0" prefWidth="45.0">
                      <children>
-                        <ImageView fitHeight="37.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fitHeight="54.0" fitWidth="29.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@../img/pngtree-blue-user-icon-profile-and-account-vector-design-vector-sign-vector-png-image_46129432.jpg" />
+                              <Image url="@../img/images.png" />
                            </image>
                            <cursor>
                               <Cursor fx:constant="HAND" />
                            </cursor>
                         </ImageView>
                      </children>
-                     <cursor>
-                        <Cursor fx:constant="HAND" />
-                     </cursor>
                   </HBox>
                   <Region minWidth="-Infinity" prefHeight="200.0" prefWidth="0.0" HBox.hgrow="ALWAYS" />
                   <HBox alignment="CENTER" layoutX="551.0" layoutY="10.0" prefHeight="53.0" prefWidth="53.0" style="-fx-background-radius: 20;">
@@ -130,17 +127,20 @@
                      </cursor>
                   </HBox>
                   <Region minWidth="-Infinity" prefHeight="200.0" prefWidth="0.0" HBox.hgrow="ALWAYS" />
-                  <HBox alignment="CENTER" prefHeight="41.0" prefWidth="45.0">
+                  <HBox alignment="CENTER" prefHeight="53.0" prefWidth="53.0" style="-fx-background-radius: 20;">
                      <children>
-                        <ImageView fitHeight="54.0" fitWidth="29.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fitHeight="37.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@../img/images.png" />
+                              <Image url="@../img/pngtree-blue-user-icon-profile-and-account-vector-design-vector-sign-vector-png-image_46129432.jpg" />
                            </image>
                            <cursor>
                               <Cursor fx:constant="HAND" />
                            </cursor>
                         </ImageView>
                      </children>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
                   </HBox>
                </children>
             </HBox>
@@ -209,6 +209,24 @@
                            <children>
                               <Region fx:id="VeriIndicator" minHeight="-Infinity" prefHeight="23.0" prefWidth="2.0" style="-fx-background-color: navy blue;" visible="false" />
                               <Label text="Verification">
+                                 <font>
+                                    <Font name="Arial Rounded MT Bold" size="15.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </HBox>
+                        <HBox fx:id="hboxsignout" alignment="CENTER_LEFT" layoutX="26.0" layoutY="210.0" onMouseClicked="#onLogoutClick" prefHeight="29.0" prefWidth="185.0" spacing="10.0">
+                           <children>
+                              <Region fx:id="VeriIndicator1" minHeight="-Infinity" prefHeight="23.0" prefWidth="2.0" style="-fx-background-color: navy blue;" visible="false" />
+                              <ImageView fitHeight="24.0" fitWidth="39.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../img/signout.png" />
+                                 </image>
+                              </ImageView>
+                              <Label text="Sign out">
                                  <font>
                                     <Font name="Arial Rounded MT Bold" size="15.0" />
                                  </font>
@@ -300,7 +318,7 @@
                                     <Insets left="20.0" right="10.0" />
                                  </padding>
                               </VBox>
-                              <VBox fx:id="paneAccount" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="499.0" spacing="3.0" style="-fx-background-color: white; -fx-border-color: white;" visible="false">
+                              <VBox fx:id="paneAccount" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="499.0" spacing="3.0" style="-fx-background-color: white; -fx-border-color: white;">
                                  <children>
                                     <Label text="Account">
                                        <font>
@@ -423,7 +441,7 @@
                                     <Insets left="20.0" right="10.0" />
                                  </padding>
                               </VBox>
-                              <VBox fx:id="panePayment" maxWidth="1.7976931348623157E308" prefHeight="700.0" spacing="3.0" style="-fx-background-color: white; -fx-border-color: white;">
+                              <VBox fx:id="panePayment" maxWidth="1.7976931348623157E308" prefHeight="700.0" spacing="3.0" style="-fx-background-color: white; -fx-border-color: white;" visible="false">
                                  <children>
                                     <Label text="Payment details">
                                        <font>
@@ -460,7 +478,7 @@
                                     <Insets left="20.0" right="10.0" />
                                  </padding>
                               </VBox>
-                              <VBox fx:id="paneEmails" layoutX="10.0" layoutY="10.0" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="505.0" spacing="3.0" style="-fx-background-color: white; -fx-border-color: white;">
+                              <VBox fx:id="paneEmails" layoutX="10.0" layoutY="10.0" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="505.0" spacing="3.0" style="-fx-background-color: white; -fx-border-color: white;" visible="false">
                                  <children>
                                     <Label text="Emails &amp; Notifications">
                                        <font>

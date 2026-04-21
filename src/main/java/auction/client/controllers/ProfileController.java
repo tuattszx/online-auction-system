@@ -46,6 +46,7 @@ public class ProfileController  {
     @FXML private VBox panePayment;
     @FXML private VBox paneEmails;
     @FXML private VBox paneVerification;
+    @FXML private HBox hboxsignout;
     private List<Region> allIndicators;
     private void hideAllPanes(VBox targetPane) {
         VBox[] allPanes = {paneAccount, paneAddresses, panePayment, paneEmails, paneVerification};
@@ -138,7 +139,7 @@ public class ProfileController  {
 
     }
     @FXML
-    public void onLogoutClick(javafx.event.ActionEvent event) {
+    public void onLogoutClick(javafx.event.Event event) {
         UserSession.loggedInUser = null;
         ViewManager.clearCache();
         ViewManager.switchScene(event, "login-view.fxml", "Hệ thống Đấu giá - Đăng nhập");
