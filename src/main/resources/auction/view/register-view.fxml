@@ -16,11 +16,12 @@
 <?import javafx.scene.text.Text?>
 <?import javafx.scene.text.TextFlow?>
 
+<?import javafx.scene.control.ProgressIndicator?>
 <BorderPane xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auction.client.controllers.RegisterController">
    <center>
       <StackPane fx:id="centerContainer" maxWidth="1.7976931348623157E308" minWidth="600.0" BorderPane.alignment="CENTER">
          <children>
-            <VBox fx:id="loginVBox" alignment="TOP_CENTER" maxHeight="426.0" maxWidth="600.0" prefHeight="426.0" prefWidth="343.0" spacing="25.0" style="-fx-background-color: rgba(255, 255, 255, 0.2); -fx-border-radius: 20; -fx-background-radius: 20; -fx-border-color: rgba(255, 255, 255, 0.3); -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.4), 10, 0, 0, 10);" StackPane.alignment="CENTER">
+            <VBox fx:id="registerVbox" alignment="TOP_CENTER" maxHeight="426.0" maxWidth="600.0" prefHeight="426.0" prefWidth="343.0" spacing="25.0" style="-fx-background-color: rgba(255, 255, 255, 0.2); -fx-border-radius: 20; -fx-background-radius: 20; -fx-border-color: rgba(255, 255, 255, 0.3); -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.4), 10, 0, 0, 10);" StackPane.alignment="CENTER">
                <padding>
                   <Insets left="25.0" right="25.0" />
                </padding>
@@ -156,6 +157,7 @@
                   <Insets top="20.0" />
                </opaqueInsets>
             </VBox>
+            <ProgressIndicator fx:id="loadingIndicator" visible="false" />
          </children>
          <padding>
             <Insets bottom="40.0" left="180.0" right="180.0" top="40.0" />

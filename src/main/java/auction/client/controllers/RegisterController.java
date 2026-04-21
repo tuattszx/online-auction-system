@@ -1,14 +1,15 @@
 package auction.client.controllers;
 
+import auction.client.ClientNetwork;
+import auction.common.message.Message;
 import auction.common.model.users.User;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import javafx.event.ActionEvent;
@@ -33,81 +34,87 @@ public class RegisterController {
     @FXML
     private StackPane centerContainer;
     @FXML
-    public void onSignupButtonClick(ActionEvent event){
-        String fullname = txtFullName.getText().trim();
-        String userName = txtUserName.getText().trim();
-        String email = txtEmail.getText().trim();
-        String phone = txtphonenumber.getText().trim();
-        String password = txtPassword.getText().trim();
-        String repass = txtRePassword.getText().trim();
-        if (fullname.isEmpty()) {
-            showAlert(Alert.AlertType.ERROR, "Lỗi đăng ký", "Họ và tên không được để trống!");
-            return;
+    private ProgressIndicator loadingIndicator;
+    @FXML
+    private VBox registerVbox;
+    // Trong RegisterController.java
+    ClientNetwork network = new ClientNetwork(); // Sử dụng hạ tầng mạng đã có
+
+    @FXML
+    public void onSignupButtonClick(ActionEvent event) {
+        // 1. Thu thập dữ liệu
+        User newUser = gatherUserData();
+
+        // 2. Kiểm tra dữ liệu tại chỗ (Client-side validation)
+        String errorMsg = validateInput(newUser, txtRePassword.getText().trim());
+        if (errorMsg != null) {
+            showAlert(Alert.AlertType.ERROR, "Lỗi đăng ký", errorMsg);
+            return; // Thoát sớm nếu dữ liệu nhập sai
         }
 
-        if (userName.isEmpty()) {
-            showAlert(Alert.AlertType.ERROR, "Lỗi đăng ký", "Tài khoản không được để trống!");
-            return;
-        }
+        loadingIndicator.setVisible(true);
+        registerVbox.setDisable(true);
 
-        if (email.isEmpty()) {
-            showAlert(Alert.AlertType.ERROR, "Lỗi đăng ký", "Email không được để trống!");
-            return;
-        }
+        Task<Message> registerTask = new Task<>(){
+            @Override
+            protected Message call() throws Exception {
+                return network.sendRequest(new Message("REGISTER", newUser));
+            }
+        };
 
-        if (phone.isEmpty()) {
-            showAlert(Alert.AlertType.ERROR, "Lỗi đăng ký", "Số điện thoại không được để trống!");
-            return;
-        }
+        registerTask.setOnSucceeded(e -> {
+            Message response = registerTask.getValue();
+            resetUI();
+            switch (response.getStatus()){
+                case "SUCCESS":
+                    showAlert(Alert.AlertType.INFORMATION, "Thành công", "Đăng ký thành công!");
+                    ViewManager.switchScene(event, "login-view.fxml", "Hệ thống Đấu giá - Đăng nhập");
+                    break;
 
-        if (password.isEmpty()) {
-            showAlert(Alert.AlertType.ERROR, "Lỗi đăng ký", "Mật khẩu không được để trống!");
-            return;
-        }
+                case "SERVER_OFFLINE":
+                    showAlert(Alert.AlertType.ERROR, "Lỗi kết nối", "Máy chủ hiện không hoạt động. Vui lòng thử lại sau!");
+                    break;
 
-        if (repass.isEmpty()) {
-            showAlert(Alert.AlertType.ERROR, "Lỗi đăng ký", "Vui lòng nhập lại mật khẩu!");
-            return;
-        }
+                case "FAILED":
+                    showAlert(Alert.AlertType.WARNING, "Thất bại", "Tài khoản hoặc email đã tồn tại!");
+                    break;
 
-        // 3. Kiểm tra định dạng Email
-        String emailRegex = "^[A-Za-z0-9+_.-]+@(.+)$";
-        if (!email.matches(emailRegex)) {
-            showAlert(Alert.AlertType.ERROR, "Lỗi đăng ký", "Định dạng email không hợp lệ (ví dụ: user@gmail.com)!");
-            return;
-        }
+                default:
+                    showAlert(Alert.AlertType.ERROR, "Lỗi", "Đã xảy ra lỗi không xác định!");
+                    break;
+            }
+        });
+        registerTask.setOnFailed(e -> {
+            resetUI();
+            showAlert(Alert.AlertType.ERROR, "Lỗi", "Không thể kết nối đến Server!");
+        });
+        new Thread(registerTask).start();
+    }
 
-        // 4. Kiểm tra định dạng Số điện thoại (Phải là số và đủ 10-11 ký tự)
-        if (!phone.matches("\\d{10,11}")) {
-            showAlert(Alert.AlertType.ERROR, "Lỗi đăng ký", "Số điện thoại phải là chữ số và dài từ 10 đến 11 ký tự!");
-            return;
-        }
+    // Hàm gom nhóm kiểm tra để main method sạch sẽ
+    private String validateInput(User user, String repass) {
+        if (user.getDisplayName().isEmpty()) return "Họ tên không được để trống!";
+        if (user.getUsername().isEmpty()) return "Tài khoản không được để trống!";
+        if (user.getEmail().isEmpty() || !user.getEmail().matches("^[A-Za-z0-9+_.-]+@(.+)$"))
+            return "Email không hợp lệ!";
+        if (user.getPhoneNumber().length() < 10) return "Số điện thoại không hợp lệ!";
+        if (user.getPassword().length() < 6) return "Mật khẩu tối thiểu 6 ký tự!";
+        if (!user.getPassword().equals(repass)) return "Mật khẩu không trùng khớp!";
+        return null; // Không có lỗi
+    }
 
-        // 5. Kiểm tra độ dài mật khẩu (Tối thiểu 6 ký tự để bảo mật)
-        if (password.length() < 6) {
-            showAlert(Alert.AlertType.ERROR, "Lỗi đăng ký", "Mật khẩu phải có ít nhất 6 ký tự!");
-            return;
-        }
-
-        // 6. Kiểm tra mật khẩu trùng khớp
-        if (!password.equals(repass)) {
-            showAlert(Alert.AlertType.ERROR, "Lỗi đăng ký", "Mật khẩu không trùng khớp!");
-            return;
-        }
-
-        User newUser=new User();
-        newUser.setDisplayName(fullname);
-        newUser.setUsername(userName);
-        newUser.setPassword(password);
-        newUser.setEmail(email);
-        newUser.setPhoneNumber(phone);
-
-        if (registerUser(newUser)){
-            showAlert(Alert.AlertType.INFORMATION, "Thành công", "Đăng ký tài khoản thành công!");
-            ViewManager.switchScene(event, "login-view.fxml", "Hệ thống Đấu giá - Đăng nhập");
-        } else {
-            showAlert(Alert.AlertType.ERROR, "Lỗi đăng ký", "Tên tài khoản đã tồn tại hoặc có lỗi xảy ra.");
-        }
+    private User gatherUserData() {
+        User user = new User();
+        user.setDisplayName(txtFullName.getText().trim());
+        user.setUsername(txtUserName.getText().trim());
+        user.setEmail(txtEmail.getText().trim());
+        user.setPhoneNumber(txtphonenumber.getText().trim());
+        user.setPassword(txtPassword.getText().trim());
+        return user;
+    }
+    private void resetUI(){
+        loadingIndicator.setVisible(false);
+        registerVbox.setDisable(false);
     }
     @FXML
     public void onBackToLoginClick(MouseEvent event){
