@@ -1,6 +1,7 @@
 package auction.server;
 
 import auction.common.message.Message;
+import auction.common.model.users.Account;
 import auction.common.model.users.User;
 import java.io.*;
 import java.net.Socket;
@@ -21,8 +22,8 @@ public class ClientHandler implements Runnable {
             Object obj = in.readObject();
             if (obj instanceof Message msg) {
                 if ("LOGIN".equals(msg.getCommand())) {
-                    User userRequest = (User) msg.getData();
-                    System.out.println("Đang xử lý login: " + userRequest.getUsername());
+                    Account accountRequest = (Account) msg.getData();
+                    System.out.println("Đang xử lý login: " + accountRequest.getUsername());
 
                     // Giả lập xử lý
                     msg.setStatus("SUCCESS");
