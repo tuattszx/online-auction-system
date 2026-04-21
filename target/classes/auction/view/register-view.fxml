@@ -84,7 +84,7 @@
                                     <Image url="@../img/phone.jpg" />
                                  </image>
                               </ImageView>
-                              <TextField prefHeight="59.0" prefWidth="169.0" promptText="Phone Number" style="-fx-background-color: white;" HBox.hgrow="ALWAYS" />
+                              <TextField fx:id="txtphonenumber" prefHeight="59.0" prefWidth="169.0" promptText="Phone Number" style="-fx-background-color: white;" HBox.hgrow="ALWAYS" />
                            </children>
                            <padding>
                               <Insets left="2.0" />

@@ -28,34 +28,70 @@ public class RegisterController {
 
     @FXML
     private  PasswordField txtRePassword;
-
+    @FXML
+    private TextField txtphonenumber;
     @FXML
     private StackPane centerContainer;
     @FXML
     public void onSignupButtonClick(ActionEvent event){
-        String userName=txtUserName.getText();
-        String password=txtPassword.getText();
-        String email=txtEmail.getText();
-        String repass=txtRePassword.getText();
-        if (userName == null || userName.isEmpty()) {
-            showAlert(Alert.AlertType.ERROR, "Lỗi đăng ký", "Tài khoản không được để trống!");
-            return;
-        }
-        if (email == null || email.isEmpty()){
-            showAlert(Alert.AlertType.ERROR,"Lỗi đăng ký", "Email cần được nhập");
+        String fullname = txtFullName.getText().trim();
+        String userName = txtUserName.getText().trim();
+        String email = txtEmail.getText().trim();
+        String phone = txtphonenumber.getText().trim();
+        String password = txtPassword.getText().trim();
+        String repass = txtRePassword.getText().trim();
+        if (fullname.isEmpty()) {
+            showAlert(Alert.AlertType.ERROR, "Lỗi đăng ký", "Họ và tên không được để trống!");
             return;
         }
 
-        if (password == null || password.isEmpty()) {
+        if (userName.isEmpty()) {
+            showAlert(Alert.AlertType.ERROR, "Lỗi đăng ký", "Tài khoản không được để trống!");
+            return;
+        }
+
+        if (email.isEmpty()) {
+            showAlert(Alert.AlertType.ERROR, "Lỗi đăng ký", "Email không được để trống!");
+            return;
+        }
+
+        if (phone.isEmpty()) {
+            showAlert(Alert.AlertType.ERROR, "Lỗi đăng ký", "Số điện thoại không được để trống!");
+            return;
+        }
+
+        if (password.isEmpty()) {
             showAlert(Alert.AlertType.ERROR, "Lỗi đăng ký", "Mật khẩu không được để trống!");
             return;
         }
-        if (repass ==null || repass.isEmpty()){
-            showAlert(Alert.AlertType.ERROR,"Lỗi đăng ký", "Cần nhập lại mật khẩu");
+
+        if (repass.isEmpty()) {
+            showAlert(Alert.AlertType.ERROR, "Lỗi đăng ký", "Vui lòng nhập lại mật khẩu!");
             return;
         }
-        if (!password.equals(repass)){
-            showAlert(Alert.AlertType.ERROR,"Lỗi đăng ký","Mật khẩu không trùng khớp");
+
+        // 3. Kiểm tra định dạng Email
+        String emailRegex = "^[A-Za-z0-9+_.-]+@(.+)$";
+        if (!email.matches(emailRegex)) {
+            showAlert(Alert.AlertType.ERROR, "Lỗi đăng ký", "Định dạng email không hợp lệ (ví dụ: user@gmail.com)!");
+            return;
+        }
+
+        // 4. Kiểm tra định dạng Số điện thoại (Phải là số và đủ 10-11 ký tự)
+        if (!phone.matches("\\d{10,11}")) {
+            showAlert(Alert.AlertType.ERROR, "Lỗi đăng ký", "Số điện thoại phải là chữ số và dài từ 10 đến 11 ký tự!");
+            return;
+        }
+
+        // 5. Kiểm tra độ dài mật khẩu (Tối thiểu 6 ký tự để bảo mật)
+        if (password.length() < 6) {
+            showAlert(Alert.AlertType.ERROR, "Lỗi đăng ký", "Mật khẩu phải có ít nhất 6 ký tự!");
+            return;
+        }
+
+        // 6. Kiểm tra mật khẩu trùng khớp
+        if (!password.equals(repass)) {
+            showAlert(Alert.AlertType.ERROR, "Lỗi đăng ký", "Mật khẩu không trùng khớp!");
             return;
         }
 
@@ -86,7 +122,6 @@ public class RegisterController {
         var resource = getClass().getResource(newPath);
         if (resource != null) {
             String url = resource.toExternalForm();
-            // Dùng CSS để ép ảnh phủ kín (cover) và luôn nằm giữa
             centerContainer.setStyle(
                     "-fx-background-image: url('" + url + "'); " +
                             "-fx-background-position: center center; " +
