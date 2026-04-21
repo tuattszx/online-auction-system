@@ -83,7 +83,7 @@ public class LoginController {
 
             switch (response.getStatus()) {
                 case "SUCCESS":
-                    Account.loggedInAccount = (Account) response.getData();
+                    UserSession.loggedInUser = (User) response.getData();
                     ViewManager.switchScene(event, "main-view.fxml", "Trang chủ");
                     break;
 

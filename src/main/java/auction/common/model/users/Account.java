@@ -7,7 +7,6 @@ import java.time.LocalDateTime;
 
 public class Account extends BaseEntity {
     private static final long serialVersionUID = 1L;
-    public static Account loggedInAccount;
     private String username;
     private String password;
     private String role;
