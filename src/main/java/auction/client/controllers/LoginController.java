@@ -2,23 +2,22 @@ package auction.client.controllers;
 
 import auction.client.ClientNetwork;
 import auction.common.message.Message;
+import auction.common.model.users.Account;
 import auction.common.model.users.User;
+import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
-import javafx.scene.image.Image;
-
 import javafx.event.ActionEvent;
 
-import static auction.server.dao.UserDao.CheckLogin;
-import auction.client.controllers.MainViewController;
 
 import java.io.IOException;
 
+class AccountSession {
+    public static Account loggedInAccount;
+}
 class UserSession{
     public static User loggedInUser;
 }
@@ -38,8 +37,11 @@ public class LoginController {
     @FXML
     private Button btnForgotPassword;
     @FXML
+    private ProgressIndicator loadingIndicator;
+    @FXML
     public void initialize() {
         changeImage("/auction/img/pxfuel.jpg");
+        loadingIndicator.setVisible(false);
     }
     public void changeImage(String newPath) {
         var resource = getClass().getResource(newPath);
@@ -58,23 +60,48 @@ public class LoginController {
     ClientNetwork network = new ClientNetwork();
 
     @FXML
-    public void onLoginButtonClick() {
-        try {
-            network.connect();
-            User user = new User(); // Tạo object user từ TextField
-            user.setUsername(txtUsername.getText());
-            user.setPassword(txtPassword.getText());
+    public void onLoginButtonClick(ActionEvent event) {
+        String username = txtUsername.getText();
+        String password = txtPassword.getText();
 
-            Message response = network.sendRequest(new Message("LOGIN", user));
-
-            if ("SUCCESS".equals(response.getStatus())) {
-                showAlert(Alert.AlertType.INFORMATION, "Thành công", "Đăng nhập qua Server thành công!");
-            } else {
-                showAlert(Alert.AlertType.ERROR, "Thất bại", "Sai tài khoản hoặc mật khẩu!");
-            }
-        } catch (IOException e) {
-            showAlert(Alert.AlertType.ERROR, "Lỗi", "Không thể kết nối tới Server!");
+        if (username.isEmpty() || password.isEmpty()) {
+            showAlert(Alert.AlertType.WARNING, "Chú ý", "Vui lòng nhập đầy đủ thông tin!");
+            return;
         }
+
+        loadingIndicator.setVisible(true);
+        loginVBox.setDisable(true);
+
+        Task<Message> loginTask = new Task<>() {
+            @Override
+            protected Message call() throws Exception {
+                Account account = new Account(username, password);
+                return network.sendRequest(new Message("LOGIN", account));
+            }
+        };
+
+        loginTask.setOnSucceeded(e -> {
+            Message response = loginTask.getValue();
+            if (response != null && "SUCCESS".equals(response.getStatus())) {
+                Account.loggedInAccount = (Account) response.getData();
+                ViewManager.switchScene(event, "main-view.fxml", "Trang chủ");
+            } else {
+                resetUI();
+                showAlert(Alert.AlertType.ERROR, "Thất bại", "Tài khoản/Mật khẩu không đúng hoặc Server lỗi!");
+            }
+        });
+
+        loginTask.setOnFailed(e -> {
+            resetUI();
+            showAlert(Alert.AlertType.ERROR, "Lỗi", "Không thể kết nối đến Server!");
+        });
+
+        new Thread(loginTask).start();
+    }
+
+    private void resetUI() {
+        loadingIndicator.setVisible(false);
+        loginVBox.setDisable(false);
     }
     @FXML
     public void onSignUpClick(ActionEvent event) throws IOException {

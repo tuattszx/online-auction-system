@@ -14,27 +14,26 @@ public class ClientHandler implements Runnable {
 
     @Override
     public void run() {
-        try (ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
-             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream())) {
+        // Đảm bảo thứ tự khởi tạo Stream khớp với Client
+        try (ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+             ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
 
-            while (true) {
-                Message msg = (Message) in.readObject();
-                if (msg == null) break;
-
-                // Xử lý logic dựa trên lệnh
+            Object obj = in.readObject();
+            if (obj instanceof Message msg) {
                 if ("LOGIN".equals(msg.getCommand())) {
                     User userRequest = (User) msg.getData();
-                    // Tại đây bạn sẽ gọi DatabaseManager.getConnection() để kiểm tra DB
-                    System.out.println("Đang xử lý đăng nhập cho: " + userRequest.getUsername());
+                    System.out.println("Đang xử lý login: " + userRequest.getUsername());
 
-                    // Giả sử đăng nhập thành công
+                    // Giả lập xử lý
                     msg.setStatus("SUCCESS");
                     out.writeObject(msg);
                     out.flush();
                 }
             }
         } catch (Exception e) {
-            System.out.println("Client đã ngắt kết nối.");
+            e.printStackTrace();
+        } finally {
+            try { socket.close(); } catch (IOException e) { }
         }
     }
 }

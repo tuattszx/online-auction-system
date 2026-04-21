@@ -5,7 +5,9 @@ import auction.common.model.BaseEntity;
 import java.time.LocalDateTime;
 
 
-public abstract class Account extends BaseEntity {
+public class Account extends BaseEntity {
+    private static final long serialVersionUID = 1L;
+    public static Account loggedInAccount;
     private String username;
     private String password;
     private String role;
@@ -16,7 +18,10 @@ public abstract class Account extends BaseEntity {
     public Account(){
         super();
     }
-
+    public Account(String username, String password){
+        this.username = username;
+        this.password = password;
+    }
     public Account(int id, String username, String password, String role,String email){
         super(id);
         this.username=username;
