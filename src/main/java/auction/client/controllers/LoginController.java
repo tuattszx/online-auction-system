@@ -15,9 +15,6 @@ import javafx.event.ActionEvent;
 
 import java.io.IOException;
 
-class AccountSession {
-    public static Account loggedInAccount;
-}
 class UserSession{
     public static User loggedInUser;
 }
@@ -84,7 +81,7 @@ public class LoginController {
             Message response = loginTask.getValue();
             if (response != null && "SUCCESS".equals(response.getStatus()) && response.getData() != null) {
                 // Lưu vào static field để các màn hình sau có thể dùng
-                Account.loggedInAccount = (Account) response.getData();
+                UserSession.loggedInUser = (User) response.getData();
 
                 ViewManager.switchScene(event, "main-view.fxml", "Trang chủ");
             } else {
