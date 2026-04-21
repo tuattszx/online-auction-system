@@ -82,15 +82,16 @@ public class LoginController {
 
         loginTask.setOnSucceeded(e -> {
             Message response = loginTask.getValue();
-            if (response != null && "SUCCESS".equals(response.getStatus())) {
+            if (response != null && "SUCCESS".equals(response.getStatus()) && response.getData() != null) {
+                // Lưu vào static field để các màn hình sau có thể dùng
                 Account.loggedInAccount = (Account) response.getData();
+
                 ViewManager.switchScene(event, "main-view.fxml", "Trang chủ");
             } else {
                 resetUI();
-                showAlert(Alert.AlertType.ERROR, "Thất bại", "Tài khoản/Mật khẩu không đúng hoặc Server lỗi!");
+                showAlert(Alert.AlertType.ERROR, "Thất bại", "Tài khoản/Mật khẩu không đúng!");
             }
         });
-
         loginTask.setOnFailed(e -> {
             resetUI();
             showAlert(Alert.AlertType.ERROR, "Lỗi", "Không thể kết nối đến Server!");

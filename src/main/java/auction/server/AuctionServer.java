@@ -25,36 +25,4 @@ public class AuctionServer {
             e.printStackTrace();
         }
     }
-
-    private static class ClientHandler implements Runnable {
-        private Socket socket;
-        private ObjectOutputStream out;
-        private ObjectInputStream in;
-
-        public ClientHandler(Socket socket) {
-            this.socket = socket;
-        }
-
-        @Override
-        public void run() {
-            try {
-                out = new ObjectOutputStream(socket.getOutputStream());
-                in = new ObjectInputStream(socket.getInputStream());
-
-                Message inputMessage;
-                while ((inputMessage = (Message) in.readObject()) != null) {
-                    System.out.println("Nhận lệnh: " + inputMessage.getCommand());
-                    // Xử lý logic tại đây dựa trên command
-                }
-            } catch (IOException | ClassNotFoundException e) {
-                System.out.println("Lỗi kết nối với client: " + e.getMessage());
-            } finally {
-                try {
-                    socket.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
 }
