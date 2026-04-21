@@ -1,33 +1,29 @@
 package auction.client;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import auction.common.message.Message;
+import java.io.*;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 
 public class ClientNetwork {
-    private static Socket socket;
-    private static ObjectOutputStream out;
-    private static ObjectInputStream in;
+    private static final String SERVER_IP = "168.144.109.78";
+    private static final int PORT = 8888;
 
-    public static void connect() throws IOException {
-        if (socket == null || socket.isClosed()) {
-            socket = new Socket("localhost", 1234); // IP và Port của Server
-            out = new ObjectOutputStream(socket.getOutputStream());
-            in = new ObjectInputStream(socket.getInputStream());
+    public Message sendRequest(Message request) {
+        try (Socket socket = new Socket()) {
+            socket.connect(new InetSocketAddress(SERVER_IP, PORT), 5000);
+            socket.setSoTimeout(5000);
+
+            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+            ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+
+            out.writeObject(request);
+            out.flush();
+
+            return (Message) in.readObject();
+        } catch (Exception e) {
+            // Trả về một Message đặc biệt để báo Server không hoạt động
+            return new Message("SERVER_OFFLINE");
         }
-    }
-
-    public static Object sendRequest(Object request) throws Exception {
-        connect();
-        out.writeObject(request);
-        out.flush();
-        return in.readObject(); 
-    }
-
-    public static void close() throws IOException {
-        if (in != null) in.close();
-        if (out != null) out.close();
-        if (socket != null) socket.close();
     }
 }
