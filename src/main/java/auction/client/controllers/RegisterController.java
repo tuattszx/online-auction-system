@@ -14,8 +14,6 @@ import javafx.stage.Stage;
 
 import javafx.event.ActionEvent;
 
-import static auction.server.dao.UserDao.registerUser;
-
 public class RegisterController {
     @FXML
     private  TextField txtUserName;

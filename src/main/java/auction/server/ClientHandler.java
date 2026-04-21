@@ -67,13 +67,17 @@ public class ClientHandler implements Runnable {
         // Ép kiểu về User vì Client sẽ gửi đối tượng User sang
         User newUser = (User) msg.getData();
 
-        // Gọi hàm registerUser trong UserDao của bạn
-        boolean isSuccess = UserDao.registerUser(newUser);
-
-        if (isSuccess) {
-            msg.setStatus("SUCCESS");
-        } else {
+        // Kiểm tra xem username hoặc email đã tồn tại chưa
+        if (UserDao.isUsernameExists(newUser.getUsername()) || UserDao.isEmailExists(newUser.getEmail())) {
             msg.setStatus("FAILED");
+        } else {
+            // Gọi hàm registerUser trong UserDao của bạn
+            boolean isSuccess = UserDao.registerUser(newUser);
+            if (isSuccess) {
+                msg.setStatus("SUCCESS");
+            } else {
+                msg.setStatus("FAILED");
+            }
         }
 
         out.writeObject(msg);
