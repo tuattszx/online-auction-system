@@ -1,3 +1,6 @@
+/* =========================================
+   1. RESET & CÁC THÀNH PHẦN CƠ BẢN
+   ========================================= */
 .forgot-btn {
     -fx-background-color: transparent;
     -fx-border-color: transparent;
@@ -6,42 +9,216 @@
     -fx-background-radius: 3px;
     -fx-text-fill: #555;
 }
+
 .root-pane {
     -fx-background-image: url("../img/login.png");
     -fx-background-size: cover;
     -fx-background-position: center;
 }
+
 .label-account {
     -fx-font-family: "Montserrat";
     -fx-font-weight: bold;
     -fx-font-size: 14px;
 }
+
 .forgot-btn:hover {
     -fx-background-color: #f0f0f0;
     -fx-text-fill: #0078d4;
 }
 
-.button{
+.button {
     -fx-background-radius: 15;
     -fx-border-radius: 15;
 }
 
-.button:hover{
+.button:hover {
     -fx-cursor: hand;
     -fx-opacity: 0.8;
 }
 
-.text-input{
+.text-input {
     -fx-background-radius: 7;
     -fx-border-radius: 7;
 }
+
+/* =========================================
+   2. THANH ĐIỀU HƯỚNG (NAVBAR)
+   ========================================= */
+.navbar {
+    -fx-background-color: #1a237e; /* Xanh đậm UET/Midnight Blue */
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 10, 0, 0, 5);
+}
+
+.logo-text {
+    -fx-text-fill: white;
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* =========================================
+   3. CỤM TÌM KIẾM LIỀN KHỐI (CATEGORY + SEARCH)
+   ========================================= */
+/* Menu danh mục bên trái */
+.category-menu {
+    -fx-background-color: #f0f2f5;
+    -fx-background-radius: 20 0 0 20; /* Bo góc trái */
+    -fx-padding: 0 15;
+    -fx-pref-height: 40;
+    -fx-cursor: hand;
+    -fx-background-insets: 0;
+}
+
+.category-menu .label {
+    -fx-text-fill: #333;
+    -fx-font-weight: bold;
+}
+
+/* Ô nhập liệu tìm kiếm ở giữa */
+.search-field {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 0; /* Vuông để dính liền */
+    -fx-border-color: #f0f2f5;
+    -fx-border-width: 1 0 1 0; /* Chỉ để viền trên và dưới */
+    -fx-pref-height: 40;
+    -fx-font-size: 14px;
+    -fx-background-insets: 0;
+    -fx-padding: 0 10;
+}
+
+.search-field:focused {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #ffca28; /* Highlight màu vàng khi gõ */
+}
+
+/* Nút tìm kiếm bên phải */
+.search-button {
+    -fx-background-color: #ffca28; /* Màu vàng nhấn */
+    -fx-text-fill: #1a237e;
+    -fx-background-radius: 0 20 20 0; /* Bo góc phải */
+    -fx-pref-height: 40;
+    -fx-padding: 0 20;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-background-insets: 0;
+}
+
+.search-button:hover {
+    -fx-background-color: #ffd54f;
+}
+
+/* =========================================
+   4. TÀI KHOẢN & SỐ DƯ
+   ========================================= */
+.balance-label {
+    -fx-text-fill: #cfd8dc;
+    -fx-font-size: 11px;
+}
+
+.balance-amount {
+    -fx-text-fill: #2ecc71; /* Xanh lá tươi */
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+
+.username-text {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+}
+
+.profile-container {
+    -fx-cursor: hand;
+    -fx-padding: 5;
+    -fx-background-radius: 25;
+}
+
+.profile-container:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.15);
+}
+
+/* =========================================
+   5. CARD SẢN PHẨM (AUCTION CARD)
+   ========================================= */
+.auction-card {
+    -fx-background-color: white;
+    -fx-background-radius: 12;
+    -fx-border-color: #eef0f2;
+    -fx-border-radius: 12;
+    -fx-padding: 15;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 8, 0, 0, 4);
+
+    /* Cố định kích thước để hàng lối thẳng tắp */
+    -fx-min-width: 200;
+    -fx-max-width: 200;
+    -fx-min-height: 260;
+}
+
+.auction-card:hover {
+    -fx-effect: dropshadow(gaussian, rgba(26, 35, 126, 0.2), 15, 0, 0, 6);
+    -fx-border-color: #1a237e;
+    -fx-scale-x: 1.03;
+    -fx-scale-y: 1.03;
+    -fx-cursor: hand;
+}
+
+.item-name {
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+    -fx-padding: 10 0 5 0;
+}
+
+.item-price {
+    -fx-font-size: 14px;
+    -fx-text-fill: #e74c3c; /* Màu đỏ giá tiền */
+    -fx-font-weight: bold;
+}
+
+.bid-button-small {
+    -fx-background-color: #1a237e;
+    -fx-text-fill: white;
+    -fx-background-radius: 8;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+/* =========================================
+   6. SCROLLPANE & CÁC THÀNH PHẦN KHÁC
+   ========================================= */
+.scroll-pane {
+    -fx-background-color: transparent;
+    -fx-background: #f4f7f6; /* Nền trang xám nhạt */
+}
+
 .searchable-combo-box .combo-box-base,
 .searchable-combo-box .text-field {
     -fx-background-color: #f0f2f5 !important;
     -fx-background-insets: 0;
     -fx-background-radius: 5;
 }
+
 .searchable-combo-box {
     -fx-background-color: #f0f2f5 !important;
     -fx-border-color: transparent;
+}
+
+.sort-combo {
+    -fx-background-color: #f8f9fa;
+    -fx-border-color: #ced4da;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-pref-width: 175;
+    -fx-cursor: hand;
+}
+
+.sort-combo:hover {
+    -fx-border-color: #1a237e;
+}
+
+/* Tùy chọn bên trong danh sách thả xuống */
+.sort-combo .list-cell {
+    -fx-padding: 5 10;
 }
