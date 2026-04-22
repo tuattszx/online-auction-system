@@ -36,7 +36,7 @@ public class RegisterController {
     @FXML
     private VBox registerVbox;
     // Trong RegisterController.java
-    ClientNetwork network = new ClientNetwork(); // Sử dụng hạ tầng mạng đã có
+    ClientNetwork network = ClientNetwork.getInstance(); // Sử dụng hạ tầng mạng đã có
 
     @FXML
     public void onSignupButtonClick(ActionEvent event) {
@@ -46,7 +46,7 @@ public class RegisterController {
         // 2. Kiểm tra dữ liệu tại chỗ (Client-side validation)
         String errorMsg = validateInput(newUser, txtRePassword.getText().trim());
         if (errorMsg != null) {
-            showAlert(Alert.AlertType.ERROR, "Lỗi đăng ký", errorMsg);
+            ViewManager.showAlert(Alert.AlertType.ERROR, "Lỗi đăng ký", errorMsg);
             return; // Thoát sớm nếu dữ liệu nhập sai
         }
 
@@ -65,26 +65,26 @@ public class RegisterController {
             resetUI();
             switch (response.getStatus()){
                 case "SUCCESS":
-                    showAlert(Alert.AlertType.INFORMATION, "Thành công", "Đăng ký thành công!");
+                    ViewManager.showAlert(Alert.AlertType.INFORMATION, "Thành công", "Đăng ký thành công!");
                     ViewManager.switchScene(event, "login-view.fxml", "Hệ thống Đấu giá - Đăng nhập");
                     break;
 
                 case "SERVER_OFFLINE":
-                    showAlert(Alert.AlertType.ERROR, "Lỗi kết nối", "Máy chủ hiện không hoạt động. Vui lòng thử lại sau!");
+                    ViewManager.showAlert(Alert.AlertType.ERROR, "Lỗi kết nối", "Máy chủ hiện không hoạt động. Vui lòng thử lại sau!");
                     break;
 
                 case "FAILED":
-                    showAlert(Alert.AlertType.WARNING, "Thất bại", "Tài khoản hoặc email đã tồn tại!");
+                    ViewManager.showAlert(Alert.AlertType.WARNING, "Thất bại", "Tài khoản hoặc email đã tồn tại!");
                     break;
 
                 default:
-                    showAlert(Alert.AlertType.ERROR, "Lỗi", "Đã xảy ra lỗi không xác định!");
+                    ViewManager.showAlert(Alert.AlertType.ERROR, "Lỗi", "Đã xảy ra lỗi không xác định!");
                     break;
             }
         });
         registerTask.setOnFailed(e -> {
             resetUI();
-            showAlert(Alert.AlertType.ERROR, "Lỗi", "Không thể kết nối đến Server!");
+            ViewManager.showAlert(Alert.AlertType.ERROR, "Lỗi", "Không thể kết nối đến Server!");
         });
         new Thread(registerTask).start();
     }
@@ -117,13 +117,6 @@ public class RegisterController {
     @FXML
     public void onBackToLoginClick(MouseEvent event){
         ViewManager.switchScene(event, "login-view.fxml", "Hệ thống Đấu giá - Đăng nhập");
-    }
-    private void showAlert(Alert.AlertType alertType, String title, String message) {
-        Alert alert = new Alert(alertType);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
     }
     public void changeImage(String newPath) {
         var resource = getClass().getResource(newPath);

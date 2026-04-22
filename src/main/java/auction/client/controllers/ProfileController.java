@@ -1,8 +1,11 @@
 package auction.client.controllers;
+import auction.client.ClientNetwork;
+import auction.common.message.Message;
 import auction.common.model.users.User;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.Node;
+import javafx.concurrent.Task;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
@@ -14,6 +17,9 @@ import java.util.List;
 
 import javafx.scene.layout.VBox;
 import org.controlsfx.control.SearchableComboBox;
+
+import javax.swing.text.View;
+
 public class ProfileController  {
     @FXML
     private SearchableComboBox<String> countryPicker;
@@ -48,6 +54,7 @@ public class ProfileController  {
     @FXML private VBox paneVerification;
     @FXML private HBox hboxsignout;
     private List<Region> allIndicators;
+    ClientNetwork network = ClientNetwork.getInstance();
     private void hideAllPanes(VBox targetPane) {
         VBox[] allPanes = {paneAccount, paneAddresses, panePayment, paneEmails, paneVerification};
         for (VBox pane : allPanes) {
@@ -139,10 +146,23 @@ public class ProfileController  {
 
     }
     @FXML
-    public void onLogoutClick(javafx.event.Event event) {
-        UserSession.loggedInUser = null;
-        ViewManager.clearCache();
-        ViewManager.switchScene(event, "login-view.fxml", "Hệ thống Đấu giá - Đăng nhập");
+    public void onSignOutClick(MouseEvent event) {
+        Task<Message> logoutTask = new Task<>() {
+            @Override
+            protected Message call() throws Exception {
+                return network.sendRequest(new Message("SIGNOUT", null));
+            }
+        };
+
+        logoutTask.setOnSucceeded(e -> {
+            UserSession.loggedInUser = null;
+            ViewManager.showAlert(Alert.AlertType.INFORMATION,"Thông báo", "Đăng xuất thành công!");
+            ViewManager.clearCache();
+            network.close(); // Đóng socket ở phía Client
+            ViewManager.switchScene(event, "login-view.fxml", "Đăng nhập");
+        });
+
+        new Thread(logoutTask).start();
     }
 
 }
