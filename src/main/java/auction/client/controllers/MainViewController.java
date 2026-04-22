@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
@@ -15,30 +16,21 @@ import java.io.IOException;
 
 public class MainViewController {
     @FXML
-    private Label lbbalance;
-    @FXML
-    private Button btusername;
-    @FXML
     private TextField txtsearch;
     @FXML
-    private FlowPane flitems;
+    private ComboBox sortPrice, sortTime;
     @FXML
-    private Button btntrangsuc;
-    @FXML
-    private Button btndongho;
-    @FXML
-    private Button btnthoitrang;
-    @FXML
-    private Button btnsach;
-
+    private Label lbusername;
     @FXML
     public void initialize() {
         if (UserSession.loggedInUser != null){
-            btusername.setText("Chào: " + UserSession.loggedInUser.getUsername());
+            lbusername.setText("Chào: " + UserSession.loggedInUser.getUsername());
         }
+        sortPrice.getItems().addAll("Giá tăng dần", "Giá giảm dần");
+        sortTime.getItems().addAll("Thời gian tăng dần", "Thời gian giảm dần");
     }
     @FXML
-    public void onProfileClick(ActionEvent event) throws IOException {
+    public void onProfileClick(MouseEvent event) throws IOException {
         ViewManager.switchScene(event, "profile-view.fxml", "Hồ sơ cá nhân");
     }
 

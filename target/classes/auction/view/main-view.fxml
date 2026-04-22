@@ -1,252 +1,151 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.collections.FXCollections?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
-
+<?import javafx.scene.shape.*?>
 <?import java.net.URL?>
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auction.client.controllers.MainViewController">
+
+<?import java.lang.*?>
+<AnchorPane prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auction.client.controllers.MainViewController">
    <stylesheets>
       <URL value="@../css/style.css" />
    </stylesheets>
    <children>
-      <VBox layoutY="-3.0" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+      <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" spacing="20.0" style="-fx-background-color: midnightblue;">
+            <HBox alignment="CENTER_LEFT" prefHeight="70.0" spacing="20.0" styleClass="navbar">
                <padding>
-                  <Insets right="25" />
+                  <Insets left="20" right="20" />
                </padding>
                <children>
+                  <Label text="UET AUCTION" styleClass="logo-text" />
 
-                  <Label fx:id="lbbalance" text="Số dư: 1.000$" textFill="WHITE" style="-fx-background-color: transparent;" />
-                  <Button fx:id="btusername" text="Chào: Admin" textFill="#ededed" style="-fx-background-color: transparent;" onAction="#onProfileClick" />
-               </children>
-            </HBox>
-            <HBox alignment="BOTTOM_CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0" style="-fx-background-color: midnightblue;">
-               <children>
-                  <Button fx:id="btntrangsuc" mnemonicParsing="false" style="-fx-background-color: Khaki;" text="trang sức" textFill="#2b1616">
-                     <font>
-                        <Font name="System Bold" size="14.0" />
-                     </font>
-                  </Button>
-                  <Button fx:id="btndongho" mnemonicParsing="false" style="-fx-background-color: Khaki;" text="đồng hồ">
-                     <font>
-                        <Font name="System Bold" size="14.0" />
-                     </font>
-                  </Button>
-                  <Button fx:id="btnthoitrang" mnemonicParsing="false" style="-fx-background-color: Khaki;" text="thời trang">
-                     <font>
-                        <Font name="System Bold" size="14.0" />
-                     </font>
-                  </Button>
-                  <Button fx:id="btnsach" mnemonicParsing="false" style="-fx-background-color: Khaki;" text="sách">
-                     <font>
-                        <Font name="System Bold" size="14.0" />
-                     </font>
-                  </Button>
-                  <HBox alignment="BOTTOM_LEFT" layoutY="-10.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="50.0" prefWidth="200.0" spacing="15.0" style="-fx-border-color: #cccccc; -fx-border-radius: 15; -fx-background-radius: 15; -fx-background-color: white; -fx-background-color: white; -fx-translate-y: 7;">
-                     <padding>
-                        <Insets bottom="15.0" left="15.0" right="15.0" />
-                     </padding>
-                     <HBox.margin>
-                        <Insets />
-                     </HBox.margin>
+                  <Region prefWidth="10.0" />
+
+                  <HBox alignment="CENTER" spacing="0" HBox.hgrow="ALWAYS" maxWidth="650.0">
                      <children>
-                        <ImageView fitHeight="12.0" fitWidth="42.0" layoutY="10.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true" style="-fx-translate-y: 4;" y="10.0">
-                           <image>
-                              <Image url="@../img/images(1).jpg" />
-                           </image>
-                        </ImageView>
-                        <TextField fx:id="txtsearch" prefHeight="25.0" prefWidth="141.0" promptText="Tìm kiếm..." style="-fx-translate-y: 8;" />
+                        <MenuButton fx:id="categoryMenu" text="Danh mục" styleClass="category-menu">
+                           <items>
+                              <MenuItem text="Bất động sản" />
+                              <MenuItem text="Xe cộ" />
+                              <MenuItem text="Đồ cổ &amp; Sưu tầm" />
+                              <MenuItem text="Công nghệ" />
+                           </items>
+                        </MenuButton>
+
+                        <TextField fx:id="txtsearch" promptText="Tìm kiếm sản phẩm đấu giá..." styleClass="search-field" HBox.hgrow="ALWAYS" />
+
+                        <Button onAction="#onSearchAction" text="🔍" styleClass="search-button" />
+                     </children>
+                  </HBox>
+
+                  <Region HBox.hgrow="ALWAYS" />
+
+                  <VBox alignment="CENTER_RIGHT" spacing="2">
+                     <Label text="Số dư khả dụng" styleClass="balance-label" />
+                     <Label fx:id="lbbalance" text="1.000.000$" styleClass="balance-amount" />
+                  </VBox>
+
+                  <HBox alignment="CENTER" spacing="10" onMouseClicked="#onProfileClick" styleClass="profile-container">
+                     <children>
+                        <StackPane>
+                           <Circle radius="20.0" fill="WHITE" stroke="#ddd" />
+                           <ImageView fx:id="imgAvatar" fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
+                              <image>
+                                 <Image url="@../img/people.jpg" />
+                              </image>
+                           </ImageView>
+                        </StackPane>
+                        <Label text="TViu" fx:id="lbusername" styleClass="username-text" />
                      </children>
                   </HBox>
                </children>
-               <padding>
-                  <Insets bottom="22.0" right="2.0" top="2.0" />
-               </padding>
             </HBox>
-            <ScrollPane fitToWidth="true" hbarPolicy="ALWAYS" prefHeight="350.0" prefWidth="800.0" vbarPolicy="ALWAYS" VBox.vgrow="ALWAYS">
+
+            <HBox alignment="CENTER_LEFT" prefHeight="50.0" spacing="15.0" style="-fx-background-color: #ffffff; -fx-border-color: #e0e0e0; -fx-border-width: 0 0 1 0;">
+               <padding>
+                  <Insets left="30" right="30" />
+               </padding>
+               <children>
+                  <Label text="Sắp xếp theo:" style="-fx-font-weight: bold; -fx-text-fill: #555;" />
+
+                  <ComboBox fx:id="sortPrice" promptText="Giá tiền" styleClass="sort-combo"> </ComboBox>
+                  <ComboBox fx:id="sortTime" promptText="Thời gian" styleClass="sort-combo"> </ComboBox>
+
+                  <Region HBox.hgrow="ALWAYS" />
+
+                  <Label text="Đang diễn ra: 10 sản phẩm" style="-fx-text-fill: #888; -fx-font-style: italic;" />
+               </children>
+            </HBox>
+
+            <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" style="-fx-background-color: transparent; -fx-background: #f4f4f4;">
                <content>
-                  <FlowPane fx:id="flitems" alignment="CENTER" hgap="20.0" prefWidth="860.0" vgap="20.0">
+                  <FlowPane fx:id="flitems"
+                            alignment="CENTER"
+                            hgap="25"
+                            vgap="25"
+                            style="-fx-padding: 30;">
+                     <padding><Insets top="30" right="30" bottom="30" left="30" /></padding>
                      <children>
-                        <VBox alignment="CENTER" onMouseClicked="#onItemClick" prefHeight="75.0" prefWidth="100.0" style="-fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 5; -fx-padding: 10; -fx-background-color: pink; -fx-cursor: hand;">
-                           <children>
-                              <ImageView fx:id="imitem" fitHeight="50.0" fitWidth="148.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../img/images.jpg" />
-                                 </image>
-                              </ImageView>
-                              <Label fx:id="lbitemname" text="AnyaForger" />
-                              <Label fx:id="lbitemprice" text="price:10000000$" />
-                           </children>
+
+                        <fx:define>
+                           <VBox fx:id="itemTemplate" alignment="CENTER" prefHeight="220.0" prefWidth="180.0" styleClass="auction-card">
+                              <children>
+                                 <ImageView fitHeight="120.0" fitWidth="160.0" pickOnBounds="true" preserveRatio="true">
+                                    <image><Image url="@../img/images.jpg" /></image>
+                                 </ImageView>
+                                 <Label text="Anya Forger Limited" styleClass="item-name" />
+                                 <Label text="Giá: 10.000.000$" styleClass="item-price" />
+                                 <Button text="Đấu giá ngay" styleClass="bid-button-small" />
+                              </children>
+                           </VBox>
+                        </fx:define>
+
+                        <VBox onMouseClicked="#onItemClick" styleClass="auction-card" alignment="CENTER" prefHeight="220.0" prefWidth="180.0">
+                           <ImageView fitHeight="120.0" fitWidth="160.0" pickOnBounds="true" preserveRatio="true"><image><Image url="@../img/images.jpg" /></image></ImageView>
+                           <Label text="Sản phẩm 1" styleClass="item-name" /><Label text="10.000.000$" styleClass="item-price" /><Button text="Đấu giá" styleClass="bid-button-small" />
                         </VBox>
-                        <VBox alignment="CENTER" layoutX="10.0" layoutY="10.0" onMouseClicked="#onItemClick" prefHeight="75.0" prefWidth="100.0" style="-fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 5; -fx-padding: 10; -fx-background-color: pink; -fx-cursor: hand;">
-                           <children>
-                              <ImageView fx:id="imitem1" fitHeight="50.0" fitWidth="148.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../img/images.jpg" />
-                                 </image>
-                              </ImageView>
-                              <Label fx:id="lbitemname1" text="AnyaForger" />
-                              <Label fx:id="lbitemprice1" text="price:10000000$" />
-                           </children>
+                        <VBox onMouseClicked="#onItemClick" styleClass="auction-card" alignment="CENTER" prefHeight="220.0" prefWidth="180.0">
+                           <ImageView fitHeight="120.0" fitWidth="160.0" pickOnBounds="true" preserveRatio="true"><image><Image url="@../img/images.jpg" /></image></ImageView>
+                           <Label text="Sản phẩm 2" styleClass="item-name" /><Label text="10.000.000$" styleClass="item-price" /><Button text="Đấu giá" styleClass="bid-button-small" />
                         </VBox>
-                        <VBox alignment="CENTER" layoutX="130.0" layoutY="10.0" onMouseClicked="#onItemClick" prefHeight="75.0" prefWidth="100.0" style="-fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 5; -fx-padding: 10; -fx-background-color: pink; -fx-cursor: hand;">
-                           <children>
-                              <ImageView fx:id="imitem11" fitHeight="50.0" fitWidth="148.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../img/images.jpg" />
-                                 </image>
-                              </ImageView>
-                              <Label fx:id="lbitemname11" text="AnyaForger" />
-                              <Label fx:id="lbitemprice11" text="price:10000000$" />
-                           </children>
+                        <VBox onMouseClicked="#onItemClick" styleClass="auction-card" alignment="CENTER" prefHeight="220.0" prefWidth="180.0">
+                           <ImageView fitHeight="120.0" fitWidth="160.0" pickOnBounds="true" preserveRatio="true"><image><Image url="@../img/images.jpg" /></image></ImageView>
+                           <Label text="Sản phẩm 3" styleClass="item-name" /><Label text="10.000.000$" styleClass="item-price" /><Button text="Đấu giá" styleClass="bid-button-small" />
                         </VBox>
-                        <VBox alignment="CENTER" layoutX="250.0" layoutY="10.0" onMouseClicked="#onItemClick" prefHeight="75.0" prefWidth="100.0" style="-fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 5; -fx-padding: 10; -fx-background-color: pink; -fx-cursor: hand;">
-                           <children>
-                              <ImageView fx:id="imitem111" fitHeight="50.0" fitWidth="148.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../img/images.jpg" />
-                                 </image>
-                              </ImageView>
-                              <Label fx:id="lbitemname111" text="AnyaForger" />
-                              <Label fx:id="lbitemprice111" text="price:10000000$" />
-                           </children>
+                        <VBox onMouseClicked="#onItemClick" styleClass="auction-card" alignment="CENTER" prefHeight="220.0" prefWidth="180.0">
+                           <ImageView fitHeight="120.0" fitWidth="160.0" pickOnBounds="true" preserveRatio="true"><image><Image url="@../img/images.jpg" /></image></ImageView>
+                           <Label text="Sản phẩm 4" styleClass="item-name" /><Label text="10.000.000$" styleClass="item-price" /><Button text="Đấu giá" styleClass="bid-button-small" />
                         </VBox>
-                        <VBox alignment="CENTER" layoutX="370.0" layoutY="10.0" onMouseClicked="#onItemClick" prefHeight="75.0" prefWidth="100.0" style="-fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 5; -fx-padding: 10; -fx-background-color: pink; -fx-cursor: hand;">
-                           <children>
-                              <ImageView fx:id="imitem1111" fitHeight="50.0" fitWidth="148.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../img/images.jpg" />
-                                 </image>
-                              </ImageView>
-                              <Label fx:id="lbitemname1111" text="AnyaForger" />
-                              <Label fx:id="lbitemprice1111" text="price:10000000$" />
-                           </children>
+                        <VBox onMouseClicked="#onItemClick" styleClass="auction-card" alignment="CENTER" prefHeight="220.0" prefWidth="180.0">
+                           <ImageView fitHeight="120.0" fitWidth="160.0" pickOnBounds="true" preserveRatio="true"><image><Image url="@../img/images.jpg" /></image></ImageView>
+                           <Label text="Sản phẩm 5" styleClass="item-name" /><Label text="10.000.000$" styleClass="item-price" /><Button text="Đấu giá" styleClass="bid-button-small" />
                         </VBox>
-                        <VBox alignment="CENTER" layoutX="10.0" layoutY="137.0" onMouseClicked="#onItemClick" prefHeight="75.0" prefWidth="100.0" style="-fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 5; -fx-padding: 10; -fx-background-color: pink; -fx-cursor: hand;">
-                           <children>
-                              <ImageView fx:id="imitem11111" fitHeight="50.0" fitWidth="148.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../img/images.jpg" />
-                                 </image>
-                              </ImageView>
-                              <Label fx:id="lbitemname11111" text="AnyaForger" />
-                              <Label fx:id="lbitemprice11111" text="price:10000000$" />
-                           </children>
+                        <VBox onMouseClicked="#onItemClick" styleClass="auction-card" alignment="CENTER" prefHeight="220.0" prefWidth="180.0">
+                           <ImageView fitHeight="120.0" fitWidth="160.0" pickOnBounds="true" preserveRatio="true"><image><Image url="@../img/images.jpg" /></image></ImageView>
+                           <Label text="Sản phẩm 6" styleClass="item-name" /><Label text="10.000.000$" styleClass="item-price" /><Button text="Đấu giá" styleClass="bid-button-small" />
                         </VBox>
-                        <VBox alignment="CENTER" layoutX="130.0" layoutY="137.0" onMouseClicked="#onItemClick" prefHeight="75.0" prefWidth="100.0" style="-fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 5; -fx-padding: 10; -fx-background-color: pink; -fx-cursor: hand;">
-                           <children>
-                              <ImageView fx:id="imitem111111" fitHeight="50.0" fitWidth="148.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../img/images.jpg" />
-                                 </image>
-                              </ImageView>
-                              <Label fx:id="lbitemname111111" text="AnyaForger" />
-                              <Label fx:id="lbitemprice111111" text="price:10000000$" />
-                           </children>
+                        <VBox onMouseClicked="#onItemClick" styleClass="auction-card" alignment="CENTER" prefHeight="220.0" prefWidth="180.0">
+                           <ImageView fitHeight="120.0" fitWidth="160.0" pickOnBounds="true" preserveRatio="true"><image><Image url="@../img/images.jpg" /></image></ImageView>
+                           <Label text="Sản phẩm 7" styleClass="item-name" /><Label text="10.000.000$" styleClass="item-price" /><Button text="Đấu giá" styleClass="bid-button-small" />
                         </VBox>
-                        <VBox alignment="CENTER" layoutX="250.0" layoutY="137.0" onMouseClicked="#onItemClick" prefHeight="75.0" prefWidth="100.0" style="-fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 5; -fx-padding: 10; -fx-background-color: pink; -fx-cursor: hand;">
-                           <children>
-                              <ImageView fx:id="imitem1111111" fitHeight="50.0" fitWidth="148.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../img/images.jpg" />
-                                 </image>
-                              </ImageView>
-                              <Label fx:id="lbitemname1111111" text="AnyaForger" />
-                              <Label fx:id="lbitemprice1111111" text="price:10000000$" />
-                           </children>
+                        <VBox onMouseClicked="#onItemClick" styleClass="auction-card" alignment="CENTER" prefHeight="220.0" prefWidth="180.0">
+                           <ImageView fitHeight="120.0" fitWidth="160.0" pickOnBounds="true" preserveRatio="true"><image><Image url="@../img/images.jpg" /></image></ImageView>
+                           <Label text="Sản phẩm 8" styleClass="item-name" /><Label text="10.000.000$" styleClass="item-price" /><Button text="Đấu giá" styleClass="bid-button-small" />
                         </VBox>
-                        <VBox alignment="CENTER" layoutX="370.0" layoutY="137.0" onMouseClicked="#onItemClick" prefHeight="75.0" prefWidth="100.0" style="-fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 5; -fx-padding: 10; -fx-background-color: pink; -fx-cursor: hand;">
-                           <children>
-                              <ImageView fx:id="imitem11111111" fitHeight="50.0" fitWidth="148.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../img/images.jpg" />
-                                 </image>
-                              </ImageView>
-                              <Label fx:id="lbitemname11111111" text="AnyaForger" />
-                              <Label fx:id="lbitemprice11111111" text="price:10000000$" />
-                           </children>
+                        <VBox onMouseClicked="#onItemClick" styleClass="auction-card" alignment="CENTER" prefHeight="220.0" prefWidth="180.0">
+                           <ImageView fitHeight="120.0" fitWidth="160.0" pickOnBounds="true" preserveRatio="true"><image><Image url="@../img/images.jpg" /></image></ImageView>
+                           <Label text="Sản phẩm 9" styleClass="item-name" /><Label text="10.000.000$" styleClass="item-price" /><Button text="Đấu giá" styleClass="bid-button-small" />
                         </VBox>
-                        <VBox alignment="CENTER" layoutX="10.0" layoutY="265.0" onMouseClicked="#onItemClick" prefHeight="75.0" prefWidth="100.0" style="-fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 5; -fx-padding: 10; -fx-background-color: pink; -fx-cursor: hand;">
-                           <children>
-                              <ImageView fx:id="imitem111111111" fitHeight="50.0" fitWidth="148.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../img/images.jpg" />
-                                 </image>
-                              </ImageView>
-                              <Label fx:id="lbitemname111111111" text="AnyaForger" />
-                              <Label fx:id="lbitemprice111111111" text="price:10000000$" />
-                           </children>
+                        <VBox onMouseClicked="#onItemClick" styleClass="auction-card" alignment="CENTER" prefHeight="220.0" prefWidth="180.0">
+                           <ImageView fitHeight="120.0" fitWidth="160.0" pickOnBounds="true" preserveRatio="true"><image><Image url="@../img/images.jpg" /></image></ImageView>
+                           <Label text="Sản phẩm 10" styleClass="item-name" /><Label text="10.000.000$" styleClass="item-price" /><Button text="Đấu giá" styleClass="bid-button-small" />
                         </VBox>
-                        <VBox alignment="CENTER" layoutX="130.0" layoutY="265.0" onMouseClicked="#onItemClick" prefHeight="75.0" prefWidth="100.0" style="-fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 5; -fx-padding: 10; -fx-background-color: pink; -fx-cursor: hand;">
-                           <children>
-                              <ImageView fx:id="imitem1111111111" fitHeight="50.0" fitWidth="148.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../img/images.jpg" />
-                                 </image>
-                              </ImageView>
-                              <Label fx:id="lbitemname1111111111" text="AnyaForger" />
-                              <Label fx:id="lbitemprice1111111111" text="price:10000000$" />
-                           </children>
-                        </VBox>
-                        <VBox alignment="CENTER" layoutX="250.0" layoutY="265.0" onMouseClicked="#onItemClick" prefHeight="75.0" prefWidth="100.0" style="-fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 5; -fx-padding: 10; -fx-background-color: pink; -fx-cursor: hand;">
-                           <children>
-                              <ImageView fx:id="imitem11111111111" fitHeight="50.0" fitWidth="148.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../img/images.jpg" />
-                                 </image>
-                              </ImageView>
-                              <Label fx:id="lbitemname11111111111" text="AnyaForger" />
-                              <Label fx:id="lbitemprice11111111111" text="price:10000000$" />
-                           </children>
-                        </VBox>
-                        <VBox alignment="CENTER" layoutX="370.0" layoutY="265.0" onMouseClicked="#onItemClick" prefHeight="75.0" prefWidth="100.0" style="-fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 5; -fx-padding: 10; -fx-background-color: pink; -fx-cursor: hand;">
-                           <children>
-                              <ImageView fx:id="imitem111111111111" fitHeight="50.0" fitWidth="148.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../img/images.jpg" />
-                                 </image>
-                              </ImageView>
-                              <Label fx:id="lbitemname111111111111" text="AnyaForger" />
-                              <Label fx:id="lbitemprice111111111111" text="price:10000000$" />
-                           </children>
-                        </VBox>
-                        <VBox alignment="CENTER" layoutX="10.0" layoutY="392.0" onMouseClicked="#onItemClick" prefHeight="75.0" prefWidth="100.0" style="-fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 5; -fx-padding: 10; -fx-background-color: pink; -fx-cursor: hand;">
-                           <children>
-                              <ImageView fx:id="imitem1111111111111" fitHeight="50.0" fitWidth="148.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../img/images.jpg" />
-                                 </image>
-                              </ImageView>
-                              <Label fx:id="lbitemname1111111111111" text="AnyaForger" />
-                              <Label fx:id="lbitemprice1111111111111" text="price:10000000$" />
-                           </children>
-                        </VBox>
-                        <VBox alignment="CENTER" layoutX="130.0" layoutY="392.0" onMouseClicked="#onItemClick" prefHeight="75.0" prefWidth="100.0" style="-fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 5; -fx-padding: 10; -fx-background-color: pink; -fx-cursor: hand;">
-                           <children>
-                              <ImageView fx:id="imitem11111111111111" fitHeight="50.0" fitWidth="148.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../img/images.jpg" />
-                                 </image>
-                              </ImageView>
-                              <Label fx:id="lbitemname11111111111111" text="AnyaForger" />
-                              <Label fx:id="lbitemprice11111111111111" text="price:10000000$" />
-                           </children>
-                        </VBox>
-                        <VBox alignment="CENTER" layoutX="250.0" layoutY="392.0" onMouseClicked="#onItemClick" prefHeight="75.0" prefWidth="100.0" style="-fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 5; -fx-padding: 10; -fx-background-color: pink; -fx-cursor: hand;">
-                           <children>
-                              <ImageView fx:id="imitem111111111111111" fitHeight="50.0" fitWidth="148.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../img/images.jpg" />
-                                 </image>
-                              </ImageView>
-                              <Label fx:id="lbitemname111111111111111" text="AnyaForger" />
-                              <Label fx:id="lbitemprice111111111111111" text="price:10000000$" />
-                           </children>
-                        </VBox>
+
                      </children>
                   </FlowPane>
                </content>
