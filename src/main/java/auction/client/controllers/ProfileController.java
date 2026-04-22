@@ -5,8 +5,7 @@ import auction.common.model.users.User;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
-import javafx.event.ActionEvent;
-import javafx.scene.Node;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
@@ -18,6 +17,9 @@ import java.util.List;
 
 import javafx.scene.layout.VBox;
 import org.controlsfx.control.SearchableComboBox;
+
+import javax.swing.text.View;
+
 public class ProfileController  {
     @FXML
     private SearchableComboBox<String> countryPicker;
@@ -144,7 +146,7 @@ public class ProfileController  {
 
     }
     @FXML
-    public void onSignOutClick(ActionEvent event) {
+    public void onSignOutClick(MouseEvent event) {
         Task<Message> logoutTask = new Task<>() {
             @Override
             protected Message call() throws Exception {
@@ -154,6 +156,8 @@ public class ProfileController  {
 
         logoutTask.setOnSucceeded(e -> {
             UserSession.loggedInUser = null;
+            ViewManager.showAlert(Alert.AlertType.INFORMATION,"Thông báo", "Đăng xuất thành công!");
+            ViewManager.clearCache();
             network.close(); // Đóng socket ở phía Client
             ViewManager.switchScene(event, "login-view.fxml", "Đăng nhập");
         });

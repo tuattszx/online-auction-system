@@ -218,7 +218,7 @@
                               <Cursor fx:constant="HAND" />
                            </cursor>
                         </HBox>
-                        <HBox fx:id="hboxsignout" alignment="CENTER_LEFT" layoutX="26.0" layoutY="210.0" onMouseClicked="#onLogoutClick" prefHeight="29.0" prefWidth="185.0" spacing="10.0">
+                        <HBox fx:id="hboxsignout" alignment="CENTER_LEFT" layoutX="26.0" layoutY="210.0" onMouseClicked="#onSignOutClick" prefHeight="29.0" prefWidth="185.0" spacing="10.0">
                            <children>
                               <Region fx:id="VeriIndicator1" minHeight="-Infinity" prefHeight="23.0" prefWidth="2.0" style="-fx-background-color: navy blue;" visible="false" />
                               <ImageView fitHeight="24.0" fitWidth="39.0" pickOnBounds="true" preserveRatio="true">

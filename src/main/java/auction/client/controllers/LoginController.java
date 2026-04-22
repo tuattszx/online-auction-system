@@ -13,6 +13,7 @@ import javafx.scene.layout.VBox;
 import javafx.event.ActionEvent;
 
 
+import javax.swing.text.View;
 import java.io.IOException;
 
 class UserSession{
@@ -62,7 +63,7 @@ public class LoginController {
         String password = txtPassword.getText();
 
         if (username.isEmpty() || password.isEmpty()) {
-            showAlert(Alert.AlertType.WARNING, "Chú ý", "Vui lòng nhập đầy đủ thông tin!");
+            ViewManager.showAlert(Alert.AlertType.WARNING, "Chú ý", "Vui lòng nhập đầy đủ thông tin!");
             return;
         }
 
@@ -88,21 +89,21 @@ public class LoginController {
                     break;
 
                 case "SERVER_OFFLINE":
-                    showAlert(Alert.AlertType.ERROR, "Lỗi kết nối", "Máy chủ hiện không hoạt động. Vui lòng thử lại sau!");
+                    ViewManager.showAlert(Alert.AlertType.ERROR, "Lỗi kết nối", "Máy chủ hiện không hoạt động. Vui lòng thử lại sau!");
                     break;
 
                 case "FAILED":
-                    showAlert(Alert.AlertType.WARNING, "Thất bại", "Tài khoản hoặc mật khẩu không chính xác!");
+                    ViewManager.showAlert(Alert.AlertType.WARNING, "Thất bại", "Tài khoản hoặc mật khẩu không chính xác!");
                     break;
 
                 default:
-                    showAlert(Alert.AlertType.ERROR, "Lỗi", "Đã xảy ra lỗi không xác định!");
+                    ViewManager.showAlert(Alert.AlertType.ERROR, "Lỗi", "Đã xảy ra lỗi không xác định!");
                     break;
             }
         });
         loginTask.setOnFailed(e -> {
             resetUI();
-            showAlert(Alert.AlertType.ERROR, "Lỗi", "Không thể kết nối đến Server!");
+            ViewManager.showAlert(Alert.AlertType.ERROR, "Lỗi", "Không thể kết nối đến Server!");
         });
 
         new Thread(loginTask).start();
@@ -116,13 +117,5 @@ public class LoginController {
     public void onSignUpClick(ActionEvent event) throws IOException {
         //Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         ViewManager.switchScene(event, "register-view.fxml", "Hệ thống Đấu giá - Đăng ký");
-    }
-
-    private void showAlert(Alert.AlertType alertType, String title, String message) {
-        Alert alert = new Alert(alertType);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
     }
 }
