@@ -36,7 +36,7 @@ public class RegisterController {
     @FXML
     private VBox registerVbox;
     // Trong RegisterController.java
-    ClientNetwork network = new ClientNetwork(); // Sử dụng hạ tầng mạng đã có
+    ClientNetwork network = ClientNetwork.getInstance(); // Sử dụng hạ tầng mạng đã có
 
     @FXML
     public void onSignupButtonClick(ActionEvent event) {

@@ -16,28 +16,35 @@ public class ClientHandler implements Runnable {
 
     @Override
     public void run() {
-        try (ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-             ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
+        // Không dùng try-with-resources cho Socket ở đây để tránh tự động đóng
+        try {
+            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+            ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
 
-            Object obj = in.readObject();
-            if (obj instanceof Message msg) {
-                // Bước 1: Lấy lệnh từ Message
-                String command = msg.getCommand();
+            while (true) { // Vòng lặp giữ kết nối
+                Object obj = in.readObject();
+                if (obj instanceof Message msg) {
+                    String command = msg.getCommand();
+                    System.out.println("Server nhận lệnh: " + command);
 
-                // Bước 2: Điều hướng xử lý dựa trên lệnh
-                switch (command) {
-                    case "LOGIN":
-                        handleLogin(msg, out);
-                        break;
-                    case "REGISTER":
-                        handleRegister(msg, out);
-                        break;
-                    default:
-                        System.out.println("Lệnh không xác định: " + command);
+                    if (command.equals("SIGNOUT")) {
+                        handleSignout(msg, out);
+                        break; // Thoát vòng lặp để đóng socket
+                    }
+
+                    switch (command) {
+                        case "LOGIN":
+                            handleLogin(msg, out);
+                            break;
+                        case "REGISTER":
+                            handleRegister(msg, out);
+                            break;
+                        // Thêm các case khác như BID, VIEW_PRODUCT...
+                    }
                 }
             }
         } catch (Exception e) {
-            System.err.println("Lỗi xử lý Client: " + e.getMessage());
+            System.err.println("Client ngắt kết nối đột ngột: " + e.getMessage());
         } finally {
             try { socket.close(); } catch (IOException e) { }
         }
@@ -83,4 +90,10 @@ public class ClientHandler implements Runnable {
         out.writeObject(msg);
         out.flush();
     }
+    private void handleSignout(Message msg, ObjectOutputStream out) throws IOException {
+        msg.setStatus("SUCCESS");
+        out.writeObject(msg);
+        out.flush();
+    }
+
 }

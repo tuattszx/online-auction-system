@@ -35,6 +35,7 @@ public class LoginController {
     private Button btnForgotPassword;
     @FXML
     private ProgressIndicator loadingIndicator;
+    ClientNetwork network = ClientNetwork.getInstance();
     @FXML
     public void initialize() {
         changeImage("/auction/img/pxfuel.jpg");
@@ -54,7 +55,6 @@ public class LoginController {
         }
     }
     // Trong LoginController.java
-    ClientNetwork network = new ClientNetwork();
 
     @FXML
     public void onLoginButtonClick(ActionEvent event) {

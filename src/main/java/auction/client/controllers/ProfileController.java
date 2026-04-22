@@ -1,7 +1,11 @@
 package auction.client.controllers;
+import auction.client.ClientNetwork;
+import auction.common.message.Message;
 import auction.common.model.users.User;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
+import javafx.event.ActionEvent;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
@@ -48,6 +52,7 @@ public class ProfileController  {
     @FXML private VBox paneVerification;
     @FXML private HBox hboxsignout;
     private List<Region> allIndicators;
+    ClientNetwork network = ClientNetwork.getInstance();
     private void hideAllPanes(VBox targetPane) {
         VBox[] allPanes = {paneAccount, paneAddresses, panePayment, paneEmails, paneVerification};
         for (VBox pane : allPanes) {
@@ -139,10 +144,21 @@ public class ProfileController  {
 
     }
     @FXML
-    public void onLogoutClick(javafx.event.Event event) {
-        UserSession.loggedInUser = null;
-        ViewManager.clearCache();
-        ViewManager.switchScene(event, "login-view.fxml", "Hệ thống Đấu giá - Đăng nhập");
+    public void onSignOutClick(ActionEvent event) {
+        Task<Message> logoutTask = new Task<>() {
+            @Override
+            protected Message call() throws Exception {
+                return network.sendRequest(new Message("SIGNOUT", null));
+            }
+        };
+
+        logoutTask.setOnSucceeded(e -> {
+            UserSession.loggedInUser = null;
+            network.close(); // Đóng socket ở phía Client
+            ViewManager.switchScene(event, "login-view.fxml", "Đăng nhập");
+        });
+
+        new Thread(logoutTask).start();
     }
 
 }

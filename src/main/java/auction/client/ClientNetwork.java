@@ -9,13 +9,27 @@ public class ClientNetwork {
     private static final String SERVER_IP = "168.144.109.78";
     private static final int PORT = 8888;
 
-    public Message sendRequest(Message request) {
-        try (Socket socket = new Socket()) {
-            socket.connect(new InetSocketAddress(SERVER_IP, PORT), 20000);
-            socket.setSoTimeout(20000);
+    private static ClientNetwork instance;
+    private static Socket socket;
+    private static ObjectOutputStream out;
+    private static ObjectInputStream in;
 
-            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-            ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+    public static ClientNetwork getInstance(){
+        if (instance == null) instance = new ClientNetwork();
+        return instance;
+    }
+    // Hàm kết nối lần đầu (gọi khi bắt đầu App hoặc trước khi Login)
+    public void connect() throws IOException {
+        if (socket == null || socket.isClosed()) {
+            socket = new Socket(SERVER_IP, PORT);
+            out = new ObjectOutputStream(socket.getOutputStream());
+            in = new ObjectInputStream(socket.getInputStream());
+        }
+    }
+
+    public Message sendRequest(Message request) {
+        try {
+            connect(); // Đảm bảo luôn có kết nối
 
             out.writeObject(request);
             out.flush();
@@ -23,8 +37,13 @@ public class ClientNetwork {
             return (Message) in.readObject();
         } catch (Exception e) {
             e.printStackTrace();
-            // Trả về một Message đặc biệt để báo Server không hoạt động
             return new Message("SERVER_OFFLINE");
         }
+    }
+
+    public void close() {
+        try {
+            if (socket != null) socket.close();
+        } catch (IOException e) { }
     }
 }
