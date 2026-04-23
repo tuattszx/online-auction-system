@@ -1,12 +1,17 @@
 package auction.client.controllers;
 
+import auction.client.ClientNetwork;
+import auction.common.message.Message;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
+import javax.swing.*;
 import javax.swing.text.View;
 
 public class AdminController {
@@ -30,6 +35,7 @@ public class AdminController {
     private TextField txtSearch;
     @FXML
     private TableView<?> adminTable;
+    ClientNetwork network = ClientNetwork.getInstance();
 
     @FXML
     private void handleBackToMain(ActionEvent event) {
@@ -70,7 +76,26 @@ public class AdminController {
     private void handleApproveSeller(ActionEvent event) {
 
     }
+    @FXML
+    private void onSignOutClick(ActionEvent event){
+        if (!ViewManager.confirmAlert("Thông báo", "Bạn có chắc chắn muốn đăng xuất không?")) return;
+        Task<Message> logoutTask = new Task<>() {
+            @Override
+            protected Message call() throws Exception {
+                return network.sendRequest(new Message("SIGNOUT", null));
+            }
+        };
 
+        logoutTask.setOnSucceeded(e -> {
+            UserSession.loggedInUser = null;
+            ViewManager.showAlert(Alert.AlertType.INFORMATION,"Thông báo", "Đăng xuất thành công!");
+            ViewManager.clearCache();
+            network.close(); // Đóng socket ở phía Client
+            ViewManager.switchScene(event, "login-view.fxml", "Đăng nhập");
+        });
+
+        new Thread(logoutTask).start();
+    }
     @FXML
     private void handleLockAccount(ActionEvent event) {
 

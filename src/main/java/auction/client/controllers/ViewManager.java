@@ -159,4 +159,11 @@ public class ViewManager {
         alert.setContentText(message != null ? message : "Không có thông báo");
         alert.showAndWait();
     }
+    public static boolean confirmAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        return alert.showAndWait().filter(response -> response == javafx.scene.control.ButtonType.OK).isPresent();
+    }
 }

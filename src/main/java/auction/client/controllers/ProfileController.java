@@ -158,6 +158,7 @@ public class ProfileController  {
     }
     @FXML
     public void onSignOutClick(MouseEvent event) {
+        if (!ViewManager.confirmAlert("Thông báo", "Bạn có chắc chắn muốn đăng xuất không?")) return;
         Task<Message> logoutTask = new Task<>() {
             @Override
             protected Message call() throws Exception {
