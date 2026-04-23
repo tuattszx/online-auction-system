@@ -1,11 +1,16 @@
 package auction.client.controllers;
 
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.event.ActionEvent;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
+import java.io.File;
 import java.io.IOException;
 
 public class SellerController {
@@ -24,26 +29,16 @@ public class SellerController {
     @FXML
     private Button btnNavMyProducts;
 
-    /**
-     * Hàm khởi tạo - Chạy khi giao diện vừa load xong
-     */
+    @FXML
+    private Label lblFileName;
     @FXML
     public void initialize() {
-        // Mặc định khi mở lên sẽ hiện trang My Products
         showMyProducts();
     }
-
-    /**
-     * Xử lý khi nhấn vào "Add Product" ở menu trái
-     */
     @FXML
     private void handleShowAddProduct(ActionEvent event) {
         showAddProduct();
     }
-
-    /**
-     * Xử lý khi nhấn vào "My Products" ở menu trái
-     */
     @FXML
     private void handleShowMyProducts(ActionEvent event) {
         showMyProducts();
@@ -55,7 +50,6 @@ public class SellerController {
         vboxMyProducts.setVisible(false);
         vboxMyProducts.setManaged(false);
 
-        // Thay đổi style nút để người dùng biết đang ở trang nào
         btnNavAdd.setStyle("-fx-background-color: #2980b9; -fx-text-fill: white;");
         btnNavMyProducts.setStyle("-fx-background-color: transparent; -fx-text-fill: #bdc3c7;");
     }
@@ -69,6 +63,21 @@ public class SellerController {
 
         btnNavMyProducts.setStyle("-fx-background-color: #2980b9; -fx-text-fill: white;");
         btnNavAdd.setStyle("-fx-background-color: transparent; -fx-text-fill: #bdc3c7;");
+    }
+    @FXML
+    private void handleBrowseFiles(ActionEvent event) {
+
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Chọn file thiết kế");
+
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+
+        File selectedFile = fileChooser.showOpenDialog(stage);
+
+        if (selectedFile != null) {
+            System.out.println("Đã chọn file: " + selectedFile.getName());
+            lblFileName.setText(selectedFile.getName());
+        }
     }
     @FXML
     public void OnMouseBacktoMain(MouseEvent event){
