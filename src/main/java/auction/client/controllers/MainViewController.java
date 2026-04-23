@@ -31,7 +31,18 @@ public class MainViewController {
     }
     @FXML
     public void onProfileClick(MouseEvent event) throws IOException {
-        ViewManager.switchScene(event, "profile-view.fxml", "Hồ sơ cá nhân");
+        switch (UserSession.loggedInUser.getRole()){
+            case "ADMIN":
+                ViewManager.switchScene(event, "admin-view.fxml", "Hồ sơ cá nhân");
+                break;
+
+            case "USER":
+                ViewManager.switchScene(event, "profile-view.fxml", "Hồ sơ cá nhân");
+                break;
+
+            default:
+                break;
+        }
     }
 
     @FXML
