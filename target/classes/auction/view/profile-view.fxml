@@ -33,7 +33,7 @@
    <children>
       <BorderPane layoutX="-2.0" layoutY="-1.0" maxHeight="1.7976931348623157E308" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: white;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <top>
-            <HBox alignment="CENTER_LEFT" maxHeight="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="91.0" prefWidth="696.0" spacing="10.0" style="-fx-background-color: white; -fx-border-color: grey; -fx-border-width: 0 0 2 0;" BorderPane.alignment="CENTER">
+            <HBox alignment="CENTER_LEFT" maxHeight="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="91.0" prefWidth="696.0" spacing="10.0" style="-fx-background-color: white; -fx-border-color: #34495e; -fx-border-width: 0 0 2 0;" BorderPane.alignment="CENTER">
                <padding>
                   <Insets left="20.0" right="20.0" />
                </padding>
@@ -89,7 +89,7 @@
                      </padding>
                   </HBox>
                   <Region minWidth="-Infinity" prefHeight="200.0" prefWidth="0.0" HBox.hgrow="ALWAYS" />
-                  <Label fx:id="lbsell" prefHeight="18.0" prefWidth="35.0" style="-fx-text-fill: #0052FF;" text="sell">
+                  <Label fx:id="lbsell" onMouseClicked="#onSellerClick" prefHeight="18.0" prefWidth="54.0" style="-fx-text-fill: #0052FF;" text="seller">
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor>
@@ -148,15 +148,15 @@
          <center>
             <HBox alignment="CENTER" BorderPane.alignment="CENTER">
                <children>
-                  <VBox alignment="TOP_CENTER" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="579.0" prefWidth="203.0" spacing="15.0" style="-fx-border-color: white;" HBox.hgrow="ALWAYS">
+                  <VBox alignment="TOP_CENTER" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="579.0" prefWidth="203.0" spacing="15.0" style="-fx-border-color: white; -fx-background-color: #34495e;" HBox.hgrow="ALWAYS">
                      <padding>
                         <Insets left="15.0" top="20.0" />
                      </padding>
                      <children>
                         <HBox fx:id="btnAccount" alignment="CENTER_LEFT" onMouseClicked="#handleSidebarClick" prefHeight="29.0" prefWidth="185.0" spacing="10.0">
                            <children>
-                              <Region fx:id="accountIndicator" minHeight="-Infinity" prefHeight="23.0" prefWidth="2.0" style="-fx-background-color: navy blue;" />
-                              <Label text="Account">
+                              <Region fx:id="accountIndicator" minHeight="-Infinity" prefHeight="23.0" prefWidth="2.0" style="-fx-background-color: white;" />
+                              <Label style="-fx-text-fill: white;" text="Account">
                                  <font>
                                     <Font name="Arial Rounded MT Bold" size="15.0" />
                                  </font>
@@ -168,8 +168,8 @@
                         </HBox>
                         <HBox fx:id="btnAddresses" alignment="CENTER_LEFT" layoutX="25.0" layoutY="30.0" onMouseClicked="#handleSidebarClick" prefHeight="29.0" prefWidth="185.0" spacing="10.0">
                            <children>
-                              <Region fx:id="addressesIndicator" minHeight="-Infinity" prefHeight="23.0" prefWidth="2.0" style="-fx-background-color: navy blue;" visible="false" />
-                              <Label text="Adresses">
+                              <Region fx:id="addressesIndicator" minHeight="-Infinity" prefHeight="23.0" prefWidth="2.0" style="-fx-background-color: white;" visible="false" />
+                              <Label style="-fx-text-fill: white;" text="Adresses">
                                  <font>
                                     <Font name="Arial Rounded MT Bold" size="15.0" />
                                  </font>
@@ -181,8 +181,8 @@
                         </HBox>
                         <HBox fx:id="btnPayment" alignment="CENTER_LEFT" layoutX="25.0" layoutY="75.0" onMouseClicked="#handleSidebarClick" prefHeight="29.0" prefWidth="185.0" spacing="10.0">
                            <children>
-                              <Region fx:id="paymentIndicator" minHeight="-Infinity" prefHeight="23.0" prefWidth="2.0" style="-fx-background-color: navy blue;" visible="false" />
-                              <Label text="Payment">
+                              <Region fx:id="paymentIndicator" minHeight="-Infinity" prefHeight="23.0" prefWidth="2.0" style="-fx-background-color: white;" visible="false" />
+                              <Label style="-fx-text-fill: white;" text="Payment">
                                  <font>
                                     <Font name="Arial Rounded MT Bold" size="15.0" />
                                  </font>
@@ -194,8 +194,8 @@
                         </HBox>
                         <HBox fx:id="btnEmail" alignment="CENTER_LEFT" layoutX="25.0" layoutY="119.0" onMouseClicked="#handleSidebarClick" prefHeight="29.0" prefWidth="185.0" spacing="10.0">
                            <children>
-                              <Region fx:id="emailIndicator" minHeight="-Infinity" prefHeight="23.0" prefWidth="2.0" style="-fx-background-color: navy blue;" visible="false" />
-                              <Label text="Email &amp; Notifications">
+                              <Region fx:id="emailIndicator" minHeight="-Infinity" prefHeight="23.0" prefWidth="2.0" style="-fx-background-color: white;" visible="false" />
+                              <Label style="-fx-text-fill: white;" text="Email &amp; Notifications">
                                  <font>
                                     <Font name="Arial Rounded MT Bold" size="15.0" />
                                  </font>
@@ -207,8 +207,8 @@
                         </HBox>
                         <HBox fx:id="btnVeri" alignment="CENTER_LEFT" layoutX="25.0" layoutY="164.0" onMouseClicked="#handleSidebarClick" prefHeight="29.0" prefWidth="185.0" spacing="10.0">
                            <children>
-                              <Region fx:id="VeriIndicator" minHeight="-Infinity" prefHeight="23.0" prefWidth="2.0" style="-fx-background-color: navy blue;" visible="false" />
-                              <Label text="Verification">
+                              <Region fx:id="VeriIndicator" minHeight="-Infinity" prefHeight="23.0" prefWidth="2.0" style="-fx-background-color: white;" visible="false" />
+                              <Label style="-fx-text-fill: white;" text="Verification">
                                  <font>
                                     <Font name="Arial Rounded MT Bold" size="15.0" />
                                  </font>
@@ -220,13 +220,13 @@
                         </HBox>
                         <HBox fx:id="hboxsignout" alignment="CENTER_LEFT" layoutX="26.0" layoutY="210.0" onMouseClicked="#onSignOutClick" prefHeight="29.0" prefWidth="185.0" spacing="10.0">
                            <children>
-                              <Region fx:id="VeriIndicator1" minHeight="-Infinity" prefHeight="23.0" prefWidth="2.0" style="-fx-background-color: navy blue;" visible="false" />
+                              <Region fx:id="VeriIndicator1" minHeight="-Infinity" prefHeight="23.0" prefWidth="2.0" style="-fx-background-color: white;" visible="false" />
                               <ImageView fitHeight="24.0" fitWidth="39.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
                                     <Image url="@../img/signout.png" />
                                  </image>
                               </ImageView>
-                              <Label text="Sign out">
+                              <Label style="-fx-text-fill: white;" text="Sign out">
                                  <font>
                                     <Font name="Arial Rounded MT Bold" size="15.0" />
                                  </font>

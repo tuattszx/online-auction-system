@@ -12,6 +12,7 @@ import javafx.scene.layout.Region;
 import javafx.fxml.FXML;
 import javafx.scene.input.MouseEvent;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -139,6 +140,10 @@ public class ProfileController  {
     @FXML
     public void onBackToMainClick(javafx.event.ActionEvent event) {
         ViewManager.switchScene(event, "main-view.fxml", "Hệ thống Đấu giá - Trang chủ");
+    }
+    @FXML
+    public void onSellerClick(MouseEvent event) throws IOException {
+        ViewManager.switchScene(event, "seller_demo.fxml", "seller page");
     }
     @FXML
     public void OnMouseBacktoMain(MouseEvent event){
