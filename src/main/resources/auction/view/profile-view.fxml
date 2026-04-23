@@ -27,7 +27,6 @@
 
 <AnchorPane prefHeight="614.0" prefWidth="691.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auction.client.controllers.ProfileController">
    <stylesheets>
-       <URL value="@../css/style.css" />
       <URL value="@../css/style.css" />
    </stylesheets>
    <children>
