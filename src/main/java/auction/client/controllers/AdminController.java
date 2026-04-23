@@ -38,56 +38,43 @@ public class AdminController {
 
     @FXML
     private void handleShowDashboard(ActionEvent event) {
-        // TODO: Load dashboard data
-        System.out.println("Showing Dashboard");
         setActiveButton(btnDashboard);
     }
 
     @FXML
     private void handleManageUsers(ActionEvent event) {
-        // TODO: Load user management view
-        System.out.println("Managing Users");
         setActiveButton(btnManageUsers);
     }
 
     @FXML
     private void handleApproveItems(ActionEvent event) {
-        // TODO: Load item approval view
-        System.out.println("Approving Items");
         setActiveButton(btnApproveItems);
     }
 
     @FXML
     private void handleManageAuctions(ActionEvent event) {
-        // TODO: Load auction management view
-        System.out.println("Managing Auctions");
         setActiveButton(btnManageAuctions);
     }
 
     @FXML
     private void handleTransactionHistory(ActionEvent event) {
-        // TODO: Load transaction history view
-        System.out.println("Viewing Transaction History");
         setActiveButton(btnTransactionHistory);
     }
 
     @FXML
     private void handleSettings(ActionEvent event) {
-        // TODO: Load system settings view
-        System.out.println("Opening System Settings");
         setActiveButton(btnSettings);
     }
 
     @FXML
     private void handleApproveSeller(ActionEvent event) {
-        // TODO: Approve selected seller
-        System.out.println("Approving seller");
+
     }
 
     @FXML
     private void handleLockAccount(ActionEvent event) {
-        // TODO: Lock selected account
-        System.out.println("Locking account");
+
+
     }
 
     private void setActiveButton(Button activeBtn) {

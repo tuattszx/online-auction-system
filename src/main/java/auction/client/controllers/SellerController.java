@@ -1,7 +1,9 @@
 package auction.client.controllers;
 
+import auction.client.utils.ImageService;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
@@ -30,18 +32,41 @@ public class SellerController {
     private Button btnNavMyProducts;
 
     @FXML
+    private Button btnNavCustomers;
+
+    @FXML
+    private Button btnNavConfig;
+
+    @FXML
     private Label lblFileName;
+
     @FXML
     public void initialize() {
         showMyProducts();
     }
+
     @FXML
     private void handleShowAddProduct(ActionEvent event) {
         showAddProduct();
     }
+
     @FXML
     private void handleShowMyProducts(ActionEvent event) {
         showMyProducts();
+    }
+
+    @FXML
+    private void handleShowCustomers(ActionEvent event) {
+        // TODO: Implement customers view
+        System.out.println("Showing Customers view");
+        setActiveButton(btnNavCustomers);
+    }
+
+    @FXML
+    private void handleShowConfiguration(ActionEvent event) {
+        // TODO: Implement configuration view
+        System.out.println("Showing Configuration view");
+        setActiveButton(btnNavConfig);
     }
     private void showAddProduct() {
         vboxAddProduct.setVisible(true);
@@ -50,8 +75,7 @@ public class SellerController {
         vboxMyProducts.setVisible(false);
         vboxMyProducts.setManaged(false);
 
-        btnNavAdd.setStyle("-fx-background-color: #2980b9; -fx-text-fill: white;");
-        btnNavMyProducts.setStyle("-fx-background-color: transparent; -fx-text-fill: #bdc3c7;");
+        setActiveButton(btnNavAdd);
     }
 
     private void showMyProducts() {
@@ -61,8 +85,18 @@ public class SellerController {
         vboxAddProduct.setVisible(false);
         vboxAddProduct.setManaged(false);
 
-        btnNavMyProducts.setStyle("-fx-background-color: #2980b9; -fx-text-fill: white;");
+        setActiveButton(btnNavMyProducts);
+    }
+
+    private void setActiveButton(Button activeBtn) {
+        // Reset all buttons to inactive state
         btnNavAdd.setStyle("-fx-background-color: transparent; -fx-text-fill: #bdc3c7;");
+        btnNavMyProducts.setStyle("-fx-background-color: transparent; -fx-text-fill: #bdc3c7;");
+        btnNavCustomers.setStyle("-fx-background-color: transparent; -fx-text-fill: #bdc3c7;");
+        btnNavConfig.setStyle("-fx-background-color: transparent; -fx-text-fill: #bdc3c7;");
+
+        // Set active button style
+        activeBtn.setStyle("-fx-background-color: #2980b9; -fx-text-fill: white;");
     }
     @FXML
     private void handleBrowseFiles(ActionEvent event) {
