@@ -1,6 +1,8 @@
 package auction.common.model.items;
 
 import auction.common.model.BaseEntity;
+import auction.common.model.categories.Category;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,12 +18,16 @@ public class Item extends BaseEntity {
     private Integer currentBidderId;
     private String status;
     private LocalDateTime createdTime;
-    private int categoryId;
-    private List<String> imageUrls;
+    private List<Category> categories;
+    private List<ItemImage> images;
+    private double length;
+    private double width;
+    private double height;
 
     public Item(){
         super();
-        this.imageUrls=new ArrayList<>();
+        this.categories =new ArrayList<>();
+        this.images=new ArrayList<>();
     }
     public Item(int id, String name, String description, long startingPrice,
                 long currentPrice,LocalDateTime startTime, LocalDateTime endTime, int sellerId, String status) {
@@ -34,7 +40,7 @@ public class Item extends BaseEntity {
         this.endTime = endTime;
         this.sellerId = sellerId;
         this.status = status;
-        this.imageUrls = new ArrayList<>();
+        this.images = new ArrayList<>();
     }
 
     public String getName() { return name; }
@@ -49,14 +55,14 @@ public class Item extends BaseEntity {
     public long getCurrentPrice() { return currentPrice; }
     public void setCurrentPrice(long currentPrice) { this.currentPrice = currentPrice; }
 
-    public List<String> getImageUrls() {
-        return imageUrls;
+    public List<ItemImage> getImages() {
+        return images;
     }
-    public void setImageUrls(List<String> imageUrls) {
-        this.imageUrls = imageUrls;
+    public void setImages(List<ItemImage> imageUrls) {
+        this.images = imageUrls;
     }
-    public void addImageUrl(String url) {
-        this.imageUrls.add(url);
+    public void addImages(ItemImage itemImage) {
+        this.images.add(itemImage);
     }
 
     public LocalDateTime getStartTime(){ return  startTime;}
@@ -77,8 +83,18 @@ public class Item extends BaseEntity {
     public LocalDateTime getCreatedTime() { return createdTime; }
     public void setCreatedTime(LocalDateTime createdTime) { this.createdTime = createdTime; }
 
-    public int getCategoryId() {return categoryId;}
-    public void setCategoryId(int categoryId) {this.categoryId = categoryId;}
+    public List<Category> getCategories() {return categories;}
+    public void setCategories(List<Category> categories) {this.categories = categories;}
+    public void addCategories(Category category){this.categories.add(category);}
+
+    public double getLength() { return length;}
+    public void setLength(double length) {this.length = length;}
+
+    public double getWidth() {return width;}
+    public void setWidth(double width) {this.width = width;}
+
+    public double getHeight() {return height;}
+    public void setHeight(double height) {this.height = height;}
 
     @Override
     public String toString(){
