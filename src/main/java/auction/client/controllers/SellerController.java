@@ -181,6 +181,7 @@ public class SellerController {
             newItem.setDescription(description);
             newItem.setStartingPrice(Long.parseLong(priceText));
             newItem.setCurrentPrice(Long.parseLong(priceText));
+            newItem.setSellerId(UserSession.loggedInUser.getId());
 
             // Set kích thước
             newItem.setLength(txtLength.getText().isEmpty() ? 0 : Double.parseDouble(txtLength.getText()));
