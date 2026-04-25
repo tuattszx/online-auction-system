@@ -50,6 +50,9 @@ public class ClientHandler implements Runnable {
                         case "ADD_ITEM":
                             handleAddItem(msg,out);
                             break;
+                        case "GET_ALL_ITEMS":
+                            handleGetAllItems(msg, out);
+                            break;
                         // Thêm các case khác như BID, VIEW_PRODUCT...
                     }
                 }
@@ -156,4 +159,17 @@ public class ClientHandler implements Runnable {
         out.flush();
     }
 
+    private void handleGetAllItems(Message msg, ObjectOutputStream out) throws IOException {
+        try{
+            List<Item> items = ItemDao.getAllItems(); // Gọi ItemDao lấy dữ liệu
+            msg.setStatus("SUCCESS");
+            msg.setData(items);
+        }
+        catch (Exception e){
+            msg.setStatus("ERROR");
+            e.printStackTrace();
+        }
+        out.writeObject(msg);
+        out.flush();
+    }
 }
