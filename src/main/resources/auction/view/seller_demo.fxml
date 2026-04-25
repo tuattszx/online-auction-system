@@ -227,7 +227,7 @@
       
                           <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="0">
                               <Label text="Title" />
-                              <TextField promptText="Product Name" />
+                              <TextField fx:id="txtTitle" promptText="Product Name" />
                           </VBox>
                           <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="0">
                               <Label text="Category" />
@@ -249,25 +249,25 @@
                           <HBox spacing="10" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="1">
                               <VBox spacing="5" HBox.hgrow="ALWAYS">
                                   <Label text="Height" />
-                                  <TextField promptText="cm" />
+                                  <TextField fx:id="txtHeight" promptText="cm" />
                               </VBox>
                               <VBox spacing="5" HBox.hgrow="ALWAYS">
                                   <Label text="Length" />
-                                  <TextField promptText="cm" />
+                                  <TextField fx:id="txtLength" promptText="cm" />
                               </VBox>
                               <VBox spacing="5" HBox.hgrow="ALWAYS">
                                   <Label text="Width" />
-                                  <TextField promptText="cm" />
+                                  <TextField fx:id="txtWidth" promptText="cm" />
                               </VBox>
                           </HBox>
       
                           <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="2">
                               <Label text="Weight" />
-                              <TextField promptText="kg" />
+                              <TextField fx:id="txtWeight" promptText="kg" />
                           </VBox>
                           <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="2">
                               <Label text="Price" />
-                              <TextField promptText="\$0.00" />
+                              <TextField fx:id="txtPrice" promptText="\$0.00" />
                           </VBox>
                           <HBox spacing="5.0" GridPane.columnIndex="0" GridPane.columnSpan="1" GridPane.rowIndex="3">
                               <children>
@@ -290,7 +290,7 @@
                               </padding>
                           </HBox>                          <VBox spacing="5" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="4">
                               <Label text="Description" />
-                              <TextArea prefHeight="100" promptText="Enter product details..." wrapText="true" />
+                              <TextArea fx:id="txtDescription" prefHeight="100" promptText="Enter product details..." wrapText="true" />
                           </VBox>
       
                           <VBox alignment="CENTER" spacing="10" style="-fx-border-color: #bdc3c7; -fx-border-style: dashed; -fx-border-width: 2; -fx-border-radius: 5; -fx-padding: 20;" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="5">
@@ -309,7 +309,7 @@
       
                       <HBox alignment="CENTER_RIGHT" spacing="10">
                           <Button prefWidth="100" style="-fx-background-color: #e74c3c; -fx-text-fill: white;" text="Cancel" />
-                          <Button prefWidth="100" style="-fx-background-color: #27ae60; -fx-text-fill: white;" text="Save" />
+                          <Button onAction="#handleSaveProduct" prefWidth="100" style="-fx-background-color: #27ae60; -fx-text-fill: white;" text="Save" />
                       </HBox>
                   </VBox>
             </children>

@@ -1,11 +1,19 @@
 package auction.server;
 
 import auction.common.message.Message;
+import auction.common.model.categories.Category;
+import auction.common.model.items.Item;
+import auction.common.model.items.ItemImage;
 import auction.common.model.users.Account;
 import auction.common.model.users.User;
+import auction.server.dao.CategoryDao;
+import auction.server.dao.ItemDao;
 import auction.server.dao.UserDao;
+import auction.server.utils.ImageService;
+
 import java.io.*;
 import java.net.Socket;
+import java.util.List;
 
 public class ClientHandler implements Runnable {
     private Socket socket;
@@ -38,6 +46,9 @@ public class ClientHandler implements Runnable {
                             break;
                         case "REGISTER":
                             handleRegister(msg, out);
+                            break;
+                        case "ADD_ITEM":
+                            handleAddItem(msg,out);
                             break;
                         // Thêm các case khác như BID, VIEW_PRODUCT...
                     }
@@ -92,6 +103,55 @@ public class ClientHandler implements Runnable {
     }
     private void handleSignout(Message msg, ObjectOutputStream out) throws IOException {
         msg.setStatus("SUCCESS");
+        out.writeObject(msg);
+        out.flush();
+    }
+
+    private void handleAddItem(Message msg, ObjectOutputStream out) throws IOException {
+        try {
+            // 1. Giải nén gói dữ liệu từ Client
+            Object[] payload = (Object[]) msg.getData();
+            Item item = (Item) payload[0];
+            List<byte[]> imagesBytes = (List<byte[]>) payload[1];
+            List<String> fileNames = (List<String>) payload[2];
+            String categoryName = (String) payload[3];
+
+            // 2. Xử lý lưu các ảnh vật lý vào ổ cứng Server
+            for (int i = 0; i < imagesBytes.size(); i++) {
+                // Lưu ảnh và nhận về đường dẫn tương đối (vd: /items/abc.jpg)
+                String dbPath = ImageService.saveImage(imagesBytes.get(i), fileNames.get(i));
+
+                // Tạo đối tượng ItemImage tương ứng
+                ItemImage itemImg = new ItemImage();
+                itemImg.setUrlImage(dbPath);
+                itemImg.setDefault(i == 0); // Ảnh đầu tiên làm ảnh mặc định
+
+                item.addImages(itemImg); // Thêm vào list trong Item
+            }
+
+            // 3. Tìm Category object từ Database bằng tên
+            Category category = CategoryDao.getCategoryByName(categoryName);
+            if (category != null) {
+                item.addCategories(category);
+            }
+
+            // 4. Gọi ItemDao để lưu trọn bộ Item (bao gồm cả ảnh và category) vào DB
+            // Hàm addItem của bạn đã có Transaction (Rollback) nên cực kỳ an toàn
+            boolean isSuccess = ItemDao.addItem(item);
+
+            if (isSuccess) {
+                msg.setStatus("SUCCESS");
+                System.out.println("Đã thêm sản phẩm mới: " + item.getName());
+            } else {
+                msg.setStatus("FAILED");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            msg.setStatus("SERVER_ERROR");
+        }
+
+        // 5. Trả phản hồi về cho Client
         out.writeObject(msg);
         out.flush();
     }
