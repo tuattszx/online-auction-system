@@ -118,7 +118,7 @@ public class RegisterController {
         registerVbox.setDisable(false);
     }
     @FXML
-    public void onBackToLoginClick(MouseEvent event){
+    public void onBackToLoginClick(ActionEvent event){
         ViewManager.switchScene(event, "login-view.fxml", "Hệ thống Đấu giá - Đăng nhập");
     }
     public void changeImage(String newPath) {
