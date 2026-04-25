@@ -2,133 +2,159 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
-<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.PasswordField?>
-<?import javafx.scene.control.ProgressIndicator?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane style="-fx-background-color: #F0F2F5;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auction.client.controllers.RegisterController">
-    <center>
-        <StackPane fx:id="centerContainer" prefHeight="650.0" prefWidth="950.0" style="-fx-background-color: #6C63FF;">
+<AnchorPane prefHeight="800.0" prefWidth="1200.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auction.client.controllers.MainViewController">
+    <children>
+        <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <children>
-                <HBox maxHeight="550.0" maxWidth="850.0" prefHeight="550.0" prefWidth="850.0" style="-fx-background-color: white; -fx-background-radius: 30; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.15), 30, 0, 0, 10);">
+                <HBox alignment="CENTER_LEFT" prefHeight="80.0" spacing="15.0" style="-fx-background-color: white; -fx-border-color: #eee; -fx-border-width: 0 0 1 0;">
+                    <padding>
+                        <Insets left="20.0" right="20.0" />
+                    </padding>
                     <children>
-
-                        <StackPane prefWidth="380.0" HBox.hgrow="ALWAYS">
+                        <VBox alignment="CENTER" prefWidth="70.0">
                             <children>
-                                <VBox style="-fx-background-color: linear-gradient(to bottom right, #6C63FF, #4B45B2); -fx-background-radius: 30 0 0 30;" />
-
-                                <ImageView fitHeight="550.0" fitWidth="380.0" pickOnBounds="true" preserveRatio="false">
-                                    <image>
-                                        <Image url="@../img/waves_pattern.jpg" />
-                                    </image>
-                                    <clip>
-                                        <Rectangle arcHeight="60.0" arcWidth="60.0" height="550.0" width="410.0" x="0.0" y="0.0" />
-                                    </clip>
+                                <ImageView fitHeight="40.0" fitWidth="40.0" onMouseClicked="#OnMouseBacktoMain" pickOnBounds="true" preserveRatio="true">
+                                    <image><Image url="@../img/logo-uet.jpg" /></image>
+                                    <cursor><Cursor fx:constant="HAND" /></cursor>
                                 </ImageView>
-
-                                <VBox alignment="CENTER" spacing="25.0">
-                                    <children>
-                                        <Label text="Get Started" textFill="WHITE">
-                                            <font>
-                                                <Font name="System Bold" size="42.0" />
-                                            </font>
-                                        </Label>
-                                        <Label text="Already have an account?" textFill="#efefff" />
-                                        <Button mnemonicParsing="false" onAction="#onBackToLoginClick" prefHeight="42.0" prefWidth="160.0" style="-fx-background-color: transparent; -fx-border-color: white; -fx-border-radius: 25; -fx-border-width: 2;" text="Log in" textFill="WHITE">
-                                            <font>
-                                                <Font name="System Bold" size="15.0" />
-                                            </font>
-                                            <cursor>
-                                                <Cursor fx:constant="HAND" />
-                                            </cursor>
-                                        </Button>
-                                    </children>
-                                </VBox>
+                                <Label text="AUCTION" textFill="#0052ff" style="-fx-font-weight: bold; -fx-font-size: 11px;" />
                             </children>
-                        </StackPane>
-
-                        <VBox fx:id="registerVbox" alignment="CENTER_LEFT" prefHeight="550.0" prefWidth="470.0" spacing="12.0">
-                            <children>
-                                <Label text="Create account" textFill="#6C63FF">
-                                    <font>
-                                        <Font name="System Bold" size="30.0" />
-                                    </font>
-                                    <VBox.margin>
-                                        <Insets bottom="15.0" />
-                                    </VBox.margin>
-                                </Label>
-
-                                <Label text="Username" textFill="#555555" />
-                                <TextField fx:id="txtUserName" prefHeight="45.0" promptText="Enter your username" style="-fx-background-color: #F8F9FA; -fx-background-radius: 10; -fx-border-color: #E9ECEF; -fx-border-radius: 10;" />
-
-                                <Label text="Full Name" textFill="#555555" />
-                                <TextField fx:id="txtFullName" prefHeight="45.0" promptText="Enter your full name" style="-fx-background-color: #F8F9FA; -fx-background-radius: 10; -fx-border-color: #E9ECEF; -fx-border-radius: 10;" />
-
-                                <HBox spacing="15.0">
-                                    <children>
-                                        <VBox spacing="5.0" HBox.hgrow="ALWAYS">
-                                            <children>
-                                                <Label text="Email" textFill="#555555" />
-                                                <TextField fx:id="txtEmail" prefHeight="45.0" promptText="Email" style="-fx-background-color: #F8F9FA; -fx-background-radius: 10; -fx-border-color: #E9ECEF; -fx-border-radius: 10;" />
-                                            </children>
-                                        </VBox>
-                                        <VBox spacing="5.0" HBox.hgrow="ALWAYS">
-                                            <children>
-                                                <Label text="Phone" textFill="#555555" />
-                                                <TextField fx:id="txtphonenumber" prefHeight="45.0" promptText="Phone" style="-fx-background-color: #F8F9FA; -fx-background-radius: 10; -fx-border-color: #E9ECEF; -fx-border-radius: 10;" />
-                                            </children>
-                                        </VBox>
-                                    </children>
-                                </HBox>
-
-                                <HBox spacing="15.0">
-                                    <children>
-                                        <VBox spacing="5.0" HBox.hgrow="ALWAYS">
-                                            <children>
-                                                <Label text="Password" textFill="#555555" />
-                                                <PasswordField fx:id="txtPassword" prefHeight="45.0" promptText="Password" style="-fx-background-color: #F8F9FA; -fx-background-radius: 10; -fx-border-color: #E9ECEF; -fx-border-radius: 10;" />
-                                            </children>
-                                        </VBox>
-                                        <VBox spacing="5.0" HBox.hgrow="ALWAYS">
-                                            <children>
-                                                <Label text="Confirm" textFill="#555555" />
-                                                <PasswordField fx:id="txtRePassword" prefHeight="45.0" promptText="Confirm" style="-fx-background-color: #F8F9FA; -fx-background-radius: 10; -fx-border-color: #E9ECEF; -fx-border-radius: 10;" />
-                                            </children>
-                                        </VBox>
-                                    </children>
-                                </HBox>
-
-                                <Button alignment="CENTER" mnemonicParsing="false" onAction="#onSignupButtonClick" prefHeight="50.0" prefWidth="Infinity" style="-fx-background-color: #6C63FF; -fx-background-radius: 12;" text="Sign up" textFill="WHITE">
-                                    <font>
-                                        <Font name="System Bold" size="18.0" />
-                                    </font>
-                                    <VBox.margin>
-                                        <Insets top="20.0" />
-                                    </VBox.margin>
-                                    <cursor>
-                                        <Cursor fx:constant="HAND" />
-                                    </cursor>
-                                </Button>
-                            </children>
-                            <padding>
-                                <Insets left="50.0" right="50.0" />
-                            </padding>
                         </VBox>
+
+                        <MenuButton mnemonicParsing="false" style="-fx-background-color: white; -fx-font-weight: bold;" text="Categories">
+                            <items>
+                                <MenuItem text="Art" /><MenuItem text="Watches" />
+                            </items>
+                        </MenuButton>
+
+                        <HBox alignment="CENTER_LEFT" maxHeight="40.0" prefWidth="450.0" style="-fx-background-color: #f1f3f5; -fx-background-radius: 20; -fx-border-color: #ddd; -fx-border-radius: 20;" HBox.hgrow="ALWAYS">
+                            <children>
+                                <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
+                                    <image><Image url="@../img/search-icon-png-11.png" /></image>
+                                    <HBox.margin><Insets left="12.0" /></HBox.margin>
+                                </ImageView>
+                                <TextField fx:id="txtsearch" promptText="Search for items..." style="-fx-background-color: transparent; -fx-border-color: transparent;" HBox.hgrow="ALWAYS" />
+                            </children>
+                        </HBox>
+
+                        <Region HBox.hgrow="ALWAYS" />
+
+                        <Label fx:id="lbsell" onMouseClicked="#onSellerClick" text="Sell" textFill="#0052ff" style="-fx-font-weight: bold; -fx-cursor: hand;">
+                            <font><Font size="14.0" /></font>
+                        </Label>
+
+                        <VBox alignment="CENTER_RIGHT">
+                            <Label text="Balance" textFill="#888" style="-fx-font-size: 10px;" />
+                            <Label fx:id="lbbalance" text="1.000.000$" style="-fx-font-weight: bold;" />
+                        </VBox>
+
+                        <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" style="-fx-cursor: hand;">
+                            <image><Image url="@../img/chuong.jpg" /></image>
+                        </ImageView>
+
+                        <HBox alignment="CENTER" spacing="8" style="-fx-cursor: hand;" onMouseClicked="#onProfileClick">
+                            <children>
+                                <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
+                                    <image><Image url="@../img/pngtree-blue-user-icon-profile-and-account-vector-design-vector-sign-vector-png-image_46129432.jpg" /></image>
+                                </ImageView>
+                                <Label fx:id="lbusername" text="Huyền" style="-fx-font-weight: bold;" />
+                            </children>
+                        </HBox>
+                    </children>
+                </HBox>
+                <StackPane alignment="CENTER_RIGHT" prefHeight="80.0" style="-fx-background-color: white; -fx-border-color: #eee; -fx-border-width: 0 0 1 0;">
+                    <children>
+                        <ScrollPane fx:id="scrollCategories" fitToHeight="true" hbarPolicy="NEVER" vbarPolicy="NEVER" style="-fx-background-color: transparent; -fx-background: white;">
+                            <content>
+                                <HBox alignment="CENTER_LEFT" spacing="40.0" style="-fx-background-color: white; -fx-padding: 0 50 0 50;">
+                                    <children>
+                                        <VBox alignment="CENTER" minWidth="80.0" spacing="5" style="-fx-border-color: #0052ff; -fx-border-width: 0 0 3 0; -fx-cursor: hand;">
+                                            <children>
+                                                <Label text="⚖" style="-fx-font-size: 20px;" textFill="#0052ff" />
+                                                <Label text="This week" style="-fx-font-weight: bold;" textFill="#0052ff" />
+                                            </children>
+                                        </VBox>
+                                        <VBox alignment="CENTER" minWidth="80.0" spacing="5" style="-fx-cursor: hand;"><children><Label text="✨" style="-fx-font-size: 20px;" /><Label text="For you" /></children></VBox>
+                                        <VBox alignment="CENTER" minWidth="80.0" spacing="5" style="-fx-cursor: hand;"><children><Label text="🔥" style="-fx-font-size: 20px;" /><Label text="Trending" /></children></VBox>
+                                        <VBox alignment="CENTER" minWidth="80.0" spacing="5" style="-fx-cursor: hand;"><children><Label text="🖼" style="-fx-font-size: 20px;" /><Label text="Art" /></children></VBox>
+                                        <VBox alignment="CENTER" minWidth="80.0" spacing="5" style="-fx-cursor: hand;"><children><Label text="🛋" style="-fx-font-size: 20px;" /><Label text="Interiors" /></children></VBox>
+                                        <VBox alignment="CENTER" minWidth="80.0" spacing="5" style="-fx-cursor: hand;"><children><Label text="💎" style="-fx-font-size: 20px;" /><Label text="Jewellery" /></children></VBox>
+                                        <VBox alignment="CENTER" minWidth="80.0" spacing="5" style="-fx-cursor: hand;"><children><Label text="⌚" style="-fx-font-size: 20px;" /><Label text="Watches" /></children></VBox>
+                                        <VBox alignment="CENTER" minWidth="80.0" spacing="5" style="-fx-cursor: hand;"><children><Label text="👜" style="-fx-font-size: 20px;" /><Label text="Fashion" /></children></VBox>
+                                        <VBox alignment="CENTER" minWidth="80.0" spacing="5" style="-fx-cursor: hand;"><children><Label text="🪙" style="-fx-font-size: 20px;" /><Label text="Coins" /></children></VBox>
+                                        <VBox alignment="CENTER" minWidth="80.0" spacing="5" style="-fx-cursor: hand;"><children><Label text="🚗" style="-fx-font-size: 20px;" /><Label text="Cars" /></children></VBox>
+                                        <VBox alignment="CENTER" minWidth="80.0" spacing="5" style="-fx-cursor: hand;"><children><Label text="🍷" style="-fx-font-size: 20px;" /><Label text="Wine" /></children></VBox>
+                                    </children>
+                                </HBox>
+                            </content>
+                        </ScrollPane>
+
+                        <HBox alignment="CENTER_RIGHT" mouseTransparent="true" pickOnBounds="false">
+                            <children>
+                                <StackPane onMouseClicked="#scrollRight" prefWidth="50.0" style="-fx-background-color: linear-gradient(to right, rgba(255,255,255,0), white); -fx-cursor: hand;">
+                                    <children>
+                                        <Label text="▶" textFill="#0052ff" style="-fx-font-size: 18px; -fx-padding: 0 10 0 0;" />
+                                    </children>
+                                </StackPane>
+                            </children>
+                        </HBox>
+                    </children>
+                </StackPane>
+                <HBox alignment="CENTER_LEFT" prefHeight="60.0" spacing="15.0" style="-fx-background-color: #f8f9fa;">
+                    <padding><Insets left="25.0" right="25.0" /></padding>
+                    <children>
+                        <Label text="Sắp xếp theo:" style="-fx-font-weight: bold;" textFill="#555" />
+                        <ComboBox fx:id="sortPrice" promptText="Giá tiền" prefHeight="35.0" prefWidth="150.0" style="-fx-background-color: white; -fx-border-color: #ddd; -fx-border-radius: 5;" />
+                        <ComboBox fx:id="sortTime" promptText="Thời gian" prefHeight="35.0" prefWidth="150.0" style="-fx-background-color: white; -fx-border-color: #ddd; -fx-border-radius: 5;" />
+                        <Region HBox.hgrow="ALWAYS" />
+                        <Label text="Tất cả sản phẩm" textFill="#999" />
                     </children>
                 </HBox>
 
-                <ProgressIndicator fx:id="loadingIndicator" maxHeight="60.0" maxWidth="60.0" visible="false" />
+                <ScrollPane fitToWidth="true" style="-fx-background-color: #f1f3f5; -fx-background: #f1f3f5;" VBox.vgrow="ALWAYS">
+                    <content>
+                        <FlowPane fx:id="flitems" hgap="20.0" vgap="25.0" style="-fx-padding: 25;">
+                            <children>
+                                <VBox onMouseClicked="#onItemClick" prefWidth="260.0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5); -fx-cursor: hand;">
+                                    <children>
+                                        <StackPane>
+                                            <children>
+                                                <ImageView fitHeight="180.0" fitWidth="260.0" pickOnBounds="true" preserveRatio="false" style="-fx-background-radius: 10 10 0 0;">
+                                                    <image><Image url="@../img/images.jpg" /></image>
+                                                </ImageView>
+                                                <Label text="❤" StackPane.alignment="TOP_RIGHT" style="-fx-background-color: white; -fx-background-radius: 20; -fx-padding: 5; -fx-translate-x: -10; -fx-translate-y: 10;" />
+                                            </children>
+                                        </StackPane>
+                                        <VBox spacing="8.0" style="-fx-padding: 15;">
+                                            <children>
+                                                <Label fx:id="itemName" text="Product Name Example" style="-fx-font-weight: bold; -fx-font-size: 14px;" wrapText="true" />
+                                                <Label fx:id="itemPrice" text="Current Bid: $1,200" textFill="#0052ff" style="-fx-font-weight: bold;" />
+                                                <Label text="2d 04h left" textFill="#888" style="-fx-font-size: 11px;" />
+                                            </children>
+                                        </VBox>
+                                    </children>
+                                </VBox>
+                            </children>
+                        </FlowPane>
+                    </content>
+                </ScrollPane>
             </children>
-        </StackPane>
-    </center>
-</BorderPane>
+        </VBox>
+    </children>
+</AnchorPane>

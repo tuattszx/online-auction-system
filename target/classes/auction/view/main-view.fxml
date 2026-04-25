@@ -1,151 +1,177 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
 <?import javafx.scene.control.ComboBox?>
-<?import javafx.collections.FXCollections?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.shape.*?>
-<?import java.net.URL?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<?import java.lang.*?>
-<AnchorPane prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auction.client.controllers.MainViewController">
-   <stylesheets>
-      <URL value="@../css/style.css" />
-   </stylesheets>
+<AnchorPane prefHeight="800.0" prefWidth="1200.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auction.client.controllers.MainViewController">
    <children>
       <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <HBox alignment="CENTER_LEFT" prefHeight="70.0" spacing="20.0" styleClass="navbar">
+            <HBox alignment="CENTER_LEFT" maxHeight="100.0" minWidth="100.0" prefHeight="100.0" prefWidth="1200.0" spacing="15.0" style="-fx-background-color: white; -fx-border-color: #eee; -fx-border-width: 0 0 1 0;">
                <padding>
-                  <Insets left="20" right="20" />
+                  <Insets left="20.0" right="20.0" />
                </padding>
                <children>
-                  <Label text="UET AUCTION" styleClass="logo-text" />
-
-                  <Region prefWidth="10.0" />
-
-                  <HBox alignment="CENTER" spacing="0" HBox.hgrow="ALWAYS" maxWidth="650.0">
+                  <VBox alignment="CENTER" prefWidth="70.0">
                      <children>
-                        <MenuButton fx:id="categoryMenu" text="Danh mục" styleClass="category-menu">
-                           <items>
-                              <MenuItem text="Bất động sản" />
-                              <MenuItem text="Xe cộ" />
-                              <MenuItem text="Đồ cổ &amp; Sưu tầm" />
-                              <MenuItem text="Công nghệ" />
-                           </items>
-                        </MenuButton>
-
-                        <TextField fx:id="txtsearch" promptText="Tìm kiếm sản phẩm đấu giá..." styleClass="search-field" HBox.hgrow="ALWAYS" />
-
-                        <Button onAction="#onSearchAction" text="🔍" styleClass="search-button" />
+                        <ImageView fitHeight="64.0" fitWidth="84.0" onMouseClicked="#OnMouseBacktoMain" pickOnBounds="true" preserveRatio="true">
+                           <image><Image url="@../img/logo-uet.jpg" /></image>
+                           <cursor><Cursor fx:constant="HAND" /></cursor>
+                        </ImageView>
                      </children>
-                  </HBox>
-
-                  <Region HBox.hgrow="ALWAYS" />
-
-                  <VBox alignment="CENTER_RIGHT" spacing="2">
-                     <Label text="Số dư khả dụng" styleClass="balance-label" />
-                     <Label fx:id="lbbalance" text="1.000.000$" styleClass="balance-amount" />
                   </VBox>
+                  <Region prefHeight="99.0" prefWidth="0.0" HBox.hgrow="ALWAYS" />
 
-                  <HBox alignment="CENTER" spacing="10" onMouseClicked="#onProfileClick" styleClass="profile-container">
+                  <MenuButton mnemonicParsing="false" style="-fx-background-color: white; -fx-font-weight: bold;" text="Categories">
+                     <items>
+                        <MenuItem text="Art" /><MenuItem text="Watches" />
+                     </items>
+                  </MenuButton>
+                  <Region prefHeight="99.0" prefWidth="0.0" HBox.hgrow="ALWAYS" />
+
+                  <HBox alignment="CENTER_LEFT" maxHeight="40.0" prefHeight="40.0" prefWidth="372.0" style="-fx-background-color: #f1f3f5; -fx-background-radius: 20; -fx-border-color: #ddd; -fx-border-radius: 20;">
                      <children>
-                        <StackPane>
-                           <Circle radius="20.0" fill="WHITE" stroke="#ddd" />
-                           <ImageView fx:id="imgAvatar" fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
-                              <image>
-                                 <Image url="@../img/people.jpg" />
-                              </image>
-                           </ImageView>
+                        <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
+                           <image><Image url="@../img/search-icon-png-11.png" /></image>
+                           <HBox.margin><Insets left="12.0" /></HBox.margin>
+                        </ImageView>
+                        <TextField fx:id="txtsearch" prefHeight="28.0" prefWidth="417.0" promptText="Search for items..." style="-fx-background-color: transparent; -fx-border-color: transparent;" />
+                     </children>
+                  </HBox>
+                  <Region prefHeight="99.0" prefWidth="0.0" HBox.hgrow="ALWAYS" />
+
+                  <Label fx:id="lbsell" onMouseClicked="#onSellerClick" style="-fx-font-weight: bold; -fx-cursor: hand;" text="Sell" textFill="#0052ff">
+                     <font><Font size="14.0" /></font>
+                  </Label>
+                  <Region prefHeight="99.0" prefWidth="0.0" HBox.hgrow="ALWAYS" />
+                  <HBox alignment="CENTER" prefHeight="41.0" prefWidth="45.0">
+                     <children>
+                        <ImageView fitHeight="54.0" fitWidth="29.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../img/images.png" />
+                           </image>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </ImageView>
+                     </children>
+                  </HBox>
+                  <Region prefHeight="99.0" prefWidth="0.0" HBox.hgrow="ALWAYS" />
+
+                  <ImageView fitHeight="22.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true" style="-fx-cursor: hand;">
+                     <image><Image url="@../img/chuong.jpg" /></image>
+                  </ImageView>
+                  <Region prefHeight="99.0" prefWidth="0.0" HBox.hgrow="ALWAYS" />
+                  <VBox alignment="CENTER" prefHeight="99.0" prefWidth="128.0">
+                     <children>
+                        <HBox alignment="CENTER">
+                           <children>
+                              <ImageView fitHeight="36.0" fitWidth="36.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../img/pngtree-blue-user-icon-profile-and-account-vector-design-vector-sign-vector-png-image_46129432.jpg" />
+                                 </image>
+                              </ImageView>
+            
+                              <VBox alignment="CENTER">
+                                 <Label style="-fx-font-size: 10px;" text="Balance" textFill="#888" />
+                                 <Label fx:id="lbbalance" prefHeight="17.0" prefWidth="73.0" style="-fx-font-weight: bold;" text="1.000.000$" />
+                              </VBox>
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+
+            <StackPane alignment="CENTER_RIGHT" maxHeight="80.0" prefHeight="80.0" prefWidth="1200.0" style="-fx-background-color: white; -fx-border-color: #eee; -fx-border-width: 0 0 1 0;">
+               <children>
+                  <ScrollPane fx:id="scrollCategories" fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" style="-fx-background-color: transparent; -fx-background: white;" vbarPolicy="NEVER">
+                     <content>
+                        <HBox alignment="CENTER_LEFT" spacing="40.0" style="-fx-background-color: white; -fx-padding: 0 60 0 20;">
+                           <children>
+                              <VBox alignment="CENTER" minWidth="80.0" spacing="5" style="-fx-border-color: #0052ff; -fx-border-width: 0 0 3 0; -fx-cursor: hand;">
+                                 <children>
+                                    <Label style="-fx-font-size: 20px;" text="⚖" textFill="#0052ff" />
+                                    <Label style="-fx-font-weight: bold;" text="This week" textFill="#0052ff" />
+                                 </children>
+                              </VBox>
+                              <VBox alignment="CENTER" minWidth="80.0" spacing="5" style="-fx-cursor: hand;"><children><Label style="-fx-font-size: 20px;" text="✨" /><Label text="For you" /></children></VBox>
+                              <VBox alignment="CENTER" minWidth="80.0" spacing="5" style="-fx-cursor: hand;"><children><Label style="-fx-font-size: 20px;" text="🔥" /><Label text="Trending" /></children></VBox>
+                              <VBox alignment="CENTER" minWidth="80.0" spacing="5" style="-fx-cursor: hand;"><children><Label style="-fx-font-size: 20px;" text="🖼" /><Label text="Art" /></children></VBox>
+                              <VBox alignment="CENTER" minWidth="80.0" spacing="5" style="-fx-cursor: hand;"><children><Label style="-fx-font-size: 20px;" text="🛋" /><Label text="Interiors" /></children></VBox>
+                              <VBox alignment="CENTER" minWidth="80.0" spacing="5" style="-fx-cursor: hand;"><children><Label style="-fx-font-size: 20px;" text="💎" /><Label text="Jewellery" /></children></VBox>
+                              <VBox alignment="CENTER" minWidth="80.0" spacing="5" style="-fx-cursor: hand;"><children><Label style="-fx-font-size: 20px;" text="⌚" /><Label text="Watches" /></children></VBox>
+                              <VBox alignment="CENTER" minWidth="80.0" spacing="5" style="-fx-cursor: hand;"><children><Label style="-fx-font-size: 20px;" text="👜" /><Label text="Fashion" /></children></VBox>
+                              <VBox alignment="CENTER" minWidth="80.0" spacing="5" style="-fx-cursor: hand;"><children><Label style="-fx-font-size: 20px;" text="🪙" /><Label text="Coins" /></children></VBox>
+                              <VBox alignment="CENTER" minWidth="80.0" spacing="5" style="-fx-cursor: hand;"><children><Label style="-fx-font-size: 20px;" text="🚗" /><Label text="Cars" /></children></VBox>
+                              <VBox alignment="CENTER" minWidth="80.0" spacing="5" style="-fx-cursor: hand;"><children><Label style="-fx-font-size: 20px;" text="🍷" /><Label text="Wine" /></children></VBox>
+                              <VBox alignment="CENTER" minWidth="80.0" spacing="5" style="-fx-cursor: hand;"><children><Label style="-fx-font-size: 20px;" text="📚" /><Label text="Books" /></children></VBox>
+                           </children>
+                        </HBox>
+                     </content>
+                  </ScrollPane>
+
+                  <HBox alignment="CENTER_RIGHT" maxHeight="80.0" minHeight="80.0" pickOnBounds="false" prefHeight="80.0" prefWidth="1200.0">
+                     <children>
+                        <StackPane mouseTransparent="false" onMouseClicked="#scrollRight" pickOnBounds="true" prefWidth="60.0" style="-fx-background-color: linear-gradient(to right, rgba(255,255,255,0), white); -fx-cursor: hand;">
+                           <children>
+                              <Label style="-fx-font-size: 18px; -fx-padding: 0 15 0 0; -fx-font-weight: bold;" text="▶" textFill="#0052ff" />
+                           </children>
                         </StackPane>
-                        <Label text="TViu" fx:id="lbusername" styleClass="username-text" />
                      </children>
                   </HBox>
                </children>
-            </HBox>
+            </StackPane>
 
-            <HBox alignment="CENTER_LEFT" prefHeight="50.0" spacing="15.0" style="-fx-background-color: #ffffff; -fx-border-color: #e0e0e0; -fx-border-width: 0 0 1 0;">
-               <padding>
-                  <Insets left="30" right="30" />
-               </padding>
+            <HBox alignment="CENTER_LEFT" prefHeight="60.0" spacing="15.0" style="-fx-background-color: #f8f9fa;">
+               <padding><Insets left="25.0" right="25.0" /></padding>
                <children>
-                  <Label text="Sắp xếp theo:" style="-fx-font-weight: bold; -fx-text-fill: #555;" />
-
-                  <ComboBox fx:id="sortPrice" promptText="Giá tiền" styleClass="sort-combo"> </ComboBox>
-                  <ComboBox fx:id="sortTime" promptText="Thời gian" styleClass="sort-combo"> </ComboBox>
-
+                  <Label style="-fx-font-weight: bold;" text="Sort by:" textFill="#555" />
+                  <ComboBox fx:id="sortPrice" prefHeight="35.0" prefWidth="150.0" promptText="price" style="-fx-background-color: white; -fx-border-color: #ddd; -fx-border-radius: 5;" />
+                  <ComboBox fx:id="sortTime" prefHeight="35.0" prefWidth="150.0" promptText="time" style="-fx-background-color: white; -fx-border-color: #ddd; -fx-border-radius: 5;" />
                   <Region HBox.hgrow="ALWAYS" />
-
-                  <Label text="Đang diễn ra: 10 sản phẩm" style="-fx-text-fill: #888; -fx-font-style: italic;" />
+                  <Label text="Tất cả sản phẩm" textFill="#999" />
                </children>
             </HBox>
 
-            <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" style="-fx-background-color: transparent; -fx-background: #f4f4f4;">
+            <ScrollPane fitToWidth="true" style="-fx-background-color: #f1f3f5; -fx-background: #f1f3f5;" VBox.vgrow="ALWAYS">
                <content>
-                  <FlowPane fx:id="flitems"
-                            alignment="CENTER"
-                            hgap="25"
-                            vgap="25"
-                            style="-fx-padding: 30;">
-                     <padding><Insets top="30" right="30" bottom="30" left="30" /></padding>
+                  <FlowPane fx:id="flitems" alignment="TOP_CENTER" columnHalignment="CENTER" hgap="20.0" style="-fx-padding: 25;" vgap="25.0">
                      <children>
-
-                        <fx:define>
-                           <VBox fx:id="itemTemplate" alignment="CENTER" prefHeight="220.0" prefWidth="180.0" styleClass="auction-card">
-                              <children>
-                                 <ImageView fitHeight="120.0" fitWidth="160.0" pickOnBounds="true" preserveRatio="true">
-                                    <image><Image url="@../img/images.jpg" /></image>
-                                 </ImageView>
-                                 <Label text="Anya Forger Limited" styleClass="item-name" />
-                                 <Label text="Giá: 10.000.000$" styleClass="item-price" />
-                                 <Button text="Đấu giá ngay" styleClass="bid-button-small" />
-                              </children>
-                           </VBox>
-                        </fx:define>
-
-                        <VBox onMouseClicked="#onItemClick" styleClass="auction-card" alignment="CENTER" prefHeight="220.0" prefWidth="180.0">
-                           <ImageView fitHeight="120.0" fitWidth="160.0" pickOnBounds="true" preserveRatio="true"><image><Image url="@../img/images.jpg" /></image></ImageView>
-                           <Label text="Sản phẩm 1" styleClass="item-name" /><Label text="10.000.000$" styleClass="item-price" /><Button text="Đấu giá" styleClass="bid-button-small" />
+                        <VBox onMouseClicked="#onItemClick" prefWidth="260.0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5); -fx-cursor: hand;">
+                           <children>
+                              <StackPane>
+                                 <children>
+                                    <ImageView fitHeight="180.0" fitWidth="260.0" pickOnBounds="true" preserveRatio="false" style="-fx-background-radius: 10 10 0 0;">
+                                       <image><Image url="@../img/images.jpg" /></image>
+                                    </ImageView>
+                                    <Label style="-fx-background-color: white; -fx-background-radius: 20; -fx-padding: 5; -fx-translate-x: -10; -fx-translate-y: 10;" text="❤" StackPane.alignment="TOP_RIGHT" />
+                                 </children>
+                              </StackPane>
+                              <VBox spacing="8.0" style="-fx-padding: 15;">
+                                 <children>
+                                    <Label fx:id="itemName" style="-fx-font-weight: bold; -fx-font-size: 14px;" text="Product Name Example" wrapText="true" />
+                                    <Label fx:id="itemPrice" style="-fx-font-weight: bold;" text="Current Bid: $1,200" textFill="#0052ff" />
+                                    <Label style="-fx-font-size: 11px;" text="2d 04h left" textFill="#888" />
+                                 </children>
+                              </VBox>
+                           </children>
                         </VBox>
-                        <VBox onMouseClicked="#onItemClick" styleClass="auction-card" alignment="CENTER" prefHeight="220.0" prefWidth="180.0">
-                           <ImageView fitHeight="120.0" fitWidth="160.0" pickOnBounds="true" preserveRatio="true"><image><Image url="@../img/images.jpg" /></image></ImageView>
-                           <Label text="Sản phẩm 2" styleClass="item-name" /><Label text="10.000.000$" styleClass="item-price" /><Button text="Đấu giá" styleClass="bid-button-small" />
-                        </VBox>
-                        <VBox onMouseClicked="#onItemClick" styleClass="auction-card" alignment="CENTER" prefHeight="220.0" prefWidth="180.0">
-                           <ImageView fitHeight="120.0" fitWidth="160.0" pickOnBounds="true" preserveRatio="true"><image><Image url="@../img/images.jpg" /></image></ImageView>
-                           <Label text="Sản phẩm 3" styleClass="item-name" /><Label text="10.000.000$" styleClass="item-price" /><Button text="Đấu giá" styleClass="bid-button-small" />
-                        </VBox>
-                        <VBox onMouseClicked="#onItemClick" styleClass="auction-card" alignment="CENTER" prefHeight="220.0" prefWidth="180.0">
-                           <ImageView fitHeight="120.0" fitWidth="160.0" pickOnBounds="true" preserveRatio="true"><image><Image url="@../img/images.jpg" /></image></ImageView>
-                           <Label text="Sản phẩm 4" styleClass="item-name" /><Label text="10.000.000$" styleClass="item-price" /><Button text="Đấu giá" styleClass="bid-button-small" />
-                        </VBox>
-                        <VBox onMouseClicked="#onItemClick" styleClass="auction-card" alignment="CENTER" prefHeight="220.0" prefWidth="180.0">
-                           <ImageView fitHeight="120.0" fitWidth="160.0" pickOnBounds="true" preserveRatio="true"><image><Image url="@../img/images.jpg" /></image></ImageView>
-                           <Label text="Sản phẩm 5" styleClass="item-name" /><Label text="10.000.000$" styleClass="item-price" /><Button text="Đấu giá" styleClass="bid-button-small" />
-                        </VBox>
-                        <VBox onMouseClicked="#onItemClick" styleClass="auction-card" alignment="CENTER" prefHeight="220.0" prefWidth="180.0">
-                           <ImageView fitHeight="120.0" fitWidth="160.0" pickOnBounds="true" preserveRatio="true"><image><Image url="@../img/images.jpg" /></image></ImageView>
-                           <Label text="Sản phẩm 6" styleClass="item-name" /><Label text="10.000.000$" styleClass="item-price" /><Button text="Đấu giá" styleClass="bid-button-small" />
-                        </VBox>
-                        <VBox onMouseClicked="#onItemClick" styleClass="auction-card" alignment="CENTER" prefHeight="220.0" prefWidth="180.0">
-                           <ImageView fitHeight="120.0" fitWidth="160.0" pickOnBounds="true" preserveRatio="true"><image><Image url="@../img/images.jpg" /></image></ImageView>
-                           <Label text="Sản phẩm 7" styleClass="item-name" /><Label text="10.000.000$" styleClass="item-price" /><Button text="Đấu giá" styleClass="bid-button-small" />
-                        </VBox>
-                        <VBox onMouseClicked="#onItemClick" styleClass="auction-card" alignment="CENTER" prefHeight="220.0" prefWidth="180.0">
-                           <ImageView fitHeight="120.0" fitWidth="160.0" pickOnBounds="true" preserveRatio="true"><image><Image url="@../img/images.jpg" /></image></ImageView>
-                           <Label text="Sản phẩm 8" styleClass="item-name" /><Label text="10.000.000$" styleClass="item-price" /><Button text="Đấu giá" styleClass="bid-button-small" />
-                        </VBox>
-                        <VBox onMouseClicked="#onItemClick" styleClass="auction-card" alignment="CENTER" prefHeight="220.0" prefWidth="180.0">
-                           <ImageView fitHeight="120.0" fitWidth="160.0" pickOnBounds="true" preserveRatio="true"><image><Image url="@../img/images.jpg" /></image></ImageView>
-                           <Label text="Sản phẩm 9" styleClass="item-name" /><Label text="10.000.000$" styleClass="item-price" /><Button text="Đấu giá" styleClass="bid-button-small" />
-                        </VBox>
-                        <VBox onMouseClicked="#onItemClick" styleClass="auction-card" alignment="CENTER" prefHeight="220.0" prefWidth="180.0">
-                           <ImageView fitHeight="120.0" fitWidth="160.0" pickOnBounds="true" preserveRatio="true"><image><Image url="@../img/images.jpg" /></image></ImageView>
-                           <Label text="Sản phẩm 10" styleClass="item-name" /><Label text="10.000.000$" styleClass="item-price" /><Button text="Đấu giá" styleClass="bid-button-small" />
-                        </VBox>
-
                      </children>
                   </FlowPane>
                </content>

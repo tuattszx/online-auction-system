@@ -388,3 +388,66 @@
     /* Hiệu ứng phát sáng khi click vào */
     -fx-effect: dropshadow(three-pass-box, rgba(0, 210, 255, 0.5), 10, 0, 0, 0);
 }
+/* Màu chủ đạo xanh Catawiki */
+.cat-btn {
+    -fx-background-color: transparent;
+    -fx-text-fill: #333;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-border-color: transparent;
+    -fx-border-width: 0 0 2 0;
+}
+.cat-btn:hover {
+    -fx-text-fill: #003adb;
+    -fx-border-color: #003adb;
+}
+
+/* Thẻ sản phẩm */
+.auction-card {
+    -fx-background-color: white;
+    -fx-background-radius: 10;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);
+    -fx-cursor: hand;
+    -fx-transition: all 0.2s;
+}
+.auction-card:hover {
+    -fx-translate-y: -5;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.15), 15, 0, 0, 10);
+}
+
+.card-image {
+    /* Bo góc trên của ảnh */
+    -fx-clip: rect(0, 240, 160, 0);
+}
+
+.item-name {
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-text-fill: #333;
+}
+
+.item-price {
+    -fx-text-fill: #003adb;
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+}
+
+.item-time {
+    -fx-text-fill: #888;
+    -fx-font-size: 11px;
+}
+
+.fav-heart {
+    -fx-background-color: white;
+    -fx-background-radius: 20;
+    -fx-padding: 5;
+    -fx-translate-x: -10;
+    -fx-translate-y: 10;
+}
+
+.sort-combo {
+    -fx-background-color: white;
+    -fx-border-color: #ddd;
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+}
