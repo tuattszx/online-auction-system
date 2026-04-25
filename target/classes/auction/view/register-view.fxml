@@ -16,7 +16,7 @@
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane style="-fx-background-color: #F0F2F5;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auction.client.controllers.RegisterController">
+<BorderPane style="-fx-background-color: #F0F2F5;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auction.client.controllers.RegisterController" stylesheets="@../css/style.css">
    <center>
       <StackPane fx:id="centerContainer" prefHeight="650.0" prefWidth="950.0" style="-fx-background-color: #6C63FF;">
          <children>
@@ -44,7 +44,7 @@
                                  </font>
                               </Label>
                               <Label text="Already have an account?" textFill="#efefff" />
-                              <Button mnemonicParsing="false" onAction="#onBackToLoginClick" prefHeight="42.0" prefWidth="160.0" style="-fx-background-color: transparent; -fx-border-color: white; -fx-border-radius: 25; -fx-border-width: 2;" text="Log in" textFill="WHITE">
+                              <Button mnemonicParsing="false" onAction="#onBackToLoginClick" prefHeight="42.0" prefWidth="160.0" style="-fx-background-color: transparent; -fx-border-color: white; -fx-border-radius: 25; -fx-border-width: 2;" text="Log in" textFill="WHITE" styleClass="btn-approve">
                                  <font>
                                     <Font name="System Bold" size="15.0" />
                                  </font>
@@ -109,7 +109,7 @@
                         </HBox>
                         <Label fx:id="lberror" prefHeight="18.0" prefWidth="375.0" style="-fx-text-fill: red;" />
 
-                        <Button alignment="CENTER" mnemonicParsing="false" onAction="#onSignupButtonClick" prefHeight="50.0" prefWidth="Infinity" style="-fx-background-color: #6C63FF; -fx-background-radius: 12;" text="Sign up" textFill="WHITE">
+                        <Button alignment="CENTER" mnemonicParsing="false" onAction="#onSignupButtonClick" prefHeight="50.0" prefWidth="Infinity" style="-fx-background-color: #6C63FF; -fx-background-radius: 12;" text="Sign up" textFill="WHITE" styleClass="btn-approve">
                            <font>
                               <Font name="System Bold" size="18.0" />
                            </font>
