@@ -235,6 +235,8 @@ public class SellerController {
         } catch (Exception e) {
             ViewManager.showAlert(Alert.AlertType.ERROR, "Lỗi hệ thống", e.getMessage());
             e.printStackTrace();
+        }finally {
+            ViewManager.clearCache();
         }
     }
 

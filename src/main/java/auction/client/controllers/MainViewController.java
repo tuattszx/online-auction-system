@@ -60,13 +60,17 @@ public class MainViewController {
         }).start();
     }
 
+    // Trong MainViewController.java
     private void renderItems(List<Item> items) {
-        flitems.getChildren().clear(); // Xóa sạch các item cũ/mẫu
-        if (items != null) {
-            for (Item item : items) {
-                flitems.getChildren().add(createItemCard(item));
+        // Rất quan trọng: Xóa sạch các thẻ sản phẩm cũ/mẫu trong FlowPane
+        Platform.runLater(() -> {
+            flitems.getChildren().clear();
+            if (items != null) {
+                for (Item item : items) {
+                    flitems.getChildren().add(createItemCard(item));
+                }
             }
-        }
+        });
     }
 
     private VBox createItemCard(Item item) {
