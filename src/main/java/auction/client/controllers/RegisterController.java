@@ -16,6 +16,8 @@ import javafx.event.ActionEvent;
 
 public class RegisterController {
     @FXML
+    private Label lberror;
+    @FXML
     private  TextField txtUserName;
     @FXML
     private  TextField txtFullName;
@@ -46,7 +48,8 @@ public class RegisterController {
         // 2. Kiểm tra dữ liệu tại chỗ (Client-side validation)
         String errorMsg = validateInput(newUser, txtRePassword.getText().trim());
         if (errorMsg != null) {
-            ViewManager.showAlert(Alert.AlertType.ERROR, "Lỗi đăng ký", errorMsg);
+           // ViewManager.showAlert(Alert.AlertType.ERROR, "Lỗi đăng ký", errorMsg);
+            lberror.setText(errorMsg);
             return; // Thoát sớm nếu dữ liệu nhập sai
         }
 
