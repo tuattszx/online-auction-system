@@ -52,6 +52,23 @@ public class ImageService {
         return dbPath;
     }
 
+    public static byte[] readImageBytes(String dbPath) {
+        try {
+            if (dbPath == null || dbPath.isEmpty()) return null;
+
+            // dbPath có dạng "/items/item-123.jpg" -> lấy "item-123.jpg"
+            String fileName = dbPath.replace("/items/", "");
+            Path targetPath = Paths.get(STORAGE_PATH, fileName);
+
+            if (Files.exists(targetPath)) {
+                return Files.readAllBytes(targetPath);
+            }
+        } catch (IOException e) {
+            System.err.println("Lỗi khi đọc file ảnh: " + e.getMessage());
+        }
+        return null;
+    }
+
     public static void deleteImage(String dbPath) {
         try {
             if (dbPath != null) {
