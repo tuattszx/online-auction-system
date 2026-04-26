@@ -54,7 +54,7 @@ public class MainViewController extends ProfileController {
     private void loadItems() {
 
         flitems.getChildren().clear();
-        for (int i = 0; i < 8; i++) {
+        for (int i = 0; i < 10; i++) {
             flitems.getChildren().add(createSkeletonCard());
         }
 
