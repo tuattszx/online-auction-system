@@ -1,4 +1,5 @@
 package auction.client.controllers;
+import auction.common.model.items.ItemImage;
 import javafx.geometry.Insets;
 import auction.client.ClientNetwork;
 import auction.common.message.Message;
@@ -91,16 +92,37 @@ public class MainViewController extends ProfileController {
 
         // 3. Xử lý Ảnh
         ImageView imgView = new ImageView();
-        try {
-            // Lưu ý: Đảm bảo đường dẫn này chính xác với cấu trúc thư mục của bạn
-            Image image = new Image(getClass().getResourceAsStream("/auction/img/images.jpg"));
-            imgView.setImage(image);
-        } catch (Exception e) {
-            System.err.println("Không tìm thấy ảnh: " + e.getMessage());
-        }
         imgView.setFitHeight(140);
         imgView.setFitWidth(180);
         imgView.setPreserveRatio(false); // Để false nếu muốn ảnh lấp đầy khung hình chữ nhật
+
+        boolean imageLoaded = false;
+        if (item.getImages() != null && !item.getImages().isEmpty()) {
+            // Lấy ảnh mặc định hoặc ảnh đầu tiên trong danh sách
+            ItemImage defaultImg = item.getImages().stream()
+                    .filter(ItemImage::isDefault)
+                    .findFirst()
+                    .orElse(item.getImages().get(0));
+
+            byte[] data = defaultImg.getImageData();
+
+            if (data != null && data.length > 0) {
+                try {
+                    Image img = new Image(new java.io.ByteArrayInputStream(data));
+                    imgView.setImage(img);
+                    imageLoaded = true;
+                } catch (Exception e) {
+                    System.err.println("Lỗi khi chuyển đổi byte[] sang Image: " + e.getMessage());
+                }
+            }
+        }
+        if (!imageLoaded) {
+            try {
+                imgView.setImage(new Image(getClass().getResourceAsStream("/auction/img/images.jpg")));
+            } catch (Exception e) {
+                System.err.println("Không tìm thấy file ảnh mặc định trong resources");
+            }
+        }
 
         // 4. Tên sản phẩm
         Label nameLabel = new Label(item.getName());
