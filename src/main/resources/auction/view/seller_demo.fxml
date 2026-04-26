@@ -234,13 +234,13 @@
                               <ComboBox fx:id="categoryComboBox" prefWidth="Infinity" promptText="Select Category">
                                   <items>
                                       <FXCollections fx:factory="observableArrayList">
-                                          <String fx:value="Bất động sản" />
-                                          <String fx:value="Xe cộ &amp; Phương tiện" />
-                                          <String fx:value="Đồ cổ &amp; Nghệ thuật" />
-                                          <String fx:value="Trang sức &amp; Đá quý" />
-                                          <String fx:value="Thiết bị điện tử" />
-                                          <String fx:value="Sim số đẹp" />
-                                          <String fx:value="Hàng sưu tầm hiếm" />
+                                          <String fx:value="Real Estate" />
+                                          <String fx:value="Vehicles &amp; Transport" />
+                                          <String fx:value="Antiques &amp; Art" />
+                                          <String fx:value="Jewelry &amp; Gemstones" />
+                                          <String fx:value="Electronics" />
+                                          <String fx:value="Nice SIM Number" />
+                                          <String fx:value="Rare Collectibles" />
                                       </FXCollections>
                                   </items>
                               </ComboBox>
