@@ -162,6 +162,17 @@ public class ClientHandler implements Runnable {
     private void handleGetAllItems(Message msg, ObjectOutputStream out) throws IOException {
         try{
             List<Item> items = ItemDao.getAllItems(); // Gọi ItemDao lấy dữ liệu
+
+            for (Item item : items) {
+                if (item.getImages() != null && !item.getImages().isEmpty()) {
+                    for (ItemImage img : item.getImages()) {
+                        // Sử dụng hàm readImageBytes đã viết trong ImageService
+                        byte[] data = ImageService.readImageBytes(img.getUrlImage());
+                        img.setImageData(data); // Gán mảng byte vào model
+                    }
+                }
+            }
+
             msg.setStatus("SUCCESS");
             msg.setData(items);
         }
@@ -171,5 +182,6 @@ public class ClientHandler implements Runnable {
         }
         out.writeObject(msg);
         out.flush();
+        out.reset();
     }
 }

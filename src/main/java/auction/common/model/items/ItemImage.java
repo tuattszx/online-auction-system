@@ -6,6 +6,7 @@ public class ItemImage extends BaseEntity {
     private int itemId;
     private String urlImage;
     private boolean isDefault;
+    private byte[] imageData;
 
     public ItemImage() {
         super();
@@ -26,6 +27,9 @@ public class ItemImage extends BaseEntity {
 
     public boolean isDefault() { return isDefault; }
     public void setDefault(boolean aDefault) { isDefault = aDefault; }
+
+    public byte[] getImageData() { return imageData; }
+    public void setImageData(byte[] imageData) { this.imageData = imageData; }
 
     @Override
     public String toString() {
