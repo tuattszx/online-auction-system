@@ -22,4 +22,6 @@ module auction {
     // Xuất các package cần thiết
     exports auction.client;
     exports auction.client.controllers;
+    exports auction.client.session;
+    opens auction.client.session to javafx.fxml;
 }

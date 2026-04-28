@@ -1,5 +1,6 @@
 package auction.client.controllers;
 import auction.client.ClientNetwork;
+import auction.client.session.DataSession;
 import auction.common.message.Message;
 import auction.common.model.users.User;
 import javafx.collections.FXCollections;
@@ -77,7 +78,7 @@ public class ProfileController  {
         allIndicators = Arrays.asList(accountIndicator, addressesIndicator, paymentIndicator,VeriIndicator,emailIndicator, auctionsIndicator);
         showIndicator(accountIndicator);
         hideAllPanes(paneAccount);
-        User user = UserSession.loggedInUser;
+        User user = DataSession.getInstance().getLoggedInUser();
         // chọn ngôn ngữ trong adress
         ObservableList<String> countries = FXCollections.observableArrayList(
                 "Vietnam", "United States", "Japan", "United Kingdom", "France", "Germany"
@@ -167,7 +168,7 @@ public class ProfileController  {
         };
 
         logoutTask.setOnSucceeded(e -> {
-            UserSession.loggedInUser = null;
+            DataSession.getInstance().clear();
             ViewManager.showAlert(Alert.AlertType.INFORMATION,"Thông báo", "Đăng xuất thành công!");
             ViewManager.clearCache();
             network.close(); // Đóng socket ở phía Client

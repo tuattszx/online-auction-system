@@ -1,4 +1,5 @@
 package auction.client.controllers;
+import auction.client.session.DataSession;
 import auction.common.model.items.ItemImage;
 import javafx.animation.Animation;
 import javafx.animation.FadeTransition;
@@ -250,6 +251,7 @@ public class MainViewController extends ProfileController {
 
         // 8. Sự kiện click vào Card
         card.setOnMouseClicked(event -> {
+            DataSession.getInstance().setSelectedItem(item);
             // Chỉ chuyển cảnh nếu không bấm trúng nút "Đấu giá"
             if (event.getTarget() != bidBtn) {
                 ViewManager.switchScene(event, "item-view.fxml", "Chi tiết");
@@ -260,9 +262,9 @@ public class MainViewController extends ProfileController {
     }
     @FXML
     public void onProfileClick(MouseEvent event) throws IOException {
-        if (UserSession.loggedInUser == null) return;
+        if (DataSession.getInstance().getLoggedInUser() == null) return;
 
-        String view = UserSession.loggedInUser.getRole().equals("ADMIN") ? "admin-view.fxml" : "profile-view.fxml";
+        String view = DataSession.getInstance().getLoggedInUser().getRole().equals("ADMIN") ? "admin-view.fxml" : "profile-view.fxml";
         ViewManager.switchScene(event, view, "Hồ sơ cá nhân");
     }
 

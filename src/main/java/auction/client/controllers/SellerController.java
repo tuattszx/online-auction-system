@@ -1,9 +1,11 @@
 package auction.client.controllers;
 
 import auction.client.ClientNetwork;
+import auction.client.session.DataSession;
 import auction.client.utils.ImageService;
 import auction.common.message.Message;
 import auction.common.model.items.Item;
+import auction.server.DatabaseManager;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -181,7 +183,7 @@ public class SellerController {
             newItem.setDescription(description);
             newItem.setStartingPrice(Long.parseLong(priceText));
             newItem.setCurrentPrice(Long.parseLong(priceText));
-            newItem.setSellerId(UserSession.loggedInUser.getId());
+            newItem.setSellerId(DataSession.getInstance().getLoggedInUser().getId());
 
             // Set kích thước
             newItem.setLength(txtLength.getText().isEmpty() ? 0 : Double.parseDouble(txtLength.getText()));

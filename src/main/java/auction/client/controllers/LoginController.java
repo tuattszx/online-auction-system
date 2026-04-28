@@ -1,6 +1,7 @@
 package auction.client.controllers;
 
 import auction.client.ClientNetwork;
+import auction.client.session.DataSession;
 import auction.common.message.Message;
 import auction.common.model.users.Account;
 import auction.common.model.users.User;
@@ -16,9 +17,6 @@ import javafx.event.ActionEvent;
 import javax.swing.text.View;
 import java.io.IOException;
 
-class UserSession{
-    public static User loggedInUser;
-}
 public class LoginController {
     @FXML
     private StackPane centerContainer;
@@ -84,7 +82,7 @@ public class LoginController {
 
             switch (response.getStatus()) {
                 case "SUCCESS":
-                    UserSession.loggedInUser = (User) response.getData();
+                    DataSession.getInstance().setLoggedInUser((User) response.getData());
                     ViewManager.switchScene(event, "main-view.fxml", "Trang chủ");
                     break;
 

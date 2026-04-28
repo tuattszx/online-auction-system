@@ -184,4 +184,18 @@ public class ClientHandler implements Runnable {
         out.flush();
         out.reset();
     }
+
+    private void handleGetItemById(Message msg,ObjectOutputStream out) throws IOException {
+        int id = (int) msg.getData();
+        Item item=ItemDao.getItemById(id);
+        if (item != null) {
+            msg.setStatus("SUCCESS");
+            msg.setData(item);
+        }
+        else {
+            msg.setStatus("FAILED");
+        }
+        out.writeObject(msg);
+        out.flush();
+    }
 }

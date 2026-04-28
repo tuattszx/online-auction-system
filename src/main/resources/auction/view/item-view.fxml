@@ -24,7 +24,7 @@
             <HBox alignment="CENTER_LEFT" prefHeight="60.0" spacing="20.0" style="-fx-background-color: #ffffff; -fx-border-color: #ddd; -fx-border-width: 0 0 1 0;">
                <padding><Insets left="20.0" right="20.0" /></padding>
                <children>
-                  <ImageView fitHeight="40.0" fitWidth="80.0" onMouseClicked="#OnMouseBacktoMain" pickOnBounds="true" preserveRatio="true">
+                  <ImageView  fitHeight="40.0" fitWidth="80.0" onMouseClicked="#OnMouseBacktoMain" pickOnBounds="true" preserveRatio="true">
                      <image><Image url="@../img/logo-uet.jpg" /></image>
                   </ImageView>
                   <TextField fx:id="txtsearch" maxWidth="400.0" promptText="Tìm kiếm sản phẩm..." style="-fx-background-radius: 20;" HBox.hgrow="ALWAYS" />
@@ -46,7 +46,7 @@
                <children>
                   <StackPane prefHeight="333.0" prefWidth="471.0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);" GridPane.columnIndex="0" GridPane.rowIndex="0">
                      <children>
-                        <ImageView fitHeight="325.0" fitWidth="327.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fx:id="itemImg" fitHeight="325.0" fitWidth="327.0" pickOnBounds="true" preserveRatio="true">
                            <image><Image url="@../img/images.jpg" /></image>
                         </ImageView>
                      </children>
@@ -80,7 +80,7 @@
                         </HBox>
                         <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;" VBox.vgrow="ALWAYS">
                            <content>
-                              <Label text="Mô tả chi tiết sản phẩm sẽ hiện ở đây..." wrapText="true" />
+                              <Label fx:id="lbDescription" text="Mô tả chi tiết sản phẩm sẽ hiện ở đây..." wrapText="true" />
                            </content>
                         </ScrollPane>
                      </children>
