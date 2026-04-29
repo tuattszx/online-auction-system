@@ -53,6 +53,9 @@ public class ClientHandler implements Runnable {
                         case "GET_ALL_ITEMS":
                             handleGetAllItems(msg, out);
                             break;
+                        case "GET_ITEM_BY_ID":
+                            handleGetItemById(msg,out);
+                            break;
                         // Thêm các case khác như BID, VIEW_PRODUCT...
                     }
                 }
@@ -183,5 +186,19 @@ public class ClientHandler implements Runnable {
         out.writeObject(msg);
         out.flush();
         out.reset();
+    }
+
+    private void handleGetItemById(Message msg,ObjectOutputStream out) throws IOException {
+        int id = (int) msg.getData();
+        Item item=ItemDao.getItemById(id);
+        if (item != null) {
+            msg.setStatus("SUCCESS");
+            msg.setData(item);
+        }
+        else {
+            msg.setStatus("FAILED");
+        }
+        out.writeObject(msg);
+        out.flush();
     }
 }

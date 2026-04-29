@@ -114,7 +114,7 @@
                               <RowConstraints minHeight="200.0" prefHeight="220.0" vgrow="SOMETIMES" />
                            </rowConstraints>
                            <children>
-                              <ImageView fitHeight="448.0" fitWidth="500.0" pickOnBounds="true" GridPane.rowSpan="2">
+                              <ImageView fx:id="mainImage" fitHeight="448.0" fitWidth="500.0" pickOnBounds="true" GridPane.rowSpan="2">
                                  <image><Image url="@../img/thanlan.jpg" /></image>
                               </ImageView>
                               <ImageView fitHeight="220.0" fitWidth="160.0" pickOnBounds="true" GridPane.columnIndex="1" GridPane.rowIndex="0">
@@ -148,7 +148,7 @@
 
                         <VBox spacing="15.0">
                            <children>
-                              <Label text="Seiko - Grand Seiko Mechanical 3 Days 1.7&quot;" wrapText="true">
+                              <Label fx:id="itemNameLabel" text="Seiko - Grand Seiko Mechanical 3 Days 1.7&quot;" wrapText="true">
                                  <font><Font name="System Bold" size="26.0" /></font>
                               </Label>
                               <HBox spacing="50.0">
@@ -257,7 +257,7 @@
                                     <Label text="CURRENT BID" textFill="#888">
                                        <font><Font name="System Bold" size="11.0" /></font>
                                     </Label>
-                                    <Label style="-fx-font-weight: bold;" text="€ 1,600">
+                                    <Label fx:id="lbCurrentBid" style="-fx-font-weight: bold;" text="€ 1,600">
                                        <font><Font size="34.0" /></font>
                                     </Label>
                                  </children>

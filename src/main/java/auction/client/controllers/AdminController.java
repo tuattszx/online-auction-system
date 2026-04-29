@@ -1,6 +1,7 @@
 package auction.client.controllers;
 
 import auction.client.ClientNetwork;
+import auction.client.session.DataSession;
 import auction.common.message.Message;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
@@ -87,7 +88,7 @@ public class AdminController {
         };
 
         logoutTask.setOnSucceeded(e -> {
-            UserSession.loggedInUser = null;
+            DataSession.getInstance().clear();
             ViewManager.showAlert(Alert.AlertType.INFORMATION,"Thông báo", "Đăng xuất thành công!");
             ViewManager.clearCache();
             network.close(); // Đóng socket ở phía Client

@@ -144,6 +144,11 @@ public class ViewManager {
         views.clear();
         System.out.println("✅ View cache cleared");
     }
+    public static void removeView(String fxmlPath) {
+        views.remove(fxmlPath);
+        System.out.println("✅ Đã xóa cache của: " + fxmlPath);
+    }
+
 
     /**
      * Hiển thị alert dialog

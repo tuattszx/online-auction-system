@@ -1,6 +1,7 @@
 package auction.client.controllers;
 
 import auction.client.ClientNetwork;
+import auction.client.session.DataSession;
 import auction.client.utils.ImageService;
 import auction.common.message.Message;
 import auction.common.model.items.Item;
@@ -181,7 +182,7 @@ public class SellerController {
             newItem.setDescription(description);
             newItem.setStartingPrice(Long.parseLong(priceText));
             newItem.setCurrentPrice(Long.parseLong(priceText));
-            newItem.setSellerId(UserSession.loggedInUser.getId());
+            newItem.setSellerId(DataSession.getInstance().getLoggedInUser().getId());
 
             // Set kích thước
             newItem.setLength(txtLength.getText().isEmpty() ? 0 : Double.parseDouble(txtLength.getText()));
@@ -243,6 +244,7 @@ public class SellerController {
     /**
      * Hàm hỗ trợ reset các trường nhập liệu sau khi lưu thành công
      */
+    @FXML
     private void clearFields() {
         txtTitle.clear();
         txtPrice.clear();

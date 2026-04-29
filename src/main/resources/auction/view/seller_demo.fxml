@@ -331,7 +331,7 @@
                       </GridPane>
       
                       <HBox alignment="CENTER_RIGHT" spacing="10">
-                          <Button prefWidth="100" style="-fx-background-color: #e74c3c; -fx-text-fill: white;" text="Cancel" />
+                          <Button onAction="#clearFields" prefWidth="100" style="-fx-background-color: #e74c3c; -fx-text-fill: white;" text="Cancel" />
                           <Button onAction="#handleSaveProduct" prefWidth="100" style="-fx-background-color: #27ae60; -fx-text-fill: white;" text="Save" />
                       </HBox>
                   </VBox>
