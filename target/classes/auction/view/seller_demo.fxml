@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
 <?import java.net.URL?>
+<?import javafx.collections.FXCollections?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
@@ -10,6 +12,7 @@
 <?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextArea?>
@@ -25,10 +28,8 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-<?import javafx.collections.FXCollections?>
-<?import java.lang.String?>
-<?import java.net.URL?>
-<BorderPane prefHeight="600.0" prefWidth="900.0" style="-fx-background-color: #f4f4f4;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auction.client.controllers.SellerController">
+
+<BorderPane prefHeight="600.0" prefWidth="1225.0" style="-fx-background-color: #f4f4f4;" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auction.client.controllers.SellerController">
     <stylesheets>
         <URL value="@../css/style.css" />
         <URL value="@../css/theme.css" />
@@ -174,7 +175,7 @@
     </left>
 
     <center>
-        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent; -fx-background: #f4f4f4;">
+        <ScrollPane fitToWidth="true" prefHeight="509.0" prefWidth="874.0" style="-fx-background-color: transparent; -fx-background: #f4f4f4;">
          <StackPane>
             <children>
                 <VBox fx:id="vboxMyProducts" spacing="20" style="-fx-padding: 30; -fx-background-color: #f4f4f4;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
@@ -234,13 +235,15 @@
                               <ComboBox fx:id="categoryComboBox" prefWidth="Infinity" promptText="Select Category">
                                   <items>
                                       <FXCollections fx:factory="observableArrayList">
-                                          <String fx:value="Real Estate" />
-                                          <String fx:value="Vehicles &amp; Transport" />
-                                          <String fx:value="Antiques &amp; Art" />
-                                          <String fx:value="Jewelry &amp; Gemstones" />
-                                          <String fx:value="Electronics" />
-                                          <String fx:value="Nice SIM Number" />
-                                          <String fx:value="Rare Collectibles" />
+                                          <String fx:value="Art" />
+                                          <String fx:value="Interiors" />
+                                          <String fx:value="Jewelry" />
+                                          <String fx:value="Watches" />
+                                          <String fx:value="Fashion" />
+                                          <String fx:value="Coins" />
+                                          <String fx:value="Cars" />
+                                          <String fx:value="Wine" />
+                                          <String fx:value="Books" />
                                       </FXCollections>
                                   </items>
                               </ComboBox>
@@ -269,19 +272,39 @@
                               <Label text="Price" />
                               <TextField fx:id="txtPrice" promptText="\$0.00" />
                           </VBox>
-                          <HBox spacing="5.0" GridPane.columnIndex="0" GridPane.columnSpan="1" GridPane.rowIndex="3">
+                          <HBox prefHeight="58.0" prefWidth="354.0" spacing="15.0" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.hgrow="ALWAYS" GridPane.rowIndex="3" GridPane.vgrow="ALWAYS">
                               <children>
-                                  <VBox HBox.hgrow="ALWAYS">
+                                  <VBox spacing="5.0" GridPane.columnIndex="0" GridPane.rowIndex="3" HBox.hgrow="ALWAYS">
                                       <children>
-                                          <Label text="Start Time" />
-                                          <DatePicker fx:id="startDatePicker" maxWidth="1.7976931348623157E308" promptText="Select Start Date" />
+                                          <Label style="-fx-font-weight: bold;" text="Start Date &amp; Time" />
+                                          <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="ALWAYS">
+                                              <children>
+                                                  <DatePicker fx:id="startDatePicker" prefWidth="150.0" promptText="Select Date" />
+                                                  <Spinner fx:id="startHour" initialValue="00" max="23" min="0" prefWidth="60.0" />
+                                                  <Label text="h" />
+                                                  <Spinner fx:id="startMin" initialValue="00" max="59" min="0" prefWidth="60.0" />
+                                                  <Label text="m" />
+                                                  <Spinner fx:id="startSec" initialValue="00" max="59" min="0" prefWidth="60.0" />
+                                       <Label layoutX="329.0" layoutY="14.0" text="s" />
+                                              </children>
+                                          </HBox>
                                       </children>
                                   </VBox>
 
-                                  <VBox HBox.hgrow="ALWAYS">
+                                  <VBox spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="3" HBox.hgrow="ALWAYS">
                                       <children>
-                                          <Label text="End Time" />
-                                          <DatePicker fx:id="endDatePicker" maxWidth="1.7976931348623157E308" promptText="Select End Date" />
+                                          <Label style="-fx-font-weight: bold;" text="End Date &amp; Time" />
+                                          <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="ALWAYS">
+                                              <children>
+                                                  <DatePicker fx:id="endDatePicker" prefWidth="150.0" promptText="Select Date" />
+                                                  <Spinner fx:id="endHour" initialValue="00" max="23" min="0" prefWidth="60.0" />
+                                                  <Label text="h" />
+                                                  <Spinner fx:id="endMin" initialValue="00" max="59" min="0" prefWidth="60.0" />
+                                                  <Label text="m" />
+                                                  <Spinner fx:id="endSec" initialValue="00" max="59" min="0" prefWidth="60.0" />
+                                       <Label layoutX="329.0" layoutY="14.0" text="s" />
+                                              </children>
+                                          </HBox>
                                       </children>
                                   </VBox>
                               </children>
