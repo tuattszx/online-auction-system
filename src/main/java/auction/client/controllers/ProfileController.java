@@ -49,18 +49,17 @@ public class ProfileController  {
     @FXML
     private HBox btnMyAuctions;
     @FXML
-    private Region accountIndicator, addressesIndicator, paymentIndicator,emailIndicator,VeriIndicator, auctionsIndicator;
+    private Region accountIndicator, addressesIndicator, paymentIndicator,emailIndicator,VeriIndicator;
     @FXML private VBox paneAccount;
     @FXML private VBox paneAddresses;
     @FXML private VBox panePayment;
     @FXML private VBox paneEmails;
     @FXML private VBox paneVerification;
-    @FXML private VBox paneMyAuctions;
     @FXML private HBox hboxsignout;
     private List<Region> allIndicators;
     ClientNetwork network = ClientNetwork.getInstance();
     private void hideAllPanes(VBox targetPane) {
-        VBox[] allPanes = {paneAccount, paneAddresses, panePayment, paneEmails, paneVerification, paneMyAuctions};
+        VBox[] allPanes = {paneAccount, paneAddresses, panePayment, paneEmails, paneVerification};
         for (VBox pane : allPanes) {
             if (pane != null) {
                 pane.setVisible(false);
@@ -74,7 +73,7 @@ public class ProfileController  {
     }
     public void initialize() {
         // hiện gạch xanh
-        allIndicators = Arrays.asList(accountIndicator, addressesIndicator, paymentIndicator,VeriIndicator,emailIndicator, auctionsIndicator);
+        allIndicators = Arrays.asList(accountIndicator, addressesIndicator, paymentIndicator,VeriIndicator,emailIndicator);
         showIndicator(accountIndicator);
         hideAllPanes(paneAccount);
         User user = UserSession.loggedInUser;
@@ -116,7 +115,6 @@ public class ProfileController  {
         paymentIndicator.setVisible(false);
         emailIndicator.setVisible(false);
         VeriIndicator.setVisible(false);
-        auctionsIndicator.setVisible(false);
 
         // 2. Kiểm tra xem HBox nào vừa được bấm dựa trên fx:id
         HBox clickedBox = (HBox) event.getSource();
@@ -138,9 +136,6 @@ public class ProfileController  {
         } else if (id.equals("btnVeri")) {
             VeriIndicator.setVisible(true);
             hideAllPanes(paneVerification);
-        } else if (id.equals("btnMyAuctions")) {
-            auctionsIndicator.setVisible(true);
-            hideAllPanes(paneMyAuctions);
         }
     }
     @FXML
