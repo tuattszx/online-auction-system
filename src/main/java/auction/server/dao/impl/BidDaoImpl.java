@@ -91,13 +91,18 @@ public class BidDaoImpl implements BidDao {
     @Override
     public List<Bid> getBidsByItemId(int itemId) {
         List<Bid> bids = new ArrayList<>();
-        String sql = "SELECT * FROM BIDS WHERE id_item = ? ORDER BY bid_time DESC";
+        String sql = "SELECT b.*, u.dis_name FROM BIDS b " +
+                "JOIN users u ON b.id_user = u.ID " +
+                "WHERE b.id_item = ? ORDER BY b.bid_time DESC";
         try (Connection conn = getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, itemId);
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
-                    bids.add(mapResultSetToBid(rs));
+                    Bid bid = mapResultSetToBid(rs);
+                    // Gán cái tên lấy từ cột dis_name của bảng users vào model
+                    bid.setBidderName(rs.getString("dis_name"));
+                    bids.add(bid);
                 }
             }
         } catch (SQLException e) {

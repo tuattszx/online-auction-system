@@ -8,6 +8,8 @@ public class Bid extends BaseEntity {
     private int idUser;
     private long bidAmount;
     private LocalDateTime bidTime;
+    private String bidderName;
+
 
     public Bid() {
         super();
@@ -51,7 +53,9 @@ public class Bid extends BaseEntity {
     public void setBidTime(LocalDateTime bidTime) {
         this.bidTime = bidTime;
     }
-
+    
+    public String getBidderName() { return bidderName; }
+    public void setBidderName(String bidderName) { this.bidderName = bidderName; }
 
     @Override
     public String toString() {
