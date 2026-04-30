@@ -6,9 +6,14 @@ import auction.common.model.items.Item;
 import auction.common.model.items.ItemImage;
 import auction.common.model.users.Account;
 import auction.common.model.users.User;
+import auction.server.dao.BidDao;
 import auction.server.dao.CategoryDao;
 import auction.server.dao.ItemDao;
 import auction.server.dao.UserDao;
+import auction.server.dao.impl.BidDaoImpl;
+import auction.server.dao.impl.CategoryDaoImpl;
+import auction.server.dao.impl.ItemDaoImpl;
+import auction.server.dao.impl.UserDaoImpl;
 import auction.server.utils.ImageService;
 
 import java.io.*;
@@ -17,6 +22,10 @@ import java.util.List;
 
 public class ClientHandler implements Runnable {
     private Socket socket;
+    private final UserDao userDao=new UserDaoImpl();
+    private final ItemDao itemDao=new ItemDaoImpl();
+    private final CategoryDao categoryDao=new CategoryDaoImpl();
+    private final BidDao bidDao=new BidDaoImpl();
 
     public ClientHandler(Socket socket) {
         this.socket = socket;
@@ -74,7 +83,7 @@ public class ClientHandler implements Runnable {
         Account accReq = (Account) msg.getData();
 
         // Gọi UserDao (nằm trong package auction.server.dao của bạn)
-        User user = UserDao.CheckLogin(accReq.getUsername(), accReq.getPassword());
+        User user = userDao.CheckLogin(accReq.getUsername(), accReq.getPassword());
 
         if (user != null) {
             msg.setStatus("SUCCESS");
@@ -92,11 +101,11 @@ public class ClientHandler implements Runnable {
         User newUser = (User) msg.getData();
 
         // Kiểm tra xem username hoặc email đã tồn tại chưa
-        if (UserDao.isUsernameExists(newUser.getUsername()) || UserDao.isEmailExists(newUser.getEmail())) {
+        if (userDao.isUsernameExists(newUser.getUsername()) || userDao.isEmailExists(newUser.getEmail())) {
             msg.setStatus("FAILED");
         } else {
             // Gọi hàm registerUser trong UserDao của bạn
-            boolean isSuccess = UserDao.registerUser(newUser);
+            boolean isSuccess = userDao.add(newUser);
             if (isSuccess) {
                 msg.setStatus("SUCCESS");
             } else {
@@ -136,14 +145,14 @@ public class ClientHandler implements Runnable {
             }
 
             // 3. Tìm Category object từ Database bằng tên
-            Category category = CategoryDao.getCategoryByName(categoryName);
+            Category category = categoryDao.getCategoryByName(categoryName);
             if (category != null) {
                 item.addCategories(category);
             }
 
             // 4. Gọi ItemDao để lưu trọn bộ Item (bao gồm cả ảnh và category) vào DB
             // Hàm addItem của bạn đã có Transaction (Rollback) nên cực kỳ an toàn
-            boolean isSuccess = ItemDao.addItem(item);
+            boolean isSuccess = itemDao.add(item);
 
             if (isSuccess) {
                 msg.setStatus("SUCCESS");
@@ -164,7 +173,7 @@ public class ClientHandler implements Runnable {
 
     private void handleGetAllItems(Message msg, ObjectOutputStream out) throws IOException {
         try{
-            List<Item> items = ItemDao.getAllItems(); // Gọi ItemDao lấy dữ liệu
+            List<Item> items = itemDao.getAll(); // Gọi ItemDao lấy dữ liệu
 
             for (Item item : items) {
                 if (item.getImages() != null && !item.getImages().isEmpty()) {
@@ -190,7 +199,7 @@ public class ClientHandler implements Runnable {
 
     private void handleGetItemById(Message msg,ObjectOutputStream out) throws IOException {
         int id = (int) msg.getData();
-        Item item=ItemDao.getItemById(id);
+        Item item=itemDao.getById(id);
         if (item != null) {
             msg.setStatus("SUCCESS");
             msg.setData(item);
