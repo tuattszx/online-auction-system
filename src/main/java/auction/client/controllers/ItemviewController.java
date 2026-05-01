@@ -89,6 +89,9 @@ public class ItemviewController {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            finally {
+                isUpdatingLastestPrice = false;
+            }
         }).start();
     }
 
