@@ -274,9 +274,14 @@
                               <VBox spacing="10.0">
                                  <children>
                                     <TextField fx:id="txtBid" prefHeight="45.0" promptText="€ 1,700 or up" style="-fx-background-color: #f8f9fa; -fx-border-color: #ddd; -fx-border-radius: 5; -fx-font-size: 16;" />
+                                    <Label fx:id="lbBidError" text="Giá trả không hợp lệ!" textFill="#e61e1e" visible="false" managed="false">
+                                       <font>
+                                          <Font size="12.0" />
+                                       </font>
+                                    </Label>
                                     <HBox spacing="10.0">
                                        <children>
-                                          <Button fx:id="btnPlaceBid" maxWidth="Infinity" prefHeight="45.0" style="-fx-background-color: white; -fx-border-color: #0052ff; -fx-text-fill: #0052ff; -fx-font-weight: bold;" text="Place bid" HBox.hgrow="ALWAYS" />
+                                          <Button onAction="#handlePlaceBid" fx:id="btnPlaceBid" maxWidth="Infinity" prefHeight="45.0" style="-fx-background-color: white; -fx-border-color: #0052ff; -fx-text-fill: #0052ff; -fx-font-weight: bold;" text="Place bid" HBox.hgrow="ALWAYS" />
                                           <Button fx:id="btnMaxBid" maxWidth="Infinity" prefHeight="45.0" style="-fx-background-color: #0052ff; -fx-text-fill: white; -fx-font-weight: bold;" text="Set max bid" HBox.hgrow="ALWAYS" />
                                        </children>
                                     </HBox>

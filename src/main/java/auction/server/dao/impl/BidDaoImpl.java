@@ -85,6 +85,7 @@ public class BidDaoImpl implements BidDao {
         if (ts != null) {
             bid.setBidTime(ts.toLocalDateTime());
         }
+        bid.setBidderName(rs.getString("dis_name"));
         return bid;
     }
 
@@ -100,8 +101,6 @@ public class BidDaoImpl implements BidDao {
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
                     Bid bid = mapResultSetToBid(rs);
-                    // Gán cái tên lấy từ cột dis_name của bảng users vào model
-                    bid.setBidderName(rs.getString("dis_name"));
                     bids.add(bid);
                 }
             }

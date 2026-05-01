@@ -1,6 +1,7 @@
 package auction.server;
 
 import auction.common.message.Message;
+import auction.common.model.bid.Bid;
 import auction.common.model.categories.Category;
 import auction.common.model.items.Item;
 import auction.common.model.items.ItemImage;
@@ -64,6 +65,9 @@ public class ClientHandler implements Runnable {
                             break;
                         case "GET_ITEM_BY_ID":
                             handleGetItemById(msg,out);
+                            break;
+                        case "PLACE_BID":
+                            handlePlaceBid(msg,out);
                             break;
                         // Thêm các case khác như BID, VIEW_PRODUCT...
                     }
@@ -206,6 +210,49 @@ public class ClientHandler implements Runnable {
         }
         else {
             msg.setStatus("FAILED");
+        }
+        out.writeObject(msg);
+        out.flush();
+    }
+
+    private void handlePlaceBid(Message msg, ObjectOutputStream out) throws IOException{
+        try{
+            Bid bidRequest = (Bid) msg.getData();
+
+            Item currentItem= itemDao.getById(bidRequest.getIdItem());
+
+            if (currentItem==null){
+                msg.setStatus("FAILED");
+                msg.setData("Sản phẩm không tồn tại!");
+            }
+            else if (bidRequest.getBidAmount() <= currentItem.getCurrentPrice()) {
+                msg.setStatus("FAILED");
+                msg.setData("Giá đã bị đẩy lên € " + currentItem.getCurrentPrice() + ". Vui lòng trả cao hơn!");
+            }
+            else{
+                boolean isUpdated= itemDao.placeBid(bidRequest.getIdItem(),bidRequest.getBidAmount(),bidRequest.getIdUser());
+                if (isUpdated) {
+                    // 4. Nếu cập nhật Item thành công, tiến hành lưu lịch sử vào bảng BIDS
+                    boolean isHistorySaved = bidDao.add(bidRequest);
+
+                    if (isHistorySaved) {
+                        msg.setStatus("SUCCESS");
+                        msg.setData("Da dat thanh cong: " + bidRequest.getBidAmount());
+                    } else {
+                        msg.setStatus("FAILED");
+                        msg.setData("Lỗi hệ thống khi lưu lịch sử đấu giá!");
+                    }
+                }
+                else {
+                    msg.setStatus("FAILED");
+                    msg.setData("Không thể đặt giá. Có thể giá đã thay đổi!");
+                }
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            msg.setStatus("ERROR");
+            msg.setData("Lỗi Server: " + e.getMessage());
         }
         out.writeObject(msg);
         out.flush();
