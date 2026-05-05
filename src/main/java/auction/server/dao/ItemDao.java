@@ -10,4 +10,6 @@ public interface ItemDao extends GenericDAO<Item, Integer> {
     boolean updateCurrentPrice(int itemId, long newPrice);
     boolean updateStatus(int itemId, String status);
     boolean placeBid(int idItem, long newPrice, int id_bidder);
+    List<Item> getUnapprovedItems();
+    boolean approveItem(int itemId, boolean isApproved);
 }

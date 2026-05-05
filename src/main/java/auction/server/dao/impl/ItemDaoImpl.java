@@ -197,7 +197,7 @@ public class ItemDaoImpl implements ItemDao {
 
     public List<Item> getAllItems() {
         List<Item> itemList = new ArrayList<>();
-        String sql = "SELECT * FROM ITEMS ORDER BY created_time DESC";
+        String sql = "SELECT * FROM ITEMS WHERE status NOT IN ('UNAPPROVED', 'DELETED') ORDER BY created_time DESC";
 
         try (Connection conn = getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql);
@@ -409,6 +409,34 @@ public class ItemDaoImpl implements ItemDao {
         catch (SQLException e){
             e.printStackTrace();
             return false;
+        }
+    }
+
+    public List<Item> getUnapprovedItems() {
+        List<Item> itemList = new ArrayList<>();
+        String sql = "SELECT * FROM ITEMS WHERE status = 'UNAPPROVED' ORDER BY created_time DESC";
+
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+
+            while (rs.next()) {
+                Item item = mapResultSetToItem(rs, conn);
+                itemList.add(item);
+            }
+        } catch (SQLException e) {
+            System.err.println("Error fetching unapproved items: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return itemList;
+    }
+
+    public boolean approveItem(int itemId, boolean isApproved) {
+        if (isApproved) {
+            return updateStatus(itemId, "PENDING");
+        } else {
+            return deleteItem(itemId);
         }
     }
 

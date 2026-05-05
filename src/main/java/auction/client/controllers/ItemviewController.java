@@ -89,48 +89,47 @@ public class ItemviewController {
     }
 
     private void handleGetLatestPrice(int id) {
-        if (isUpdatingLastestPrice) return;
-        isUpdatingLastestPrice = true;
-
-        // Tạo luồng chạy ngầm để không treo giao diện
-        new Thread(() -> {
-            try {
-                Item item;
-                // Gửi request lấy Item mới nhất bằng ID
-                Message response = ClientNetwork.getInstance().sendRequest(new Message("GET_ITEM_BY_ID", id));
-                if (response != null && "SUCCESS".equals(response.getStatus())) {
-                    item=(Item) response.getData();
-                } else {
-                    throw new RuntimeException("Server không phản hồi hoặc có lỗi xảy ra");
-                }
-                Platform.runLater(() -> {
-                    lbCurrentBid.setText(String.format("%,d $", item.getCurrentPrice()));
-                });
-            } catch (Exception e) {
-                e.printStackTrace();
+        try {
+            Item item;
+            // Gửi request lấy Item mới nhất bằng ID
+            Message response = ClientNetwork.getInstance().sendRequest(new Message("GET_ITEM_BY_ID", id));
+            if (response != null && "SUCCESS".equals(response.getStatus())) {
+                item=(Item) response.getData();
+            } else {
+                throw new RuntimeException("Server không phản hồi hoặc có lỗi xảy ra");
             }
-            finally {
-                isUpdatingLastestPrice = false;
-            }
-        }).start();
+            Platform.runLater(() -> {
+                lbCurrentBid.setText(String.format("%,d $", item.getCurrentPrice()));
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void startAutoUpdate(int itemId) {
-        // Nếu đã có timeline đang chạy thì dừng cái cũ trước
-        if (autoUpdateTimeline != null) {
-            autoUpdateTimeline.stop();
-        }
+        if (autoUpdateTimeline != null) autoUpdateTimeline.stop();
 
-        // Tạo một "KeyFrame" chạy sau mỗi 3 giây
-        KeyFrame kf = new KeyFrame(Duration.seconds(3), event -> {
-            handleGetLatestPrice(itemId);
-            loadHistoryBid();
-            loadPriceChart();
-        });
-
-        autoUpdateTimeline = new Timeline(kf);
-        autoUpdateTimeline.setCycleCount(Timeline.INDEFINITE); // Chạy vô hạn
+        autoUpdateTimeline = new Timeline(new KeyFrame(Duration.seconds(3), event -> {
+            // Chỉ chạy nếu luồng trước đó đã xong
+            if (!isUpdatingLastestPrice) {
+                updateAllData(itemId);
+            }
+        }));
+        autoUpdateTimeline.setCycleCount(Timeline.INDEFINITE);
         autoUpdateTimeline.play();
+    }
+
+    private void updateAllData(int itemId) {
+        isUpdatingLastestPrice = true;
+        new Thread(() -> {
+            try {
+                handleGetLatestPrice(itemId);
+                loadHistoryBid();
+                loadPriceChart();
+            } finally {
+                isUpdatingLastestPrice = false;
+            }
+        }).start();
     }
     private void stopTimeline() {
         if (autoUpdateTimeline != null) {
@@ -171,6 +170,10 @@ public class ItemviewController {
             long amount = Long.parseLong(bidValue);
             Item selectedItem = DataSession.getInstance().getSelectedItem();
             User currentUser = DataSession.getInstance().getLoggedInUser();
+            if ("ADMIN".equals(currentUser.getRole()) || currentUser.getId() == selectedItem.getSellerId()) {
+                showBidError("Admin hoặc người bán không thể đấu giá!");
+                return;
+            }
 
             if (amount <= selectedItem.getCurrentPrice()) {
                 showBidError("Giá trả phải lớn hơn" + selectedItem.getCurrentPrice());
@@ -188,7 +191,7 @@ public class ItemviewController {
                     if ("SUCCESS".equals(response.getStatus())) {
                         long newPrice = Long.parseLong(bidValue);
                         selectedItem.setCurrentPrice(newPrice);
-                        lbCurrentBid.setText(String.format("%,d $", newPrice));
+                        updateAllData(selectedItem.getId());
                         txtBid.clear();
                     }
                     showBidError(response.getData().toString());
@@ -244,56 +247,47 @@ public class ItemviewController {
     public void loadHistoryBid() {
         Item selectedItem = DataSession.getInstance().getSelectedItem();
         if (selectedItem == null) return;
-
-        new Thread(() -> {
-            try {
-                Message response = ClientNetwork.getInstance().sendRequest(new Message("GET_BID_BY_ITEM_ID", selectedItem.getId()));
-                if (response != null && "SUCCESS".equals(response.getStatus())) {
-                    @SuppressWarnings("unchecked")
-                    List<Bid> bidHistory = (List<Bid>) response.getData();
-                    Platform.runLater(() -> {
-                        bidTable.getItems().clear();
-                        bidTable.getItems().setAll(bidHistory);
-                    });
-                } else {
-                    throw new RuntimeException("Failed to fetch bid history.");
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
+        try {
+            Message response = ClientNetwork.getInstance().sendRequest(new Message("GET_BID_BY_ITEM_ID", selectedItem.getId()));
+            if (response != null && "SUCCESS".equals(response.getStatus())) {
+                @SuppressWarnings("unchecked")
+                List<Bid> bidHistory = (List<Bid>) response.getData();
+                Platform.runLater(() -> {
+                    bidTable.getItems().clear();
+                    bidTable.getItems().setAll(bidHistory);
+                });
+            } else {
+                throw new RuntimeException("Failed to fetch bid history.");
             }
-        }).start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void loadPriceChart() {
         Item selectedItem = DataSession.getInstance().getSelectedItem();
         if (selectedItem == null) return;
 
-        new Thread(() -> {
-            try {
-                Message response = ClientNetwork.getInstance().sendRequest(new Message("GET_PRICE_CHART", selectedItem.getId()));
-                if (response != null && "SUCCESS".equals(response.getStatus())) {
-                    @SuppressWarnings("unchecked")
-                    List<Object[]> priceChartData = (List<Object[]>) response.getData();
+        Message response = ClientNetwork.getInstance().sendRequest(new Message("GET_PRICE_CHART", selectedItem.getId()));
+        if (response != null && "SUCCESS".equals(response.getStatus())) {
+            @SuppressWarnings("unchecked")
+            List<Object[]> priceChartData = (List<Object[]>) response.getData();
 
-                    Platform.runLater(() -> {
-                        priceChart.getData().clear();
-                        XYChart.Series<String, Number> series = new XYChart.Series<>();
+            Platform.runLater(() -> {
+                priceChart.getData().clear();
+                XYChart.Series<String, Number> series = new XYChart.Series<>();
 
-                        for (Object[] dataPoint : priceChartData) {
-                            String time = dataPoint[0].toString();
-                            Number price = (Number) dataPoint[1];
-                            series.getData().add(new XYChart.Data<>(time, price));
-                        }
-
-                        priceChart.getData().add(series);
-                        priceChart.setCreateSymbols(true);
-                    });
-                } else {
-                    throw new RuntimeException("Failed to fetch price chart data.");
+                for (Object[] dataPoint : priceChartData) {
+                    String time = dataPoint[0].toString();
+                    Number price = (Number) dataPoint[1];
+                    series.getData().add(new XYChart.Data<>(time, price));
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }).start();
+
+                priceChart.getData().add(series);
+                priceChart.setCreateSymbols(true);
+            });
+        } else {
+            throw new RuntimeException("Failed to fetch price chart data.");
+        }
     }
 }
