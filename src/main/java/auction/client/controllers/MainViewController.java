@@ -3,6 +3,7 @@ import auction.client.session.DataSession;
 import auction.common.model.items.ItemImage;
 import javafx.animation.Animation;
 import javafx.animation.FadeTransition;
+import javafx.collections.ListChangeListener;
 import javafx.concurrent.Task;
 import javafx.geometry.Insets;
 import auction.client.ClientNetwork;
@@ -240,18 +241,29 @@ public class MainViewController extends ProfileController {
 // Icon trái tim (Dùng Label kèm mã Unicode hoặc ImageView)
         Label heartIcon = new Label("❤");
         heartIcon.setStyle("-fx-text-fill: #ccc; -fx-font-size: 18px; -fx-cursor: hand;");
-
+        if (DataSession.getInstance().getFavoriteItems().contains(item)) {
+            heartIcon.setStyle("-fx-text-fill: #ff4d4d; -fx-font-size: 18px; -fx-cursor: hand;");
+        } else {
+            heartIcon.setStyle("-fx-text-fill: #ccc; -fx-font-size: 18px; -fx-cursor: hand;");
+        }
+        DataSession.getInstance().getFavoriteItems().addListener((ListChangeListener<Item>) change -> {
+            if (DataSession.getInstance().getFavoriteItems().contains(item)) {
+                heartIcon.setStyle("-fx-text-fill: #ff4d4d; -fx-font-size: 18px; -fx-cursor: hand;");
+            } else {
+                heartIcon.setStyle("-fx-text-fill: #ccc; -fx-font-size: 18px; -fx-cursor: hand;");
+            }
+        });
 // Hiệu ứng đổi màu khi click vào tim (Like/Unlike)
         heartIcon.setOnMouseClicked(e -> {
             // Logic xử lý yêu thích tại đây
             if (heartIcon.getStyle().contains("#ff4d4d")) {
-                heartIcon.setStyle("-fx-text-fill: #ccc; -fx-font-size: 18px; -fx-cursor: hand;");
                 // Xóa khỏi danh sách yêu thích
                 DataSession.getInstance().removeFavorite(item);
+                heartIcon.setStyle("-fx-text-fill: #ccc; -fx-font-size: 18px; -fx-cursor: hand;");
             } else {
                 heartIcon.setStyle("-fx-text-fill: #ff4d4d; -fx-font-size: 18px; -fx-cursor: hand;");
-                // Thêm vào danh sách yêu thích
                 DataSession.getInstance().addFavorite(item);
+                // Thêm vào danh sách yêu thích
                 System.out.println("Đã thêm vào yêu thích: " + item.getName());
             }
             e.consume(); // Ngăn sự kiện click lan ra Card
