@@ -171,7 +171,7 @@ public class MainViewController extends ProfileController {
         });
     }
 
-    private VBox createItemCard(Item item) {
+    public VBox createItemCard(Item item) {
         VBox card = new VBox();
 
         // 1. Cấu hình Kích thước & Căn lề
