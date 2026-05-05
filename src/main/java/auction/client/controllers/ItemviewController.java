@@ -9,14 +9,14 @@ import auction.common.model.users.User;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.LineChart;
-import javafx.scene.control.Hyperlink;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.chart.XYChart;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -25,6 +25,7 @@ import javafx.util.Duration;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.List;
 
 public class ItemviewController {
     @FXML private ImageView mainImage;
@@ -34,9 +35,18 @@ public class ItemviewController {
     @FXML private Label lbbalance;
     @FXML private Hyperlink btnShowMore;
     @FXML private VBox Vboxdetails;
-    @FXML private LineChart<CategoryAxis,CategoryAxis> priceChart;
+    @FXML private LineChart<String ,Number> priceChart;
     @FXML private TextField txtBid;
     @FXML private Label lbBidError;
+
+    @FXML
+    private TableView<Bid> bidTable;
+    @FXML
+    private TableColumn<Bid, String> colBidder;
+    @FXML
+    private TableColumn<Bid, String> colTime;
+    @FXML
+    private TableColumn<Bid, String> colPrice;
 
     private Timeline autoUpdateTimeline;
     private volatile boolean isUpdatingLastestPrice = false;
@@ -66,6 +76,16 @@ public class ItemviewController {
         if (DataSession.getInstance().getLoggedInUser() != null) {
             lbbalance.setText(String.format("%,d$", DataSession.getInstance().getLoggedInUser().getBalance()));
         }
+
+        // Initialize bidTable columns
+        colBidder.setCellValueFactory(cellData -> {
+            String bidderName = cellData.getValue().getBidderName();
+            return new SimpleStringProperty(bidderName != null ? bidderName : "Unknown");
+        });
+        colTime.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getBidTime().toString()));
+        colPrice.setCellValueFactory(cellData -> new SimpleStringProperty(String.format("%,d $", cellData.getValue().getBidAmount())));
+
+        loadHistoryBid();// Load bid history when initializing
     }
 
     private void handleGetLatestPrice(int id) {
@@ -104,6 +124,8 @@ public class ItemviewController {
         // Tạo một "KeyFrame" chạy sau mỗi 3 giây
         KeyFrame kf = new KeyFrame(Duration.seconds(3), event -> {
             handleGetLatestPrice(itemId);
+            loadHistoryBid();
+            loadPriceChart();
         });
 
         autoUpdateTimeline = new Timeline(kf);
@@ -164,7 +186,7 @@ public class ItemviewController {
                 Message response = ClientNetwork.getInstance().sendRequest(new Message("PLACE_BID", newBid));
                 Platform.runLater(() -> {
                     if ("SUCCESS".equals(response.getStatus())) {
-                        long newPrice = (long) response.getData();
+                        long newPrice = Long.parseLong(bidValue);
                         selectedItem.setCurrentPrice(newPrice);
                         lbCurrentBid.setText(String.format("%,d $", newPrice));
                         txtBid.clear();
@@ -184,6 +206,7 @@ public class ItemviewController {
     @FXML
     public void OnMouseBacktoMain(MouseEvent event){
         stopTimeline();
+        ViewManager.removeView("main-view.fxml");
         DataSession.getInstance().setSelectedItem(null);
         ViewManager.switchScene(event,"main-view.fxml", "Trang chủ");
 
@@ -215,5 +238,62 @@ public class ItemviewController {
 
         String view = DataSession.getInstance().getLoggedInUser().getRole().equals("ADMIN") ? "admin-view.fxml" : "profile-view.fxml";
         ViewManager.switchScene(event, view, "Hồ sơ cá nhân");
+    }
+
+    @FXML
+    public void loadHistoryBid() {
+        Item selectedItem = DataSession.getInstance().getSelectedItem();
+        if (selectedItem == null) return;
+
+        new Thread(() -> {
+            try {
+                Message response = ClientNetwork.getInstance().sendRequest(new Message("GET_BID_BY_ITEM_ID", selectedItem.getId()));
+                if (response != null && "SUCCESS".equals(response.getStatus())) {
+                    @SuppressWarnings("unchecked")
+                    List<Bid> bidHistory = (List<Bid>) response.getData();
+                    Platform.runLater(() -> {
+                        bidTable.getItems().clear();
+                        bidTable.getItems().setAll(bidHistory);
+                    });
+                } else {
+                    throw new RuntimeException("Failed to fetch bid history.");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
+
+    private void loadPriceChart() {
+        Item selectedItem = DataSession.getInstance().getSelectedItem();
+        if (selectedItem == null) return;
+
+        new Thread(() -> {
+            try {
+                Message response = ClientNetwork.getInstance().sendRequest(new Message("GET_PRICE_CHART", selectedItem.getId()));
+                if (response != null && "SUCCESS".equals(response.getStatus())) {
+                    @SuppressWarnings("unchecked")
+                    List<Object[]> priceChartData = (List<Object[]>) response.getData();
+
+                    Platform.runLater(() -> {
+                        priceChart.getData().clear();
+                        XYChart.Series<String, Number> series = new XYChart.Series<>();
+
+                        for (Object[] dataPoint : priceChartData) {
+                            String time = dataPoint[0].toString();
+                            Number price = (Number) dataPoint[1];
+                            series.getData().add(new XYChart.Data<>(time, price));
+                        }
+
+                        priceChart.getData().add(series);
+                        priceChart.setCreateSymbols(true);
+                    });
+                } else {
+                    throw new RuntimeException("Failed to fetch price chart data.");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }).start();
     }
 }

@@ -19,6 +19,7 @@ import auction.server.utils.ImageService;
 
 import java.io.*;
 import java.net.Socket;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class ClientHandler implements Runnable {
@@ -68,6 +69,12 @@ public class ClientHandler implements Runnable {
                             break;
                         case "PLACE_BID":
                             handlePlaceBid(msg,out);
+                            break;
+                        case "GET_BID_BY_ITEM_ID":
+                            handleGetBidByItemId(msg, out);
+                            break;
+                        case "GET_PRICE_CHART":
+                            handleGetPriceChart(msg, out);
                             break;
                         // Thêm các case khác như BID, VIEW_PRODUCT...
                     }
@@ -254,6 +261,59 @@ public class ClientHandler implements Runnable {
             msg.setStatus("ERROR");
             msg.setData("Lỗi Server: " + e.getMessage());
         }
+        out.writeObject(msg);
+        out.flush();
+    }
+
+    private void handleGetBidByItemId(Message msg, ObjectOutputStream out) throws IOException {
+        try {
+            int itemId = (int) msg.getData(); // Extract item ID from the message
+            List<Bid> bidHistory = bidDao.getBidsByItemId(itemId); // Fetch bid history
+
+            if (bidHistory != null && !bidHistory.isEmpty()) {
+                msg.setStatus("SUCCESS");
+                msg.setData(bidHistory);
+            } else {
+                msg.setStatus("FAILED");
+                msg.setData("No bid history found for the specified item.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            msg.setStatus("ERROR");
+            msg.setData("Server error: " + e.getMessage());
+        }
+
+        out.writeObject(msg);
+        out.flush();
+    }
+
+    private void handleGetPriceChart(Message msg, ObjectOutputStream out) throws IOException {
+        try {
+            int itemId = (int) msg.getData(); // Extract item ID from the message
+            List<Bid> bidHistory = bidDao.getBidsByItemId(itemId); // Fetch bid history
+
+            if (bidHistory != null && !bidHistory.isEmpty()) {
+                // Transform bid history into a format suitable for the chart
+                List<Object[]> priceChartData = bidHistory.stream()
+                        .sorted((b1, b2) -> b1.getBidTime().compareTo(b2.getBidTime())) // Sắp xếp tăng dần
+                        .map(bid -> {
+                            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+                            return new Object[]{ bid.getBidTime().format(formatter), bid.getBidAmount() };
+                        })
+                        .toList();
+
+                msg.setStatus("SUCCESS");
+                msg.setData(priceChartData);
+            } else {
+                msg.setStatus("FAILED");
+                msg.setData("No price chart data found for the specified item.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            msg.setStatus("ERROR");
+            msg.setData("Server error: " + e.getMessage());
+        }
+
         out.writeObject(msg);
         out.flush();
     }

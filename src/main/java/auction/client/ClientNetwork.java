@@ -27,12 +27,13 @@ public class ClientNetwork {
         }
     }
 
-    public Message sendRequest(Message request) {
+    public synchronized Message sendRequest(Message request) {
         try {
             connect(); // Đảm bảo luôn có kết nối
 
             out.writeObject(request);
             out.flush();
+            out.reset();
 
             return (Message) in.readObject();
         } catch (Exception e) {
