@@ -1,0 +1,201 @@
+package auction.client.controllers;
+
+import auction.client.session.DataSession;
+import auction.common.model.items.Item;
+import auction.common.model.items.ItemImage;
+import javafx.fxml.FXML;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
+
+import java.io.IOException;
+import java.util.List;
+
+public class FavoriteViewController {
+    @FXML
+    private FlowPane favoriteContainer; // Container trên file fxml của bạn
+
+    @FXML private ScrollPane scrollCategories;
+    public void initialize() {
+        renderFavorites();
+    }
+    private VBox createItemCard(Item item) {
+        VBox card = new VBox();
+
+        // 1. Cấu hình Kích thước & Căn lề
+        card.setPrefSize(200, 280); // Tăng kích thước một chút để cân đối
+        card.setAlignment(Pos.TOP_CENTER); // Chỉnh lên trên để ảnh nằm trên cùng
+        card.setSpacing(10);
+        card.setPadding(new Insets(10)); // Tạo khoảng cách từ nội dung đến mép khung
+
+        // 2. TẠO CÁI KHUNG (Style trực tiếp để thấy ngay kết quả)
+        card.setStyle(
+                "-fx-background-color: white; " +
+                        "-fx-background-radius: 15; " + // Bo góc 15px
+                        "-fx-border-radius: 15; " +
+                        "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.15), 10, 0, 0, 4); " + // Đổ bóng nhẹ
+                        "-fx-cursor: hand;"
+        );
+
+        // 3. Xử lý Ảnh
+        ImageView imgView = new ImageView();
+        imgView.setFitHeight(140);
+        imgView.setFitWidth(180);
+        imgView.setPreserveRatio(false); // Để false nếu muốn ảnh lấp đầy khung hình chữ nhật
+
+        boolean imageLoaded = false;
+        if (item.getImages() != null && !item.getImages().isEmpty()) {
+            // Lấy ảnh mặc định hoặc ảnh đầu tiên trong danh sách
+            ItemImage defaultImg = item.getImages().stream()
+                    .filter(ItemImage::isDefault)
+                    .findFirst()
+                    .orElse(item.getImages().get(0));
+
+            byte[] data = defaultImg.getImageData();
+
+            if (data != null && data.length > 0) {
+                try {
+                    Image img = new Image(new java.io.ByteArrayInputStream(data));
+                    imgView.setImage(img);
+                    imageLoaded = true;
+                } catch (Exception e) {
+                    System.err.println("Lỗi khi chuyển đổi byte[] sang Image: " + e.getMessage());
+                }
+            }
+        }
+        if (!imageLoaded) {
+            try {
+                imgView.setImage(new Image(getClass().getResourceAsStream("/auction/img/images.jpg")));
+            } catch (Exception e) {
+                System.err.println("Không tìm thấy file ảnh mặc định trong resources");
+            }
+        }
+
+        // 4. Tên sản phẩm
+        HBox nameAndHeartBox = new HBox();
+        nameAndHeartBox.setAlignment(Pos.CENTER_LEFT); // Căn lề trái để icon và tên thẳng hàng
+        nameAndHeartBox.setSpacing(10);
+        nameAndHeartBox.setPadding(new Insets(0, 5, 0, 5));
+
+        Label nameLabel = new Label(item.getName());
+// Cho nameLabel co giãn để đẩy icon về phía bên phải
+        HBox.setHgrow(nameLabel, Priority.ALWAYS);
+        nameLabel.setMaxWidth(140); // Giới hạn chiều rộng để không đè vào icon
+        nameLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: #333;");
+        nameLabel.setWrapText(false); // Thường tên sản phẩm trong Card nên để 1 dòng
+        nameLabel.setEllipsisString("..."); // Nếu dài quá thì hiện dấu ...
+
+// Icon trái tim (Dùng Label kèm mã Unicode hoặc ImageView)
+        Label heartIcon = new Label("❤");
+        heartIcon.setStyle("-fx-text-fill: #ccc; -fx-font-size: 18px; -fx-cursor: hand;");
+
+// Hiệu ứng đổi màu khi click vào tim (Like/Unlike)
+        heartIcon.setOnMouseClicked(e -> {
+            // Logic xử lý yêu thích tại đây
+            if (heartIcon.getStyle().contains("#ff4d4d")) {
+                heartIcon.setStyle("-fx-text-fill: #ccc; -fx-font-size: 18px; -fx-cursor: hand;");
+                // Xóa khỏi danh sách yêu thích
+                DataSession.getInstance().removeFavorite(item);
+            } else {
+                heartIcon.setStyle("-fx-text-fill: #ff4d4d; -fx-font-size: 18px; -fx-cursor: hand;");
+                // Thêm vào danh sách yêu thích
+                DataSession.getInstance().addFavorite(item);
+                System.out.println("Đã thêm vào yêu thích: " + item.getName());
+            }
+            e.consume(); // Ngăn sự kiện click lan ra Card
+        });
+
+        nameAndHeartBox.getChildren().addAll(nameLabel, heartIcon);
+
+        // 5. Giá tiền
+        Label priceLabel = new Label(String.format("%,d $", item.getCurrentPrice()));
+        priceLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 15px; -fx-text-fill: #0052ff;");
+
+        // 6. Nút Đấu giá
+        Button bidBtn = new Button("Đấu giá");
+        bidBtn.setPrefWidth(120);
+        bidBtn.setStyle(
+                "-fx-background-color: #0052ff; " +
+                        "-fx-text-fill: white; " +
+                        "-fx-background-radius: 20; " +
+                        "-fx-font-weight: bold; " +
+                        "-fx-padding: 5 15 5 15;"
+        );
+
+        // Hiệu ứng hover cho nút
+        bidBtn.setOnMouseEntered(e -> bidBtn.setStyle(bidBtn.getStyle() + "-fx-background-color: #003db3;"));
+        bidBtn.setOnMouseExited(e -> bidBtn.setStyle(bidBtn.getStyle() + "-fx-background-color: #0052ff;"));
+
+        // 7. Gom tất cả vào Card
+        card.getChildren().addAll(imgView, nameAndHeartBox, priceLabel, bidBtn);
+
+        // 8. Sự kiện click vào Card
+        card.setOnMouseClicked(event -> {
+            ViewManager.removeView("item-view.fxml");
+            DataSession.getInstance().setSelectedItem(item);
+            // Chỉ chuyển cảnh nếu không bấm trúng nút "Đấu giá"
+            if (event.getTarget() != bidBtn) {
+                ViewManager.switchScene(event, "item-view.fxml", "Chi tiết");
+            }
+        });
+
+        return card;
+    }
+    private void renderFavorites() {
+        favoriteContainer.getChildren().clear();
+        List<Item> favorites = DataSession.getInstance().getFavoriteItems();
+
+        for (Item item : favorites) {
+            // Tận dụng lại hàm tạo Card mà bạn đã viết ở trên
+            VBox card = createItemCard(item);
+            favoriteContainer.getChildren().add(card);
+        }
+    }
+    @FXML
+    public void scrollRight() {
+        if (scrollCategories != null) {
+            double currentValue = scrollCategories.getHvalue();
+            // Tính toán vị trí mới
+            double newValue = currentValue + 0.2;
+
+            if (newValue > 1.0) newValue = 1.0;
+
+            // Đặt giá trị mới cho thanh cuộn
+            scrollCategories.setHvalue(newValue);
+
+            // In ra console để kiểm tra xem hàm có chạy không
+            System.out.println("Đã bấm nút cuộn phải. Vị trí hiện tại: " + newValue);
+        } else {
+            System.out.println("Lỗi: scrollCategories đang bị null!");
+        }
+    }
+    @FXML
+    public void onProfileClick(MouseEvent event) throws IOException {
+        if (DataSession.getInstance().getLoggedInUser() == null) return;
+
+        String view = DataSession.getInstance().getLoggedInUser().getRole().equals("ADMIN") ? "admin-view.fxml" : "profile-view.fxml";
+        ViewManager.switchScene(event, view, "Hồ sơ cá nhân");
+    }
+    @FXML
+    public void onItemClick(MouseEvent event) {
+        ViewManager.switchScene(event, "item-view.fxml", "Chi tiết sản phẩm");
+    }
+    @FXML
+    public void onSellerClick(MouseEvent event) throws IOException {
+        ViewManager.switchScene(event, "seller_demo.fxml", "seller page");
+    }
+    @FXML
+    public void OnMouseBacktoMain(MouseEvent event){
+        ViewManager.switchScene(event,"main-view.fxml", "Trang chủ");
+
+    }
+}

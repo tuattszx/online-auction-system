@@ -20,7 +20,9 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.scene.layout.HBox;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
@@ -222,10 +224,40 @@ public class MainViewController extends ProfileController {
         }
 
         // 4. Tên sản phẩm
+        HBox nameAndHeartBox = new HBox();
+        nameAndHeartBox.setAlignment(Pos.CENTER_LEFT); // Căn lề trái để icon và tên thẳng hàng
+        nameAndHeartBox.setSpacing(10);
+        nameAndHeartBox.setPadding(new Insets(0, 5, 0, 5));
+
         Label nameLabel = new Label(item.getName());
+// Cho nameLabel co giãn để đẩy icon về phía bên phải
+        HBox.setHgrow(nameLabel, Priority.ALWAYS);
+        nameLabel.setMaxWidth(140); // Giới hạn chiều rộng để không đè vào icon
         nameLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: #333;");
-        nameLabel.setWrapText(true); // Tự xuống dòng nếu tên quá dài
-        nameLabel.setAlignment(Pos.CENTER);
+        nameLabel.setWrapText(false); // Thường tên sản phẩm trong Card nên để 1 dòng
+        nameLabel.setEllipsisString("..."); // Nếu dài quá thì hiện dấu ...
+
+// Icon trái tim (Dùng Label kèm mã Unicode hoặc ImageView)
+        Label heartIcon = new Label("❤");
+        heartIcon.setStyle("-fx-text-fill: #ccc; -fx-font-size: 18px; -fx-cursor: hand;");
+
+// Hiệu ứng đổi màu khi click vào tim (Like/Unlike)
+        heartIcon.setOnMouseClicked(e -> {
+            // Logic xử lý yêu thích tại đây
+            if (heartIcon.getStyle().contains("#ff4d4d")) {
+                heartIcon.setStyle("-fx-text-fill: #ccc; -fx-font-size: 18px; -fx-cursor: hand;");
+                // Xóa khỏi danh sách yêu thích
+                DataSession.getInstance().removeFavorite(item);
+            } else {
+                heartIcon.setStyle("-fx-text-fill: #ff4d4d; -fx-font-size: 18px; -fx-cursor: hand;");
+                // Thêm vào danh sách yêu thích
+                DataSession.getInstance().addFavorite(item);
+                System.out.println("Đã thêm vào yêu thích: " + item.getName());
+            }
+            e.consume(); // Ngăn sự kiện click lan ra Card
+        });
+
+        nameAndHeartBox.getChildren().addAll(nameLabel, heartIcon);
 
         // 5. Giá tiền
         Label priceLabel = new Label(String.format("%,d $", item.getCurrentPrice()));
@@ -247,7 +279,7 @@ public class MainViewController extends ProfileController {
         bidBtn.setOnMouseExited(e -> bidBtn.setStyle(bidBtn.getStyle() + "-fx-background-color: #0052ff;"));
 
         // 7. Gom tất cả vào Card
-        card.getChildren().addAll(imgView, nameLabel, priceLabel, bidBtn);
+        card.getChildren().addAll(imgView, nameAndHeartBox, priceLabel, bidBtn);
 
         // 8. Sự kiện click vào Card
         card.setOnMouseClicked(event -> {
@@ -296,4 +328,8 @@ public void scrollRight() {
         System.out.println("Lỗi: scrollCategories đang bị null!");
     }
 }
+    public void GoToFavoriteView(MouseEvent event){
+        ViewManager.switchScene(event,"favourite_view.fxml", " yêu thích");
+
+    }
 }
