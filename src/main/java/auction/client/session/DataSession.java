@@ -2,9 +2,16 @@ package auction.client.session;
 
 import auction.common.model.items.Item;
 import auction.common.model.users.User;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DataSession {
     private static DataSession instance;
+
+    private ObservableList<Item> favoriteItems = FXCollections.observableArrayList();
 
     private User loggedInUser;
 
@@ -29,5 +36,19 @@ public class DataSession {
     public void clear() {
         loggedInUser = null;
         selectedItem = null;
+    }
+    // đẩy Item vào danh sách để đưa lên Favorite_view
+    public ObservableList<Item> getFavoriteItems() {
+        return favoriteItems;
+    }
+
+    public void addFavorite(Item item) {
+        if (!favoriteItems.contains(item)) {
+            favoriteItems.add(item);
+        }
+    }
+
+    public void removeFavorite(Item item) {
+        favoriteItems.remove(item);
     }
 }
