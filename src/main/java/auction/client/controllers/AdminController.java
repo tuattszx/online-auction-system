@@ -3,41 +3,86 @@ package auction.client.controllers;
 import auction.client.ClientNetwork;
 import auction.client.session.DataSession;
 import auction.common.message.Message;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import javafx.stage.Stage;
-
-import javax.swing.*;
-import javax.swing.text.View;
+import javafx.scene.layout.VBox;
+import javafx.scene.shape.Line;
+import javafx.util.Duration;
 
 public class AdminController {
-    @FXML
-    private Button btnDashboard;
-    @FXML
-    private Button btnManageUsers;
-    @FXML
-    private Button btnApproveItems;
-    @FXML
-    private Button btnManageAuctions;
-    @FXML
-    private Button btnTransactionHistory;
-    @FXML
-    private Button btnSettings;
-    @FXML
-    private Button btnApproveSeller;
-    @FXML
-    private Button btnLockAccount;
-    @FXML
-    private TextField txtSearch;
-    @FXML
-    private TableView<?> adminTable;
+    // --- CÁC THÀNH PHẦN MỚI CHO SIDEBAR ---
+    @FXML private VBox sidebar;
+    @FXML private Line sideLine;
+    @FXML private Label lblAdminPanel;
+    @FXML private Label txtBack, txtDashboard, txtManageUsers, txtApproveItems,
+            txtManageAuctions, txtTransactionHistory, txtSettings, txtSignOut;
+
+    private boolean isExpanded = true;
+
+    // --- CÁC BUTTON CŨ ---
+    @FXML private Button btnDashboard;
+    @FXML private Button btnManageUsers;
+    @FXML private Button btnApproveItems;
+    @FXML private Button btnManageAuctions;
+    @FXML private Button btnTransactionHistory;
+    @FXML private Button btnSettings;
+    @FXML private Button btnApproveSeller;
+    @FXML private Button btnLockAccount;
+    @FXML private TextField txtSearch;
+    @FXML private TableView<?> adminTable;
+
     ClientNetwork network = ClientNetwork.getInstance();
 
+    // --- HÀM TOGGLE SIDEBAR MỚI ---
+    @FXML
+    private void toggleSidebar(Event event) {
+        double targetWidth = isExpanded ? 80.0 : 260.0;
+        double lineEnd = isExpanded ? 40.0 : 180.0;
+
+        Timeline timeline = new Timeline();
+
+        // Hiệu ứng co giãn width và đường kẻ
+        KeyValue kvWidth = new KeyValue(sidebar.prefWidthProperty(), targetWidth);
+        KeyValue kvLine = new KeyValue(sideLine.endXProperty(), lineEnd);
+
+        KeyFrame kf = new KeyFrame(Duration.millis(300), kvWidth, kvLine);
+        timeline.getKeyFrames().add(kf);
+
+        if (isExpanded) {
+            // Nếu đang mở -> Thu nhỏ: Ẩn chữ ngay lập tức
+            setLabelsVisible(false);
+        } else {
+            // Nếu đang thu nhỏ -> Mở rộng: Chạy xong animation mới hiện chữ
+            timeline.setOnFinished(e -> setLabelsVisible(true));
+        }
+
+        timeline.play();
+        isExpanded = !isExpanded;
+    }
+
+    private void setLabelsVisible(boolean visible) {
+        Label[] labels = {lblAdminPanel, txtBack, txtDashboard, txtManageUsers,
+                txtApproveItems, txtManageAuctions, txtTransactionHistory,
+                txtSettings, txtSignOut};
+        for (Label l : labels) {
+            if (l != null) {
+                l.setVisible(visible);
+                l.setManaged(visible); // Giúp giải phóng không gian để icon căn giữa
+            }
+        }
+    }
+
+    // --- CÁC HÀM CŨ GIỮ NGUYÊN ---
     @FXML
     private void handleBackToMain(ActionEvent event) {
         ViewManager.switchScene(event, "main-view.fxml", "Main");
@@ -74,9 +119,8 @@ public class AdminController {
     }
 
     @FXML
-    private void handleApproveSeller(ActionEvent event) {
+    private void handleApproveSeller(ActionEvent event) {}
 
-    }
     @FXML
     private void onSignOutClick(ActionEvent event){
         if (!ViewManager.confirmAlert("Thông báo", "Bạn có chắc chắn muốn đăng xuất không?")) return;
@@ -91,35 +135,25 @@ public class AdminController {
             DataSession.getInstance().clear();
             ViewManager.showAlert(Alert.AlertType.INFORMATION,"Thông báo", "Đăng xuất thành công!");
             ViewManager.clearCache();
-            network.close(); // Đóng socket ở phía Client
+            network.close();
             ViewManager.switchScene(event, "login-view.fxml", "Đăng nhập");
         });
 
         new Thread(logoutTask).start();
     }
+
     @FXML
-    private void handleLockAccount(ActionEvent event) {
-
-
-    }
+    private void handleLockAccount(ActionEvent event) {}
 
     private void setActiveButton(Button activeBtn) {
-        // Remove active style from all buttons
-        btnDashboard.getStyleClass().remove("admin-menu-btn-active");
-        btnManageUsers.getStyleClass().remove("admin-menu-btn-active");
-        btnApproveItems.getStyleClass().remove("admin-menu-btn-active");
-        btnManageAuctions.getStyleClass().remove("admin-menu-btn-active");
-        btnTransactionHistory.getStyleClass().remove("admin-menu-btn-active");
-        btnSettings.getStyleClass().remove("admin-menu-btn-active");
+        Button[] allBtns = {btnDashboard, btnManageUsers, btnApproveItems,
+                btnManageAuctions, btnTransactionHistory, btnSettings};
 
-        btnDashboard.getStyleClass().add("admin-menu-btn");
-        btnManageUsers.getStyleClass().add("admin-menu-btn");
-        btnApproveItems.getStyleClass().add("admin-menu-btn");
-        btnManageAuctions.getStyleClass().add("admin-menu-btn");
-        btnTransactionHistory.getStyleClass().add("admin-menu-btn");
-        btnSettings.getStyleClass().add("admin-menu-btn");
+        for (Button btn : allBtns) {
+            btn.getStyleClass().remove("admin-menu-btn-active");
+            btn.getStyleClass().add("admin-menu-btn");
+        }
 
-        // Set active style to clicked button
         activeBtn.getStyleClass().remove("admin-menu-btn");
         activeBtn.getStyleClass().add("admin-menu-btn-active");
     }

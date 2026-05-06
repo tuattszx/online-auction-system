@@ -6,76 +6,120 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
-<?import javafx.scene.shape.Line?>
-
 <?import javafx.scene.layout.Pane?>
-<BorderPane prefHeight="750.0" prefWidth="1200.0"
-            style="-fx-background-color: linear-gradient(to bottom right, #0f2027, #203a43, #2b5268);"
-            stylesheets="@../css/style.css"
-            xmlns="http://javafx.com/javafx/21"
-            xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="auction.client.controllers.AdminController">
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Line?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane prefHeight="750.0" prefWidth="1200.0" style="-fx-background-color: linear-gradient(to bottom right, #0f2027, #203a43, #2b5268);" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auction.client.controllers.AdminController">
 
     <left>
-        <VBox prefWidth="260.0" spacing="10.0" style="-fx-background-color: rgba(0, 0, 0, 0.4); -fx-background-radius: 0 30 30 0;">
+        <VBox fx:id="sidebar" prefWidth="260.0" spacing="10.0" style="-fx-background-color: rgba(0, 0, 0, 0.4); -fx-background-radius: 0 30 30 0;">
             <padding>
                 <Insets bottom="20.0" left="15.0" right="15.0" top="30.0" />
             </padding>
             <children>
-                <Label text="ADMIN PANEL" textFill="#00d2ff">
-                    <font>
-                        <Font name="System Bold" size="24.0" />
-                    </font>
+                <HBox spacing="10.0">
                     <VBox.margin>
                         <Insets bottom="10.0" left="10.0" />
                     </VBox.margin>
-                </Label>
+                    <children>
+                        <ImageView fitHeight="31.0" fitWidth="33.0" onMouseClicked="#toggleSidebar" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../img/bagach.png" />
+                            </image>
+                        </ImageView>
+                        <Label fx:id="lblAdminPanel" text="ADMIN PANEL" textFill="#00d2ff">
+                            <font>
+                                <Font name="System Bold" size="24.0" />
+                            </font>
+                        </Label>
+                    </children>
+                </HBox>
 
-                <Line endX="180.0" stroke="rgba(255,255,255,0.2)" />
+                <Line fx:id="sideLine" endX="180.0" stroke="rgba(255,255,255,0.2)" />
 
-                <Button fx:id="btnBack" alignment="BASELINE_LEFT" mnemonicParsing="false"
-                        onAction="#handleBackToMain" prefHeight="45.0" prefWidth="230.0"
-                        styleClass="back-button" text="← Return to the system">
-                    <font>
-                        <Font name="System Bold" size="14.0" />
-                    </font>
-                    <VBox.margin>
-                        <Insets bottom="20.0" top="10.0" />
-                    </VBox.margin>
+                <Button fx:id="btnBack" alignment="BASELINE_LEFT" onAction="#handleBackToMain" prefHeight="45.0" prefWidth="230.0" styleClass="back-button">
+                    <graphic>
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <Label prefHeight="22.0" prefWidth="18.0" style="-fx-text-fill: white; -fx-font-size: 16;" text="⏎" />
+                            <Label fx:id="txtBack" prefHeight="19.0" prefWidth="140.0" style="-fx-text-fill: white;" text="Return to the system">
+                        <font>
+                           <Font size="14.0" />
+                        </font></Label>
+                        </HBox>
+                    </graphic>
+                    <VBox.margin><Insets bottom="20.0" top="10.0" /></VBox.margin>
                 </Button>
 
-                <Button fx:id="btnDashboard" alignment="BASELINE_LEFT" mnemonicParsing="false"
-                        onAction="#handleShowDashboard" prefHeight="50.0" prefWidth="230.0"
-                        styleClass="admin-menu-btn-active" text="📊 Overview" />
+                <Button fx:id="btnDashboard" alignment="BASELINE_LEFT" onAction="#handleShowDashboard" prefHeight="50.0" prefWidth="230.0" styleClass="admin-menu-btn-active">
+                    <graphic>
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <Label style="-fx-text-fill: white;" text="📊" />
+                            <Label fx:id="txtDashboard" style="-fx-text-fill: white;" text="Overview" />
+                        </HBox>
+                    </graphic>
+                </Button>
 
-                <Button fx:id="btnManageUsers" alignment="BASELINE_LEFT" mnemonicParsing="false"
-                        onAction="#handleManageUsers" prefHeight="50.0" prefWidth="230.0"
-                        styleClass="admin-menu-btn" text="👥 User management" />
+                <Button fx:id="btnManageUsers" alignment="BASELINE_LEFT" onAction="#handleManageUsers" prefHeight="50.0" prefWidth="230.0" styleClass="admin-menu-btn">
+                    <graphic>
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <Label style="-fx-text-fill: white;" text="👥" />
+                            <Label fx:id="txtManageUsers" style="-fx-text-fill: white;" text="User management" />
+                        </HBox>
+                    </graphic>
+                </Button>
 
-                <Button fx:id="btnApproveItems" alignment="BASELINE_LEFT" mnemonicParsing="false"
-                        onAction="#handleApproveItems" prefHeight="50.0" prefWidth="230.0"
-                        styleClass="admin-menu-btn" text="📦 Product approval" />
+                <Button fx:id="btnApproveItems" alignment="BASELINE_LEFT" onAction="#handleApproveItems" prefHeight="50.0" prefWidth="230.0" styleClass="admin-menu-btn">
+                    <graphic>
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <Label style="-fx-text-fill: white;" text="📦" />
+                            <Label fx:id="txtApproveItems" style="-fx-text-fill: white;" text="Product approval" />
+                        </HBox>
+                    </graphic>
+                </Button>
 
-                <Button fx:id="btnManageAuctions" alignment="BASELINE_LEFT" mnemonicParsing="false"
-                        onAction="#handleManageAuctions" prefHeight="50.0" prefWidth="230.0"
-                        styleClass="admin-menu-btn" text="🔨 Auction management" />
+                <Button fx:id="btnManageAuctions" alignment="BASELINE_LEFT" onAction="#handleManageAuctions" prefHeight="50.0" prefWidth="230.0" styleClass="admin-menu-btn">
+                    <graphic>
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <Label style="-fx-text-fill: white;" text="🔨" />
+                            <Label fx:id="txtManageAuctions" style="-fx-text-fill: white;" text="Auction management" />
+                        </HBox>
+                    </graphic>
+                </Button>
 
-                <Button fx:id="btnTransactionHistory" alignment="BASELINE_LEFT" mnemonicParsing="false"
-                        onAction="#handleTransactionHistory" prefHeight="50.0" prefWidth="230.0"
-                        styleClass="admin-menu-btn" text="📜 Transaction history" />
+                <Button fx:id="btnTransactionHistory" alignment="BASELINE_LEFT" onAction="#handleTransactionHistory" prefHeight="50.0" prefWidth="230.0" styleClass="admin-menu-btn">
+                    <graphic>
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <Label style="-fx-text-fill: white;" text="📜" />
+                            <Label fx:id="txtTransactionHistory" style="-fx-text-fill: white;" text="Transaction history" />
+                        </HBox>
+                    </graphic>
+                </Button>
 
-                <Button fx:id="btnSettings" alignment="BASELINE_LEFT" mnemonicParsing="false"
-                        onAction="#handleSettings" prefHeight="50.0" prefWidth="230.0"
-                        styleClass="admin-menu-btn" text="⚙️ System settings" />
+                <Button fx:id="btnSettings" alignment="BASELINE_LEFT" onAction="#handleSettings" prefHeight="50.0" prefWidth="230.0" styleClass="admin-menu-btn">
+                    <graphic>
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <Label prefHeight="26.0" prefWidth="16.0" style="-fx-text-fill: white;" text="⚙" />
+                            <Label fx:id="txtSettings" style="-fx-text-fill: white;" text="System settings" />
+                        </HBox>
+                    </graphic>
+                </Button>
+
                 <Pane VBox.vgrow="ALWAYS" />
 
-                <Button fx:id="btnSignOutClick" alignment="BASELINE_LEFT" mnemonicParsing="false"
-                        onAction="#onSignOutClick" prefHeight="50.0" prefWidth="230.0"
-                        styleClass="admin-menu-btn" text=":🚪 Sign out" />
+                <Button fx:id="btnSignOutClick" alignment="BASELINE_LEFT" onAction="#onSignOutClick" prefHeight="50.0" prefWidth="230.0" styleClass="admin-menu-btn">
+                    <graphic>
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <Label style="-fx-text-fill: white;" text="🚪" />
+                            <Label fx:id="txtSignOut" style="-fx-text-fill: white;" text="Sign out" />
+                        </HBox>
+                    </graphic>
+                </Button>
             </children>
         </VBox>
     </left>
@@ -99,8 +143,7 @@
                             </children>
                         </VBox>
                         <HBox HBox.hgrow="ALWAYS" />
-                        <TextField fx:id="txtSearch" prefHeight="40.0" prefWidth="280.0"
-                                   promptText="Find user..." styleClass="admin-search-field" />
+                        <TextField fx:id="txtSearch" prefHeight="40.0" prefWidth="280.0" promptText="Find user..." styleClass="admin-search-field" />
                     </children>
                 </HBox>
 
@@ -119,12 +162,8 @@
 
                 <HBox alignment="CENTER_RIGHT" spacing="20.0">
                     <children>
-                        <Button fx:id="btnApproveSeller" mnemonicParsing="false"
-                                onAction="#handleApproveSeller" prefHeight="45.0" prefWidth="180.0"
-                                styleClass="btn-approve" text="Seller's approval" />
-                        <Button fx:id="btnLockAccount" mnemonicParsing="false"
-                                onAction="#handleLockAccount" prefHeight="45.0" prefWidth="180.0"
-                                styleClass="btn-lock" text="Account lock" />
+                        <Button fx:id="btnApproveSeller" mnemonicParsing="false" onAction="#handleApproveSeller" prefHeight="45.0" prefWidth="180.0" styleClass="btn-approve" text="Seller's approval" />
+                        <Button fx:id="btnLockAccount" mnemonicParsing="false" onAction="#handleLockAccount" prefHeight="45.0" prefWidth="180.0" styleClass="btn-lock" text="Account lock" />
                     </children>
                 </HBox>
             </children>
