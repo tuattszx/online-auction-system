@@ -34,7 +34,7 @@
                         <Insets bottom="10.0" left="10.0" />
                     </VBox.margin>
                     <children>
-                        <ImageView fitHeight="31.0" fitWidth="33.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fitHeight="31.0" fitWidth="33.0" onMouseClicked="#toggleSidebar" pickOnBounds="true" preserveRatio="true">
                             <image>
                                 <Image url="@../img/bagach.png" />
                             </image>
@@ -253,7 +253,7 @@
                             </children>
                         </VBox>
 
-                        <VBox prefHeight="486.0" prefWidth="458.0" styleClass="chart-card">
+                        <VBox prefHeight="486.0" prefWidth="458.0" styleClass="chart-card" HBox.hgrow="ALWAYS">
                             <children>
                                 <Label styleClass="chart-title" text="Product Categories" />
                                 <PieChart fx:id="categoryChart" labelsVisible="true" legendSide="TOP" minHeight="550.0" minWidth="550.0" prefHeight="500.0" prefWidth="550.0" titleSide="TOP" VBox.vgrow="ALWAYS" />
