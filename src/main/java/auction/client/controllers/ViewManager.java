@@ -39,6 +39,7 @@ public class ViewManager {
                         "Không tìm thấy file: " + fxmlPath
                     )
                 );
+                loader.setResources(LanguageManager.getBundle());
                 Parent root = loader.load();
                 views.put(fxmlPath, root);
             } catch (NullPointerException e) {
