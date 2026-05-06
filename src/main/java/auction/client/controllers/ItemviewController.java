@@ -2,10 +2,12 @@ package auction.client.controllers;
 
 import auction.client.ClientNetwork;
 import auction.client.session.DataSession;
+import auction.client.utils.ServerTimeSync;
 import auction.common.message.Message;
 import auction.common.model.bid.Bid;
 import auction.common.model.items.Item;
 import auction.common.model.users.User;
+import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
@@ -21,10 +23,11 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
-import javafx.util.Duration;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.Duration;
 import java.util.List;
 
 public class ItemviewController {
@@ -86,6 +89,7 @@ public class ItemviewController {
         colPrice.setCellValueFactory(cellData -> new SimpleStringProperty(String.format("%,d $", cellData.getValue().getBidAmount())));
 
         loadHistoryBid();// Load bid history when initializing
+        setItemData(selectedItem);
     }
 
     private void handleGetLatestPrice(int id) {
@@ -109,7 +113,7 @@ public class ItemviewController {
     private void startAutoUpdate(int itemId) {
         if (autoUpdateTimeline != null) autoUpdateTimeline.stop();
 
-        autoUpdateTimeline = new Timeline(new KeyFrame(Duration.seconds(3), event -> {
+        autoUpdateTimeline = new Timeline(new KeyFrame(javafx.util.Duration.seconds(3), event -> {
             // Chỉ chạy nếu luồng trước đó đã xong
             if (!isUpdatingLastestPrice) {
                 updateAllData(itemId);
@@ -289,5 +293,63 @@ public class ItemviewController {
         } else {
             throw new RuntimeException("Failed to fetch price chart data.");
         }
+    }
+    @FXML private Label lblDays, lblHours, lblMins, lblSecs;
+
+    private Timeline timeline;
+    private Item currentItem; // Object chứa endTime từ Database
+
+    public void setItemData(Item item) {
+        this.currentItem = item;
+        startCountdown();
+    }
+
+    private void startCountdown() {
+        if (timeline != null) timeline.stop();
+
+        timeline = new Timeline(new KeyFrame(javafx.util.Duration.seconds(1), event -> {
+            updateCountdownUI();
+        }));
+        timeline.setCycleCount(Animation.INDEFINITE);
+        timeline.play();
+    }
+
+    private void updateCountdownUI() {
+        // 1. Lấy giờ chuẩn Server đã đồng bộ (Dùng class ServerTimeSync đã làm ở bước trước)
+        LocalDateTime now = ServerTimeSync.getNow();
+        LocalDateTime endTime = currentItem.getEndTime();
+
+        // 2. Tính khoảng cách
+        Duration duration = Duration.between(now, endTime);
+        long seconds = duration.getSeconds();
+
+        if (seconds <= 0) {
+            timeline.stop();
+            lblDays.setText("00");
+            lblHours.setText("00");
+            lblMins.setText("00");
+            lblSecs.setText("00");
+            return;
+        }
+
+        // 3. Phân tách thời gian
+        long days = seconds / 86400;
+        long hours = (seconds % 86400) / 3600;
+        long minutes = (seconds % 3600) / 60;
+        long secs = seconds % 60;
+
+        // 4. Hiển thị lên giao diện (Format %02d để luôn có 2 chữ số, ví dụ: 03)
+        lblDays.setText(String.format("%02d", days));
+        lblHours.setText(String.format("%02d", hours));
+        lblMins.setText(String.format("%02d", minutes));
+        lblSecs.setText(String.format("%02d", secs));
+    }
+
+    private void displayExpired() {
+        lblDays.setText("00");
+        lblHours.setText("00");
+        lblMins.setText("00");
+        lblSecs.setText("00");
+        // Có thể thêm thông báo "Phiên đấu giá đã kết thúc"
     }
 }

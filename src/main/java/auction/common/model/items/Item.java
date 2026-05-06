@@ -1,8 +1,10 @@
 package auction.common.model.items;
 
+import auction.client.utils.ServerTimeSync;
 import auction.common.model.BaseEntity;
 import auction.common.model.categories.Category;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
