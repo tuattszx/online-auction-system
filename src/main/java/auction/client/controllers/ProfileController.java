@@ -6,7 +6,10 @@ import auction.common.model.users.User;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
+import javafx.event.ActionEvent;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
@@ -16,47 +19,33 @@ import javafx.scene.input.MouseEvent;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 import javafx.scene.layout.VBox;
 import org.controlsfx.control.SearchableComboBox;
 
-import javax.swing.text.View;
-
 public class ProfileController  {
-    @FXML
-    private SearchableComboBox<String> countryPicker;
-    @FXML
-    public Label lbname;
-    @FXML
-    public Label lbusername;
-    @FXML
-    public Label lbemail;
-    @FXML
-    public Label lbname21;
-    @FXML
-    public Label lbphonenumber;
-    @FXML
-    private HBox btnAccount;
-
-    @FXML
-    private HBox btnAddresses;
-
-    @FXML
-    private HBox btnPayment;
-    @FXML
-    private HBox btnEmail;
-    @FXML
-    private HBox btnVeri;
-    @FXML
-    private HBox btnMyAuctions;
-    @FXML
-    private Region accountIndicator, addressesIndicator, paymentIndicator,emailIndicator,VeriIndicator;
+    @FXML private SearchableComboBox<String> countryPicker;
+    @FXML private Label lbname;
+    @FXML private Label lbusername;
+    @FXML private Label lbemail;
+    @FXML private Label lbname21;
+    @FXML private Label lbphonenumber;
+    @FXML private HBox btnAccount;
+    @FXML private HBox btnAddresses;
+    @FXML private HBox btnPayment;
+    @FXML private HBox btnEmail;
+    @FXML private HBox btnVeri;
+    @FXML private HBox btnMyAuctions;
+    @FXML private Region accountIndicator, addressesIndicator, paymentIndicator,emailIndicator,VeriIndicator;
     @FXML private VBox paneAccount;
     @FXML private VBox paneAddresses;
     @FXML private VBox panePayment;
     @FXML private VBox paneEmails;
     @FXML private VBox paneVerification;
     @FXML private HBox hboxsignout;
+    @FXML private ComboBox<String> languagePicker; // Parameterized ComboBox
     private List<Region> allIndicators;
     ClientNetwork network = ClientNetwork.getInstance();
     private void hideAllPanes(VBox targetPane) {
@@ -85,6 +74,8 @@ public class ProfileController  {
         countryPicker.setItems(countries);
 
         countryPicker.setValue("Vietnam");
+
+        languagePicker.getItems().addAll("Tiếng Việt", "English"); // No unchecked call
 
         if (user!= null){
             lbname.setText(user.getDisplayName());
@@ -140,8 +131,27 @@ public class ProfileController  {
         }
     }
     @FXML
-    public void onBackToMainClick(javafx.event.ActionEvent event) {
-        ViewManager.switchScene(event, "main-view.fxml", "Hệ thống Đấu giá - Trang chủ");
+    public void btnSaveSetting(ActionEvent event){
+        ViewManager.showAlert(Alert.AlertType.INFORMATION,
+            LanguageManager.getString("profile.label.notification"),
+            LanguageManager.getString("profile.label.saveSuccess"));
+        String selectedLanguage = languagePicker.getValue();
+        if (selectedLanguage != null) {
+            switch (selectedLanguage) {
+                case "Tiếng Việt":
+                    LanguageManager.setLocale("vi");
+                    break;
+                case "English":
+                    LanguageManager.setLocale("en");
+                    break;
+                default:
+                    break;
+            }
+        }
+
+
+        ViewManager.clearCache();
+        ViewManager.switchScene(event, "profile-view.fxml", LanguageManager.getString("profile.title"));
     }
     @FXML
     public void onSellerClick(MouseEvent event) throws IOException {
@@ -164,7 +174,6 @@ public class ProfileController  {
 
         logoutTask.setOnSucceeded(e -> {
             DataSession.getInstance().clear();
-            ViewManager.showAlert(Alert.AlertType.INFORMATION,"Thông báo", "Đăng xuất thành công!");
             ViewManager.clearCache();
             network.close(); // Đóng socket ở phía Client
             ViewManager.switchScene(event, "login-view.fxml", "Đăng nhập");

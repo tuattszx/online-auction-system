@@ -49,7 +49,7 @@
                         </ImageView>
                         <Label alignment="CENTER" prefHeight="30.0" prefWidth="87.0" textAlignment="CENTER" textFill="#2125ff">
                            <font>
-                              <Font name="Arial Rounded MT Bold" size="16.0" />
+                              <Font name="Arial" size="16.0" />
                            </font>
                         </Label>
                      </children>
@@ -155,9 +155,9 @@
                         <HBox fx:id="btnAccount" alignment="CENTER_LEFT" onMouseClicked="#handleSidebarClick" prefHeight="29.0" prefWidth="185.0" spacing="10.0">
                            <children>
                               <Region fx:id="accountIndicator" minHeight="-Infinity" prefHeight="23.0" prefWidth="2.0" style="-fx-background-color: white;" />
-                              <Label style="-fx-text-fill: white;" text="Account">
+                              <Label style="-fx-text-fill: white;" text="%profile.title">
                                  <font>
-                                    <Font name="Arial Rounded MT Bold" size="15.0" />
+                                    <Font name="Arial" size="15.0" />
                                  </font>
                               </Label>
                            </children>
@@ -168,9 +168,9 @@
                         <HBox fx:id="btnAddresses" alignment="CENTER_LEFT" layoutX="25.0" layoutY="30.0" onMouseClicked="#handleSidebarClick" prefHeight="29.0" prefWidth="185.0" spacing="10.0">
                            <children>
                               <Region fx:id="addressesIndicator" minHeight="-Infinity" prefHeight="23.0" prefWidth="2.0" style="-fx-background-color: white;" visible="false" />
-                              <Label style="-fx-text-fill: white;" text="Adresses">
+                              <Label style="-fx-text-fill: white;" text="%profile.label.address">
                                  <font>
-                                    <Font name="Arial Rounded MT Bold" size="15.0" />
+                                    <Font name="Arial" size="15.0" />
                                  </font>
                               </Label>
                            </children>
@@ -181,9 +181,9 @@
                         <HBox fx:id="btnPayment" alignment="CENTER_LEFT" layoutX="25.0" layoutY="75.0" onMouseClicked="#handleSidebarClick" prefHeight="29.0" prefWidth="185.0" spacing="10.0">
                            <children>
                               <Region fx:id="paymentIndicator" minHeight="-Infinity" prefHeight="23.0" prefWidth="2.0" style="-fx-background-color: white;" visible="false" />
-                              <Label style="-fx-text-fill: white;" text="Payment">
+                              <Label style="-fx-text-fill: white;" text="%profile.label.payment">
                                  <font>
-                                    <Font name="Arial Rounded MT Bold" size="15.0" />
+                                    <Font name="Arial" size="15.0" />
                                  </font>
                               </Label>
                            </children>
@@ -194,9 +194,9 @@
                         <HBox fx:id="btnEmail" alignment="CENTER_LEFT" layoutX="25.0" layoutY="119.0" onMouseClicked="#handleSidebarClick" prefHeight="29.0" prefWidth="185.0" spacing="10.0">
                            <children>
                               <Region fx:id="emailIndicator" minHeight="-Infinity" prefHeight="23.0" prefWidth="2.0" style="-fx-background-color: white;" visible="false" />
-                              <Label style="-fx-text-fill: white;" text="Email &amp; Notifications">
+                              <Label style="-fx-text-fill: white;" text="%profile.label.email_notification">
                                  <font>
-                                    <Font name="Arial Rounded MT Bold" size="15.0" />
+                                    <Font name="Arial" size="15.0" />
                                  </font>
                               </Label>
                            </children>
@@ -207,9 +207,9 @@
                         <HBox fx:id="btnVeri" alignment="CENTER_LEFT" layoutX="25.0" layoutY="164.0" onMouseClicked="#handleSidebarClick" prefHeight="29.0" prefWidth="185.0" spacing="10.0">
                            <children>
                               <Region fx:id="VeriIndicator" minHeight="-Infinity" prefHeight="23.0" prefWidth="2.0" style="-fx-background-color: white;" visible="false" />
-                              <Label style="-fx-text-fill: white;" text="Verification">
+                              <Label style="-fx-text-fill: white;" text="%profile.label.verification">
                                  <font>
-                                    <Font name="Arial Rounded MT Bold" size="15.0" />
+                                    <Font name="Arial" size="15.0" />
                                  </font>
                               </Label>
                            </children>
@@ -225,9 +225,9 @@
                                     <Image url="@../img/signout.png" />
                                  </image>
                               </ImageView>
-                              <Label style="-fx-text-fill: white;" text="Sign out">
+                              <Label style="-fx-text-fill: white;" text="%profile.button.signout">
                                  <font>
-                                    <Font name="Arial Rounded MT Bold" size="15.0" />
+                                    <Font name="Arial" size="15.0" />
                                  </font>
                               </Label>
                            </children>
@@ -243,15 +243,15 @@
                            <children>
                               <VBox fx:id="paneAddresses" layoutX="10.0" layoutY="10.0" maxWidth="1.7976931348623157E308" prefHeight="700.0" spacing="3.0" style="-fx-background-color: white; -fx-border-color: white;" visible="false">
                                  <children>
-                                    <Label text="Adresses">
+                                    <Label text="%profile.label.address">
                                        <font>
-                                          <Font name="Arial Rounded MT Bold" size="24.0" />
+                                          <Font name="Arial" size="24.0" />
                                        </font>
                                     </Label>
                                     <Region prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
                                     <VBox prefHeight="63.0" prefWidth="865.0">
                                        <children>
-                                          <Label text="SHIPPING ADRESS">
+                                          <Label text="%profile.label.address">
                                              <font>
                                                 <Font size="10.0" />
                                              </font>
@@ -260,7 +260,7 @@
                                              <children>
                                                 <VBox prefHeight="45.0" prefWidth="249.0" HBox.hgrow="ALWAYS">
                                                    <children>
-                                                      <Label text="FIST NAME">
+                                                      <Label text="%profile.label.name">
                                                          <font>
                                                             <Font size="10.0" />
                                                          </font>
@@ -285,7 +285,7 @@
                                     <Region layoutX="31.0" layoutY="39.0" prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
                                     <VBox layoutX="31.0" layoutY="41.0" prefHeight="48.0" prefWidth="443.0">
                                        <children>
-                                          <Label text="Phone number">
+                                          <Label text="%profile.label.phone">
                                              <font>
                                                 <Font size="10.0" />
                                              </font>
@@ -311,7 +311,7 @@
                                           <TextArea prefHeight="47.0" prefWidth="441.0" promptText="ddd" style="-fx-background-color: #f0f2f5; -fx-border-color: #f0f2f5; -fx-background-radius: 0; -fx-control-inner-background: #f0f2f5; -fx-border-width: 0;" />
                                        </children>
                                     </VBox>
-                                    <Button mnemonicParsing="false" prefHeight="37.0" prefWidth="101.0" style="-fx-border-radius: 0; -fx-background-radius: 0; -fx-background-color: #0052ff; -fx-text-fill: white;" text="Save settings" />
+                                    <Button mnemonicParsing="false" prefHeight="37.0" prefWidth="101.0" style="-fx-border-radius: 0; -fx-background-radius: 0; -fx-background-color: #0052ff; -fx-text-fill: white;" text="%profile.label.save"/>
                                  </children>
                                  <padding>
                                     <Insets left="20.0" right="10.0" />
@@ -319,9 +319,9 @@
                               </VBox>
                               <VBox fx:id="panePayment" maxWidth="1.7976931348623157E308" prefHeight="700.0" spacing="3.0" style="-fx-background-color: white; -fx-border-color: white; -fx-background-radius: 15; -fx-border-radius: 15;" visible="false">
                                  <children>
-                                    <Label text="Payment details">
+                                    <Label text="%profile.label.payment">
                                        <font>
-                                          <Font name="Arial Rounded MT Bold" size="24.0" />
+                                          <Font name="Arial" size="24.0" />
                                        </font>
                                     </Label>
                                     <Region prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
@@ -348,7 +348,7 @@
                                        </children>
                                     </VBox>
                                     <Region layoutX="31.0" layoutY="127.0" prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
-                                    <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="101.0" style="-fx-border-radius: 0; -fx-background-radius: 0; -fx-background-color: #0052FF; -fx-text-fill: white;" text="Save settings" />
+                                    <Button mnemonicParsing="false" onAction="#btnSaveSetting" prefHeight="40.0" prefWidth="101.0" style="-fx-border-radius: 0; -fx-background-radius: 0; -fx-background-color: #0052FF; -fx-text-fill: white;" text="%profile.label.change" />
                                  </children>
                                  <padding>
                                     <Insets left="20.0" right="10.0" />
@@ -356,9 +356,9 @@
                               </VBox>
                               <VBox fx:id="paneEmails" layoutX="10.0" layoutY="10.0" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="505.0" spacing="3.0" style="-fx-background-color: white; -fx-border-color: white; -fx-background-radius: 15; -fx-border-radius: 15;" visible="false">
                                  <children>
-                                    <Label text="Emails &amp; Notifications">
+                                    <Label text="%profile.label.notification">
                                        <font>
-                                          <Font name="Arial Rounded MT Bold" size="24.0" />
+                                          <Font name="Arial" size="24.0" />
                                        </font>
                                     </Label>
                                     <Region maxWidth="1.7976931348623157E308" prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
@@ -474,7 +474,7 @@
                                        </children>
                                     </VBox>
                                     <Region layoutX="31.0" layoutY="127.0" prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
-                                    <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="101.0" style="-fx-border-radius: 0; -fx-background-radius: 0; -fx-background-color: #0052FF; -fx-text-fill: white;" text="Save settings" />
+                                    <Button mnemonicParsing="false" onAction="#btnSaveSetting" prefHeight="40.0" prefWidth="101.0" style="-fx-border-radius: 0; -fx-background-radius: 0; -fx-background-color: #0052FF; -fx-text-fill: white;" text="%profile.label.change" />
                                  </children>
                                  <padding>
                                     <Insets left="20.0" right="10.0" />
@@ -482,9 +482,9 @@
                               </VBox>
                               <VBox fx:id="paneVerification" layoutX="10.0" layoutY="10.0" maxWidth="1.7976931348623157E308" prefHeight="700.0" spacing="3.0" style="-fx-background-color: white; -fx-border-color: white; -fx-background-radius: 15; -fx-border-radius: 15;" visible="false">
                                  <children>
-                                    <Label text="Verification">
+                                    <Label text="%profile.label.verification">
                                        <font>
-                                          <Font name="Arial Rounded MT Bold" size="24.0" />
+                                          <Font name="Arial" size="24.0" />
                                        </font>
                                     </Label>
                                     <Region prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
@@ -527,21 +527,21 @@
                               </VBox>
                               <VBox fx:id="paneAccount" maxWidth="1.7976931348623157E308" spacing="3.0" style="-fx-background-color: white; -fx-background-radius: 15; -fx-border-radius: 15; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);">
                                  <children>
-                                    <Label text="Account">
+                                    <Label text="%profile.label.account">
                                        <font>
-                                          <Font name="Arial Rounded MT Bold" size="24.0" />
+                                          <Font name="Arial" size="24.0" />
                                        </font>
                                     </Label>
                                     <Region prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
                                     <VBox prefHeight="63.0" prefWidth="865.0">
                                        <children>
-                                          <Label text="Name" />
+                                          <Label text="%profile.label.name" />
                                           <Label fx:id="lbname" text="admin">
                                              <font>
                                                 <Font size="17.0" />
                                              </font>
                                           </Label>
-                                          <Label text="Change" textFill="#1541c5">
+                                          <Label text="%profile.label.change" textFill="#1541c5">
                                              <font>
                                                 <Font name="System Bold" size="13.0" />
                                              </font>
@@ -554,13 +554,13 @@
                                     <Region layoutX="31.0" layoutY="39.0" prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
                                     <VBox layoutX="31.0" layoutY="41.0" prefHeight="48.0" prefWidth="443.0">
                                        <children>
-                                          <Label text="username" />
+                                          <Label text="%profile.label.username" />
                                           <Label fx:id="lbusername" text="admin">
                                              <font>
                                                 <Font size="17.0" />
                                              </font>
                                           </Label>
-                                          <Label text="you can't change your user name">
+                                          <Label text="%profile.label.unChange">
                                              <font>
                                                 <Font size="11.0" />
                                              </font>
@@ -573,13 +573,13 @@
                                     <Region layoutX="31.0" layoutY="103.0" prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
                                     <VBox layoutX="31.0" layoutY="41.0" prefHeight="48.0" prefWidth="443.0">
                                        <children>
-                                          <Label text="email" />
+                                          <Label text="%profile.label.email" />
                                           <Label fx:id="lbemail" text="admin@gmail.com">
                                              <font>
                                                 <Font size="17.0" />
                                              </font>
                                           </Label>
-                                          <Label text="Change" textFill="#1541c5">
+                                          <Label text="%profile.label.change" textFill="#1541c5">
                                              <font>
                                                 <Font name="System Bold" size="13.0" />
                                              </font>
@@ -592,13 +592,13 @@
                                     <Region layoutX="31.0" layoutY="164.0" prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
                                     <VBox layoutX="31.0" layoutY="165.0" prefHeight="101.0" prefWidth="443.0">
                                        <children>
-                                          <Label text="password" />
+                                          <Label text="%profile.label.password" />
                                           <Label fx:id="lbname21" text="********">
                                              <font>
                                                 <Font size="17.0" />
                                              </font>
                                           </Label>
-                                          <Label text="Change" textFill="#1541c5">
+                                          <Label text="%profile.label.change" textFill="#1541c5">
                                              <font>
                                                 <Font name="System Bold" size="13.0" />
                                              </font>
@@ -609,13 +609,13 @@
                                           <Region prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
                                           <VBox prefHeight="48.0" prefWidth="443.0">
                                              <children>
-                                                <Label text="phone number" />
+                                                <Label text="%profile.label.phone" />
                                                 <Label fx:id="lbphonenumber" text="01234566">
                                                    <font>
                                                       <Font size="17.0" />
                                                    </font>
                                                 </Label>
-                                                <Label text="Change" textFill="#1541c5">
+                                                <Label text="%profile.label.change" textFill="#1541c5">
                                                    <font>
                                                       <Font name="System Bold" size="13.0" />
                                                    </font>
@@ -630,8 +630,8 @@
                                     <Region layoutX="31.0" layoutY="164.0" prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
                                     <VBox layoutX="31.0" layoutY="41.0" prefHeight="48.0" prefWidth="443.0">
                                        <children>
-                                          <Label text="language" />
-                                          <ComboBox maxWidth="1.7976931348623157E308" prefHeight="37.0" prefWidth="443.0" promptText="english" style="-fx-border-color: white; -fx-background-color: lightgray;" />
+                                          <Label text="%profile.label.language" />
+                                          <ComboBox maxWidth="1.7976931348623157E308" prefHeight="37.0" prefWidth="443.0" promptText="%profile.label.languageDefault" style="-fx-border-color: white; -fx-background-color: lightgray;" fx:id="languagePicker" />
                                        </children>
                                     </VBox>
                                     <Region prefHeight="1.0" prefWidth="443.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
@@ -642,7 +642,7 @@
                                        </children>
                                     </VBox>
                                     <Region layoutX="31.0" layoutY="445.0" opacity="0.0" prefHeight="37.0" prefWidth="441.0" style="-fx-background-color: lightgray; -ox-border-color: light grey; hfx-max-height: 20;" />
-                                    <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="101.0" style="-fx-border-radius: 0; -fx-background-radius: 0; -fx-background-color: #0052ff; -fx-text-fill: white;" text="Save settings" />
+                                    <Button mnemonicParsing="false" onAction="#btnSaveSetting" prefHeight="40.0" prefWidth="101.0" style="-fx-border-radius: 0; -fx-background-radius: 0; -fx-background-color: #0052ff; -fx-text-fill: white;" text="%profile.label.change" />
                                  </children>
                                  <padding>
                                     <Insets left="20.0" right="10.0" />
