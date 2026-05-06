@@ -34,7 +34,8 @@ public class AdminController {
                 new PieChart.Data("Đồ cổ", 25),
                 new PieChart.Data("Thời trang", 20),
                 new PieChart.Data("Sách", 10),
-                new PieChart.Data("Khác", 10) // Đã thêm "Khác"
+                new PieChart.Data("trang suc", 10),
+                new PieChart.Data("Khác", 6) // Đã thêm "Khác"
         );
 
         categoryChart.setData(pieChartData);
