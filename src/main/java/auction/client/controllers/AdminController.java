@@ -6,20 +6,49 @@ import auction.common.message.Message;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
+import javafx.scene.chart.PieChart;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Line;
 import javafx.util.Duration;
 
 public class AdminController {
+    @FXML private PieChart categoryChart;
+
+    @FXML
+    public void initialize() {
+        // Tạo dữ liệu PieChart mới bao gồm tất cả các thành phần bạn muốn
+        ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList(
+                new PieChart.Data("Hàng điện tử", 35),
+                new PieChart.Data("Đồ cổ", 25),
+                new PieChart.Data("Thời trang", 20),
+                new PieChart.Data("Sách", 10),
+                new PieChart.Data("Khác", 10) // Đã thêm "Khác"
+        );
+
+        categoryChart.setData(pieChartData);
+
+        // (Tùy chọn) Thêm phần trăm vào nhãn để chuyên nghiệp hơn
+        for (PieChart.Data data : pieChartData) {
+            data.nameProperty().bind(
+                    javafx.beans.binding.Bindings.concat(
+                            data.getName(), " ", String.format("%.1f%%", data.getPieValue())
+                    )
+            );
+        }
+    }
+
     // --- CÁC THÀNH PHẦN MỚI CHO SIDEBAR ---
     @FXML private VBox sidebar;
     @FXML private Line sideLine;
@@ -29,7 +58,7 @@ public class AdminController {
 
     private boolean isExpanded = true;
 
-    // --- CÁC BUTTON CŨ ---
+    // --- CÁC BUTTON  ---
     @FXML private Button btnDashboard;
     @FXML private Button btnManageUsers;
     @FXML private Button btnApproveItems;
@@ -40,6 +69,10 @@ public class AdminController {
     @FXML private Button btnLockAccount;
     @FXML private TextField txtSearch;
     @FXML private TableView<?> adminTable;
+
+    // ___ CÁC VBOX ___
+    @FXML private VBox VBoxUserManagement;
+    @FXML private VBox VBoxOverview;
 
     ClientNetwork network = ClientNetwork.getInstance();
 
@@ -89,13 +122,22 @@ public class AdminController {
     }
 
     @FXML
+    private void handleSwitchHbox(VBox vBox){
+        VBoxUserManagement.setVisible(false);
+        VBoxOverview.setVisible(false);
+        vBox.setVisible(true);
+    }
+
+    @FXML
     private void handleShowDashboard(ActionEvent event) {
         setActiveButton(btnDashboard);
+        handleSwitchHbox(VBoxOverview);
     }
 
     @FXML
     private void handleManageUsers(ActionEvent event) {
         setActiveButton(btnManageUsers);
+        handleSwitchHbox(VBoxUserManagement);
     }
 
     @FXML
