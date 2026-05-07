@@ -164,21 +164,9 @@ public class ItemviewController {
         }*/
 
         String bidValue = txtBid.getText().trim();
-        if (bidValue.isEmpty()){
-            showBidError("Vui lòng nhập số tiền!",false);
-            return;
-        }
         try {
+            validateBid(bidValue, selectedItem.getCurrentPrice(), currentUser.getId(), selectedItem.getSellerId(), currentUser.getRole());
             long amount = Long.parseLong(bidValue);
-            if ("ADMIN".equals(currentUser.getRole()) || currentUser.getId() == selectedItem.getSellerId()) {
-                showBidError("Admin hoặc người bán không thể đấu giá!",false);
-                return;
-            }
-
-            if (amount <= selectedItem.getCurrentPrice()) {
-                showBidError("Giá trả phải lớn hơn " + selectedItem.getCurrentPrice(),false);
-                return;
-            }
 
             new Thread(() -> {
                 Message response = AuctionManager.getInstance().placeBid(selectedItem.getId(), currentUser.getId(), amount);
@@ -196,8 +184,31 @@ public class ItemviewController {
                 });
             }).start();
         }
-        catch (NumberFormatException e) {
-            showBidError("Vui lòng chỉ nhập số!",false);
+        catch (IllegalArgumentException e) {
+            showBidError(e.getMessage(),false);
+        }
+    }
+
+    public void validateBid(String bidText, long currentPrice, int userId, int sellerId, String userRole)
+            throws IllegalArgumentException {
+
+        if (bidText == null || bidText.trim().isEmpty()) {
+            throw new IllegalArgumentException("Vui lòng nhập số tiền!");
+        }
+
+        long amount;
+        try {
+            amount = Long.parseLong(bidText.trim());
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Vui lòng chỉ nhập số!");
+        }
+
+        if ("ADMIN".equals(userRole) || userId == sellerId) {
+            throw new IllegalArgumentException("Admin hoặc người bán không thể đấu giá!");
+        }
+
+        if (amount <= currentPrice) {
+            throw new IllegalArgumentException("Giá trả phải lớn hơn " + currentPrice + "$");
         }
     }
     @FXML
