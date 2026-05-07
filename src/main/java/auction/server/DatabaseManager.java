@@ -17,8 +17,9 @@ public class DatabaseManager {
 
     private static final String URL = "jdbc:mysql://" + HOST + ":" + PORT + "/" + DB_NAME + "?useSSL=true&trustServerCertificate=true";
 
+    private static DatabaseManager instance;
     private static HikariDataSource dataSource;
-    static {
+    private DatabaseManager() {
         try {
             HikariConfig config = new HikariConfig();
 
@@ -48,9 +49,21 @@ public class DatabaseManager {
         return dataSource.getConnection();
     }
 
+    public static DatabaseManager getInstance() {
+        if (instance == null) {
+            synchronized (DatabaseManager.class) {
+                if (instance == null) {
+                    instance = new DatabaseManager();
+                }
+            }
+
+        }
+        return instance;
+    }
+
     public static void main(String[] args) {
         long start = System.currentTimeMillis();
-        try (Connection conn1 = getConnection();) {
+        try (Connection conn1 = DatabaseManager.getInstance().getConnection();) {
             System.out.println("Lần 1 lấy kết nối mất: " + (System.currentTimeMillis() - start) + "ms");
 
         }
@@ -59,7 +72,7 @@ public class DatabaseManager {
         }
 
         long start2 = System.currentTimeMillis();
-        try (Connection conn2 = getConnection();){
+        try (Connection conn2 = DatabaseManager.getInstance().getConnection();){
             System.out.println("Lần 2 lấy kết nối mất: " + (System.currentTimeMillis() - start2) + "ms");
         }
         catch (SQLException e){

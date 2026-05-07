@@ -212,6 +212,21 @@ public class ClientHandler implements Runnable {
         int id = (int) msg.getData();
         Item item=itemDao.getById(id);
         if (item != null) {
+            java.time.LocalDateTime now = java.time.LocalDateTime.now();
+            String oldStatus = item.getStatus();
+
+            if (now.isBefore(item.getStartTime())) {
+                item.setStatus("PENDING");
+            } else if (now.isAfter(item.getEndTime())) {
+                item.setStatus("CLOSED");
+            } else {
+                item.setStatus("OPEN");
+            }
+
+            if (!item.getStatus().equals(oldStatus)) {
+                itemDao.updateStatus(item.getId(), item.getStatus());
+            }
+
             msg.setStatus("SUCCESS");
             msg.setData(item);
         }
@@ -232,6 +247,13 @@ public class ClientHandler implements Runnable {
                 msg.setStatus("FAILED");
                 msg.setData("Sản phẩm không tồn tại!");
             }
+            /*else if (!"OPEN".equals(currentItem.getStatus())) {
+                msg.setStatus("FAILED");
+                msg.setData("Phiên đấu giá đang đóng, không thể đặt giá!");
+                out.writeObject(msg);
+                out.flush();
+                return;
+            }*/
             else if (bidRequest.getBidAmount() <= currentItem.getCurrentPrice()) {
                 msg.setStatus("FAILED");
                 msg.setData("Giá đã bị đẩy lên € " + currentItem.getCurrentPrice() + ". Vui lòng trả cao hơn!");

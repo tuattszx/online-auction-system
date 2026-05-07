@@ -1,4 +1,4 @@
-package auction.client.controllers;
+package auction.client.services;
 
 import java.util.Locale;
 import java.util.ResourceBundle;

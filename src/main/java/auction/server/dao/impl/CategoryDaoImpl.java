@@ -1,20 +1,20 @@
 package auction.server.dao.impl;
 
 import auction.common.model.categories.Category;
+import auction.server.DatabaseManager;
 import auction.server.dao.CategoryDao;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static auction.server.DatabaseManager.getConnection;
 
 public class CategoryDaoImpl implements CategoryDao {
 
     @Override
     public Category getById(Integer id) {
         String sql = "SELECT * FROM CATEGORIES WHERE id = ?";
-        try (Connection conn = getConnection();
+        try (Connection conn = DatabaseManager.getInstance().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, id);
             try (ResultSet rs = pstmt.executeQuery()) {
@@ -31,7 +31,7 @@ public class CategoryDaoImpl implements CategoryDao {
     public List<Category> getAll() {
         List<Category> list = new ArrayList<>();
         String sql = "SELECT * FROM CATEGORIES ORDER BY name ASC";
-        try (Connection conn = getConnection();
+        try (Connection conn = DatabaseManager.getInstance().getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
@@ -47,7 +47,7 @@ public class CategoryDaoImpl implements CategoryDao {
     @Override
     public boolean add(Category category){
         String sql = "INSERT INTO CATEGORIES (name, description) VALUES (?, ?)";
-        try (Connection conn = getConnection();
+        try (Connection conn = DatabaseManager.getInstance().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, category.getName());
             pstmt.setString(2, category.getDescription());
@@ -62,7 +62,7 @@ public class CategoryDaoImpl implements CategoryDao {
     @Override
     public boolean update(Category category){
         String sql = "UPDATE CATEGORIES SET name = ?, description = ? WHERE id = ?";
-        try (Connection conn = getConnection();
+        try (Connection conn = DatabaseManager.getInstance().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, category.getName());
             pstmt.setString(2, category.getDescription());
@@ -78,7 +78,7 @@ public class CategoryDaoImpl implements CategoryDao {
     @Override
     public boolean delete(Integer id) {
         String sql = "DELETE FROM CATEGORIES WHERE id = ?";
-        try (Connection conn = getConnection();
+        try (Connection conn = DatabaseManager.getInstance().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, id);
             return pstmt.executeUpdate() > 0;
@@ -93,7 +93,7 @@ public class CategoryDaoImpl implements CategoryDao {
     public Category getCategoryByName(String name) throws SQLException {
         String sql = "SELECT * FROM CATEGORIES WHERE name = ?";
 
-        try (Connection conn = getConnection();
+        try (Connection conn = DatabaseManager.getInstance().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, name);

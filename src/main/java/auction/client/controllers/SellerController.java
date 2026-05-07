@@ -31,6 +31,14 @@ public class SellerController {
     @FXML private DatePicker startDatePicker;
     @FXML private DatePicker endDatePicker;
     @FXML private TextArea txtDescription;
+
+    @FXML private Spinner<Integer> startHour;
+    @FXML private Spinner<Integer> startMin;
+    @FXML private Spinner<Integer> startSec;
+
+    @FXML private Spinner<Integer> endHour;
+    @FXML private Spinner<Integer> endMin;
+    @FXML private Spinner<Integer> endSec;
     // Khai báo các VBox nội dung (phần bên phải)
     @FXML
     private VBox vboxAddProduct;
@@ -191,12 +199,26 @@ public class SellerController {
 
             // Set thời gian (LocalDateTime)
             if (startDatePicker.getValue() != null) {
-                newItem.setStartTime(startDatePicker.getValue().atStartOfDay());
+                int h = startHour.getValue();
+                int m = startMin.getValue();
+                int s = startSec.getValue();
+
+                newItem.setStartTime(startDatePicker.getValue().atTime(h, m, s));
             }
             if (endDatePicker.getValue() != null) {
-                newItem.setEndTime(endDatePicker.getValue().atTime(23, 59, 59));
+                int h = endHour.getValue();
+                int m = endMin.getValue();
+                int s = endSec.getValue();
+
+                newItem.setEndTime(endDatePicker.getValue().atTime(h, m, s));
             }
 
+            if (newItem.getStartTime() != null && newItem.getEndTime() != null) {
+                if (newItem.getEndTime().isBefore(newItem.getStartTime())) {
+                    ViewManager.showAlert(Alert.AlertType.WARNING, "Lỗi thời gian", "Thời gian kết thúc phải sau thời gian bắt đầu!");
+                    return;
+                }
+            }
             // 4. Xử lý Ảnh (Chuyển sang mảng byte để gửi qua Socket)
             // Lưu ý: Ta không tạo URL ở đây, Server sẽ tạo URL sau khi lưu file vật lý thành công
             List<byte[]> allImageData = new ArrayList<>();
@@ -258,5 +280,12 @@ public class SellerController {
         categoryComboBox.setValue(null);
         lblFileName.setText("Chưa chọn file");
         selectedFiles = null;
+        startHour.getValueFactory().setValue(0);
+        startMin.getValueFactory().setValue(0);
+        startSec.getValueFactory().setValue(0);
+
+        endHour.getValueFactory().setValue(0);
+        endMin.getValueFactory().setValue(0);
+        endSec.getValueFactory().setValue(0);
     }
 }

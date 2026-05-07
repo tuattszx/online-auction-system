@@ -1,5 +1,6 @@
 package auction.client.controllers;
 import auction.client.ClientNetwork;
+import auction.client.services.LanguageManager;
 import auction.client.session.DataSession;
 import auction.common.message.Message;
 import auction.common.model.users.User;
@@ -8,7 +9,6 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
@@ -19,8 +19,6 @@ import javafx.scene.input.MouseEvent;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
-import java.util.ResourceBundle;
 
 import javafx.scene.layout.VBox;
 import org.controlsfx.control.SearchableComboBox;

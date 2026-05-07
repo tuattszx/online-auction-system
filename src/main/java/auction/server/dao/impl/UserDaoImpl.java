@@ -1,13 +1,13 @@
 package auction.server.dao.impl;
 
 import auction.common.model.users.User;
+import auction.server.DatabaseManager;
 import auction.server.dao.UserDao;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static auction.server.DatabaseManager.getConnection;
 
 public class UserDaoImpl implements UserDao {
 
@@ -20,7 +20,7 @@ public class UserDaoImpl implements UserDao {
     public List<User> getAll() {
         List<User> users = new ArrayList<>();
         String sql = "SELECT * FROM users";
-        try (Connection conn = getConnection();
+        try (Connection conn = DatabaseManager.getInstance().getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
@@ -33,7 +33,7 @@ public class UserDaoImpl implements UserDao {
     @Override
     public User getById(Integer id) {
         String sql="SELECT * FROM users WHERE id=?";
-        try (Connection conn= getConnection();
+        try (Connection conn= DatabaseManager.getInstance().getConnection();
              PreparedStatement pstmt=conn.prepareStatement(sql)) {
 
             pstmt.setInt(1,id);
@@ -58,7 +58,7 @@ public class UserDaoImpl implements UserDao {
     @Override
     public boolean delete(Integer id) {
         String sql = "DELETE FROM users WHERE id = ?";
-        try (Connection conn = getConnection();
+        try (Connection conn = DatabaseManager.getInstance().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, id);
             return pstmt.executeUpdate() > 0;
@@ -68,7 +68,7 @@ public class UserDaoImpl implements UserDao {
     @Override
     public User CheckLogin(String userName, String password){
         String sql="SELECT * FROM users WHERE username=? AND password=?";
-        try(Connection conn=getConnection();
+        try(Connection conn=DatabaseManager.getInstance().getConnection();
             PreparedStatement pstmt= conn.prepareStatement(sql)) {
             pstmt.setString(1, userName);
             pstmt.setString(2, password);
@@ -85,7 +85,7 @@ public class UserDaoImpl implements UserDao {
     public boolean registerUser(User user) {
         String sql = "INSERT INTO users (username, password, email,dis_name,phone_number) VALUES (?, ?, ?, ?, ?)";
 
-        try (Connection conn = getConnection();
+        try (Connection conn = DatabaseManager.getInstance().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, user.getUsername());
@@ -106,7 +106,7 @@ public class UserDaoImpl implements UserDao {
     @Override
     public boolean updateBalance(int id,long amount){
         String sql= "UPDATE users SET balance = balance + ? WHERE ID = ?";
-        try (Connection conn= getConnection();
+        try (Connection conn= DatabaseManager.getInstance().getConnection();
              PreparedStatement pstmt= conn.prepareStatement(sql)){
 
             pstmt.setLong(1,amount);
@@ -151,7 +151,7 @@ public class UserDaoImpl implements UserDao {
     @Override
     public boolean isUsernameExists(String username) {
         String sql = "SELECT 1 FROM users WHERE USERNAME = ?";
-        try (Connection conn = getConnection();
+        try (Connection conn = DatabaseManager.getInstance().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, username);
             try (ResultSet rs = pstmt.executeQuery()) {
@@ -163,7 +163,7 @@ public class UserDaoImpl implements UserDao {
     @Override
     public boolean isEmailExists(String email) {
         String sql = "SELECT 1 FROM users WHERE EMAIL = ?";
-        try (Connection conn = getConnection();
+        try (Connection conn = DatabaseManager.getInstance().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, email);
             try (ResultSet rs = pstmt.executeQuery()) {
@@ -175,7 +175,7 @@ public class UserDaoImpl implements UserDao {
     @Override
     public boolean updatePassword(int userId, String newPassword) {
         String sql = "UPDATE users SET PASSWORD = ? WHERE ID = ?";
-        try (Connection conn = getConnection();
+        try (Connection conn = DatabaseManager.getInstance().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, newPassword);
             pstmt.setInt(2, userId);
@@ -189,7 +189,7 @@ public class UserDaoImpl implements UserDao {
     @Override
     public boolean updateProfile(int userId, String newName, String newEmail, String newAddress,String newPhoneNumber) {
         String sql = "UPDATE users SET dis_name=?, EMAIL = ?, ADDRESS=?, phone_number=? WHERE ID = ?";
-        try (Connection conn = getConnection();
+        try (Connection conn = DatabaseManager.getInstance().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1,newName);
             pstmt.setString(2, newEmail);

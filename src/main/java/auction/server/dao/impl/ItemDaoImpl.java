@@ -3,13 +3,13 @@ package auction.server.dao.impl;
 import auction.common.model.categories.Category;
 import auction.common.model.items.Item;
 import auction.common.model.items.ItemImage;
+import auction.server.DatabaseManager;
 import auction.server.dao.ItemDao;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static auction.server.DatabaseManager.getConnection;
 
 public class ItemDaoImpl implements ItemDao {
 
@@ -78,7 +78,7 @@ public class ItemDaoImpl implements ItemDao {
 
         Connection conn = null;
         try {
-            conn = getConnection();
+            conn = DatabaseManager.getInstance().getConnection();
             conn.setAutoCommit(false);
 
             try (PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -199,7 +199,7 @@ public class ItemDaoImpl implements ItemDao {
         List<Item> itemList = new ArrayList<>();
         String sql = "SELECT * FROM ITEMS WHERE status NOT IN ('UNAPPROVED', 'DELETED') ORDER BY created_time DESC";
 
-        try (Connection conn = getConnection();
+        try (Connection conn = DatabaseManager.getInstance().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql);
              ResultSet rs = pstmt.executeQuery()) {
 
@@ -217,7 +217,7 @@ public class ItemDaoImpl implements ItemDao {
 
     public Item getItemById(int id){
         String sql="SELECT * FROM ITEMS WHERE id=?";
-        try (Connection conn = getConnection();
+        try (Connection conn = DatabaseManager.getInstance().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1,id);
             try (ResultSet rs = pstmt.executeQuery()) {
@@ -239,7 +239,7 @@ public class ItemDaoImpl implements ItemDao {
                 "JOIN ITEM_CATEGORIES ic ON i.id = ic.id_item " +
                 "WHERE ic.id_category = ? ORDER BY i.created_time DESC";
 
-        try (Connection conn = getConnection();
+        try (Connection conn = DatabaseManager.getInstance().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setInt(1, catId);
@@ -262,7 +262,7 @@ public class ItemDaoImpl implements ItemDao {
         String sql = "SELECT * FROM ITEMS WHERE (name LIKE ? OR description LIKE ?) " +
                 "AND  status = 'OPEN' ORDER BY created_time DESC";
 
-        try (Connection conn = getConnection();
+        try (Connection conn = DatabaseManager.getInstance().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             String searchPattern = "%" + keyword + "%";
@@ -283,7 +283,7 @@ public class ItemDaoImpl implements ItemDao {
     @Override
     public boolean updateCurrentPrice(int itemId, long newPrice) {
         String sql = "UPDATE ITEMS SET current_price = ? WHERE id = ?";
-        try (Connection conn = getConnection();
+        try (Connection conn = DatabaseManager.getInstance().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setLong(1, newPrice);
@@ -299,7 +299,7 @@ public class ItemDaoImpl implements ItemDao {
     @Override
     public boolean updateStatus(int itemId, String status) {
         String sql = "UPDATE ITEMS SET status = ? WHERE id = ?";
-        try (Connection conn = getConnection();
+        try (Connection conn = DatabaseManager.getInstance().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, status);
@@ -323,7 +323,7 @@ public class ItemDaoImpl implements ItemDao {
 
         Connection conn = null;
         try {
-            conn = getConnection();
+            conn = DatabaseManager.getInstance().getConnection();
             conn.setAutoCommit(false);
 
             try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -373,7 +373,7 @@ public class ItemDaoImpl implements ItemDao {
         List<Item> itemList = new ArrayList<>();
         String sql = "SELECT * FROM ITEMS WHERE id_seller = ? ORDER BY created_time DESC";
 
-        try (Connection conn = getConnection();
+        try (Connection conn = DatabaseManager.getInstance().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setInt(1, sellerId);
@@ -396,7 +396,7 @@ public class ItemDaoImpl implements ItemDao {
     public boolean placeBid(int idItem,long newPrice,int id_bidder){
         String sql="UPDATE ITEMS SET current_price=?, id_current_bidder=? WHERE id=? and current_price<?";
 
-        try(Connection conn=getConnection();
+        try(Connection conn=DatabaseManager.getInstance().getConnection();
             PreparedStatement pstmt= conn.prepareStatement(sql)) {
 
             pstmt.setLong(1,newPrice);
@@ -416,7 +416,7 @@ public class ItemDaoImpl implements ItemDao {
         List<Item> itemList = new ArrayList<>();
         String sql = "SELECT * FROM ITEMS WHERE status = 'UNAPPROVED' ORDER BY created_time DESC";
 
-        try (Connection conn = getConnection();
+        try (Connection conn = DatabaseManager.getInstance().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql);
              ResultSet rs = pstmt.executeQuery()) {
 

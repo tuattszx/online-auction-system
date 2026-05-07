@@ -1,5 +1,6 @@
 package auction.client.controllers;
 
+import auction.client.services.LanguageManager;
 import javafx.event.Event;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;

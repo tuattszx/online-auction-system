@@ -1,6 +1,7 @@
 package auction.client.controllers;
 
 import auction.client.ClientNetwork;
+import auction.client.services.AuctionManager;
 import auction.client.session.DataSession;
 import auction.client.utils.ServerTimeSync;
 import auction.common.message.Message;
@@ -9,6 +10,7 @@ import auction.common.model.items.Item;
 import auction.common.model.users.User;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
+import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
@@ -23,6 +25,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -53,6 +56,7 @@ public class ItemviewController {
 
     private Timeline autoUpdateTimeline;
     private volatile boolean isUpdatingLastestPrice = false;
+    private PauseTransition errorTimeout = new PauseTransition(javafx.util.Duration.seconds(3));
 
     @FXML
     public void initialize() {
@@ -70,7 +74,7 @@ public class ItemviewController {
 
             lbCurrentBid.setText(String.format("€ %,d", selectedItem.getCurrentPrice(),"Updating...."));
 
-            handleGetLatestPrice(selectedItem.getId());
+            updateAllData(selectedItem.getId());
             startAutoUpdate(selectedItem.getId());
         }
 
@@ -88,26 +92,7 @@ public class ItemviewController {
         colTime.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getBidTime().toString()));
         colPrice.setCellValueFactory(cellData -> new SimpleStringProperty(String.format("%,d $", cellData.getValue().getBidAmount())));
 
-        loadHistoryBid();// Load bid history when initializing
         setItemData(selectedItem);
-    }
-
-    private void handleGetLatestPrice(int id) {
-        try {
-            Item item;
-            // Gửi request lấy Item mới nhất bằng ID
-            Message response = ClientNetwork.getInstance().sendRequest(new Message("GET_ITEM_BY_ID", id));
-            if (response != null && "SUCCESS".equals(response.getStatus())) {
-                item=(Item) response.getData();
-            } else {
-                throw new RuntimeException("Server không phản hồi hoặc có lỗi xảy ra");
-            }
-            Platform.runLater(() -> {
-                lbCurrentBid.setText(String.format("%,d $", item.getCurrentPrice()));
-            });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     private void startAutoUpdate(int itemId) {
@@ -127,9 +112,15 @@ public class ItemviewController {
         isUpdatingLastestPrice = true;
         new Thread(() -> {
             try {
-                handleGetLatestPrice(itemId);
-                loadHistoryBid();
-                loadPriceChart();
+                Item item = AuctionManager.getInstance().getLatestItem(itemId);
+                List<Bid> bids = AuctionManager.getInstance().getBidHistory(itemId);
+                List<Object[]> chartData = AuctionManager.getInstance().getPriceChart(itemId);
+
+                Platform.runLater(() -> {
+                    if (item != null) lbCurrentBid.setText(String.format("%,d $", item.getCurrentPrice()));
+                    if (bids != null) bidTable.getItems().setAll(bids);
+                    if (chartData != null) loadPriceChart(chartData);
+                });
             } finally {
                 isUpdatingLastestPrice = false;
             }
@@ -141,21 +132,18 @@ public class ItemviewController {
         }
     }
 
-    private void showBidError(String message) {
+    private void showBidError(String message,boolean isSuccess) {
         Platform.runLater(() -> {
             lbBidError.setText(message);
+            lbBidError.setTextFill(isSuccess? Color.GREEN:Color.RED);
             lbBidError.setVisible(true);
             lbBidError.setManaged(true);
 
-            new Thread(() -> {
-                try {
-                    Thread.sleep(3000);
-                    Platform.runLater(() -> {
-                        lbBidError.setVisible(false);
-                        lbBidError.setManaged(false);
-                    });
-                } catch (InterruptedException e) { e.printStackTrace(); }
-            }).start();
+            errorTimeout.setOnFinished(e -> {
+                lbBidError.setVisible(false);
+                lbBidError.setManaged(false);
+            });
+            errorTimeout.playFromStart();
         });
     }
 
@@ -164,46 +152,52 @@ public class ItemviewController {
     public void handlePlaceBid(){
         lbBidError.setVisible(false); // Ẩn lỗi cũ trước khi check mới
         lbBidError.setManaged(false);
+        Item selectedItem = DataSession.getInstance().getSelectedItem();
+        User currentUser = DataSession.getInstance().getLoggedInUser();
+
+        /*if ("PENDING".equals(selectedItem.getStatus())) {
+            showBidError("Phiên đấu giá chưa bắt đầu!", false);
+            return;
+        } else if ("CLOSED".equals(selectedItem.getStatus())) {
+            showBidError("Phiên đấu giá đã kết thúc!", false);
+            return;
+        }*/
 
         String bidValue = txtBid.getText().trim();
         if (bidValue.isEmpty()){
-            showBidError("Vui lòng nhập số tiền!");
+            showBidError("Vui lòng nhập số tiền!",false);
             return;
         }
         try {
             long amount = Long.parseLong(bidValue);
-            Item selectedItem = DataSession.getInstance().getSelectedItem();
-            User currentUser = DataSession.getInstance().getLoggedInUser();
             if ("ADMIN".equals(currentUser.getRole()) || currentUser.getId() == selectedItem.getSellerId()) {
-                showBidError("Admin hoặc người bán không thể đấu giá!");
+                showBidError("Admin hoặc người bán không thể đấu giá!",false);
                 return;
             }
 
             if (amount <= selectedItem.getCurrentPrice()) {
-                showBidError("Giá trả phải lớn hơn" + selectedItem.getCurrentPrice());
+                showBidError("Giá trả phải lớn hơn " + selectedItem.getCurrentPrice(),false);
                 return;
             }
 
-            Bid newBid = new Bid();
-            newBid.setIdItem(selectedItem.getId());
-            newBid.setIdUser(currentUser.getId());
-            newBid.setBidAmount(amount);
-
             new Thread(() -> {
-                Message response = ClientNetwork.getInstance().sendRequest(new Message("PLACE_BID", newBid));
+                Message response = AuctionManager.getInstance().placeBid(selectedItem.getId(), currentUser.getId(), amount);
                 Platform.runLater(() -> {
                     if ("SUCCESS".equals(response.getStatus())) {
                         long newPrice = Long.parseLong(bidValue);
                         selectedItem.setCurrentPrice(newPrice);
                         updateAllData(selectedItem.getId());
                         txtBid.clear();
+                        showBidError(response.getData().toString(),true);
                     }
-                    showBidError(response.getData().toString());
+                    else {
+                        showBidError(response.getData().toString(),false);
+                    }
                 });
             }).start();
         }
         catch (NumberFormatException e) {
-            showBidError("Vui lòng chỉ nhập số!");
+            showBidError("Vui lòng chỉ nhập số!",false);
         }
     }
     @FXML
@@ -247,52 +241,18 @@ public class ItemviewController {
         ViewManager.switchScene(event, view, "Hồ sơ cá nhân");
     }
 
-    @FXML
-    public void loadHistoryBid() {
-        Item selectedItem = DataSession.getInstance().getSelectedItem();
-        if (selectedItem == null) return;
-        try {
-            Message response = ClientNetwork.getInstance().sendRequest(new Message("GET_BID_BY_ITEM_ID", selectedItem.getId()));
-            if (response != null && "SUCCESS".equals(response.getStatus())) {
-                @SuppressWarnings("unchecked")
-                List<Bid> bidHistory = (List<Bid>) response.getData();
-                Platform.runLater(() -> {
-                    bidTable.getItems().clear();
-                    bidTable.getItems().setAll(bidHistory);
-                });
-            } else {
-                throw new RuntimeException("Failed to fetch bid history.");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+    private void loadPriceChart(List<Object[]> priceChartData) {
+        priceChart.getData().clear();
+        XYChart.Series<String, Number> series = new XYChart.Series<>();
+
+        for (Object[] dataPoint : priceChartData) {
+            String time = dataPoint[0].toString();
+            Number price = (Number) dataPoint[1];
+            series.getData().add(new XYChart.Data<>(time, price));
         }
-    }
 
-    private void loadPriceChart() {
-        Item selectedItem = DataSession.getInstance().getSelectedItem();
-        if (selectedItem == null) return;
+        priceChart.getData().add(series);
 
-        Message response = ClientNetwork.getInstance().sendRequest(new Message("GET_PRICE_CHART", selectedItem.getId()));
-        if (response != null && "SUCCESS".equals(response.getStatus())) {
-            @SuppressWarnings("unchecked")
-            List<Object[]> priceChartData = (List<Object[]>) response.getData();
-
-            Platform.runLater(() -> {
-                priceChart.getData().clear();
-                XYChart.Series<String, Number> series = new XYChart.Series<>();
-
-                for (Object[] dataPoint : priceChartData) {
-                    String time = dataPoint[0].toString();
-                    Number price = (Number) dataPoint[1];
-                    series.getData().add(new XYChart.Data<>(time, price));
-                }
-
-                priceChart.getData().add(series);
-                priceChart.setCreateSymbols(true);
-            });
-        } else {
-            throw new RuntimeException("Failed to fetch price chart data.");
-        }
     }
     @FXML private Label lblDays, lblHours, lblMins, lblSecs;
 
@@ -317,10 +277,31 @@ public class ItemviewController {
     private void updateCountdownUI() {
         // 1. Lấy giờ chuẩn Server đã đồng bộ (Dùng class ServerTimeSync đã làm ở bước trước)
         LocalDateTime now = ServerTimeSync.getNow();
+        LocalDateTime startTime = currentItem.getStartTime();
         LocalDateTime endTime = currentItem.getEndTime();
 
         // 2. Tính khoảng cách
-        Duration duration = Duration.between(now, endTime);
+        Duration duration;
+        boolean isStarted = now.isAfter(startTime);
+        boolean isEnded = now.isAfter(endTime);
+        if (!isStarted) {
+            duration = Duration.between(now, startTime);
+            setCountdownColor(Color.BLACK); // Chưa bắt đầu
+        }
+        else if (isEnded) {
+            timeline.stop();
+            currentItem.setStatus("CLOSED");
+            setCountdownColor(Color.GRAY); // Đã kết thúc - màu xám
+            displayExpired();
+            return;
+        }
+        else {
+            duration = Duration.between(now, endTime);
+            setCountdownColor(Color.GREEN); // Đang diễn ra - màu xanh lá
+            if (!"OPEN".equals(currentItem.getStatus())) {
+                currentItem.setStatus("OPEN");
+            }
+        }
         long seconds = duration.getSeconds();
 
         if (seconds <= 0) {
@@ -351,5 +332,12 @@ public class ItemviewController {
         lblMins.setText("00");
         lblSecs.setText("00");
         // Có thể thêm thông báo "Phiên đấu giá đã kết thúc"
+    }
+
+    private void setCountdownColor(Color color) {
+        lblDays.setTextFill(color);
+        lblHours.setTextFill(color);
+        lblMins.setTextFill(color);
+        lblSecs.setTextFill(color);
     }
 }
