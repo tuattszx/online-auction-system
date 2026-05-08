@@ -361,4 +361,23 @@ public class ItemviewController {
         lblMins.setTextFill(color);
         lblSecs.setTextFill(color);
     }
+    @FXML
+    private ScrollPane thumbnailScrollPane;
+
+    // Khoảng cách cuộn mỗi lần click (từ 0.0 đến 1.0)
+    private final double scrollStep = 0.2;
+
+    @FXML
+    void handleScrollUp(ActionEvent event) {
+        // Lấy giá trị hiện tại và trừ đi bước cuộn
+        double currentValue = thumbnailScrollPane.getVvalue();
+        thumbnailScrollPane.setVvalue(currentValue - scrollStep);
+    }
+
+    @FXML
+    void handleScrollDown(ActionEvent event) {
+        // Lấy giá trị hiện tại và cộng thêm bước cuộn
+        double currentValue = thumbnailScrollPane.getVvalue();
+        thumbnailScrollPane.setVvalue(currentValue + scrollStep);
+    }
 }

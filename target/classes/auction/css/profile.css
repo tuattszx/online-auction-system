@@ -1,0 +1,125 @@
+/* =========================================
+   PROFILE & SELLER VIEW STYLES
+   ========================================= */
+
+/* Profile Panes */
+.profile-pane {
+    -fx-background-color: white;
+    -fx-border-color: white;
+    -fx-spacing: 3;
+}
+
+.profile-pane-section-title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+}
+
+.profile-section-label {
+    -fx-text-fill: #7f8c8d;
+    -fx-font-size: 10px;
+}
+
+.profile-info-value {
+    -fx-font-size: 17px;
+    -fx-text-fill: #2c3e50;
+}
+
+/* Address Fields */
+.address-field-label {
+    -fx-text-fill: #2c3e50;
+    -fx-font-size: 10px;
+}
+
+.address-input {
+    -fx-background-color: #f0f2f5;
+    -fx-border-color: transparent;
+    -fx-background-radius: 0;
+    -fx-min-height: 35;
+}
+
+.address-textarea {
+    -fx-background-color: #f0f2f5;
+    -fx-border-color: #f0f2f5;
+    -fx-background-radius: 0;
+    -fx-control-inner-background: #f0f2f5;
+    -fx-border-width: 0;
+}
+
+/* Navbar */
+.profile-navbar {
+    -fx-background-color: white;
+    -fx-border-color: #34495e;
+    -fx-border-width: 0 0 2 0;
+}
+
+.profile-navbar-logo {
+    -fx-text-fill: #2125ff;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.profile-navbar-link {
+    -fx-text-fill: #0052FF;
+    -fx-font-weight: bold;
+    -fx-font-size: 15px;
+    -fx-cursor: hand;
+}
+
+.profile-navbar-link:hover {
+    -fx-underline: true;
+}
+
+/* Seller Page Left Menu */
+.seller-menu {
+    -fx-background-color: #34495e;
+    -fx-padding: 20 10;
+    -fx-spacing: 10;
+}
+
+.seller-menu-button {
+    -fx-max-width: Infinity;
+    -fx-text-fill: #bdc3c7;
+    -fx-alignment: CENTER_LEFT;
+    -fx-background-color: transparent;
+    -fx-cursor: hand;
+}
+
+.seller-menu-button-active {
+    -fx-background-color: #2980b9;
+    -fx-text-fill: white;
+}
+
+.seller-menu-button:hover {
+    -fx-background-color: rgba(41, 128, 185, 0.3);
+}
+
+/* Email/Notification Settings */
+.notification-toggle-container {
+    -fx-spacing: 15;
+    -fx-alignment: CENTER_LEFT;
+}
+
+.notification-title {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+}
+
+.notification-description {
+    -fx-font-size: 11px;
+    -fx-text-fill: #7f8c8d;
+}
+
+/* Verification Section */
+.verification-status {
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #24b47e;
+}
+
+.verification-badge {
+    -fx-text-fill: #24b47e;
+    -fx-effect: dropshadow(gaussian, rgba(36, 180, 126, 0.3), 5, 0, 0, 0);
+}
+

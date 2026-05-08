@@ -1,0 +1,244 @@
+/* =========================================
+   ADMIN VIEW STYLES
+   ========================================= */
+
+/* Sidebar Menu Buttons */
+.admin-menu-btn {
+    -fx-background-color: transparent;
+    -fx-text-fill: #88a1b9;
+    -fx-font-size: 16px;
+    -fx-padding: 12 15;
+    -fx-cursor: hand;
+    -fx-background-radius: 10;
+    -fx-transition: 0.3s;
+}
+
+.admin-menu-btn:hover {
+    -fx-background-color: rgba(0, 210, 255, 0.1);
+    -fx-text-fill: #00d2ff;
+}
+
+.admin-menu-btn-active {
+    -fx-background-color: linear-gradient(to right, #00d2ff, #3a7bd5);
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-padding: 12 15;
+    -fx-background-radius: 10;
+}
+
+/* Back Button */
+.back-button {
+    -fx-background-color: rgba(255, 255, 255, 0.1);
+    -fx-text-fill: #00d2ff;
+    -fx-border-color: #00d2ff;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-cursor: hand;
+    -fx-transition: all 0.3s ease-in-out;
+}
+
+.back-button:hover {
+    -fx-background-color: #00d2ff;
+    -fx-text-fill: white;
+    -fx-effect: dropshadow(gaussian, #00d2ff, 15, 0, 0, 0);
+}
+
+/* Search Field */
+.admin-search-field {
+    -fx-background-color: rgba(255, 255, 255, 0.15);
+    -fx-text-fill: white;
+    -fx-prompt-text-fill: #adb5bd;
+    -fx-background-radius: 20;
+    -fx-border-color: #00d2ff;
+    -fx-border-radius: 20;
+    -fx-padding: 0 15;
+    -fx-transition: all 0.3s;
+}
+
+.admin-search-field:focused {
+    -fx-background-color: rgba(255, 255, 255, 0.2);
+    -fx-border-color: #00d2ff;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 210, 255, 0.5), 10, 0, 0, 0);
+}
+
+/* Admin Table */
+.admin-table {
+    -fx-background-color: rgba(255, 255, 255, 0.07);
+    -fx-background-radius: 15;
+    -fx-border-color: rgba(255, 255, 255, 0.1);
+    -fx-padding: 5;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.4), 10, 0, 0, 0);
+}
+
+.admin-table .column-header-background {
+    -fx-background-color: transparent;
+}
+
+.admin-table .column-header {
+    -fx-background-color: rgba(0, 210, 255, 0.2);
+    -fx-size: 45;
+}
+
+.admin-table .column-header .label {
+    -fx-text-fill: #00d2ff;
+    -fx-font-weight: bold;
+}
+
+.admin-table .table-row-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-border-color: rgba(255, 255, 255, 0.05);
+    -fx-border-width: 0 0 1 0;
+}
+
+.admin-table .table-row-cell:filled:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.1);
+}
+
+.admin-table .table-cell {
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+}
+
+.table-row-cell:hover {
+    -fx-background-color: rgba(0, 210, 255, 0.15);
+    -fx-text-fill: white;
+}
+
+/* Action Buttons */
+.btn-approve {
+    -fx-background-color: linear-gradient(to right, #00b09b, #96c93d);
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0, 176, 155, 0.5), 10, 0, 0, 0);
+}
+
+.btn-approve:hover {
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+    -fx-effect: dropshadow(gaussian, #00b09b, 15, 0, 0, 0);
+}
+
+.btn-lock {
+    -fx-background-color: linear-gradient(to right, #ff416c, #ff4b2b);
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(255, 65, 108, 0.5), 10, 0, 0, 0);
+}
+
+.btn-lock:hover {
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+    -fx-effect: dropshadow(gaussian, #ff416c, 15, 0, 0, 0);
+}
+
+/* Thiết kế chung cho thẻ Card */
+.metric-card {
+    -fx-background-color: rgba(255, 255, 255, 0.05); /* Trắng mờ */
+    -fx-background-radius: 15;
+    -fx-border-radius: 15;
+    -fx-padding: 20;
+    -fx-border-color: rgba(255, 255, 255, 0.1);
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 10, 0, 0, 5);
+}
+
+.metric-card:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.1);
+    -fx-background-radius: 15;
+    -fx-cursor: hand;
+}
+
+/* Vòng tròn nhỏ chứa Icon */
+.icon-circle {
+    -fx-font-size: 20;
+    -fx-background-color: rgba(255, 255, 255, 0.1);
+    -fx-background-radius: 50;
+    -fx-min-width: 40;
+    -fx-min-height: 40;
+    -fx-alignment: center;
+}
+
+/* Kiểu chữ cho nội dung */
+.card-subtitle {
+    -fx-text-fill: #bdc3c7;
+    -fx-font-size: 14;
+    -fx-font-weight: bold;
+}
+
+.card-value {
+    -fx-text-fill: white;
+    -fx-font-size: 28;
+    -fx-font-weight: bold;
+    -fx-padding: 15 0 5 0;
+}
+
+/* Các nhãn thông báo xu hướng */
+.card-trend-up {
+    -fx-text-fill: #2ecc71;
+    -fx-font-size: 12;
+}
+
+.card-trend-neutral {
+    -fx-text-fill: #95a5a6;
+    -fx-font-size: 12;
+}
+
+.chart-card {
+    -fx-background-color: rgba(255, 255, 255, 0.05);
+    -fx-background-radius: 15;
+    -fx-border-radius: 15;
+    -fx-padding: 20;
+    -fx-border-color: rgba(255, 255, 255, 0.1);
+    -fx-border-width: 1;
+}
+
+.chart-title {
+    -fx-text-fill: white;
+    -fx-font-size: 18;
+    -fx-font-weight: bold;
+    -fx-padding: 0 0 10 0;
+}
+
+/* Đổi màu chữ cho các trục tọa độ */
+.axis {
+    -fx-tick-label-fill: #b2b2b2;
+    -fx-label-padding: 5;
+}
+
+.axis-label {
+    -fx-text-fill: #00d2ff;
+}
+
+/* Tùy chỉnh màu nền của lưới biểu đồ */
+.chart-plot-background {
+    -fx-background-color: transparent;
+}
+
+.chart-vertical-grid-lines, .chart-horizontal-grid-lines {
+    -fx-stroke: rgba(255, 255, 255, 0.1);
+}
+
+/* Container của phần chú thích (Legend) */
+.chart-legend {
+    -fx-background-color:  rgba(255, 255, 255, 0.05); /* Nền mờ cho phần chú thích */
+    -fx-padding: 10;
+    -fx-background-radius: 10;
+    /* Để phần chú thích nằm ngang, không phải dọc */
+    -fx-orientation: horizontal;
+    -fx-alignment: CENTER;
+}
+
+/* Các nhãn chữ trong phần chú thích */
+.chart-legend-item {
+    -fx-text-fill: white; /* Đổi màu chữ chú thích thành trắng phù hợp nền tối */
+    -fx-font-size: 13;
+}
+
