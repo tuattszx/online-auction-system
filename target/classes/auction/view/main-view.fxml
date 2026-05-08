@@ -37,19 +37,7 @@
                   </VBox>
                   <Region prefHeight="99.0" prefWidth="0.0" HBox.hgrow="ALWAYS" />
 
-                  <MenuButton mnemonicParsing="false" style="-fx-text-fill: #0052ff; -fx-background-color: white; -fx-font-weight: bold;" text="Categories" textFill="#0052ff">
-                     <items>
-                        <MenuItem text="Art" /><MenuItem text="Watches" /><MenuItem text="Art" />
-                        <MenuItem text="Interiors" />
-                        <MenuItem text="Jewellery" />
-                        <MenuItem text="Watches" />
-                        <MenuItem text="Fashion" />
-                        <MenuItem text="Coins" />
-                        <MenuItem text="Cars" />
-                        <MenuItem text="Wine" />
-                        <MenuItem text="Books" />
-                     </items>
-                  </MenuButton>
+
                   <Region prefHeight="99.0" prefWidth="0.0" HBox.hgrow="ALWAYS" />
 
                   <HBox alignment="CENTER_LEFT" maxHeight="40.0" prefHeight="40.0" prefWidth="372.0" style="-fx-background-color: #f1f3f5; -fx-background-radius: 20; -fx-border-color: #ddd; -fx-border-radius: 20;">

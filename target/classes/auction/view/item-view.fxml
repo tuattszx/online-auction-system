@@ -41,41 +41,35 @@
                   </ImageView>
                </children>
             </VBox>
+<!---->
+<!--            <Region HBox.hgrow="ALWAYS" />-->
+<!--            <HBox alignment="CENTER_LEFT" maxHeight="40.0" prefHeight="40.0" prefWidth="372.0" style="-fx-background-color: #f1f3f5; -fx-background-radius: 20; -fx-border-color: #ddd; -fx-border-radius: 20;">-->
+<!--               <children>-->
+<!--                  <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">-->
+<!--                     <image><Image url="@../img/search-icon-png-11.png" /></image>-->
+<!--                     <HBox.margin><Insets left="12.0" /></HBox.margin>-->
+<!--                  </ImageView>-->
+<!--                  <TextField fx:id="txtsearch" prefHeight="28.0" prefWidth="417.0" promptText="Search for items..." style="-fx-background-color: transparent; -fx-border-color: transparent;" />-->
+<!--               </children>-->
+<!--            </HBox>-->
             <Region HBox.hgrow="ALWAYS" />
-            <MenuButton mnemonicParsing="false" style="-fx-background-color: white; -fx-font-weight: bold;" text="Categories">
-               <items>
-                  <MenuItem text="Art" />
-                  <MenuItem text="Watches" />
-               </items>
-            </MenuButton>
-            <Region HBox.hgrow="ALWAYS" />
-            <HBox alignment="CENTER_LEFT" maxHeight="40.0" prefHeight="40.0" prefWidth="372.0" style="-fx-background-color: #f1f3f5; -fx-background-radius: 20; -fx-border-color: #ddd; -fx-border-radius: 20;">
+<!--            <Label fx:id="lbsell" onMouseClicked="#onSellerClick" style="-fx-font-weight: bold; -fx-cursor: hand;" text="Sell" textFill="#0052ff"><font><Font size="14.0" /></font></Label>-->
+<!--            <Region HBox.hgrow="ALWAYS" />-->
+            <HBox alignment="CENTER_RIGHT" prefHeight="41.0" prefWidth="800.0">
                <children>
-                  <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
-                     <image><Image url="@../img/search-icon-png-11.png" /></image>
-                     <HBox.margin><Insets left="12.0" /></HBox.margin>
-                  </ImageView>
-                  <TextField fx:id="txtsearch" prefHeight="28.0" prefWidth="417.0" promptText="Search for items..." style="-fx-background-color: transparent; -fx-border-color: transparent;" />
-               </children>
-            </HBox>
-            <Region HBox.hgrow="ALWAYS" />
-            <Label fx:id="lbsell" onMouseClicked="#onSellerClick" style="-fx-font-weight: bold; -fx-cursor: hand;" text="Sell" textFill="#0052ff"><font><Font size="14.0" /></font></Label>
-            <Region HBox.hgrow="ALWAYS" />
-            <HBox alignment="CENTER" prefHeight="41.0" prefWidth="45.0">
-               <children>
-                  <ImageView fitHeight="54.0" fitWidth="29.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fitHeight="54.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true">
                      <image><Image url="@../img/images.png" /></image>
                      <cursor><Cursor fx:constant="HAND" /></cursor>
                   </ImageView>
                </children>
             </HBox>
-            <Region HBox.hgrow="ALWAYS" />
-            <ImageView fitHeight="22.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true" style="-fx-cursor: hand;">
-               <image><Image url="@../img/chuong.jpg" /></image>
-            </ImageView>
-            <Region HBox.hgrow="ALWAYS" />
-            <VBox alignment="CENTER" prefHeight="99.0" prefWidth="128.0">
-               <children>
+<!--            <Region HBox.hgrow="ALWAYS" />-->
+<!--            <ImageView fitHeight="22.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true" style="-fx-cursor: hand;">-->
+<!--               <image><Image url="@../img/chuong.jpg" /></image>-->
+<!--            </ImageView>-->
+<!--            <Region HBox.hgrow="ALWAYS" />-->
+<!--            <VBox alignment="CENTER" prefHeight="99.0" prefWidth="-1280.0">-->
+<!--               <children>-->
                   <HBox alignment="CENTER" onMouseClicked="#onProfileClick">
                      <children>
                         <ImageView fitHeight="36.0" fitWidth="36.0" pickOnBounds="true" preserveRatio="true">
