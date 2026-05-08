@@ -31,6 +31,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.Duration;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class ItemviewController {
@@ -44,6 +45,8 @@ public class ItemviewController {
     @FXML private LineChart<String ,Number> priceChart;
     @FXML private TextField txtBid;
     @FXML private Label lbBidError;
+    @FXML private Label lbstarttime;
+    @FXML private Label lbendtime;
 
     @FXML
     private TableView<Bid> bidTable;
@@ -93,6 +96,13 @@ public class ItemviewController {
         colPrice.setCellValueFactory(cellData -> new SimpleStringProperty(String.format("%,d $", cellData.getValue().getBidAmount())));
 
         setItemData(selectedItem);
+         lbstarttime.setText(toString(currentItem.getStartTime()));
+         lbendtime.setText(toString(currentItem.getEndTime()));
+    }
+
+    private String toString(LocalDateTime time) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+        return time.format(formatter);
     }
 
     private void startAutoUpdate(int itemId) {

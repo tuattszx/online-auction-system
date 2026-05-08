@@ -280,11 +280,11 @@
                                           <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="ALWAYS">
                                               <children>
                                                   <DatePicker fx:id="startDatePicker" prefWidth="150.0" promptText="Select Date" />
-                                                  <Spinner fx:id="startHour" initialValue="00" max="23" min="0" prefWidth="60.0" />
+                                                  <Spinner fx:id="startHour" editable="true" initialValue="00" max="23" min="0" prefWidth="60.0" />
                                                   <Label text="h" />
-                                                  <Spinner fx:id="startMin" initialValue="00" max="59" min="0" prefWidth="60.0" />
+                                                  <Spinner fx:id="startMin" editable="true" initialValue="00" max="59" min="0" prefWidth="60.0" />
                                                   <Label text="m" />
-                                                  <Spinner fx:id="startSec" initialValue="00" max="59" min="0" prefWidth="60.0" />
+                                                  <Spinner fx:id="startSec" editable="true" initialValue="00" max="59" min="0" prefWidth="60.0" />
                                        <Label layoutX="329.0" layoutY="14.0" text="s" />
                                               </children>
                                           </HBox>
@@ -297,11 +297,11 @@
                                           <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="ALWAYS">
                                               <children>
                                                   <DatePicker fx:id="endDatePicker" prefWidth="150.0" promptText="Select Date" />
-                                                  <Spinner fx:id="endHour" initialValue="00" max="23" min="0" prefWidth="60.0" />
+                                                  <Spinner fx:id="endHour" editable="true" initialValue="00" max="23" min="0" prefWidth="60.0" />
                                                   <Label text="h" />
-                                                  <Spinner fx:id="endMin" initialValue="00" max="59" min="0" prefWidth="60.0" />
+                                                  <Spinner fx:id="endMin" editable="true" initialValue="00" max="59" min="0" prefWidth="60.0" />
                                                   <Label text="m" />
-                                                  <Spinner fx:id="endSec" initialValue="00" max="59" min="0" prefWidth="60.0" />
+                                                  <Spinner fx:id="endSec" editable="true" initialValue="00" max="59" min="0" prefWidth="60.0" />
                                        <Label layoutX="329.0" layoutY="14.0" text="s" />
                                               </children>
                                           </HBox>
