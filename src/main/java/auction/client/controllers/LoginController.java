@@ -60,7 +60,7 @@ public class LoginController {
         String username = txtUsername.getText();
         String password = txtPassword.getText();
 
-        if (username.isEmpty() || password.isEmpty()) {
+        if (!validateInput(username, password)) {
             ViewManager.showAlert(Alert.AlertType.WARNING, "Chú ý", "Vui lòng nhập đầy đủ thông tin!");
             return;
         }
@@ -80,23 +80,8 @@ public class LoginController {
             Message response = loginTask.getValue();
             resetUI(); // Luôn reset UI trước khi xử lý tiếp
 
-            switch (response.getStatus()) {
-                case "SUCCESS":
-                    DataSession.getInstance().setLoggedInUser((User) response.getData());
-                    ViewManager.switchScene(event, "main-view.fxml", "Trang chủ");
-                    break;
-
-                case "SERVER_OFFLINE":
-                    ViewManager.showAlert(Alert.AlertType.ERROR, "Lỗi kết nối", "Máy chủ hiện không hoạt động. Vui lòng thử lại sau!");
-                    break;
-
-                case "FAILED":
-                    ViewManager.showAlert(Alert.AlertType.WARNING, "Thất bại", "Tài khoản hoặc mật khẩu không chính xác!");
-                    break;
-
-                default:
-                    ViewManager.showAlert(Alert.AlertType.ERROR, "Lỗi", "Đã xảy ra lỗi không xác định!");
-                    break;
+            if ("GOTO_MAIN".equals(handleLoginResponse(response))) {
+                ViewManager.switchScene(event, "main-view.fxml", "Trang chủ");
             }
         });
         loginTask.setOnFailed(e -> {
@@ -115,5 +100,30 @@ public class LoginController {
     public void onSignUpClick(ActionEvent event) throws IOException {
         //Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         ViewManager.switchScene(event, "register-view.fxml", "Hệ thống Đấu giá - Đăng ký");
+    }
+
+    // Test
+    public boolean validateInput(String username, String password) {
+        return username != null && !username.trim().isEmpty()
+                && password != null && !password.trim().isEmpty();
+    }
+
+    public String handleLoginResponse(Message response) {
+        if (response == null) return "ERROR";
+
+        switch (response.getStatus()) {
+            case "SUCCESS":
+                DataSession.getInstance().setLoggedInUser((User) response.getData());
+                return "GOTO_MAIN";
+            case "FAILED":
+                ViewManager.showAlert(Alert.AlertType.WARNING, "Thất bại", "Tài khoản hoặc mật khẩu không chính xác!");
+                return "WRONG_AUTH";
+            case "SERVER_OFFLINE":
+                ViewManager.showAlert(Alert.AlertType.ERROR, "Lỗi kết nối", "Máy chủ hiện không hoạt động. Vui lòng thử lại sau!");
+                return "OFFLINE";
+            default:
+                ViewManager.showAlert(Alert.AlertType.ERROR, "Lỗi", "Đã xảy ra lỗi không xác định!");
+                return "UNKNOWN";
+        }
     }
 }

@@ -31,6 +31,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.Duration;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class ItemviewController {
@@ -44,6 +45,8 @@ public class ItemviewController {
     @FXML private LineChart<String ,Number> priceChart;
     @FXML private TextField txtBid;
     @FXML private Label lbBidError;
+    @FXML private Label lbstarttime;
+    @FXML private Label lbendtime;
 
     @FXML
     private TableView<Bid> bidTable;
@@ -93,6 +96,13 @@ public class ItemviewController {
         colPrice.setCellValueFactory(cellData -> new SimpleStringProperty(String.format("%,d $", cellData.getValue().getBidAmount())));
 
         setItemData(selectedItem);
+         lbstarttime.setText(toString(currentItem.getStartTime()));
+         lbendtime.setText(toString(currentItem.getEndTime()));
+    }
+
+    private String toString(LocalDateTime time) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+        return time.format(formatter);
     }
 
     private void startAutoUpdate(int itemId) {
@@ -164,21 +174,9 @@ public class ItemviewController {
         }*/
 
         String bidValue = txtBid.getText().trim();
-        if (bidValue.isEmpty()){
-            showBidError("Vui lòng nhập số tiền!",false);
-            return;
-        }
         try {
+            validateBid(bidValue, selectedItem.getCurrentPrice(), currentUser.getId(), selectedItem.getSellerId(), currentUser.getRole());
             long amount = Long.parseLong(bidValue);
-            if ("ADMIN".equals(currentUser.getRole()) || currentUser.getId() == selectedItem.getSellerId()) {
-                showBidError("Admin hoặc người bán không thể đấu giá!",false);
-                return;
-            }
-
-            if (amount <= selectedItem.getCurrentPrice()) {
-                showBidError("Giá trả phải lớn hơn " + selectedItem.getCurrentPrice(),false);
-                return;
-            }
 
             new Thread(() -> {
                 Message response = AuctionManager.getInstance().placeBid(selectedItem.getId(), currentUser.getId(), amount);
@@ -196,8 +194,31 @@ public class ItemviewController {
                 });
             }).start();
         }
-        catch (NumberFormatException e) {
-            showBidError("Vui lòng chỉ nhập số!",false);
+        catch (IllegalArgumentException e) {
+            showBidError(e.getMessage(),false);
+        }
+    }
+
+    public void validateBid(String bidText, long currentPrice, int userId, int sellerId, String userRole)
+            throws IllegalArgumentException {
+
+        if (bidText == null || bidText.trim().isEmpty()) {
+            throw new IllegalArgumentException("Vui lòng nhập số tiền!");
+        }
+
+        long amount;
+        try {
+            amount = Long.parseLong(bidText.trim());
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Vui lòng chỉ nhập số!");
+        }
+
+        if ("ADMIN".equals(userRole) || userId == sellerId) {
+            throw new IllegalArgumentException("Admin hoặc người bán không thể đấu giá!");
+        }
+
+        if (amount <= currentPrice) {
+            throw new IllegalArgumentException("Giá trả phải lớn hơn " + currentPrice + "$");
         }
     }
     @FXML
@@ -339,5 +360,24 @@ public class ItemviewController {
         lblHours.setTextFill(color);
         lblMins.setTextFill(color);
         lblSecs.setTextFill(color);
+    }
+    @FXML
+    private ScrollPane thumbnailScrollPane;
+
+    // Khoảng cách cuộn mỗi lần click (từ 0.0 đến 1.0)
+    private final double scrollStep = 0.2;
+
+    @FXML
+    void handleScrollUp(ActionEvent event) {
+        // Lấy giá trị hiện tại và trừ đi bước cuộn
+        double currentValue = thumbnailScrollPane.getVvalue();
+        thumbnailScrollPane.setVvalue(currentValue - scrollStep);
+    }
+
+    @FXML
+    void handleScrollDown(ActionEvent event) {
+        // Lấy giá trị hiện tại và cộng thêm bước cuộn
+        double currentValue = thumbnailScrollPane.getVvalue();
+        thumbnailScrollPane.setVvalue(currentValue + scrollStep);
     }
 }
