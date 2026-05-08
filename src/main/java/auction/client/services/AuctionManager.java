@@ -29,6 +29,11 @@ public class AuctionManager {
         return (res != null && "SUCCESS".equals(res.getStatus())) ? (List<Object[]>) res.getData() : null;
     }
 
+    public Message getItemImages(int itemId){
+        Message res = ClientNetwork.getInstance().sendRequest(new Message("GET_ITEM_IMAGES", itemId));
+        return (res != null && "SUCCESS".equals(res.getStatus())) ? res : null;
+    }
+
     public Message placeBid(int itemId, int userId, long amount) {
         Bid newBid = new Bid();
         newBid.setIdItem(itemId);

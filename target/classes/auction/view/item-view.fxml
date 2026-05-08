@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.util.ResourceBundle?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.chart.CategoryAxis?>
@@ -98,48 +99,8 @@
 
                                     <ScrollPane fx:id="thumbnailScrollPane" hbarPolicy="NEVER" prefHeight="400.0" style="-fx-background-color: transparent; -fx-background: white;" vbarPolicy="NEVER">
                                        <content>
-                                          <VBox spacing="8.0">
+                                          <VBox fx:id="thumbnailContainer" spacing="8.0">
                                              <children>
-                                                <ImageView fitHeight="80.0" fitWidth="80.0" pickOnBounds="true" preserveRatio="true" style="-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 0);">
-                                                   <image>
-                                                      <Image url="@../img/thanlan.jpg" />
-                                                   </image>
-                                                </ImageView>
-                                                <ImageView fitHeight="80.0" fitWidth="80.0" opacity="0.5" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../img/thanlan.jpg" />
-                                                   </image>
-                                                </ImageView>
-                                                <ImageView fitHeight="80.0" fitWidth="80.0" layoutX="10.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" style="-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 0);">
-                                                   <image>
-                                                      <Image url="@../img/thanlan.jpg" />
-                                                   </image>
-                                                </ImageView>
-                                                <ImageView fitHeight="80.0" fitWidth="80.0" layoutX="10.0" layoutY="98.0" opacity="0.5" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../img/thanlan.jpg" />
-                                                   </image>
-                                                </ImageView>
-                                                <ImageView fitHeight="80.0" fitWidth="80.0" layoutX="10.0" layoutY="186.0" pickOnBounds="true" preserveRatio="true" style="-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 0);">
-                                                   <image>
-                                                      <Image url="@../img/thanlan.jpg" />
-                                                   </image>
-                                                </ImageView>
-                                                <ImageView fitHeight="80.0" fitWidth="80.0" layoutX="10.0" layoutY="274.0" opacity="0.5" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../img/thanlan.jpg" />
-                                                   </image>
-                                                </ImageView>
-                                                <ImageView fitHeight="80.0" fitWidth="80.0" layoutX="10.0" layoutY="362.0" pickOnBounds="true" preserveRatio="true" style="-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 0);">
-                                                   <image>
-                                                      <Image url="@../img/thanlan.jpg" />
-                                                   </image>
-                                                </ImageView>
-                                                <ImageView fitHeight="80.0" fitWidth="80.0" layoutX="10.0" layoutY="450.0" opacity="0.5" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../img/thanlan.jpg" />
-                                                   </image>
-                                                </ImageView>
                                              </children>
                                           </VBox>
                                        </content>

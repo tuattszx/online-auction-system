@@ -6,7 +6,7 @@ import auction.client.session.DataSession;
 import auction.client.utils.ServerTimeSync;
 import auction.common.message.Message;
 import auction.common.model.bid.Bid;
-import auction.common.model.items.Item;
+import auction.common.model.items.*;
 import auction.common.model.users.User;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
@@ -17,6 +17,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 
+import javafx.scene.Cursor;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
@@ -72,11 +73,15 @@ public class ItemviewController {
 
             if (selectedItem.getImages() != null && !selectedItem.getImages().isEmpty()) {
                 byte[] data = selectedItem.getImages().get(0).getImageData();
-                mainImage.setImage(new Image(new ByteArrayInputStream(data)));
+                if (data != null && data.length > 0) {
+                    Image img = new Image(new ByteArrayInputStream(data));
+                    mainImage.setImage(img);
+                }
             }
 
             lbCurrentBid.setText(String.format("€ %,d", selectedItem.getCurrentPrice(),"Updating...."));
 
+            loadExtraImages(selectedItem.getId());
             updateAllData(selectedItem.getId());
             startAutoUpdate(selectedItem.getId());
         }
@@ -363,6 +368,7 @@ public class ItemviewController {
     }
     @FXML
     private ScrollPane thumbnailScrollPane;
+    @FXML private VBox thumbnailContainer;
 
     // Khoảng cách cuộn mỗi lần click (từ 0.0 đến 1.0)
     private final double scrollStep = 0.2;
@@ -379,5 +385,67 @@ public class ItemviewController {
         // Lấy giá trị hiện tại và cộng thêm bước cuộn
         double currentValue = thumbnailScrollPane.getVvalue();
         thumbnailScrollPane.setVvalue(currentValue + scrollStep);
+    }
+
+    private void displayThumbnails(Item item) {
+        if (item == null || item.getImages() == null) return;
+
+        Platform.runLater(() -> {
+            thumbnailContainer.getChildren().clear(); // Xóa sạch các ảnh cũ (cái lizard mặc định)
+
+            for (ItemImage imgModel : item.getImages()) {
+                // Lấy dữ liệu mảng byte (đã được server gửi về hoặc load thêm)
+                byte[] data = imgModel.getImageData();
+                if (data == null || data.length == 0) continue;
+
+                Image img = new Image(new ByteArrayInputStream(data));
+                ImageView thumb = new ImageView(img);
+
+                thumb.setFitHeight(80.0);
+                thumb.setFitWidth(80.0);
+                thumb.setPickOnBounds(true);
+                thumb.setPreserveRatio(true);
+                thumb.setCursor(Cursor.HAND);
+                thumb.setStyle("-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 0);");
+
+                //Bấm ảnh nhỏ thì ảnh to (mainImage) thay đổi
+                thumb.setOnMouseClicked(event -> {
+                    mainImage.setImage(img);
+                    // Bạn có thể thêm hiệu ứng mờ các ảnh không được chọn ở đây
+                    thumbnailContainer.getChildren().forEach(node -> node.setOpacity(0.5));
+                    thumb.setOpacity(1.0);
+                });
+
+                // Thêm vào VBox
+                thumbnailContainer.getChildren().add(thumb);
+            }
+
+            // Mặc định cho ảnh đầu tiên là ảnh chính nếu mainImage đang trống
+            if (!thumbnailContainer.getChildren().isEmpty()) {
+                ImageView firstThumb = (ImageView) thumbnailContainer.getChildren().get(0);
+                mainImage.setImage(firstThumb.getImage());
+                firstThumb.setOpacity(1.0);
+            }
+        });
+    }
+
+    private void loadExtraImages(int itemId) {
+        new Thread(() -> {
+            try {
+                Message response = AuctionManager.getInstance().getItemImages(itemId);
+
+                if ("SUCCESS".equals(response.getStatus())) {
+                    List<ItemImage> allImages = (List<ItemImage>) response.getData();
+
+                    Platform.runLater(() -> {
+                        Item tempItem = new Item();
+                        tempItem.setImages(allImages);
+                        displayThumbnails(tempItem);
+                    });
+                }
+            } catch (Exception e) {
+                System.err.println("Không thể tải thêm ảnh: " + e.getMessage());
+            }
+        }).start();
     }
 }

@@ -224,7 +224,7 @@ public class SellerController {
             List<byte[]> allImageData = new ArrayList<>();
             List<String> allFileNames = new ArrayList<>();
             for (File file : selectedFiles) {
-                allImageData.add(ImageService.toBytes(file));
+                allImageData.add(ImageService.toBytesAndCompress(file));
                 allFileNames.add(file.getName());
             }
             // 5. Đóng gói payload gửi đi

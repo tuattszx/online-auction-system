@@ -76,6 +76,9 @@ public class ClientHandler implements Runnable {
                         case "GET_PRICE_CHART":
                             handleGetPriceChart(msg, out);
                             break;
+                        case "GET_ITEM_IMAGES":
+                            handleGetItemImages(msg, out);
+                            break;
                         // Thêm các case khác như BID, VIEW_PRODUCT...
                     }
                 }
@@ -188,10 +191,11 @@ public class ClientHandler implements Runnable {
 
             for (Item item : items) {
                 if (item.getImages() != null && !item.getImages().isEmpty()) {
-                    for (ItemImage img : item.getImages()) {
-                        // Sử dụng hàm readImageBytes đã viết trong ImageService
-                        byte[] data = ImageService.readImageBytes(img.getUrlImage());
-                        img.setImageData(data); // Gán mảng byte vào model
+                    ItemImage firstImg = item.getImages().get(0);
+                    firstImg.setImageData(ImageService.readImageBytes(firstImg.getUrlImage()));
+
+                    for (int i = 1; i < item.getImages().size(); i++) {
+                        item.getImages().get(i).setImageData(null);
                     }
                 }
             }
@@ -338,5 +342,28 @@ public class ClientHandler implements Runnable {
 
         out.writeObject(msg);
         out.flush();
+    }
+
+    private void handleGetItemImages(Message msg, ObjectOutputStream out) throws IOException {
+        try {
+            int itemId = (int) msg.getData();
+            // Lấy danh sách ảnh từ DB (chỉ cần URL/Path)
+            Item item = itemDao.getById(itemId);
+            List<ItemImage> images=item.getImages();
+
+            for (ItemImage img : images) {
+                // Đọc dữ liệu vật lý từ ổ cứng và nén (nếu chưa nén lúc upload)
+                byte[] data = ImageService.readImageBytes(img.getUrlImage());
+                img.setImageData(data);
+            }
+
+            msg.setStatus("SUCCESS");
+            msg.setData(images);
+        } catch (Exception e) {
+            msg.setStatus("ERROR");
+        }
+        out.writeObject(msg);
+        out.flush();
+        out.reset();
     }
 }
