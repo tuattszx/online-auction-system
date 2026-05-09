@@ -72,9 +72,11 @@ public class ItemviewController {
             lbShortDesc.setText(selectedItem.getDescription());
 
             if (selectedItem.getImages() != null && !selectedItem.getImages().isEmpty()) {
-                byte[] data = selectedItem.getImages().get(0).getImageData();
-                if (data != null && data.length > 0) {
-                    Image img = new Image(new ByteArrayInputStream(data));
+                String imageUrl = selectedItem.getImages().get(0).getUrlImage();
+
+                if (imageUrl != null && !imageUrl.isEmpty()) {
+                    // Load ảnh trực tiếp từ link Cloudinary
+                    Image img = new Image(imageUrl, true);
                     mainImage.setImage(img);
                 }
             }
@@ -394,11 +396,12 @@ public class ItemviewController {
             thumbnailContainer.getChildren().clear(); // Xóa sạch các ảnh cũ (cái lizard mặc định)
 
             for (ItemImage imgModel : item.getImages()) {
-                // Lấy dữ liệu mảng byte (đã được server gửi về hoặc load thêm)
-                byte[] data = imgModel.getImageData();
-                if (data == null || data.length == 0) continue;
+                // 1.lấy URL từ Cloudinary
+                String url = imgModel.getUrlImage();
+                if (url == null || url.isEmpty()) continue;
 
-                Image img = new Image(new ByteArrayInputStream(data));
+                // 2. Tạo Image trực tiếp từ URL (tham số true giúp load ngầm không lag UI)
+                Image img = new Image(url, true);
                 ImageView thumb = new ImageView(img);
 
                 thumb.setFitHeight(80.0);

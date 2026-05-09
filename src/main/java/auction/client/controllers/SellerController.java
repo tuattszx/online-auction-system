@@ -5,6 +5,7 @@ import auction.client.session.DataSession;
 import auction.client.utils.ImageService;
 import auction.common.message.Message;
 import auction.common.model.items.Item;
+import auction.server.utils.CloudinaryUtil;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -219,21 +220,24 @@ public class SellerController {
                     return;
                 }
             }
-            // 4. Xử lý Ảnh (Chuyển sang mảng byte để gửi qua Socket)
-            // Lưu ý: Ta không tạo URL ở đây, Server sẽ tạo URL sau khi lưu file vật lý thành công
-            List<byte[]> allImageData = new ArrayList<>();
-            List<String> allFileNames = new ArrayList<>();
-            for (File file : selectedFiles) {
-                allImageData.add(ImageService.toBytesAndCompress(file));
-                allFileNames.add(file.getName());
-            }
-            // 5. Đóng gói payload gửi đi
-            // Gửi mảng Object gồm: [Item, byte[], tên ảnh, tên Category]
-            // Việc gửi categoryName riêng giúp Server dùng CategoryDAO tìm ID chính xác
-            Object[] payload = new Object[]{ newItem, allImageData,allFileNames, categoryName };
+            // 4. Xử lý Ảnh: Upload lên Cloudinary để lấy danh sách URL
+                List<String> allImageUrls = new ArrayList<>();
+                if (selectedFiles != null && !selectedFiles.isEmpty()) {
+                    for (File file : selectedFiles) {
+                        // Tải ảnh lên Cloudinary
 
-            Message request = new Message("ADD_ITEM", payload);
+                        String url = ImageService.uploadToCloud(file);;
+                        if (url != null) {
+                            allImageUrls.add(url);
+                        }
+                    }
+                }
 
+                // 5. Đóng gói payload gửi đi: Thay mảng byte bằng danh sách URL
+                Object[] payload = new Object[]{newItem, allImageUrls, categoryName};
+
+
+                Message request = new Message("ADD_ITEM", payload);
             // 6. Gửi qua ClientNetwork
             System.out.println("Đang gửi yêu cầu thêm sản phẩm lên Server...");
             Message response = ClientNetwork.getInstance().sendRequest(request);
@@ -252,9 +256,6 @@ public class SellerController {
 
         } catch (NumberFormatException e) {
             ViewManager.showAlert(Alert.AlertType.ERROR, "Lỗi định dạng", "Giá và kích thước phải là số hợp lệ!");
-        } catch (IOException e) {
-            ViewManager.showAlert(Alert.AlertType.ERROR, "Lỗi file", "Không thể đọc dữ liệu ảnh!");
-            e.printStackTrace();
         } catch (Exception e) {
             ViewManager.showAlert(Alert.AlertType.ERROR, "Lỗi hệ thống", e.getMessage());
             e.printStackTrace();

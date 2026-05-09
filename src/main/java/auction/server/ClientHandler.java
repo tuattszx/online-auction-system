@@ -24,10 +24,10 @@ import java.util.List;
 
 public class ClientHandler implements Runnable {
     private Socket socket;
-    private final UserDao userDao=new UserDaoImpl();
-    private final ItemDao itemDao=new ItemDaoImpl();
-    private final CategoryDao categoryDao=new CategoryDaoImpl();
-    private final BidDao bidDao=new BidDaoImpl();
+    private final UserDao userDao = new UserDaoImpl();
+    private final ItemDao itemDao = new ItemDaoImpl();
+    private final CategoryDao categoryDao = new CategoryDaoImpl();
+    private final BidDao bidDao = new BidDaoImpl();
 
     public ClientHandler(Socket socket) {
         this.socket = socket;
@@ -59,16 +59,16 @@ public class ClientHandler implements Runnable {
                             handleRegister(msg, out);
                             break;
                         case "ADD_ITEM":
-                            handleAddItem(msg,out);
+                            handleAddItem(msg, out);
                             break;
                         case "GET_ALL_ITEMS":
                             handleGetAllItems(msg, out);
                             break;
                         case "GET_ITEM_BY_ID":
-                            handleGetItemById(msg,out);
+                            handleGetItemById(msg, out);
                             break;
                         case "PLACE_BID":
-                            handlePlaceBid(msg,out);
+                            handlePlaceBid(msg, out);
                             break;
                         case "GET_BID_BY_ITEM_ID":
                             handleGetBidByItemId(msg, out);
@@ -86,7 +86,10 @@ public class ClientHandler implements Runnable {
         } catch (Exception e) {
             System.err.println("Client ngắt kết nối đột ngột: " + e.getMessage());
         } finally {
-            try { socket.close(); } catch (IOException e) { }
+            try {
+                socket.close();
+            } catch (IOException e) {
+            }
         }
     }
 
@@ -130,6 +133,7 @@ public class ClientHandler implements Runnable {
         out.writeObject(msg);
         out.flush();
     }
+
     private void handleSignout(Message msg, ObjectOutputStream out) throws IOException {
         msg.setStatus("SUCCESS");
         out.writeObject(msg);
@@ -141,21 +145,26 @@ public class ClientHandler implements Runnable {
             // 1. Giải nén gói dữ liệu từ Client
             Object[] payload = (Object[]) msg.getData();
             Item item = (Item) payload[0];
-            List<byte[]> imagesBytes = (List<byte[]>) payload[1];
-            List<String> fileNames = (List<String>) payload[2];
-            String categoryName = (String) payload[3];
+            List<String> imageUrls = (List<String>) payload[1];
+            String categoryName = (String) payload[2];
 
-            // 2. Xử lý lưu các ảnh vật lý vào ổ cứng Server
-            for (int i = 0; i < imagesBytes.size(); i++) {
-                // Lưu ảnh và nhận về đường dẫn tương đối (vd: /items/abc.jpg)
-                String dbPath = ImageService.saveImage(imagesBytes.get(i), fileNames.get(i));
+            // 2. Xử lý lưu các link ảnh vào đối tượng Item
+            for (int i = 0; i < imageUrls.size(); i++) {
+                // Link URL trực tiếp từ Cloudinary
+                String cloudPath = imageUrls.get(i);
 
                 // Tạo đối tượng ItemImage tương ứng
                 ItemImage itemImg = new ItemImage();
-                itemImg.setUrlImage(dbPath);
-                itemImg.setDefault(i == 0); // Ảnh đầu tiên làm ảnh mặc định
+                itemImg.setUrlImage(cloudPath); // Lưu link Cloudinary vào DB
 
-                item.addImages(itemImg); // Thêm vào list trong Item
+                // Ảnh đầu tiên (vị trí index 0) làm ảnh mặc định
+                itemImg.setDefault(i == 0);
+
+                // Thêm vào list trong Item để DAO xử lý lưu DB một thể
+                item.addImages(itemImg);
+                // LOG 1: Kiểm tra payload
+                System.out.println("DEBUG: Nhan duoc " + imageUrls.size() + " anh");
+                System.out.println("DEBUG: Category name nhan duoc: " + categoryName);
             }
 
             // 3. Tìm Category object từ Database bằng tên
@@ -163,6 +172,7 @@ public class ClientHandler implements Runnable {
             if (category != null) {
                 item.addCategories(category);
             }
+            System.out.println("Dang xu ly category: " + categoryName);
 
             // 4. Gọi ItemDao để lưu trọn bộ Item (bao gồm cả ảnh và category) vào DB
             // Hàm addItem của bạn đã có Transaction (Rollback) nên cực kỳ an toàn
@@ -183,27 +193,20 @@ public class ClientHandler implements Runnable {
         // 5. Trả phản hồi về cho Client
         out.writeObject(msg);
         out.flush();
+        out.reset();
     }
 
     private void handleGetAllItems(Message msg, ObjectOutputStream out) throws IOException {
-        try{
-            List<Item> items = itemDao.getAll(); // Gọi ItemDao lấy dữ liệu
+        try {
+            List<Item> items = itemDao.getAll();
 
-            for (Item item : items) {
-                if (item.getImages() != null && !item.getImages().isEmpty()) {
-                    ItemImage firstImg = item.getImages().get(0);
-                    firstImg.setImageData(ImageService.readImageBytes(firstImg.getUrlImage()));
-
-                    for (int i = 1; i < item.getImages().size(); i++) {
-                        item.getImages().get(i).setImageData(null);
-                    }
-                }
-            }
+            // XÓA BỎ TOÀN BỘ LOGIC XỬ LÝ IMAGE SERVICE TRONG NÀY
+            // Không cần readImageBytes, không cần set imageData(null)
+            // Vì bản thân đối tượng Item đã có List<ItemImage> chứa URL bên trong rồi
 
             msg.setStatus("SUCCESS");
             msg.setData(items);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             msg.setStatus("ERROR");
             e.printStackTrace();
         }
@@ -212,9 +215,9 @@ public class ClientHandler implements Runnable {
         out.reset();
     }
 
-    private void handleGetItemById(Message msg,ObjectOutputStream out) throws IOException {
+    private void handleGetItemById(Message msg, ObjectOutputStream out) throws IOException {
         int id = (int) msg.getData();
-        Item item=itemDao.getById(id);
+        Item item = itemDao.getById(id);
         if (item != null) {
             java.time.LocalDateTime now = java.time.LocalDateTime.now();
             String oldStatus = item.getStatus();
@@ -233,21 +236,20 @@ public class ClientHandler implements Runnable {
 
             msg.setStatus("SUCCESS");
             msg.setData(item);
-        }
-        else {
+        } else {
             msg.setStatus("FAILED");
         }
         out.writeObject(msg);
         out.flush();
     }
 
-    private void handlePlaceBid(Message msg, ObjectOutputStream out) throws IOException{
-        try{
+    private void handlePlaceBid(Message msg, ObjectOutputStream out) throws IOException {
+        try {
             Bid bidRequest = (Bid) msg.getData();
 
-            Item currentItem= itemDao.getById(bidRequest.getIdItem());
+            Item currentItem = itemDao.getById(bidRequest.getIdItem());
 
-            if (currentItem==null){
+            if (currentItem == null) {
                 msg.setStatus("FAILED");
                 msg.setData("Sản phẩm không tồn tại!");
             }
@@ -261,9 +263,8 @@ public class ClientHandler implements Runnable {
             else if (bidRequest.getBidAmount() <= currentItem.getCurrentPrice()) {
                 msg.setStatus("FAILED");
                 msg.setData("Giá đã bị đẩy lên € " + currentItem.getCurrentPrice() + ". Vui lòng trả cao hơn!");
-            }
-            else{
-                boolean isUpdated= itemDao.placeBid(bidRequest.getIdItem(),bidRequest.getBidAmount(),bidRequest.getIdUser());
+            } else {
+                boolean isUpdated = itemDao.placeBid(bidRequest.getIdItem(), bidRequest.getBidAmount(), bidRequest.getIdUser());
                 if (isUpdated) {
                     // 4. Nếu cập nhật Item thành công, tiến hành lưu lịch sử vào bảng BIDS
                     boolean isHistorySaved = bidDao.add(bidRequest);
@@ -275,14 +276,12 @@ public class ClientHandler implements Runnable {
                         msg.setStatus("FAILED");
                         msg.setData("Lỗi hệ thống khi lưu lịch sử đấu giá!");
                     }
-                }
-                else {
+                } else {
                     msg.setStatus("FAILED");
                     msg.setData("Không thể đặt giá. Có thể giá đã thay đổi!");
                 }
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             msg.setStatus("ERROR");
             msg.setData("Lỗi Server: " + e.getMessage());
@@ -324,7 +323,7 @@ public class ClientHandler implements Runnable {
                         .sorted((b1, b2) -> b1.getBidTime().compareTo(b2.getBidTime())) // Sắp xếp tăng dần
                         .map(bid -> {
                             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
-                            return new Object[]{ bid.getBidTime().format(formatter), bid.getBidAmount() };
+                            return new Object[]{bid.getBidTime().format(formatter), bid.getBidAmount()};
                         })
                         .toList();
 
@@ -347,18 +346,11 @@ public class ClientHandler implements Runnable {
     private void handleGetItemImages(Message msg, ObjectOutputStream out) throws IOException {
         try {
             int itemId = (int) msg.getData();
-            // Lấy danh sách ảnh từ DB (chỉ cần URL/Path)
             Item item = itemDao.getById(itemId);
-            List<ItemImage> images=item.getImages();
-
-            for (ItemImage img : images) {
-                // Đọc dữ liệu vật lý từ ổ cứng và nén (nếu chưa nén lúc upload)
-                byte[] data = ImageService.readImageBytes(img.getUrlImage());
-                img.setImageData(data);
-            }
+            List<ItemImage> images = item.getImages();
 
             msg.setStatus("SUCCESS");
-            msg.setData(images);
+            msg.setData(images); // Gửi thẳng List đối tượng chứa URL về
         } catch (Exception e) {
             msg.setStatus("ERROR");
         }

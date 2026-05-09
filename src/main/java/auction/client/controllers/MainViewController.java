@@ -204,15 +204,17 @@ public class MainViewController extends ProfileController {
                     .findFirst()
                     .orElse(item.getImages().get(0));
 
-            byte[] data = defaultImg.getImageData();
+            // 2. Lấy URL thay vì lấy mảng byte
+            String imageUrl = defaultImg.getUrlImage();
 
-            if (data != null && data.length > 0) {
+            if (imageUrl != null && !imageUrl.isEmpty()) {
                 try {
-                    Image img = new Image(new java.io.ByteArrayInputStream(data));
+                    // 3. Tạo Image trực tiếp từ URL (để true để load ngầm)
+                    Image img = new Image(imageUrl, true);
                     imgView.setImage(img);
                     imageLoaded = true;
                 } catch (Exception e) {
-                    System.err.println("Lỗi khi chuyển đổi byte[] sang Image: " + e.getMessage());
+                    System.err.println("Lỗi khi tải ảnh từ URL: " + e.getMessage());
                 }
             }
         }
