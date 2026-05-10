@@ -39,7 +39,7 @@
                                 <Image url="@../img/bagach.png" />
                             </image>
                         </ImageView>
-                        <Label fx:id="lblAdminPanel" text="ADMIN PANEL" textFill="#00d2ff">
+                        <Label fx:id="lblAdminPanel" text="%adminview.label.adminpanel" textFill="#00d2ff">
                             <font>
                                 <Font name="System Bold" size="24.0" />
                             </font>
@@ -53,7 +53,7 @@
                     <graphic>
                         <HBox alignment="CENTER_LEFT" spacing="10">
                             <Label style="-fx-text-fill: white; -fx-font-size: 16;" text="←" />
-                            <Label fx:id="txtBack" style="-fx-text-fill: white;" text="Return to the system" />
+                            <Label fx:id="txtBack" style="-fx-text-fill: white;" text="%adminview.label.returnsystem" />
                         </HBox>
                     </graphic>
                     <VBox.margin><Insets bottom="20.0" top="10.0" /></VBox.margin>
@@ -63,7 +63,7 @@
                     <graphic>
                         <HBox alignment="CENTER_LEFT" spacing="10">
                             <Label text="📊" />
-                            <Label fx:id="txtDashboard" style="-fx-text-fill: white;" text="Overview" />
+                            <Label fx:id="txtDashboard" style="-fx-text-fill: white;" text="%adminview.label.overview" />
                         </HBox>
                     </graphic>
                 </Button>
@@ -72,7 +72,7 @@
                     <graphic>
                         <HBox alignment="CENTER_LEFT" spacing="10">
                             <Label text="👥" />
-                            <Label fx:id="txtManageUsers" style="-fx-text-fill: white;" text="User management" />
+                            <Label fx:id="txtManageUsers" style="-fx-text-fill: white;" text="%adminview.label.usermanagement" />
                         </HBox>
                     </graphic>
                 </Button>
@@ -81,7 +81,7 @@
                     <graphic>
                         <HBox alignment="CENTER_LEFT" spacing="10">
                             <Label text="📦" />
-                            <Label fx:id="txtApproveItems" style="-fx-text-fill: white;" text="Product approval" />
+                            <Label fx:id="txtApproveItems" style="-fx-text-fill: white;" text="%adminview.label.productapproval" />
                         </HBox>
                     </graphic>
                 </Button>
@@ -90,7 +90,7 @@
                     <graphic>
                         <HBox alignment="CENTER_LEFT" spacing="10">
                             <Label text="🔨" />
-                            <Label fx:id="txtManageAuctions" style="-fx-text-fill: white;" text="Auction management" />
+                            <Label fx:id="txtManageAuctions" style="-fx-text-fill: white;" text="%adminview.label.auctionmanagement" />
                         </HBox>
                     </graphic>
                 </Button>
@@ -99,7 +99,7 @@
                     <graphic>
                         <HBox alignment="CENTER_LEFT" spacing="10">
                             <Label text="📜" />
-                            <Label fx:id="txtTransactionHistory" style="-fx-text-fill: white;" text="Transaction history" />
+                            <Label fx:id="txtTransactionHistory" style="-fx-text-fill: white;" text="%adminview.label.transactionhistory" />
                         </HBox>
                     </graphic>
                 </Button>
@@ -108,7 +108,7 @@
                     <graphic>
                         <HBox alignment="CENTER_LEFT" spacing="10">
                             <Label text="⚙️" />
-                            <Label fx:id="txtSettings" style="-fx-text-fill: white;" text="System settings" />
+                            <Label fx:id="txtSettings" style="-fx-text-fill: white;" text="%adminview.label.systemsettings" />
                         </HBox>
                     </graphic>
                 </Button>
@@ -119,7 +119,7 @@
                     <graphic>
                         <HBox alignment="CENTER_LEFT" spacing="10">
                             <Label text="🚪" />
-                            <Label fx:id="txtSignOut" style="-fx-text-fill: white;" text="Sign out" />
+                            <Label fx:id="txtSignOut" style="-fx-text-fill: white;" text="%adminview.label.signout" />
                         </HBox>
                     </graphic>
                 </Button>
@@ -141,26 +141,26 @@
                           <children>
                               <VBox>
                                   <children>
-                                      <Label text="Account management" textFill="WHITE">
+                                      <Label text="%adminview.label.accountmanagement" textFill="WHITE">
                                           <font>
                                               <Font name="System Bold" size="28.0" />
                                           </font>
                                       </Label>
-                                      <Label text="List of user and Active status" textFill="#bdc3c7" />
+                                      <Label text="%adminview.label.listuseractive" textFill="#bdc3c7" />
                                   </children>
                               </VBox>
                               <HBox HBox.hgrow="ALWAYS" />
-                              <TextField fx:id="txtSearch" prefHeight="40.0" prefWidth="280.0" promptText="Find user..." styleClass="admin-search-field" />
+                              <TextField fx:id="txtSearch" prefHeight="40.0" prefWidth="280.0" promptText="%adminview.textfield.finduser" styleClass="admin-search-field" />
                           </children>
                       </HBox>
       
                       <TableView fx:id="adminTable" prefHeight="500.0" styleClass="admin-table" VBox.vgrow="ALWAYS">
                           <columns>
-                              <TableColumn fx:id="colId" prefWidth="60.0" text="ID" />
-                              <TableColumn fx:id="colUsername" prefWidth="150.0" text="Login name" />
-                              <TableColumn fx:id="colFullName" prefWidth="200.0" text="Full name" />
-                              <TableColumn fx:id="colRole" prefWidth="120.0" text="Account balance" />
-                              <TableColumn fx:id="colStatus" prefWidth="150.0" text="Status" />
+                              <TableColumn fx:id="colId" prefWidth="60.0" text="%adminview.tablecolumn.id" />
+                              <TableColumn fx:id="colUsername" prefWidth="150.0" text="%adminview.tablecolumn.loginname" />
+                              <TableColumn fx:id="colFullName" prefWidth="200.0" text="%adminview.tablecolumn.fullname" />
+                              <TableColumn fx:id="colRole" prefWidth="120.0" text="%adminview.tablecolumn.accountbalance" />
+                              <TableColumn fx:id="colStatus" prefWidth="150.0" text="%adminview.tablecolumn.status" />
                           </columns>
                           <columnResizePolicy>
                               <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
@@ -169,8 +169,8 @@
       
                       <HBox alignment="CENTER_RIGHT" spacing="20.0">
                           <children>
-                              <Button fx:id="btnApproveSeller" mnemonicParsing="false" onAction="#handleApproveSeller" prefHeight="45.0" prefWidth="180.0" styleClass="btn-approve" text="Seller's approval" />
-                              <Button fx:id="btnLockAccount" mnemonicParsing="false" onAction="#handleLockAccount" prefHeight="45.0" prefWidth="180.0" styleClass="btn-lock" text="Account lock" />
+                              <Button fx:id="btnApproveSeller" mnemonicParsing="false" onAction="#handleApproveSeller" prefHeight="45.0" prefWidth="180.0" styleClass="btn-approve" text="%adminview.button.sellerapproval" />
+                              <Button fx:id="btnLockAccount" mnemonicParsing="false" onAction="#handleLockAccount" prefHeight="45.0" prefWidth="180.0" styleClass="btn-lock" text="%adminview.button.accountlock" />
                           </children>
                       </HBox>
                   </children>
@@ -189,11 +189,11 @@
                                 <HBox alignment="CENTER_LEFT" spacing="10.0">
                                     <children>
                                         <Label style="-fx-text-fill: #27ae60;" styleClass="icon-circle" text="💰" />
-                                        <Label styleClass="card-subtitle" text="Total Revenue" />
+                                        <Label styleClass="card-subtitle" text="%adminview.label.totalrevenue" />
                                     </children>
                                 </HBox>
                                 <Label fx:id="lblTotalRevenue" styleClass="card-value" text="125,430$" />
-                                <Label styleClass="card-trend-up" text="+15.2% from last month" />
+                                <Label styleClass="card-trend-up" text="%adminview.label.+15.2fromlastmonth" />
                             </children>
                         </VBox>
 
@@ -202,11 +202,11 @@
                                 <HBox alignment="CENTER_LEFT" spacing="10.0">
                                     <children>
                                         <Label style="-fx-text-fill: #e67e22;" styleClass="icon-circle" text="🔨" />
-                                        <Label styleClass="card-subtitle" text="Live Auctions" />
+                                        <Label styleClass="card-subtitle" text="%adminview.label.liveauction" />
                                     </children>
                                 </HBox>
                                 <Label fx:id="lblLiveAuctions" styleClass="card-value" text="1,042" />
-                                <Label styleClass="card-trend-neutral" text="Currently active" />
+                                <Label styleClass="card-trend-neutral" text="%adminview.label.currentlyactive" />
                             </children>
                         </VBox>
 
@@ -215,11 +215,11 @@
                                 <HBox alignment="CENTER_LEFT" spacing="10.0">
                                     <children>
                                         <Label style="-fx-text-fill: #2980b9;" styleClass="icon-circle" text="👥" />
-                                        <Label styleClass="card-subtitle" text="New Users" />
+                                        <Label styleClass="card-subtitle" text="%adminview.label.newuser" />
                                     </children>
                                 </HBox>
                                 <Label fx:id="lblNewUsers" styleClass="card-value" text="+156" />
-                                <Label styleClass="card-trend-up" text="+5.4% since yesterday" />
+                                <Label styleClass="card-trend-up" text="%adminview.label.+5.4sinceyes" />
                             </children>
                         </VBox>
 
@@ -228,11 +228,11 @@
                                 <HBox alignment="CENTER_LEFT" spacing="10.0">
                                     <children>
                                         <Label style="-fx-text-fill: #9b59b6;" styleClass="icon-circle" text="📈" />
-                                        <Label styleClass="card-subtitle" text="Success Rate" />
+                                        <Label styleClass="card-subtitle" text="%adminview.label.successrate" />
                                     </children>
                                 </HBox>
                                 <Label fx:id="lblSuccessRate" styleClass="card-value" text="89.5%" />
-                                <Label styleClass="card-trend-up" text="High performance" />
+                                <Label styleClass="card-trend-up" text="%adminview.label.highperformance" />
                             </children>
                         </VBox>
                     </children>
@@ -241,7 +241,7 @@
                     <children>
                         <VBox styleClass="chart-card" HBox.hgrow="ALWAYS">
                             <children>
-                                <Label styleClass="chart-title" text="Revenue Trend (Weekly)" />
+                                <Label styleClass="chart-title" text="%adminview.label.revenuetrend(Weekly)" />
                                 <LineChart fx:id="revenueChart" createSymbols="true" legendSide="BOTTOM" VBox.vgrow="ALWAYS">
                                     <xAxis>
                                         <CategoryAxis label="Days of Week" side="BOTTOM" tickLabelFill="WHITE" />
@@ -255,7 +255,7 @@
 
                         <VBox prefHeight="486.0" prefWidth="458.0" styleClass="chart-card" HBox.hgrow="ALWAYS">
                             <children>
-                                <Label styleClass="chart-title" text="Product Categories" />
+                                <Label styleClass="chart-title" text="%adminview.label.productcategories" />
                                 <PieChart fx:id="categoryChart" labelsVisible="true" legendSide="TOP" minHeight="550.0" minWidth="550.0" prefHeight="500.0" prefWidth="550.0" titleSide="TOP" VBox.vgrow="ALWAYS" />
                             </children>
                         </VBox>

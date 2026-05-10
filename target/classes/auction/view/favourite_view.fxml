@@ -40,19 +40,19 @@
                      </children>
                   </VBox>
                   <Region prefHeight="99.0" prefWidth="0.0" HBox.hgrow="ALWAYS" />
-                  <MenuButton mnemonicParsing="false" style="-fx-text-fill: #0052ff; -fx-background-color: white; -fx-font-weight: bold;" text="Categories" textFill="#0052ff">
+                  <MenuButton mnemonicParsing="false" style="-fx-text-fill: #0052ff; -fx-background-color: white; -fx-font-weight: bold;" text="%favouriteview.label.categories" textFill="#0052ff">
                      <items>
-                        <MenuItem text="Art" />
-                        <MenuItem text="Watches" />
-                        <MenuItem text="Art" />
-                        <MenuItem text="Interiors" />
-                        <MenuItem text="Jewellery" />
-                        <MenuItem text="Watches" />
-                        <MenuItem text="Fashion" />
-                        <MenuItem text="Coins" />
-                        <MenuItem text="Cars" />
-                        <MenuItem text="Wine" />
-                        <MenuItem text="Books" />
+                        <MenuItem text="%favouriteview.menuitem.art" />
+                        <MenuItem text="%favouriteview.menuitem.watches" />
+                        <MenuItem text="%favouriteview.menuitem.art" />
+                        <MenuItem text="%favouriteview.menuitem.interiors" />
+                        <MenuItem text="%favouriteview.menuitem.jewelry" />
+                        <MenuItem text="%favouriteview.menuitem.watches" />
+                        <MenuItem text="%favouriteview.menuitem.fashion" />
+                        <MenuItem text="%favouriteview.menuitem.coin" />
+                        <MenuItem text="%favouriteview.menuitem.cars" />
+                        <MenuItem text="%favouriteview.menuitem.wine" />
+                        <MenuItem text="%favouriteview.menuitem.books" />
                      </items>
                   </MenuButton>
                   <Region prefHeight="99.0" prefWidth="0.0" HBox.hgrow="ALWAYS" />
@@ -66,11 +66,11 @@
                               <Insets left="12.0" />
                            </HBox.margin>
                         </ImageView>
-                        <TextField fx:id="txtsearch" prefHeight="28.0" prefWidth="417.0" promptText="Search for items..." style="-fx-background-color: transparent; -fx-border-color: transparent;" />
+                        <TextField fx:id="txtsearch" prefHeight="28.0" prefWidth="417.0" promptText="%favouriteview.textfield.searchforitems..." style="-fx-background-color: transparent; -fx-border-color: transparent;" />
                      </children>
                   </HBox>
                   <Region prefHeight="99.0" prefWidth="0.0" HBox.hgrow="ALWAYS" />
-                  <Label fx:id="lbsell" onMouseClicked="#onSellerClick" style="-fx-font-weight: bold; -fx-cursor: hand;" text="Sell" textFill="#0052ff">
+                  <Label fx:id="lbsell" onMouseClicked="#onSellerClick" style="-fx-font-weight: bold; -fx-cursor: hand;" text="%favouriteview.label.sell" textFill="#0052ff">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -106,7 +106,7 @@
                               </ImageView>
                               <VBox alignment="CENTER">
                                  <children>
-                                    <Label style="-fx-font-size: 10px;" text="Balance" textFill="#888" />
+                                    <Label style="-fx-font-size: 10px;" text="%favouriteview.label.balance" textFill="#888" />
                                     <Label fx:id="lbbalance" prefHeight="17.0" prefWidth="73.0" style="-fx-font-weight: bold;" text="1.000.000$" />
                                  </children>
                               </VBox>
@@ -125,7 +125,7 @@
                               <VBox alignment="CENTER" minWidth="80.0" spacing="5" style="-fx-border-color: #0052ff; -fx-border-width: 0 0 3 0; -fx-cursor: hand;">
                                  <children>
                                     <Label style="-fx-text-fill: #0052ff;" text="⚖" textFill="#0052ff" />
-                                    <Label style="-fx-font-weight: bold; -fx-text-fill: #0052ff;" text="This week" textFill="#0052ff">
+                                    <Label style="-fx-font-weight: bold; -fx-text-fill: #0052ff;" text="%favouriteview.label.thisweek" textFill="#0052ff">
                                        <font>
                                           <Font name="System Bold" size="12.0" />
                                        </font>
@@ -135,61 +135,61 @@
                               <VBox alignment="CENTER" minWidth="80.0" spacing="5" style="-fx-cursor: hand;">
                                  <children>
                                     <Label style="-fx-text-fill: #0052ff;" text="✨" />
-                                    <Label style="-fx-font-weight: bold; -fx-text-fill: #0052ff;" text="For you" />
+                                    <Label style="-fx-font-weight: bold; -fx-text-fill: #0052ff;" text="%favouriteview.label.foryou" />
                                  </children>
                               </VBox>
                               <VBox alignment="CENTER" minWidth="80.0" spacing="5" style="-fx-cursor: hand;">
                                  <children>
                                     <Label style="-fx-text-fill: #0052ff;" text="🔥" />
-                                    <Label style="-fx-font-weight: bold; -fx-text-fill: #0052ff;" text="Trending" />
+                                    <Label style="-fx-font-weight: bold; -fx-text-fill: #0052ff;" text="%favouriteview.label.trending" />
                                  </children>
                               </VBox>
                               <VBox alignment="CENTER" minWidth="80.0" spacing="5" style="-fx-cursor: hand;">
                                  <children>
                                     <Label style="-fx-text-fill: #0052ff;" text="🖼" />
-                                    <Label style="-fx-font-weight: bold; -fx-text-fill: #0052ff;" text="Art" />
+                                    <Label style="-fx-font-weight: bold; -fx-text-fill: #0052ff;" text="%favouriteview.label.art" />
                                  </children>
                               </VBox>
                               <VBox alignment="CENTER" minWidth="80.0" spacing="5" style="-fx-cursor: hand;">
                                  <children>
                                     <Label style="-fx-text-fill: #0052ff;" text="🛋" />
-                                    <Label style="-fx-font-weight: bold; -fx-text-fill: #0052ff;" text="Interiors" />
+                                    <Label style="-fx-font-weight: bold; -fx-text-fill: #0052ff;" text="%favouriteview.label.interiors" />
                                  </children>
                               </VBox>
                               <VBox alignment="CENTER" minWidth="80.0" spacing="5" style="-fx-cursor: hand;">
                                  <children>
                                     <Label style="-fx-text-fill: #0052ff;" text="💎" />
-                                    <Label style="-fx-font-weight: bold; -fx-text-fill: #0052ff;" text="Jewellery" />
+                                    <Label style="-fx-font-weight: bold; -fx-text-fill: #0052ff;" text="%favouriteview.label.jewelry" />
                                  </children>
                               </VBox>
                               <VBox alignment="CENTER" minWidth="80.0" spacing="5" style="-fx-cursor: hand;">
                                  <children>
                                     <Label style="-fx-text-fill: #0052ff;" text="⌚" />
-                                    <Label style="-fx-font-weight: bold; -fx-text-fill: #0052ff;" text="Watches" />
+                                    <Label style="-fx-font-weight: bold; -fx-text-fill: #0052ff;" text="%favouriteview.label.watches" />
                                  </children>
                               </VBox>
                               <VBox alignment="CENTER" minWidth="80.0" spacing="5" style="-fx-cursor: hand;">
                                  <children>
                                     <Label style="-fx-text-fill: #0052ff;" text="👜" />
-                                    <Label style="-fx-font-weight: bold; -fx-text-fill: #0052ff;" text="Fashion" />
+                                    <Label style="-fx-font-weight: bold; -fx-text-fill: #0052ff;" text="%favouriteview.label.fashion" />
                                  </children>
                               </VBox>
                               <VBox alignment="CENTER" minWidth="80.0" spacing="5" style="-fx-cursor: hand;">
                                  <children>
                                     <Label style="-fx-text-fill: #0052ff;" text="✪" />
-                                    <Label style="-fx-font-weight: bold; -fx-text-fill: #0052ff;" text="Coins" />
+                                    <Label style="-fx-font-weight: bold; -fx-text-fill: #0052ff;" text="%favouriteview.label.coin" />
                                  </children>
                               </VBox>
                               <VBox alignment="CENTER" minWidth="80.0" spacing="5" style="-fx-cursor: hand;">
                                  <children>
                                     <Label style="-fx-text-fill: #0052ff;" text="🚗" />
-                                    <Label style="-fx-font-weight: bold; -fx-text-fill: #0052ff;" text="Cars" />
+                                    <Label style="-fx-font-weight: bold; -fx-text-fill: #0052ff;" text="%favouriteview.label.car" />
                                  </children>
                               </VBox>
                               <VBox alignment="CENTER" minWidth="80.0" spacing="5" style="-fx-cursor: hand;">
                                  <children>
                                     <Label style="-fx-text-fill: #0052ff;" text="🍷" />
-                                    <Label style="-fx-font-weight: bold; -fx-text-fill: #0052ff;" text="Wine" />
+                                    <Label style="-fx-font-weight: bold; -fx-text-fill: #0052ff;" text="%favouriteview.label.wine" />
                                  </children>
                               </VBox>
                               <VBox alignment="CENTER" minWidth="80.0" spacing="5" style="-fx-cursor: hand;">
@@ -199,7 +199,7 @@
                                           <Font name="Nirmala UI" size="12.0" />
                                        </font>
                                     </Label>
-                                    <Label style="-fx-font-weight: bold; -fx-text-fill: #0052ff;" text="Books" />
+                                    <Label style="-fx-font-weight: bold; -fx-text-fill: #0052ff;" text="%favouriteview.label.book" />
                                  </children>
                               </VBox>
                            </children>
@@ -222,11 +222,11 @@
                   <Insets left="25.0" right="25.0" />
                </padding>
                <children>
-                  <Label style="-fx-font-weight: bold;" text="Sort by:" textFill="#555" />
-                  <ComboBox fx:id="sortPrice" prefHeight="35.0" prefWidth="150.0" promptText="price" style="-fx-background-color: white; -fx-border-color: #ddd; -fx-border-radius: 5;" />
-                  <ComboBox fx:id="sortTime" prefHeight="35.0" prefWidth="150.0" promptText="time" style="-fx-background-color: white; -fx-border-color: #ddd; -fx-border-radius: 5;" />
+                  <Label style="-fx-font-weight: bold;" text="%favouriteview.label.sortby" textFill="#555" />
+                  <ComboBox fx:id="sortPrice" prefHeight="35.0" prefWidth="150.0" promptText="%favouriteview.combobox.price" style="-fx-background-color: white; -fx-border-color: #ddd; -fx-border-radius: 5;" />
+                  <ComboBox fx:id="sortTime" prefHeight="35.0" prefWidth="150.0" promptText="%favouriteview.combobox.time" style="-fx-background-color: white; -fx-border-color: #ddd; -fx-border-radius: 5;" />
                   <Region HBox.hgrow="ALWAYS" />
-                  <Label text="Tất cả sản phẩm" textFill="#999" />
+                  <Label text="%favouriteview.label.allproduct" textFill="#999" />
                </children>
             </HBox>
             <ScrollPane fitToWidth="true" style="-fx-background-color: #f1f3f5; -fx-background: #f1f3f5;" VBox.vgrow="ALWAYS">
@@ -248,7 +248,7 @@
                                  <children>
                                     <HBox alignment="CENTER_LEFT">
                                        <children>
-                                          <Label fx:id="itemName" prefHeight="28.0" prefWidth="199.0" style="-fx-font-weight: bold; -fx-font-size: 14px;" text="Product Name Example" wrapText="true" />
+                                          <Label fx:id="itemName" prefHeight="28.0" prefWidth="199.0" style="-fx-font-weight: bold; -fx-font-size: 14px;" text="%favouriteview.label.productnameexample" wrapText="true" />
                                           <Label prefHeight="30.0" prefWidth="47.0" style="-fx-background-color: white; -fx-text-fill: red; -fx-background-radius: 20; -fx-padding: 5; -fx-translate-x: 15; -fx-translate-y: 0;" text="‪‪❤︎‬">
                                              <font>
                                                 <Font size="18.0" />
@@ -259,8 +259,8 @@
                                           </Label>
                                        </children>
                                     </HBox>
-                                    <Label fx:id="itemPrice" style="-fx-font-weight: bold;" text="Current Bid: $1,200" textFill="#0052ff" />
-                                    <Label style="-fx-font-size: 11px;" text="2d 04h left" textFill="#888" />
+                                    <Label fx:id="itemPrice" style="-fx-font-weight: bold;" text="%favouriteview.label.currentbid" textFill="#0052ff" />
+                                    <Label style="-fx-font-size: 11px;" text="%favouriteview.label.timeleft" textFill="#888" />
                                  </children>
                               </VBox>
                            </children>
