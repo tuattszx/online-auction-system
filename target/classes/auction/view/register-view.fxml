@@ -38,13 +38,13 @@
 
                         <VBox alignment="CENTER" spacing="25.0">
                            <children>
-                              <Label text="%registerview.label.begin" textFill="WHITE">
+                              <Label text="Get Started" textFill="WHITE">
                                  <font>
                                     <Font name="System Bold" size="42.0" />
                                  </font>
                               </Label>
-                              <Label text="%registerview.label.alreadyaccount" textFill="#efefff" />
-                              <Button mnemonicParsing="false" onAction="#onBackToLoginClick" prefHeight="42.0" prefWidth="160.0" style="-fx-background-color: transparent; -fx-border-color: white; -fx-border-radius: 25; -fx-border-width: 2;" text="%registerview.button.login" textFill="WHITE" styleClass="btn-approve">
+                              <Label text="Already have an account?" textFill="#efefff" />
+                              <Button mnemonicParsing="false" onAction="#onBackToLoginClick" prefHeight="42.0" prefWidth="160.0" style="-fx-background-color: transparent; -fx-border-color: white; -fx-border-radius: 25; -fx-border-width: 2;" text="Log in" textFill="WHITE" styleClass="btn-approve">
                                  <font>
                                     <Font name="System Bold" size="15.0" />
                                  </font>
@@ -59,7 +59,7 @@
 
                   <VBox fx:id="registerVbox" alignment="CENTER_LEFT" prefHeight="550.0" prefWidth="470.0" spacing="12.0">
                      <children>
-                        <Label text="%registerview.label.createaccount" textFill="#6C63FF">
+                        <Label text="Create account" textFill="#6C63FF">
                            <font>
                               <Font name="System Bold" size="30.0" />
                            </font>
@@ -68,24 +68,24 @@
                            </VBox.margin>
                         </Label>
 
-                        <Label text="%registerview.label.username" textFill="#555555" />
-                        <TextField fx:id="txtUserName" prefHeight="45.0" promptText="%registerview.textfield.enteryourusername" style="-fx-background-color: #F8F9FA; -fx-background-radius: 10; -fx-border-color: #E9ECEF; -fx-border-radius: 10;" />
+                        <Label text="Username" textFill="#555555" />
+                        <TextField fx:id="txtUserName" prefHeight="45.0" promptText="Enter your username" style="-fx-background-color: #F8F9FA; -fx-background-radius: 10; -fx-border-color: #E9ECEF; -fx-border-radius: 10;" />
 
-                        <Label text="%registerview.label.fullname" textFill="#555555" />
-                        <TextField fx:id="txtFullName" prefHeight="45.0" promptText="%registerview.textfield.enteryourfullname" style="-fx-background-color: #F8F9FA; -fx-background-radius: 10; -fx-border-color: #E9ECEF; -fx-border-radius: 10;" />
+                        <Label text="Full Name" textFill="#555555" />
+                        <TextField fx:id="txtFullName" prefHeight="45.0" promptText="Enter your full name" style="-fx-background-color: #F8F9FA; -fx-background-radius: 10; -fx-border-color: #E9ECEF; -fx-border-radius: 10;" />
 
                         <HBox spacing="15.0">
                            <children>
                               <VBox spacing="5.0" HBox.hgrow="ALWAYS">
                                  <children>
-                                    <Label text="%registerview.label.email" textFill="#555555" />
-                                    <TextField fx:id="txtEmail" prefHeight="45.0" promptText="%registerview.textfield.email" style="-fx-background-color: #F8F9FA; -fx-background-radius: 10; -fx-border-color: #E9ECEF; -fx-border-radius: 10;" />
+                                    <Label text="Email" textFill="#555555" />
+                                    <TextField fx:id="txtEmail" prefHeight="45.0" promptText="Email" style="-fx-background-color: #F8F9FA; -fx-background-radius: 10; -fx-border-color: #E9ECEF; -fx-border-radius: 10;" />
                                  </children>
                               </VBox>
                               <VBox spacing="5.0" HBox.hgrow="ALWAYS">
                                  <children>
-                                    <Label text="%registerview.label.phone" textFill="#555555" />
-                                    <TextField fx:id="txtphonenumber" prefHeight="45.0" promptText="%registerview.textfield.phone" style="-fx-background-color: #F8F9FA; -fx-background-radius: 10; -fx-border-color: #E9ECEF; -fx-border-radius: 10;" />
+                                    <Label text="Phone" textFill="#555555" />
+                                    <TextField fx:id="txtphonenumber" prefHeight="45.0" promptText="Phone" style="-fx-background-color: #F8F9FA; -fx-background-radius: 10; -fx-border-color: #E9ECEF; -fx-border-radius: 10;" />
                                  </children>
                               </VBox>
                            </children>
@@ -95,21 +95,21 @@
                            <children>
                               <VBox spacing="5.0" HBox.hgrow="ALWAYS">
                                  <children>
-                                    <Label text="%registerview.label.password" textFill="#555555" />
-                                    <PasswordField fx:id="txtPassword" prefHeight="45.0" promptText="%registerview.passwordfield.password" style="-fx-background-color: #F8F9FA; -fx-background-radius: 10; -fx-border-color: #E9ECEF; -fx-border-radius: 10;" />
+                                    <Label text="Password" textFill="#555555" />
+                                    <PasswordField fx:id="txtPassword" prefHeight="45.0" promptText="Password" style="-fx-background-color: #F8F9FA; -fx-background-radius: 10; -fx-border-color: #E9ECEF; -fx-border-radius: 10;" />
                                  </children>
                               </VBox>
                               <VBox spacing="5.0" HBox.hgrow="ALWAYS">
                                  <children>
-                                    <Label text="%registerview.label.confirm" textFill="#555555" />
-                                    <PasswordField fx:id="txtRePassword" prefHeight="45.0" promptText="%registerview.passwordfield.confirm" style="-fx-background-color: #F8F9FA; -fx-background-radius: 10; -fx-border-color: #E9ECEF; -fx-border-radius: 10;" />
+                                    <Label text="Confirm" textFill="#555555" />
+                                    <PasswordField fx:id="txtRePassword" prefHeight="45.0" promptText="Confirm" style="-fx-background-color: #F8F9FA; -fx-background-radius: 10; -fx-border-color: #E9ECEF; -fx-border-radius: 10;" />
                                  </children>
                               </VBox>
                            </children>
                         </HBox>
                         <Label fx:id="lberror" prefHeight="18.0" prefWidth="375.0" style="-fx-text-fill: red;" />
 
-                        <Button alignment="CENTER" mnemonicParsing="false" onAction="#onSignupButtonClick" prefHeight="50.0" prefWidth="Infinity" style="-fx-background-color: #6C63FF; -fx-background-radius: 12;" text="%registerview.button.register" textFill="WHITE" styleClass="btn-approve">
+                        <Button alignment="CENTER" mnemonicParsing="false" onAction="#onSignupButtonClick" prefHeight="50.0" prefWidth="Infinity" style="-fx-background-color: #6C63FF; -fx-background-radius: 12;" text="Sign up" textFill="WHITE" styleClass="btn-approve">
                            <font>
                               <Font name="System Bold" size="18.0" />
                            </font>

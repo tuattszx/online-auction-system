@@ -26,12 +26,12 @@
                      <children>
                         <VBox spacing="5.0">
                            <children>
-                              <Label text="Hello," textFill="#2d2d2d">
+                              <Label text="%loginview.label.hello" textFill="#2d2d2d">
                                  <font>
                                     <Font name="System Bold" size="32.0" />
                                  </font>
                               </Label>
-                              <Label text="Welcome back" textFill="#666666">
+                              <Label text="%loginview.label.welcomeback" textFill="#666666">
                                  <font>
                                     <Font size="18.0" />
                                  </font>
@@ -42,13 +42,13 @@
                            </VBox.margin>
                         </VBox>
 
-                        <TextField fx:id="txtUsername" prefHeight="45.0" promptText="Username or email" style="-fx-background-color: #f4f4f4; -fx-background-radius: 10; -fx-border-color: #eeeeee; -fx-border-radius: 10;" />
+                        <TextField fx:id="txtUsername" prefHeight="45.0" promptText="%loginview.textfield.usernameoremail" style="-fx-background-color: #f4f4f4; -fx-background-radius: 10; -fx-border-color: #eeeeee; -fx-border-radius: 10;" />
 
-                        <PasswordField fx:id="txtPassword" prefHeight="45.0" promptText="Password" style="-fx-background-color: #f4f4f4; -fx-background-radius: 10; -fx-border-color: #eeeeee; -fx-border-radius: 10;" />
+                        <PasswordField fx:id="txtPassword" prefHeight="45.0" promptText="%loginview.passwordfield.password" style="-fx-background-color: #f4f4f4; -fx-background-radius: 10; -fx-border-color: #eeeeee; -fx-border-radius: 10;" />
 
                         <HBox alignment="CENTER_RIGHT">
                            <children>
-                              <Button fx:id="btnForgotPassword" mnemonicParsing="false" style="-fx-background-color: transparent; -fx-text-fill: #6C63FF;" text="Forgot password?">
+                              <Button fx:id="btnForgotPassword" mnemonicParsing="false" style="-fx-background-color: transparent; -fx-text-fill: #6C63FF;" text="%loginview.button.forgotpassword">
                                  <font>
                                     <Font name="System Italic" size="13.0" />
                                  </font>
@@ -59,7 +59,7 @@
                            </children>
                         </HBox>
 
-                        <Button fx:id="btnLogin" mnemonicParsing="false" onAction="#onLoginButtonClick" styleClass="btn-approve" prefHeight="45.0" prefWidth="Infinity" style="-fx-background-color: #6C63FF; -fx-background-radius: 10;" text="Login" textFill="WHITE" >
+                        <Button fx:id="btnLogin" mnemonicParsing="false" onAction="#onLoginButtonClick" styleClass="btn-approve" prefHeight="45.0" prefWidth="Infinity" style="-fx-background-color: #6C63FF; -fx-background-radius: 10;" text="%loginview.button.login" textFill="WHITE" >
                            <font>
                               <Font name="System Bold" size="16.0" />
                            </font>
@@ -70,8 +70,8 @@
 
                         <HBox alignment="CENTER" spacing="5.0">
                            <children>
-                              <Label text="Don't have an account?" textFill="#888888" />
-                              <Button fx:id="btnSignUp" mnemonicParsing="false" onAction="#onSignUpClick" styleClass="btn-approve" style="-fx-background-color: transparent; -fx-text-fill: #6C63FF; -fx-padding: 0;" text="Click here" >
+                              <Label text="%loginview.label.dontaccount" textFill="#888888" />
+                              <Button fx:id="btnSignUp" mnemonicParsing="false" onAction="#onSignUpClick" styleClass="btn-approve" style="-fx-background-color: transparent; -fx-text-fill: #6C63FF; -fx-padding: 0;" text="%loginview.button.clickhere" >
                                  <font>
                                     <Font name="System Bold" size="13.0" />
                                  </font>

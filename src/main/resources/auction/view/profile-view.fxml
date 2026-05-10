@@ -58,10 +58,10 @@
                      </padding>
                   </VBox>
                   <Region minWidth="-Infinity" prefHeight="59.0" prefWidth="0.0" HBox.hgrow="ALWAYS" />
-                  <MenuButton mnemonicParsing="false" style="-fx-background-color: white;" text="categories">
+                  <MenuButton mnemonicParsing="false" style="-fx-background-color: white;" text="%profile.menubutton.categories">
                      <items>
-                        <MenuItem mnemonicParsing="false" text="Action 1" />
-                        <MenuItem mnemonicParsing="false" text="Action 2" />
+                        <MenuItem mnemonicParsing="false" text="%profile.menubutton.action1" />
+                        <MenuItem mnemonicParsing="false" text="%profile.menubutton.action2" />
                      </items>
                      <font>
                         <Font size="13.0" />
@@ -78,7 +78,7 @@
                               <Image url="@../img/search-icon-png-11.png" />
                            </image>
                         </ImageView>
-                        <TextField fx:id="txtsearch" promptText="searching..." style="-fx-background-color: white; -fx-border-color: transparent;" />
+                        <TextField fx:id="txtsearch" promptText="%profile.texfield.searching" style="-fx-background-color: white; -fx-border-color: transparent;" />
                      </children>
                      <opaqueInsets>
                         <Insets left="5.0" />
@@ -88,7 +88,7 @@
                      </padding>
                   </HBox>
                   <Region minWidth="-Infinity" prefHeight="200.0" prefWidth="0.0" HBox.hgrow="ALWAYS" />
-                  <Label fx:id="lbsell" onMouseClicked="#onSellerClick" prefHeight="18.0" prefWidth="54.0" style="-fx-text-fill: #0052FF;" text="seller">
+                  <Label fx:id="lbsell" onMouseClicked="#onSellerClick" prefHeight="18.0" prefWidth="54.0" style="-fx-text-fill: #0052FF;" text="%profile.label.seller">
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor>
@@ -270,7 +270,7 @@
                                                 </VBox>
                                                 <VBox HBox.hgrow="ALWAYS">
                                                    <children>
-                                                      <Label text="LAST NAME" textFill="#baa3a3">
+                                                      <Label text="%profile.label.LASTNAME" textFill="#baa3a3">
                                                          <font>
                                                             <Font size="10.0" />
                                                          </font>
@@ -296,7 +296,7 @@
                                     <Region layoutX="31.0" layoutY="103.0" prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
                                     <VBox layoutX="31.0" layoutY="119.0" prefHeight="48.0" prefWidth="443.0">
                                        <children>
-                                          <Label text="Country">
+                                          <Label text="%profile.label.Country">
                                              <font>
                                                 <Font size="10.0" />
                                              </font>
@@ -307,7 +307,7 @@
                                     <Region layoutX="31.0" layoutY="164.0" prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
                                     <VBox layoutX="31.0" layoutY="165.0" prefHeight="101.0" prefWidth="443.0">
                                        <children>
-                                          <Label text="Delivery Address" />
+                                          <Label text="%profile.label.DeliveryAddress" />
                                           <TextArea prefHeight="47.0" prefWidth="441.0" promptText="ddd" style="-fx-background-color: #f0f2f5; -fx-border-color: #f0f2f5; -fx-background-radius: 0; -fx-control-inner-background: #f0f2f5; -fx-border-width: 0;" />
                                        </children>
                                     </VBox>
@@ -327,8 +327,8 @@
                                     <Region prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
                                     <VBox prefHeight="76.0" prefWidth="441.0">
                                        <children>
-                                          <Label text="Credit card" />
-                                          <Label prefHeight="15.0" prefWidth="101.0" text="Card holder's name">
+                                          <Label text="%profile.label.Creditcard" />
+                                          <Label prefHeight="15.0" prefWidth="101.0" text="%profile.label.cardname">
                                              <font>
                                                 <Font size="11.0" />
                                              </font>
@@ -339,7 +339,7 @@
                                     <Region layoutX="31.0" layoutY="39.0" prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
                                     <VBox layoutX="31.0" layoutY="47.0" prefHeight="63.0" prefWidth="865.0">
                                        <children>
-                                          <Label text="card holder's number">
+                                          <Label text="%profile.label.cardnumber">
                                              <font>
                                                 <Font size="11.0" />
                                              </font>
@@ -368,12 +368,12 @@
                                              <children>
                                                 <VBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" prefHeight="76.0" prefWidth="397.0" HBox.hgrow="ALWAYS">
                                                    <children>
-                                                      <Label text="Bid Outbid">
+                                                      <Label text="%profile.label.Outbid">
                                                          <font>
                                                             <Font name="System Bold" size="14.0" />
                                                          </font>
                                                       </Label>
-                                                      <Label text="Alerts users to place a new bid when outpriced.">
+                                                      <Label text="%profile.label.notifyuser">
                                                          <font>
                                                             <Font size="11.0" />
                                                          </font>
@@ -396,12 +396,12 @@
                                              <children>
                                                 <VBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" prefHeight="76.0" prefWidth="375.0" HBox.hgrow="ALWAYS">
                                                    <children>
-                                                      <Label text="Auction Won">
+                                                      <Label text="%profile.label.AuctionWon">
                                                          <font>
                                                             <Font name="System Bold" size="14.0" />
                                                          </font>
                                                       </Label>
-                                                      <Label text="Notifies the winner to proceed with payment.">
+                                                      <Label text="%profile.label.notifywinner">
                                                          <font>
                                                             <Font size="11.0" />
                                                          </font>
@@ -424,12 +424,12 @@
                                              <children>
                                                 <VBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" prefHeight="76.0" prefWidth="375.0" HBox.hgrow="ALWAYS">
                                                    <children>
-                                                      <Label text="New Message">
+                                                      <Label text="%profile.label.NewMessage">
                                                          <font>
                                                             <Font name="System Bold" size="14.0" />
                                                          </font>
                                                       </Label>
-                                                      <Label text="Updates users on new inquiries from buyers or sellers.">
+                                                      <Label text="%profile.label.Updatesusers">
                                                          <font>
                                                             <Font size="11.0" />
                                                          </font>
@@ -452,12 +452,12 @@
                                              <children>
                                                 <VBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" prefHeight="76.0" prefWidth="375.0" HBox.hgrow="ALWAYS">
                                                    <children>
-                                                      <Label text="Payment Success">
+                                                      <Label text="%profile.label.PaymentSuccess">
                                                          <font>
                                                             <Font name="System Bold" size="14.0" />
                                                          </font>
                                                       </Label>
-                                                      <Label text="Confirms successful transaction and updates order status.">
+                                                      <Label text="%profile.label.Confirmssuccessfulandupdates">
                                                          <font>
                                                             <Font size="11.0" />
                                                          </font>
@@ -490,7 +490,7 @@
                                     <Region prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
                                     <HBox alignment="CENTER_LEFT" prefHeight="63.0" prefWidth="441.0">
                                        <children>
-                                          <Label maxWidth="500.0" prefHeight="19.0" prefWidth="228.0" text="EMAIL" HBox.hgrow="ALWAYS">
+                                          <Label maxWidth="500.0" prefHeight="19.0" prefWidth="228.0" text="%profile.label.EMAIL" HBox.hgrow="ALWAYS">
                                              <font>
                                                 <Font name="System Bold" size="12.0" />
                                              </font>
@@ -502,11 +502,11 @@
                                                       <Image url="@../img/verified.png" />
                                                    </image></ImageView>
                                                 <TextFlow maxWidth="250.0" prefHeight="43.0" prefWidth="238.0" HBox.hgrow="ALWAYS">
-                                                   <Text style="-fx-fill: #24b47e; -fx-font-weight: bold;" text="Your email address has been successfully verified. ">
+                                                   <Text style="-fx-fill: #24b47e; -fx-font-weight: bold;" text="%profile.label.Youremailsuccessfully">
                                                       <font>
                                                          <Font size="11.0" />
                                                       </font></Text>
-                                                   <Text style="-fx-fill: #6b7c93;" text="To activate your account, your email address needs to be verified.">
+                                                   <Text style="-fx-fill: #6b7c93;" text="%profile.label.verifyaccount">
                                                       <font>
                                                          <Font size="11.0" />
                                                       </font></Text>
@@ -536,7 +536,7 @@
                                     <VBox prefHeight="63.0" prefWidth="865.0">
                                        <children>
                                           <Label text="%profile.label.name" />
-                                          <Label fx:id="lbname" text="admin">
+                                          <Label fx:id="lbname" text="%profile.label.admin">
                                              <font>
                                                 <Font size="17.0" />
                                              </font>
@@ -555,7 +555,7 @@
                                     <VBox layoutX="31.0" layoutY="41.0" prefHeight="48.0" prefWidth="443.0">
                                        <children>
                                           <Label text="%profile.label.username" />
-                                          <Label fx:id="lbusername" text="admin">
+                                          <Label fx:id="lbusername" text="%profile.label.admin">
                                              <font>
                                                 <Font size="17.0" />
                                              </font>
@@ -637,7 +637,7 @@
                                     <Region prefHeight="1.0" prefWidth="443.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
                                     <VBox layoutX="31.0" layoutY="356.0" prefHeight="48.0" prefWidth="443.0">
                                        <children>
-                                          <Label text="bidding currency" />
+                                          <Label text="%profile.label.biddingcurrency" />
                                           <ComboBox maxWidth="1.7976931348623157E308" prefHeight="37.0" prefWidth="443.0" promptText="dollar" style="-fx-border-color: white; -fx-background-color: lightgray;" />
                                        </children>
                                     </VBox>
