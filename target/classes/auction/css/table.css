@@ -1,0 +1,80 @@
+/* ============================================================
+   1. CẤU HÌNH TỔNG THỂ BẢNG (MODERN TABLE)
+   ============================================================ */
+.modern-table {
+    -fx-background-color: white;
+    -fx-background-radius: 15;
+    -fx-border-radius: 15;
+    -fx-border-color: #eee;
+    -fx-padding: 0;
+}
+
+/* Xóa viền xanh bao quanh toàn bộ bảng khi click */
+.modern-table:focused {
+    -fx-background-color: white;
+    -fx-background-insets: 0;
+}
+
+/* Header */
+.modern-table .column-header-background {
+    -fx-background-color: transparent;
+    -fx-border-color: #eee;
+    -fx-border-width: 0 0 1 0;
+}
+
+.modern-table .column-header {
+    -fx-background-color: transparent;
+    -fx-size: 50;
+}
+
+/* ============================================================
+   2. FIX LỖI KHI CLICK (CELL & ROW)
+   ============================================================ */
+
+/* Xóa vạch kẻ dọc/ngang màu xanh khi click vào ô */
+.modern-table .table-cell:focused {
+    -fx-background-color: transparent !important;
+    -fx-background-insets: 0 !important;
+    -fx-background-radius: 0 !important;
+}
+
+/* Màu nền hàng khi được chọn (rất nhạt) */
+.modern-table .table-row-cell:filled:selected {
+    -fx-background-color: #f4f8fb !important;
+}
+
+/* QUAN TRỌNG: Xóa màu nền mặc định của ô khi được chọn để lộ Label phía dưới */
+.modern-table .table-cell:selected {
+    -fx-background-color: transparent !important;
+    -fx-text-fill: inherit !important;
+}
+
+/* ============================================================
+   3. ĐỊNH DẠNG STATUS LABELS (KHÓA MÀU TUYỆT ĐỐI)
+   ============================================================ */
+.status-label {
+    -fx-padding: 5 12;
+    -fx-background-radius: 15;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-alignment: center;
+}
+
+/* Dùng selector cực mạnh để khóa màu chữ và nền */
+.modern-table .table-row-cell .status-label.status-winning,
+.modern-table .table-row-cell:selected .status-label.status-winning {
+    -fx-background-color: #e6f7ef !important;
+    -fx-text-fill: #00a854 !important;
+}
+
+.modern-table .table-row-cell .status-label.status-losing,
+.modern-table .table-row-cell:selected .status-label.status-losing {
+    -fx-background-color: #feeef0 !important;
+    -fx-text-fill: #e74c3c !important;
+}
+
+.modern-table .table-row-cell .status-label.status-participate,
+.modern-table .table-row-cell:selected .status-label.status-participate {
+    -fx-background-color: #f0f2f5 !important;
+    -fx-text-fill: #555 !important;
+}

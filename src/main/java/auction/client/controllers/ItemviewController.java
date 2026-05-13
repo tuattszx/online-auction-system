@@ -241,6 +241,11 @@ public class ItemviewController {
 
     }
     @FXML
+    public void OnMouseCart(MouseEvent event){
+        ViewManager.switchScene(event,"cart_view.fxml", "rỏ hàng");
+
+    }
+    @FXML
     public void handleShowMore(ActionEvent event){
         Vboxdetails.setVisible(true);
         priceChart.setVisible(false);
