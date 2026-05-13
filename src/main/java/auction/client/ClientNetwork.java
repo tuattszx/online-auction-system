@@ -14,7 +14,9 @@ public class ClientNetwork {
     private static ObjectOutputStream out;
     private static ObjectInputStream in;
 
-    public static ClientNetwork getInstance(){
+    private ClientNetwork() { }
+
+    public static synchronized ClientNetwork getInstance(){
         if (instance == null) instance = new ClientNetwork();
         return instance;
     }

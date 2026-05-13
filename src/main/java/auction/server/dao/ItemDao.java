@@ -1,6 +1,8 @@
 package auction.server.dao;
 
 import auction.common.model.items.Item;
+
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface ItemDao extends GenericDAO<Item, Integer> {
@@ -12,4 +14,5 @@ public interface ItemDao extends GenericDAO<Item, Integer> {
     boolean placeBid(int idItem, long newPrice, int id_bidder);
     List<Item> getUnapprovedItems();
     boolean approveItem(int itemId, boolean isApproved);
+    boolean updateEndTime(int id, LocalDateTime newEndTime);
 }

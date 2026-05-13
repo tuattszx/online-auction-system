@@ -1,5 +1,6 @@
 package auction.server;
 
+import auction.common.message.BidUpdateNotification;
 import auction.common.message.Message;
 import auction.common.model.bid.Bid;
 import auction.common.model.categories.Category;
@@ -19,6 +20,7 @@ import auction.server.utils.ImageService;
 
 import java.io.*;
 import java.net.Socket;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -28,6 +30,7 @@ public class ClientHandler implements Runnable {
     private final ItemDao itemDao = new ItemDaoImpl();
     private final CategoryDao categoryDao = new CategoryDaoImpl();
     private final BidDao bidDao = new BidDaoImpl();
+    private ObjectOutputStream out;
 
     public ClientHandler(Socket socket) {
         this.socket = socket;
@@ -37,9 +40,10 @@ public class ClientHandler implements Runnable {
     public void run() {
         // Không dùng try-with-resources cho Socket ở đây để tránh tự động đóng
         try {
-            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+            out = new ObjectOutputStream(socket.getOutputStream());
             ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
 
+            ClientManager.addClient(this);
             while (true) { // Vòng lặp giữ kết nối
                 Object obj = in.readObject();
                 if (obj instanceof Message msg) {
@@ -86,10 +90,23 @@ public class ClientHandler implements Runnable {
         } catch (Exception e) {
             System.err.println("Client ngắt kết nối đột ngột: " + e.getMessage());
         } finally {
+            ClientManager.removeClient(this);
             try {
                 socket.close();
             } catch (IOException e) {
             }
+        }
+    }
+
+    public void sendObject(Object obj) {
+        try {
+            synchronized (out) {
+                out.writeObject(obj);
+                out.flush();
+                out.reset();
+            }
+        } catch (IOException e) {
+            System.err.println("Lỗi gửi broadcast: " + e.getMessage());
         }
     }
 
@@ -244,25 +261,22 @@ public class ClientHandler implements Runnable {
     }
 
     private void handlePlaceBid(Message msg, ObjectOutputStream out) throws IOException {
+        String status = "FAILED";
+        Object responseData = "Lỗi không xác định";
+        BidUpdateNotification notification = null;
         try {
             Bid bidRequest = (Bid) msg.getData();
 
             Item currentItem = itemDao.getById(bidRequest.getIdItem());
 
             if (currentItem == null) {
-                msg.setStatus("FAILED");
-                msg.setData("Sản phẩm không tồn tại!");
+                responseData = "Sản phẩm không tồn tại!";
             }
             /*else if (!"OPEN".equals(currentItem.getStatus())) {
-                msg.setStatus("FAILED");
-                msg.setData("Phiên đấu giá đang đóng, không thể đặt giá!");
-                out.writeObject(msg);
-                out.flush();
-                return;
+                responseData= "Phiên đấu giá đang đóng, không thể đặt giá!";
             }*/
             else if (bidRequest.getBidAmount() <= currentItem.getCurrentPrice()) {
-                msg.setStatus("FAILED");
-                msg.setData("Giá đã bị đẩy lên € " + currentItem.getCurrentPrice() + ". Vui lòng trả cao hơn!");
+                responseData = "Giá đã bị đẩy lên € " + currentItem.getCurrentPrice() + ". Vui lòng trả cao hơn!";
             } else {
                 boolean isUpdated = itemDao.placeBid(bidRequest.getIdItem(), bidRequest.getBidAmount(), bidRequest.getIdUser());
                 if (isUpdated) {
@@ -270,24 +284,47 @@ public class ClientHandler implements Runnable {
                     boolean isHistorySaved = bidDao.add(bidRequest);
 
                     if (isHistorySaved) {
-                        msg.setStatus("SUCCESS");
-                        msg.setData("Da dat thanh cong: " + bidRequest.getBidAmount());
+                        status = "SUCCESS";
+                        responseData = "Da dat thanh cong: " + bidRequest.getBidAmount();
+
+                        LocalDateTime now = LocalDateTime.now();
+                        LocalDateTime newEndTime = null;
+
+                        if (java.time.Duration.between(now, currentItem.getEndTime()).getSeconds() < 30) {
+                            newEndTime = currentItem.getEndTime().plusMinutes(2);
+                            boolean updateTimeIsSuccess= itemDao.updateEndTime(currentItem.getId(), newEndTime);
+                        }
+
+                        notification = new BidUpdateNotification(
+                                currentItem.getId(),
+                                bidRequest.getBidAmount(),
+                                bidRequest.getBidderName(),
+                                now,
+                                newEndTime
+                        );
                     } else {
-                        msg.setStatus("FAILED");
-                        msg.setData("Lỗi hệ thống khi lưu lịch sử đấu giá!");
+                        responseData = "Lỗi hệ thống khi lưu lịch sử đấu giá!";
                     }
                 } else {
-                    msg.setStatus("FAILED");
-                    msg.setData("Không thể đặt giá. Có thể giá đã thay đổi!");
+                    responseData = "Không thể đặt giá. Có thể giá đã thay đổi!";
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
-            msg.setStatus("ERROR");
-            msg.setData("Lỗi Server: " + e.getMessage());
+            status = "ERROR";
+            responseData = "Lỗi Server: " + e.getMessage();
         }
-        out.writeObject(msg);
-        out.flush();
+        finally {
+            msg.setStatus(status);
+            msg.setData(responseData);
+
+            out.writeObject(msg);
+            out.flush();
+
+            if (notification != null) {
+                ClientManager.broadcast(notification);
+            }
+        }
     }
 
     private void handleGetBidByItemId(Message msg, ObjectOutputStream out) throws IOException {

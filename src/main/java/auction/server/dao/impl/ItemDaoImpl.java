@@ -7,6 +7,7 @@ import auction.server.DatabaseManager;
 import auction.server.dao.ItemDao;
 
 import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -437,6 +438,22 @@ public class ItemDaoImpl implements ItemDao {
             return updateStatus(itemId, "PENDING");
         } else {
             return deleteItem(itemId);
+        }
+    }
+
+    public boolean updateEndTime(int id, LocalDateTime newEndTime) {
+        String sql = "UPDATE ITEMS SET end_time = ? WHERE id = ?";
+        try (Connection conn = DatabaseManager.getInstance().getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setTimestamp(1, Timestamp.valueOf(newEndTime));
+            pstmt.setInt(2, id);
+
+            return pstmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.err.println("Error updating end time for item ID " + id + ": " + e.getMessage());
+            e.printStackTrace();
+            return false;
         }
     }
 
