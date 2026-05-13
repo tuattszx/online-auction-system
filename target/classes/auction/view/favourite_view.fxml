@@ -44,8 +44,10 @@
                      <items>
                         <MenuItem text="%favouriteview.menuitem.art" />
                         <MenuItem text="%favouriteview.menuitem.watches" />
+                        <MenuItem text="%favouriteview.menuitem.art" />
                         <MenuItem text="%favouriteview.menuitem.interiors" />
                         <MenuItem text="%favouriteview.menuitem.jewelry" />
+                        <MenuItem text="%favouriteview.menuitem.watches" />
                         <MenuItem text="%favouriteview.menuitem.fashion" />
                         <MenuItem text="%favouriteview.menuitem.coin" />
                         <MenuItem text="%favouriteview.menuitem.cars" />

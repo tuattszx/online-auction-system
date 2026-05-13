@@ -46,12 +46,12 @@
                            <image><Image url="@../img/search-icon-png-11.png" /></image>
                            <HBox.margin><Insets left="12.0" /></HBox.margin>
                         </ImageView>
-                        <TextField fx:id="txtsearch" prefHeight="28.0" prefWidth="417.0" promptText="Search for items..." style="-fx-background-color: transparent; -fx-border-color: transparent;" />
+                        <TextField fx:id="txtsearch" prefHeight="28.0" prefWidth="417.0" promptText="%mainview.textfield.searchforitem" style="-fx-background-color: transparent; -fx-border-color: transparent;" />
                      </children>
                   </HBox>
                   <Region prefHeight="99.0" prefWidth="0.0" HBox.hgrow="ALWAYS" />
 
-                  <Label fx:id="lbsell" onMouseClicked="#onSellerClick" prefHeight="28.0" prefWidth="26.0" style="-fx-font-weight: bold; -fx-cursor: hand;" text="Sell" textFill="#0052ff">
+                  <Label fx:id="lbsell" onMouseClicked="#onSellerClick" prefHeight="28.0" prefWidth="26.0" style="-fx-font-weight: bold; -fx-cursor: hand;" text="%mainview.label.sell" textFill="#0052ff">
                      <font><Font size="14.0" /></font>
                   </Label>
                   <Region prefHeight="99.0" prefWidth="0.0" HBox.hgrow="ALWAYS" />
@@ -84,7 +84,7 @@
                               </ImageView>
 
                               <VBox alignment="CENTER">
-                                 <Label style="-fx-font-size: 10px;" text="Balance" textFill="#0025ff" />
+                                 <Label style="-fx-font-size: 10px;" text="%mainview.label.balance" textFill="#0025ff" />
                                  <Label fx:id="lbbalance" prefHeight="17.0" prefWidth="73.0" style="-fx-font-weight: bold;" text="1.000.000$" />
                               </VBox>
                            </children>

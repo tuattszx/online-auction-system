@@ -1,5 +1,6 @@
 package auction.client.controllers;
 
+import auction.client.services.LanguageManager;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -11,6 +12,7 @@ public class MainAuctionController extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(MainAuctionController.class.getResource("/auction/view/login-view.fxml"));
+        fxmlLoader.setResources(LanguageManager.getBundle());
         Scene scene = new Scene(fxmlLoader.load(), 640, 480);
         stage.getIcons().add(new javafx.scene.image.Image(
                 MainAuctionController.class.getResourceAsStream("/auction/img/logo.png")

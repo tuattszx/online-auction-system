@@ -306,7 +306,7 @@
                                           <Font name="System Bold Italic" size="13.0" />
                                        </font>
                                     </Label>
-                                    <Label fx:id="lbstarttime" prefHeight="18.0" prefWidth="174.0" text="Label">
+                                    <Label fx:id="lbstarttime" prefHeight="18.0" prefWidth="174.0" text="%itemview.label.label">
                                        <font>
                                           <Font name="System Bold Italic" size="13.0" />
                                        </font>
