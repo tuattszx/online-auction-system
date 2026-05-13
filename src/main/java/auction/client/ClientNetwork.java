@@ -1,9 +1,15 @@
 package auction.client;
 
+import auction.common.message.BidUpdateNotification;
 import auction.common.message.Message;
 import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 public class ClientNetwork {
     private static final String SERVER_IP = "168.144.109.78";
@@ -13,6 +19,8 @@ public class ClientNetwork {
     private static Socket socket;
     private static ObjectOutputStream out;
     private static ObjectInputStream in;
+
+    private final Map<String, CompletableFuture<Message>> pendingRequests = new ConcurrentHashMap<>();
 
     private ClientNetwork() { }
 
@@ -26,21 +34,67 @@ public class ClientNetwork {
             socket = new Socket(SERVER_IP, PORT);
             out = new ObjectOutputStream(socket.getOutputStream());
             in = new ObjectInputStream(socket.getInputStream());
+            startListening();
         }
     }
 
-    public synchronized Message sendRequest(Message request) {
+    private void startListening() {
+        Thread listenerThread = new Thread(() -> {
+            try {
+                while (!socket.isClosed()) {
+                    Object obj = in.readObject();
+
+                    if (obj instanceof BidUpdateNotification notification) {
+                        // TRƯỜNG HỢP 1: Server tự đẩy về (Broadcast)
+                        // Không ai hỏi cả, Server tự "hét" lên, ta báo cho UI cập nhật
+
+                    }
+                    else if (obj instanceof Message response) {
+                        // TRƯỜNG HỢP 2: Phản hồi cho một lệnh ta đã gửi (Login, GetItem...)
+                        String reqId = response.getRequestId();
+                        CompletableFuture<Message> future = pendingRequests.remove(reqId);
+                        if (future != null) {
+                            future.complete(response);
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                System.err.println("Mất kết nối Server trong khi lắng nghe: " + e.getMessage());
+                close();
+            }
+        });
+        listenerThread.setDaemon(true);
+        listenerThread.start();
+    }
+
+    public CompletableFuture<Message> sendRequestAsync(Message request){
         try {
             connect(); // Đảm bảo luôn có kết nối
+
+            String requestId = UUID.randomUUID().toString();
+            request.setRequestId(requestId);
+
+            CompletableFuture<Message> future = new CompletableFuture<>();
+            pendingRequests.put(requestId, future);
 
             out.writeObject(request);
             out.flush();
             out.reset();
 
-            return (Message) in.readObject();
+            return future;
         } catch (Exception e) {
-            e.printStackTrace();
-            return new Message("SERVER_OFFLINE");
+            CompletableFuture<Message> failed = new CompletableFuture<>();
+            failed.complete(new Message("SERVER_OFFLINE"));
+            return failed;
+        }
+    }
+
+    public Message sendRequest(Message request) {
+        try {
+            return sendRequestAsync(request).get(5, TimeUnit.SECONDS);
+        } catch (Exception e) {
+            System.err.println("Lỗi hoặc Timeout: " + e.getMessage());
+            return new Message("TIMEOUT_OR_ERROR");
         }
     }
 

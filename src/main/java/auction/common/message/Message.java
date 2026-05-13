@@ -7,6 +7,7 @@ public class Message implements Serializable {
     private String command; // Ví dụ: "LOGIN", "REGISTER", "BID"
     private Object data;    // Chứa User object hoặc String, List...
     private String status;  // "SUCCESS" hoặc "FAILED"
+    private String requestId;
 
     public Message(String command, Object data) {
         this.command = command;
@@ -21,4 +22,6 @@ public class Message implements Serializable {
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
     public void setData(Object data) {this.data = data;}
+    public String getRequestId() { return requestId; }
+    public void setRequestId(String requestId) { this.requestId = requestId; }
 }
