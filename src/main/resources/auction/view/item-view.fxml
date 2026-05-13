@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.util.ResourceBundle?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.chart.CategoryAxis?>
@@ -42,7 +41,7 @@
                </children>
             </VBox>
             <Region HBox.hgrow="ALWAYS" />
-            <ImageView fitHeight="34.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fitHeight="34.0" fitWidth="32.0" onMouseClicked="#OnMouseCart" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../img/cart.png" />
                </image>
