@@ -1,6 +1,7 @@
 package auction.client.services;
 
 import auction.client.ClientNetwork;
+import auction.client.session.DataSession;
 import auction.common.message.Message;
 import auction.common.model.bid.Bid;
 import auction.common.model.items.Item;
@@ -39,7 +40,9 @@ public class AuctionManager {
         newBid.setIdItem(itemId);
         newBid.setIdUser(userId);
         newBid.setBidAmount(amount);
-
+        if (DataSession.getInstance().getLoggedInUser() != null) {
+            newBid.setBidderName(DataSession.getInstance().getLoggedInUser().getUsername());
+        }
         return ClientNetwork.getInstance().sendRequestAsync(new Message("PLACE_BID", newBid));
     }
 }
