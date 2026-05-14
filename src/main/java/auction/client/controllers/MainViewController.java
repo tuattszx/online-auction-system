@@ -24,6 +24,7 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
@@ -292,8 +293,37 @@ public class MainViewController extends ProfileController {
         bidBtn.setOnMouseEntered(e -> bidBtn.setStyle(bidBtn.getStyle() + "-fx-background-color: #003db3;"));
         bidBtn.setOnMouseExited(e -> bidBtn.setStyle(bidBtn.getStyle() + "-fx-background-color: #0052ff;"));
 
+        HBox statusContainer = new HBox();
+        statusContainer.setAlignment(Pos.CENTER);
+        statusContainer.setSpacing(6);
+        statusContainer.setMaxHeight(30);
+        statusContainer.setPrefWidth(120);
+        statusContainer.getStylesheets().add(getClass().getResource("/auction/css/labelstatus.css").toExternalForm());
+
+        Circle dot = new Circle(4);
+        dot.getStyleClass().add("badge-dot");
+
+        Label lblStatus = new Label();
+        lblStatus.getStyleClass().add("badge-text");
+
+        // Logic đổ màu và text dựa trên trạng thái thực tế của item
+        String status = item.getStatus().toLowerCase(); // Giả sử item có thuộc tính status
+        statusContainer.getStyleClass().add("badge-container");
+
+        if (status.contains("upcoming")) {
+            lblStatus.setText("UPCOMING");
+            statusContainer.getStyleClass().add("status-upcoming");
+        } else if (status.contains("pending") || status.contains("live")) {
+            lblStatus.setText("LIVE NOW");
+            statusContainer.getStyleClass().add("status-pending"); // Dùng màu vàng của pending cho live
+        } else {
+            lblStatus.setText("FINISHED");
+            statusContainer.getStyleClass().add("status-finished");
+        }
+
+        statusContainer.getChildren().addAll(dot, lblStatus);
         // 7. Gom tất cả vào Card
-        card.getChildren().addAll(imgView, nameAndHeartBox, priceLabel, bidBtn);
+        card.getChildren().addAll(imgView,statusContainer, nameAndHeartBox, priceLabel, bidBtn);
 
         // 8. Sự kiện click vào Card
         card.setOnMouseClicked(event -> {
