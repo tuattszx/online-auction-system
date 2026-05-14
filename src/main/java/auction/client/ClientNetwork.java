@@ -1,5 +1,6 @@
 package auction.client;
 
+import auction.client.services.AuctionSubscriptionManager;
 import auction.common.message.BidUpdateNotification;
 import auction.common.message.Message;
 import java.io.*;
@@ -46,8 +47,8 @@ public class ClientNetwork {
 
                     if (obj instanceof BidUpdateNotification notification) {
                         // TRƯỜNG HỢP 1: Server tự đẩy về (Broadcast)
-                        // Không ai hỏi cả, Server tự "hét" lên, ta báo cho UI cập nhật
-
+                        // ta báo cho UI cập nhật
+                        AuctionSubscriptionManager.getInstance().notifyUpdate(notification);
                     }
                     else if (obj instanceof Message response) {
                         // TRƯỜNG HỢP 2: Phản hồi cho một lệnh ta đã gửi (Login, GetItem...)

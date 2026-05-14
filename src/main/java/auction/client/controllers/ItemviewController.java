@@ -4,6 +4,7 @@ import auction.client.ClientNetwork;
 import auction.client.services.AuctionManager;
 import auction.client.session.DataSession;
 import auction.client.utils.ServerTimeSync;
+import auction.common.message.BidUpdateNotification;
 import auction.common.message.Message;
 import auction.common.model.bid.Bid;
 import auction.common.model.items.*;
@@ -34,6 +35,7 @@ import java.time.LocalDateTime;
 import java.time.Duration;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class ItemviewController {
     @FXML private ImageView mainImage;
@@ -58,9 +60,8 @@ public class ItemviewController {
     @FXML
     private TableColumn<Bid, String> colPrice;
 
-    private Timeline autoUpdateTimeline;
-    private volatile boolean isUpdatingLastestPrice = false;
     private PauseTransition errorTimeout = new PauseTransition(javafx.util.Duration.seconds(3));
+    private Consumer<BidUpdateNotification> bidUpdateCallback;
 
     @FXML
     public void initialize() {
@@ -85,7 +86,7 @@ public class ItemviewController {
 
             loadExtraImages(selectedItem.getId());
             updateAllData(selectedItem.getId());
-            startAutoUpdate(selectedItem.getId());
+            setupRealtimeUpdate(selectedItem.getId());
         }
 
 
@@ -112,41 +113,58 @@ public class ItemviewController {
         return time.format(formatter);
     }
 
-    private void startAutoUpdate(int itemId) {
-        if (autoUpdateTimeline != null) autoUpdateTimeline.stop();
+    private void setupRealtimeUpdate(int itemId) {
+        this.bidUpdateCallback = notification -> {
+            Platform.runLater(() -> {
+                // 1. Cập nhật giá cao nhất hiện tại
+                lbCurrentBid.setText(String.format("€ %,d", notification.getNewPrice()));
 
-        autoUpdateTimeline = new Timeline(new KeyFrame(javafx.util.Duration.seconds(3), event -> {
-            // Chỉ chạy nếu luồng trước đó đã xong
-            if (!isUpdatingLastestPrice) {
-                updateAllData(itemId);
-            }
-        }));
-        autoUpdateTimeline.setCycleCount(Timeline.INDEFINITE);
-        autoUpdateTimeline.play();
+                // 2. Thêm dòng mới vào bảng lịch sử (Bid Table)
+                Bid newBid = new Bid();
+                newBid.setBidderName(notification.getBidderName());
+                newBid.setBidAmount(notification.getNewPrice());
+                newBid.setBidTime(notification.getBidTime());
+                bidTable.getItems().add(0, newBid); // Thêm lên đầu bảng
+
+                // 3. Cập nhật biểu đồ
+                updateChartDirectly(notification.getBidTime(), notification.getNewPrice());
+
+                // 4. Nếu Server báo có gia hạn thời gian (newEndTime != null)
+                if (notification.getNewEndTime() != null) {
+                    this.currentItem.setEndTime(notification.getNewEndTime());
+                    lbendtime.setText(toString(notification.getNewEndTime()));
+                }
+            });
+        };
+
+        // Đăng ký với Tổng đài
+        auction.client.services.AuctionSubscriptionManager.getInstance().subscribe(itemId, bidUpdateCallback);
     }
 
     private void updateAllData(int itemId) {
-        isUpdatingLastestPrice = true;
-        new Thread(() -> {
-            try {
-                Item item = AuctionManager.getInstance().getLatestItem(itemId);
-                List<Bid> bids = AuctionManager.getInstance().getBidHistory(itemId);
-                List<Object[]> chartData = AuctionManager.getInstance().getPriceChart(itemId);
-
+        // 1. lay item moi nhat
+        AuctionManager.getInstance().getLatestItemAsync(itemId).thenAccept(item -> {
+            if (item != null) {
                 Platform.runLater(() -> {
-                    if (item != null) lbCurrentBid.setText(String.format("%,d $", item.getCurrentPrice()));
-                    if (bids != null) bidTable.getItems().setAll(bids);
-                    if (chartData != null) loadPriceChart(chartData);
+                    lbCurrentBid.setText(String.format("€ %,d", item.getCurrentPrice()));
+                    this.currentItem = item; // Cập nhật để countdown chạy đúng
                 });
-            } finally {
-                isUpdatingLastestPrice = false;
             }
-        }).start();
-    }
-    private void stopTimeline() {
-        if (autoUpdateTimeline != null) {
-            autoUpdateTimeline.stop();
-        }
+        });
+
+        // 2. Lấy lịch sử Bid
+        AuctionManager.getInstance().getBidHistoryAsync(itemId).thenAccept(bids -> {
+            if (bids != null) {
+                Platform.runLater(() -> bidTable.getItems().setAll(bids));
+            }
+        });
+
+        // 3. Lấy dữ liệu biểu đồ
+        AuctionManager.getInstance().getPriceChartAsync(itemId).thenAccept(chartData -> {
+            if (chartData != null) {
+                Platform.runLater(() -> loadPriceChart(chartData));
+            }
+        });
     }
 
     private void showBidError(String message,boolean isSuccess) {
@@ -185,21 +203,21 @@ public class ItemviewController {
             validateBid(bidValue, selectedItem.getCurrentPrice(), currentUser.getId(), selectedItem.getSellerId(), currentUser.getRole());
             long amount = Long.parseLong(bidValue);
 
-            new Thread(() -> {
-                Message response = AuctionManager.getInstance().placeBid(selectedItem.getId(), currentUser.getId(), amount);
-                Platform.runLater(() -> {
-                    if ("SUCCESS".equals(response.getStatus())) {
-                        long newPrice = Long.parseLong(bidValue);
-                        selectedItem.setCurrentPrice(newPrice);
-                        updateAllData(selectedItem.getId());
-                        txtBid.clear();
-                        showBidError(response.getData().toString(),true);
-                    }
-                    else {
-                        showBidError(response.getData().toString(),false);
-                    }
-                });
-            }).start();
+            AuctionManager.getInstance().placeBidAsync(selectedItem.getId(), currentUser.getId(), amount)
+                    .thenAccept(response -> {
+                        Platform.runLater(() -> {
+                            txtBid.setDisable(false); // Mở lại input
+
+                            if ("SUCCESS".equals(response.getStatus())) {
+                                txtBid.clear();
+                                showBidError("Đặt giá thành công!", true);
+                                // Lưu ý: Không cần gọi updateAllData ở đây nữa
+                                // vì SubscriptionManager sẽ tự cập nhật khi nhận thông báo Broadcast
+                            } else {
+                                showBidError(response.getData().toString(), false);
+                            }
+                        });
+                    });
         }
         catch (IllegalArgumentException e) {
             showBidError(e.getMessage(),false);
@@ -234,7 +252,11 @@ public class ItemviewController {
     }
     @FXML
     public void OnMouseBacktoMain(MouseEvent event){
-        stopTimeline();
+        if (currentItem != null && bidUpdateCallback != null) {
+            auction.client.services.AuctionSubscriptionManager.getInstance()
+                    .unsubscribe(currentItem.getId(), bidUpdateCallback);
+        }
+
         ViewManager.removeView("main-view.fxml");
         DataSession.getInstance().setSelectedItem(null);
         ViewManager.switchScene(event,"main-view.fxml", "Trang chủ");
@@ -272,6 +294,13 @@ public class ItemviewController {
 
         String view = DataSession.getInstance().getLoggedInUser().getRole().equals("ADMIN") ? "admin-view.fxml" : "profile-view.fxml";
         ViewManager.switchScene(event, view, "Hồ sơ cá nhân");
+    }
+
+    private void updateChartDirectly(LocalDateTime time, long price) {
+        if (priceChart.getData().isEmpty()) return;
+        XYChart.Series<String, Number> series = priceChart.getData().get(0);
+        String timeStr = time.format(DateTimeFormatter.ofPattern("HH:mm:ss"));
+        series.getData().add(new XYChart.Data<>(timeStr, price));
     }
 
     private void loadPriceChart(List<Object[]> priceChartData) {
@@ -438,22 +467,18 @@ public class ItemviewController {
     }
 
     private void loadExtraImages(int itemId) {
-        new Thread(() -> {
-            try {
-                Message response = AuctionManager.getInstance().getItemImages(itemId);
-
-                if ("SUCCESS".equals(response.getStatus())) {
-                    List<ItemImage> allImages = (List<ItemImage>) response.getData();
-
-                    Platform.runLater(() -> {
-                        Item tempItem = new Item();
-                        tempItem.setImages(allImages);
-                        displayThumbnails(tempItem);
-                    });
-                }
-            } catch (Exception e) {
-                System.err.println("Không thể tải thêm ảnh: " + e.getMessage());
+        AuctionManager.getInstance().getItemImagesAsync(itemId).thenAccept(response -> {
+            if (response != null && "SUCCESS".equals(response.getStatus())) {
+                List<ItemImage> allImages = (List<ItemImage>) response.getData();
+                Platform.runLater(() -> {
+                    Item tempItem = new Item();
+                    tempItem.setImages(allImages);
+                    displayThumbnails(tempItem);
+                });
             }
-        }).start();
+        }).exceptionally(ex -> {
+            System.err.println("Lỗi tải ảnh: " + ex.getMessage());
+            return null;
+        });
     }
 }
