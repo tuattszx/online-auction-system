@@ -2,24 +2,45 @@ package auction.common.model.items;
 
 import javafx.beans.property.*;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 
 public class AuctionItem implements Serializable {
-    private final IntegerProperty id;
-    private final StringProperty name;
-    private final StringProperty remainingTime;
-    private final LongProperty currentBid;
-    private final LongProperty yourBid;
-    private final StringProperty status;
+    private static final long serialVersionUID = 1L;
+
+    private int idVal;
+    private String nameVal;
+    private String remainingTimeVal;
+    private long currentBidVal;
+    private long yourBidVal;
+    private String statusVal;
+
+    private transient IntegerProperty id;
+    private transient StringProperty name;
+    private transient StringProperty remainingTime;
+    private transient LongProperty currentBid;
+    private transient LongProperty yourBid;
+    private transient StringProperty status;
 
     // 1. Constructor đầy đủ
     public AuctionItem(int id, String name, String remainingTime, long currentBid, long yourBid, String status) {
-        this.id = new SimpleIntegerProperty(id);
-        this.name = new SimpleStringProperty(name);
-        this.remainingTime = new SimpleStringProperty(remainingTime);
-        this.currentBid = new SimpleLongProperty(currentBid);
-        this.yourBid = new SimpleLongProperty(yourBid);
-        this.status = new SimpleStringProperty(status);
+        this.idVal = id;
+        this.nameVal = name;
+        this.remainingTimeVal = remainingTime;
+        this.currentBidVal = currentBid;
+        this.yourBidVal = yourBid;
+        this.statusVal = status;
+        initializeProperties();
+    }
+
+    private void initializeProperties() {
+        this.id = new SimpleIntegerProperty(idVal);
+        this.name = new SimpleStringProperty(nameVal);
+        this.remainingTime = new SimpleStringProperty(remainingTimeVal);
+        this.currentBid = new SimpleLongProperty(currentBidVal);
+        this.yourBid = new SimpleLongProperty(yourBidVal);
+        this.status = new SimpleStringProperty(statusVal);
     }
 
     // 2. Các hàm Getter cho Property (Để TableView quan sát được sự thay đổi)
@@ -29,6 +50,10 @@ public class AuctionItem implements Serializable {
     public LongProperty yourBidProperty() { return yourBid; }
     public StringProperty statusProperty() { return status; }
 
+    private void readObject(ObjectInputStream s) throws IOException, ClassNotFoundException {
+        s.defaultReadObject(); // Đọc các biến *Val
+        initializeProperties(); // Hồi sinh các Property cho UI
+    }
     // 3. Các hàm Getter/Setter chuẩn (Để lấy giá trị nhanh)
     public Integer getId() { return id.get(); }
     public void setId(Integer id) { this.id.set(id); }

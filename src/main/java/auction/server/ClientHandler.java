@@ -4,6 +4,7 @@ import auction.common.message.BidUpdateNotification;
 import auction.common.message.Message;
 import auction.common.model.bid.Bid;
 import auction.common.model.categories.Category;
+import auction.common.model.items.AuctionItem;
 import auction.common.model.items.Item;
 import auction.common.model.items.ItemImage;
 import auction.common.model.users.Account;
@@ -403,7 +404,7 @@ public class ClientHandler implements Runnable {
         try {
             int userId = (int) msg.getData();
 
-            List<auction.common.model.items.AuctionItem> myAuctions = itemDao.getMyAuctions(userId);
+            List<AuctionItem> myAuctions = itemDao.getMyAuctions(userId);
 
             msg.setStatus("SUCCESS");
             msg.setData(myAuctions);
