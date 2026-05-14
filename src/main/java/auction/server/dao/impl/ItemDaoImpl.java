@@ -1,6 +1,7 @@
 package auction.server.dao.impl;
 
 import auction.common.model.categories.Category;
+import auction.common.model.items.AuctionItem;
 import auction.common.model.items.Item;
 import auction.common.model.items.ItemImage;
 import auction.server.DatabaseManager;
@@ -457,4 +458,62 @@ public class ItemDaoImpl implements ItemDao {
         }
     }
 
+    @Override
+    public List<AuctionItem> getMyAuctions(int userId) {
+        List<AuctionItem> list = new ArrayList<>();
+        // Câu truy vấn lấy thông tin Item và mức giá cao nhất người dùng này từng trả
+        String sql = "SELECT i.id, i.name, i.current_price, i.end_time, " +
+                "MAX(b.bid_amount) as your_max_bid " +
+                "FROM ITEMS i " +
+                "JOIN BIDS b ON i.id = b.id_item " +
+                "WHERE b.id_user = ? " +
+                "GROUP BY i.id, i.name, i.current_price, i.end_time";
+
+        try (Connection conn = DatabaseManager.getInstance().getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, userId);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    int id = rs.getInt("id");
+                    String name = rs.getString("name");
+                    long currentPrice = rs.getLong("current_price");
+                    long yourMaxBid = rs.getLong("your_max_bid");
+                    LocalDateTime endTime = rs.getTimestamp("end_time").toLocalDateTime();
+
+                    // 1. Logic xác định trạng thái đơn giản:
+                    // Nếu giá hiện tại của món hàng đúng bằng giá mình đã trả -> Winning
+                    String status = (currentPrice <= yourMaxBid) ? "Winning" : "Losing";
+
+                    // 2. Tính toán thời gian còn lại (Dạng String để hiển thị lên bảng)
+                    String remaining = calculateRemainingTime(endTime);
+                    list.add(new AuctionItem(
+                            id,
+                            name,
+                            remaining,
+                            (long) currentPrice,
+                            (long) yourMaxBid,
+                            status
+                    ));
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Lỗi khi lấy danh sách đấu giá của tôi: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    // Hàm phụ trợ để tính thời gian còn lại
+    private String calculateRemainingTime(LocalDateTime endTime) {
+        java.time.Duration duration = java.time.Duration.between(LocalDateTime.now(), endTime);
+        if (duration.isNegative() || duration.isZero()) {
+            return "Closed";
+        }
+        long hours = duration.toHours();
+        long minutes = duration.toMinutesPart();
+        long seconds = duration.toSecondsPart();
+        return String.format("%02d:%02d:%02d", hours, minutes, seconds);
+    }
 }
