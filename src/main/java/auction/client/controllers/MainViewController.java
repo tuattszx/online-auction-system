@@ -207,11 +207,12 @@ public class MainViewController extends ProfileController {
 
             // 2. Lấy URL thay vì lấy mảng byte
             String imageUrl = defaultImg.getUrlImage();
+            String optimizedUrl = imageUrl.replace("/upload/", "/upload/w_200,c_fill,f_auto,q_auto/");
 
             if (imageUrl != null && !imageUrl.isEmpty()) {
                 try {
                     // 3. Tạo Image trực tiếp từ URL (để true để load ngầm)
-                    Image img = new Image(imageUrl, true);
+                    Image img = new Image(optimizedUrl,140,180,true ,true,true);
                     imgView.setImage(img);
                     imageLoaded = true;
                 } catch (Exception e) {
@@ -310,16 +311,10 @@ public class MainViewController extends ProfileController {
         String status = item.getStatus().toLowerCase(); // Giả sử item có thuộc tính status
         statusContainer.getStyleClass().add("badge-container");
 
-        if (status.contains("upcoming")) {
-            lblStatus.setText("UPCOMING");
-            statusContainer.getStyleClass().add("status-upcoming");
-        } else if (status.contains("pending") || status.contains("live")) {
-            lblStatus.setText("LIVE NOW");
-            statusContainer.getStyleClass().add("status-pending"); // Dùng màu vàng của pending cho live
-        } else {
-            lblStatus.setText("FINISHED");
-            statusContainer.getStyleClass().add("status-finished");
-        }
+        AuctionTimerManager cardTimer = new AuctionTimerManager(
+                item, lblStatus, statusContainer, dot);
+        cardTimer.tick();
+
 
         statusContainer.getChildren().addAll(dot, lblStatus);
         // 7. Gom tất cả vào Card

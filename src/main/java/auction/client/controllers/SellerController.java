@@ -41,6 +41,8 @@ public class SellerController {
     @FXML private Spinner<Integer> endMin;
     @FXML private Spinner<Integer> endSec;
     // Khai báo các VBox nội dung (phần bên phải)
+    @FXML ProgressBar progressbar;
+
     @FXML
     private VBox vboxAddProduct;
 
@@ -68,6 +70,7 @@ public class SellerController {
     @FXML
     public void initialize() {
         showMyProducts();
+        progressbar.setVisible(false);
     }
 
     @FXML
@@ -221,12 +224,14 @@ public class SellerController {
                 }
             }
             // 4. Xử lý Ảnh: Upload lên Cloudinary để lấy danh sách URL
+
                 List<String> allImageUrls = new ArrayList<>();
                 if (selectedFiles != null && !selectedFiles.isEmpty()) {
                     for (File file : selectedFiles) {
                         // Tải ảnh lên Cloudinary
 
                         String url = ImageService.uploadToCloud(file);;
+                        progressbar.setVisible(true);
                         if (url != null) {
                             allImageUrls.add(url);
                         }
@@ -245,6 +250,7 @@ public class SellerController {
             // 7. Xử lý kết quả trả về từ Server
             if (response != null && "SUCCESS".equals(response.getStatus())) {
                 ViewManager.showAlert(Alert.AlertType.INFORMATION, "Thành công", "Sản phẩm đã được đăng đấu giá thành công!");
+                progressbar.setVisible(false);
 
                 // Xóa trắng form và quay về danh sách sản phẩm
                 clearFields();

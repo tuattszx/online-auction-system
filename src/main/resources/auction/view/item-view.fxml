@@ -327,7 +327,7 @@
                                  </children>
                                  <HBox fx:id="statusContainer" alignment="CENTER" fillHeight="false" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="38.0" prefWidth="141.0" spacing="6" stylesheets="@../css/labelstatus.css">
                                     <children>
-                                       <Circle radius="4" styleClass="badge-dot" />
+                                       <Circle fx:id="dot" radius="4" styleClass="badge-dot" />
                                        <Label fx:id="lblStatus" styleClass="badge-text" text="UPCOMING" />
                                     </children>
                                     <styleClass>
