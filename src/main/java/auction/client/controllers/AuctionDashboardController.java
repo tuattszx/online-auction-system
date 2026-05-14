@@ -56,13 +56,36 @@ public class AuctionDashboardController {
         colYourBid.setCellValueFactory(cellData -> cellData.getValue().yourBidProperty().asObject());
         colStatus.setCellValueFactory(cellData -> cellData.getValue().statusProperty());
 
-        // 2. Gọi hàm cấu hình hiển thị cột Status
+        // 2.cấu hình hiển thị cột Status
         setupStatusColumn();
 
         // 3. Khởi tạo dữ liệu mẫu
         ObservableList<AuctionItem> auctionData = FXCollections.observableArrayList(
-                new AuctionItem("UFC 300: Pereira vs. Hill", "1:45:30", 2100.0, 2100.0, "Winning"),
-                new AuctionItem("UFC 302: Makhachev vs. Poirier", "0:30:12", 4300.0, 3800.0, "Losing")
+                // Nhóm Đang thắng (Winning)
+                new AuctionItem("iPhone 15 Pro Max - 256GB", "0:05:12", 1200.0, 1200.0, "Winning"),
+                new AuctionItem("MacBook Pro M3 Max", "1:20:45", 3500.0, 3500.0, "Winning"),
+                new AuctionItem("Sony PS5 Slim Edition", "0:15:30", 550.0, 550.0, "Winning"),
+                new AuctionItem("Mechanical Keyboard Custom", "2:10:00", 150.0, 150.0, "Winning"),
+                new AuctionItem("Vintage Rolex Datejust", "0:02:15", 8500.0, 8500.0, "Winning"),
+                new AuctionItem("AirPods Pro Gen 2", "4:30:12", 210.0, 210.0, "Winning"),
+
+                // Nhóm Đang thua (Losing)
+                new AuctionItem("Samsung Galaxy S24 Ultra", "0:10:20", 1150.0, 1000.0, "Losing"),
+                new AuctionItem("RTX 4090 Rog Strix", "0:45:00", 2200.0, 1900.0, "Losing"),
+                new AuctionItem("Dell XPS 15 9530", "1:05:15", 1800.0, 1650.0, "Losing"),
+                new AuctionItem("Nintendo Switch OLED", "0:08:45", 320.0, 280.0, "Losing"),
+                new AuctionItem("Canon EOS R5 Body", "3:15:40", 3100.0, 2900.0, "Losing"),
+                new AuctionItem("Herman Miller Aeron Chair", "5:20:00", 1200.0, 950.0, "Losing"),
+                new AuctionItem("LEGO Star Wars Millennium Falcon", "0:25:30", 650.0, 500.0, "Losing"),
+
+                // Nhóm Tham gia (Participate)
+                new AuctionItem("Jordan 1 Retro High OG", "12:45:00", 450.0, 400.0, "Participate"),
+                new AuctionItem("Dyson V15 Detect Vacuum", "8:10:25", 700.0, 620.0, "Participate"),
+                new AuctionItem("iPad Pro 12.9 M2", "6:50:10", 1100.0, 980.0, "Participate"),
+                new AuctionItem("Marshall Emberton II", "2:30:45", 140.0, 120.0, "Participate"),
+                new AuctionItem("Kindle Paperwhite 5", "15:00:00", 130.0, 100.0, "Participate"),
+                new AuctionItem("Logitech MX Master 3S", "1:15:20", 95.0, 85.0, "Participate"),
+                new AuctionItem("FujiFilm X100V", "0:01:45", 2300.0, 2100.0, "Participate")
         );
 
         // 4. Đưa dữ liệu vào TableView

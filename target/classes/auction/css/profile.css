@@ -122,4 +122,23 @@
     -fx-text-fill: #24b47e;
     -fx-effect: dropshadow(gaussian, rgba(36, 180, 126, 0.3), 5, 0, 0, 0);
 }
+.scroll-pane {
+    -fx-background-radius: 15;
+    -fx-border-radius: 15;
+    -fx-background-color: transparent; /* Quan trọng: Để nền trong suốt */
+    -fx-overflow-hidden: true; /* Giúp hỗ trợ cắt nội dung */
+}
+
+/* Bo tròn cả vùng Viewport (vùng chứa nội dung trực tiếp) */
+.scroll-pane > .viewport {
+    -fx-background-color: transparent;
+    -fx-background-radius: 15;
+}
+
+/* Bo tròn cho StackPane và HBox bên trong để đồng bộ */
+.scroll-pane .stack-pane,
+.scroll-pane .hbox {
+    -fx-background-radius: 15;
+    -fx-background-color: white; /* Hoặc màu nền của bạn */
+}
 

@@ -106,8 +106,6 @@
                         <TableColumn fx:id="colYourBid" prefWidth="150.0" text="YOUR BID" />
 
                               <TableColumn fx:id="colStatus" prefWidth="150.0" text="STATUS" />
-
-                        <TableColumn fx:id="colAction" prefWidth="150.0" text="ACTION" />
                      </columns>
                      <columnResizePolicy>
                         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />

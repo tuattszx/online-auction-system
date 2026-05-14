@@ -4,8 +4,6 @@
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.MenuButton?>
-<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
@@ -36,11 +34,16 @@
                      </children>
                   </VBox>
                   <Region prefHeight="99.0" prefWidth="0.0" HBox.hgrow="ALWAYS" />
+                  <ImageView fitHeight="34.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../img/cart.png" />
+                     </image>
+                  </ImageView>
 
 
                   <Region prefHeight="99.0" prefWidth="0.0" HBox.hgrow="ALWAYS" />
 
-                  <HBox alignment="CENTER_LEFT" maxHeight="40.0" prefHeight="40.0" prefWidth="372.0" style="-fx-background-color: #f1f3f5; -fx-background-radius: 20; -fx-border-color: #ddd; -fx-border-radius: 20;">
+                  <HBox alignment="CENTER_LEFT" maxHeight="40.0" prefHeight="40.0" prefWidth="395.0" style="-fx-background-color: #f1f3f5; -fx-background-radius: 20; -fx-border-color: #ddd; -fx-border-radius: 20;">
                      <children>
                         <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                            <image><Image url="@../img/search-icon-png-11.png" /></image>
