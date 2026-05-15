@@ -154,7 +154,7 @@
                </children>
             </HBox>
 
-            <ScrollPane fitToWidth="true" style="-fx-background-color: #f1f3f5; -fx-background: #f1f3f5;" VBox.vgrow="ALWAYS">
+            <ScrollPane fitToWidth="true" style="-fx-background-color: #f1f3f5; -fx-background: #f1f3f5;" stylesheets="@../css/labelstatus.css" VBox.vgrow="ALWAYS">
                <content>
                   <FlowPane fx:id="flitems" alignment="TOP_CENTER" columnHalignment="CENTER" hgap="20.0" style="-fx-padding: 25;" vgap="25.0">
                      <children>

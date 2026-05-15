@@ -9,6 +9,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,22 +33,23 @@ public class ViewManager {
             throw new IllegalArgumentException("FXML path không thể rỗng!");
         }
 
-        if (!views.containsKey(fxmlPath)) {
-            try {
-                FXMLLoader loader = new FXMLLoader(
+        try {
+            FXMLLoader loader = new FXMLLoader(
                     Objects.requireNonNull(
-                        ViewManager.class.getResource(FXML_PATH_PREFIX + fxmlPath),
-                        "Không tìm thấy file: " + fxmlPath
+                            ViewManager.class.getResource(FXML_PATH_PREFIX + fxmlPath),
+                            "Không tìm thấy file: " + fxmlPath
                     )
-                );
-                loader.setResources(LanguageManager.getBundle());
-                Parent root = loader.load();
-                views.put(fxmlPath, root);
-            } catch (NullPointerException e) {
-                throw new IOException("File FXML không tồn tại: " + fxmlPath, e);
-            }
+            );
+
+            // Thiết lập đa ngôn ngữ
+            loader.setResources(LanguageManager.getBundle());
+
+            // Trả về Parent mới hoàn toàn, kích hoạt initialize() mới của Controller
+            return loader.load();
+
+        } catch (NullPointerException e) {
+            throw new IOException("File FXML không tồn tại: " + fxmlPath, e);
         }
-        return views.get(fxmlPath);
     }
 
     /**
@@ -78,9 +80,17 @@ public class ViewManager {
                 throw new RuntimeException("Node không được add vào Scene!");
             }
 
-            Stage stage = (Stage) scene.getWindow();
-            if (stage == null) {
-                throw new RuntimeException("Scene không được add vào Stage!");
+            Stage stage;
+            if (event.getSource() instanceof Node) {
+                Scene currentScene = ((Node) event.getSource()).getScene();
+                if (currentScene != null && currentScene.getWindow() != null) {
+                    stage = (Stage) currentScene.getWindow();
+                } else {
+                    // Nếu lấy từ event bị null, hãy lấy cửa sổ đang focus/hiện tại của App
+                    stage = (Stage) Stage.getWindows().filtered(Window::isShowing).get(0);
+                }
+            } else {
+                stage = (Stage) Stage.getWindows().filtered(Window::isShowing).get(0);
             }
 
             // Load view mới
@@ -98,11 +108,9 @@ public class ViewManager {
             }
 
             // Chuyển scene
-            if (stage.getScene() == null) {
-                stage.setScene(new Scene(root));
-            } else {
-                stage.getScene().setRoot(root);
-            }
+            Scene newScene = new Scene(root);
+            stage.setScene(newScene); // Tạo scene mới hoàn toàn
+            stage.show();
 
         } catch (IllegalArgumentException e) {
             showAlert(Alert.AlertType.ERROR, "Lỗi Input", e.getMessage());
