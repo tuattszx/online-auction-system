@@ -25,6 +25,22 @@
 .status-pending .badge-text { -fx-text-fill: #ffa000; }
 .status-pending .badge-dot { -fx-fill: #ffa000; }
 
+.status-live {
+    /* Nền đỏ cực nhạt để làm nổi chữ */
+    -fx-background-color: #ffebee;
+}
+
+.status-live .badge-text {
+    /* Chữ đỏ đậm rực rỡ */
+    -fx-text-fill: #d32f2f;
+    -fx-font-weight: bold;
+}
+
+.status-live .badge-dot {
+    /* Chấm tròn đỏ tươi */
+    -fx-fill: #ff1744;
+}
+
 /* Trạng thái FINISHED (Màu Xám hoặc Xanh Lá) */
 .status-finished {
     -fx-background-color: #f5f5f5;

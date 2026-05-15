@@ -10,10 +10,7 @@ import auction.common.message.Message;
 import auction.common.model.bid.Bid;
 import auction.common.model.items.*;
 import auction.common.model.users.User;
-import javafx.animation.Animation;
-import javafx.animation.KeyFrame;
-import javafx.animation.PauseTransition;
-import javafx.animation.Timeline;
+import javafx.animation.*;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.event.ActionEvent;
@@ -27,8 +24,10 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -39,6 +38,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public class ItemviewController {
+    private AuctionTimerManager timer;
     @FXML private ImageView mainImage;
     @FXML private Label itemNameLabel;
     @FXML private Label lbCurrentBid;
@@ -51,7 +51,9 @@ public class ItemviewController {
     @FXML private Label lbBidError;
     @FXML private Label lbstarttime;
     @FXML private Label lbendtime;
-
+    @FXML private HBox statusContainer;
+    @FXML private Label lblStatus;
+    @FXML private Circle dot;
     @FXML
     private TableView<Bid> bidTable;
     @FXML
@@ -346,79 +348,20 @@ public class ItemviewController {
     private void startCountdown() {
         if (timeline != null) timeline.stop();
 
-        timeline = new Timeline(new KeyFrame(javafx.util.Duration.seconds(1), event -> {
-            updateCountdownUI();
-        }));
-        timeline.setCycleCount(Animation.INDEFINITE);
-        timeline.play();
+        timer = new AuctionTimerManager(
+                currentItem,
+                lblStatus,
+                statusContainer,
+                dot,
+                lblDays,
+                lblHours,
+                lblMins,
+                lblSecs
+        );
+
+        timer.start();
     }
 
-    private void updateCountdownUI() {
-        // 1. Lấy giờ chuẩn Server đã đồng bộ (Dùng class ServerTimeSync đã làm ở bước trước)
-        LocalDateTime now = ServerTimeSync.getNow();
-        LocalDateTime startTime = currentItem.getStartTime();
-        LocalDateTime endTime = currentItem.getEndTime();
-
-        // 2. Tính khoảng cách
-        Duration duration;
-        boolean isStarted = now.isAfter(startTime);
-        boolean isEnded = now.isAfter(endTime);
-        if (!isStarted) {
-            duration = Duration.between(now, startTime);
-            setCountdownColor(Color.BLACK); // Chưa bắt đầu
-        }
-        else if (isEnded) {
-            timeline.stop();
-            currentItem.setStatus("CLOSED");
-            setCountdownColor(Color.GRAY); // Đã kết thúc - màu xám
-            displayExpired();
-            return;
-        }
-        else {
-            duration = Duration.between(now, endTime);
-            setCountdownColor(Color.GREEN); // Đang diễn ra - màu xanh lá
-            if (!"OPEN".equals(currentItem.getStatus())) {
-                currentItem.setStatus("OPEN");
-            }
-        }
-        long seconds = duration.getSeconds();
-
-        if (seconds <= 0) {
-            timeline.stop();
-            lblDays.setText("00");
-            lblHours.setText("00");
-            lblMins.setText("00");
-            lblSecs.setText("00");
-            return;
-        }
-
-        // 3. Phân tách thời gian
-        long days = seconds / 86400;
-        long hours = (seconds % 86400) / 3600;
-        long minutes = (seconds % 3600) / 60;
-        long secs = seconds % 60;
-
-        // 4. Hiển thị lên giao diện (Format %02d để luôn có 2 chữ số, ví dụ: 03)
-        lblDays.setText(String.format("%02d", days));
-        lblHours.setText(String.format("%02d", hours));
-        lblMins.setText(String.format("%02d", minutes));
-        lblSecs.setText(String.format("%02d", secs));
-    }
-
-    private void displayExpired() {
-        lblDays.setText("00");
-        lblHours.setText("00");
-        lblMins.setText("00");
-        lblSecs.setText("00");
-        // Có thể thêm thông báo "Phiên đấu giá đã kết thúc"
-    }
-
-    private void setCountdownColor(Color color) {
-        lblDays.setTextFill(color);
-        lblHours.setTextFill(color);
-        lblMins.setTextFill(color);
-        lblSecs.setTextFill(color);
-    }
     @FXML
     private ScrollPane thumbnailScrollPane;
     @FXML private VBox thumbnailContainer;
