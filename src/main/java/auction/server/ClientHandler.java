@@ -4,6 +4,7 @@ import auction.common.message.BidUpdateNotification;
 import auction.common.message.Message;
 import auction.common.model.bid.Bid;
 import auction.common.model.categories.Category;
+import auction.common.model.items.AuctionItem;
 import auction.common.model.items.Item;
 import auction.common.model.items.ItemImage;
 import auction.common.model.users.Account;
@@ -82,6 +83,9 @@ public class ClientHandler implements Runnable {
                             break;
                         case "GET_ITEM_IMAGES":
                             handleGetItemImages(msg, out);
+                            break;
+                        case "GET_MY_AUCTIONS":
+                            handleGetMyAuctions(msg, out);
                             break;
                         // Thêm các case khác như BID, VIEW_PRODUCT...
                     }
@@ -394,5 +398,25 @@ public class ClientHandler implements Runnable {
         out.writeObject(msg);
         out.flush();
         out.reset();
+    }
+
+    private void handleGetMyAuctions(Message msg, ObjectOutputStream out) throws IOException {
+        try {
+            int userId = (int) msg.getData();
+
+            List<AuctionItem> myAuctions = itemDao.getMyAuctions(userId);
+
+            msg.setStatus("SUCCESS");
+            msg.setData(myAuctions);
+
+        } catch (Exception e) {
+            System.err.println("Lỗi handleGetMyAuctions: " + e.getMessage());
+            msg.setStatus("ERROR");
+            msg.setData(null);
+        } finally {
+            out.writeObject(msg);
+            out.flush();
+            out.reset();
+        }
     }
 }

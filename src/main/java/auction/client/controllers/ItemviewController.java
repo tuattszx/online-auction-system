@@ -2,6 +2,7 @@ package auction.client.controllers;
 
 import auction.client.ClientNetwork;
 import auction.client.services.AuctionManager;
+import auction.client.services.AuctionSubscriptionManager;
 import auction.client.session.DataSession;
 import auction.client.utils.ServerTimeSync;
 import auction.common.message.BidUpdateNotification;
@@ -140,7 +141,7 @@ public class ItemviewController {
         };
 
         // Đăng ký với Tổng đài
-        auction.client.services.AuctionSubscriptionManager.getInstance().subscribe(itemId, bidUpdateCallback);
+        AuctionSubscriptionManager.getInstance().subscribe(itemId, bidUpdateCallback);
     }
 
     private void updateAllData(int itemId) {
@@ -163,9 +164,14 @@ public class ItemviewController {
 
         // 3. Lấy dữ liệu biểu đồ
         AuctionManager.getInstance().getPriceChartAsync(itemId).thenAccept(chartData -> {
-            if (chartData != null) {
-                Platform.runLater(() -> loadPriceChart(chartData));
-            }
+            Platform.runLater(() -> {
+                if (chartData == null || chartData.isEmpty()) {
+                    loadPriceChart(new java.util.ArrayList<>()); // Hàm loadPriceChart sẽ tự xử lý vẽ đường ngang
+                } else {
+                    // Nếu đã có bid, truyền chartData vào bình thường
+                    loadPriceChart(chartData);
+                }
+            });
         });
     }
 
@@ -255,8 +261,7 @@ public class ItemviewController {
     @FXML
     public void OnMouseBacktoMain(MouseEvent event){
         if (currentItem != null && bidUpdateCallback != null) {
-            auction.client.services.AuctionSubscriptionManager.getInstance()
-                    .unsubscribe(currentItem.getId(), bidUpdateCallback);
+            AuctionSubscriptionManager.getInstance().unsubscribe(currentItem.getId(), bidUpdateCallback);
         }
 
         ViewManager.removeView("main-view.fxml");
@@ -307,12 +312,24 @@ public class ItemviewController {
 
     private void loadPriceChart(List<Object[]> priceChartData) {
         priceChart.getData().clear();
+        CategoryAxis xAxis = (CategoryAxis) priceChart.getXAxis();
+        xAxis.setGapStartAndEnd(true);
+        xAxis.setAnimated(false);
         XYChart.Series<String, Number> series = new XYChart.Series<>();
+        Item currentItem=DataSession.getInstance().getSelectedItem();
 
-        for (Object[] dataPoint : priceChartData) {
-            String time = dataPoint[0].toString();
-            Number price = (Number) dataPoint[1];
-            series.getData().add(new XYChart.Data<>(time, price));
+        if (priceChartData == null || priceChartData.isEmpty() || priceChartData.get(0) == null) {
+            if (currentItem != null) {
+                String startTime = currentItem.getStartTime().format(DateTimeFormatter.ofPattern("HH:mm:ss"));
+                series.getData().add(new XYChart.Data<>(startTime, currentItem.getCurrentPrice()));
+            }
+        }
+        else{
+            for (Object[] dataPoint : priceChartData) {
+                String time = dataPoint[0].toString();
+                Number price = (Number) dataPoint[1];
+                series.getData().add(new XYChart.Data<>(time, price));
+            }
         }
 
         priceChart.getData().add(series);

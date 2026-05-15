@@ -1,14 +1,16 @@
 package auction.client.controllers;
 
+import auction.client.services.AuctionManager;
 import auction.client.session.DataSession;
 import auction.common.model.items.AuctionItem;
+import auction.common.model.users.User;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.Cursor;
+import javafx.scene.control.*;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 
 import java.io.IOException;
@@ -24,9 +26,9 @@ public class AuctionDashboardController {
     @FXML
     private TableColumn<AuctionItem, String> colRemaining;
     @FXML
-    private TableColumn<AuctionItem, Double> colCurrentBid;
+    private TableColumn<AuctionItem, Long> colCurrentBid;
     @FXML
-    private TableColumn<AuctionItem, Double> colYourBid;
+    private TableColumn<AuctionItem, Long> colYourBid;
 
     // --- CÁC HÀM SỰ KIỆN GIỮ NGUYÊN ---
     @FXML
@@ -60,37 +62,59 @@ public class AuctionDashboardController {
         setupStatusColumn();
 
         // 3. Khởi tạo dữ liệu mẫu
-        ObservableList<AuctionItem> auctionData = FXCollections.observableArrayList(
-                // Nhóm Đang thắng (Winning)
-                new AuctionItem("iPhone 15 Pro Max - 256GB", "0:05:12", 1200.0, 1200.0, "Winning"),
-                new AuctionItem("MacBook Pro M3 Max", "1:20:45", 3500.0, 3500.0, "Winning"),
-                new AuctionItem("Sony PS5 Slim Edition", "0:15:30", 550.0, 550.0, "Winning"),
-                new AuctionItem("Mechanical Keyboard Custom", "2:10:00", 150.0, 150.0, "Winning"),
-                new AuctionItem("Vintage Rolex Datejust", "0:02:15", 8500.0, 8500.0, "Winning"),
-                new AuctionItem("AirPods Pro Gen 2", "4:30:12", 210.0, 210.0, "Winning"),
+        User currentUser = DataSession.getInstance().getLoggedInUser();
+        if (currentUser != null) {
+            // Gọi dữ liệu từ Server
+            loadMyAuctions(currentUser.getId());
+        }
 
-                // Nhóm Đang thua (Losing)
-                new AuctionItem("Samsung Galaxy S24 Ultra", "0:10:20", 1150.0, 1000.0, "Losing"),
-                new AuctionItem("RTX 4090 Rog Strix", "0:45:00", 2200.0, 1900.0, "Losing"),
-                new AuctionItem("Dell XPS 15 9530", "1:05:15", 1800.0, 1650.0, "Losing"),
-                new AuctionItem("Nintendo Switch OLED", "0:08:45", 320.0, 280.0, "Losing"),
-                new AuctionItem("Canon EOS R5 Body", "3:15:40", 3100.0, 2900.0, "Losing"),
-                new AuctionItem("Herman Miller Aeron Chair", "5:20:00", 1200.0, 950.0, "Losing"),
-                new AuctionItem("LEGO Star Wars Millennium Falcon", "0:25:30", 650.0, 500.0, "Losing"),
-
-                // Nhóm Tham gia (Participate)
-                new AuctionItem("Jordan 1 Retro High OG", "12:45:00", 450.0, 400.0, "Participate"),
-                new AuctionItem("Dyson V15 Detect Vacuum", "8:10:25", 700.0, 620.0, "Participate"),
-                new AuctionItem("iPad Pro 12.9 M2", "6:50:10", 1100.0, 980.0, "Participate"),
-                new AuctionItem("Marshall Emberton II", "2:30:45", 140.0, 120.0, "Participate"),
-                new AuctionItem("Kindle Paperwhite 5", "15:00:00", 130.0, 100.0, "Participate"),
-                new AuctionItem("Logitech MX Master 3S", "1:15:20", 95.0, 85.0, "Participate"),
-                new AuctionItem("FujiFilm X100V", "0:01:45", 2300.0, 2100.0, "Participate")
-        );
-
-        // 4. Đưa dữ liệu vào TableView
-        auctionTable.setItems(auctionData);
+        auctionTable.setRowFactory(tv -> {
+            TableRow<AuctionItem> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (!row.isEmpty() && event.getButton() == MouseButton.PRIMARY) {
+                    handleAuctionItemSelection(row.getItem(), event);
+                }
+            });
+            return row;
+        });
     }
+
+    private void loadMyAuctions(int userId) {
+        AuctionManager.getInstance().getMyAuctionsAsync(userId).thenAccept(list -> {
+            Platform.runLater(() -> {
+                auctionTable.getItems().setAll(list);
+            });
+        });
+    }private void handleAuctionItemSelection(AuctionItem selected, MouseEvent event) {
+        if (selected == null) return;
+
+        // Hiển thị trạng thái đang tải (nếu cần)
+        auctionTable.setCursor(Cursor.WAIT);
+
+        // 1. Gọi Async lấy thông tin chi tiết nhất từ Server
+        AuctionManager.getInstance().getLatestItemAsync(selected.getId())
+                .thenAccept(item -> {
+                    Platform.runLater(() -> {
+                        auctionTable.setCursor(Cursor.DEFAULT);
+                        if (item != null) {
+                            // 2. Lưu vào Session để trang ItemView có dữ liệu dùng ngay
+                            DataSession.getInstance().setSelectedItem(item);
+
+                            // 3. Chuyển sang màn hình chi tiết sản phẩm
+                            ViewManager.switchScene(event, "item-view.fxml", "Chi tiết: " + item.getName());
+                        } else {
+                            // Xử lý khi sản phẩm không tồn tại (có thể bị xóa)
+                            System.err.println("Không tìm thấy sản phẩm!");
+                        }
+                    });
+                })
+                .exceptionally(ex -> {
+                    Platform.runLater(() -> auctionTable.setCursor(Cursor.DEFAULT));
+                    return null;
+                });
+    }
+
+
 
     private void setupStatusColumn() {
         colStatus.setCellFactory(column -> {

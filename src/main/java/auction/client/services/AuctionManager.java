@@ -4,6 +4,7 @@ import auction.client.ClientNetwork;
 import auction.client.session.DataSession;
 import auction.common.message.Message;
 import auction.common.model.bid.Bid;
+import auction.common.model.items.AuctionItem;
 import auction.common.model.items.Item;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -44,5 +45,15 @@ public class AuctionManager {
             newBid.setBidderName(DataSession.getInstance().getLoggedInUser().getUsername());
         }
         return ClientNetwork.getInstance().sendRequestAsync(new Message("PLACE_BID", newBid));
+    }
+
+    public CompletableFuture<List<AuctionItem>> getMyAuctionsAsync(int userId) {
+        return ClientNetwork.getInstance().sendRequestAsync(new Message("GET_MY_AUCTIONS", userId))
+                .thenApply(res -> {
+                    if (res != null && "SUCCESS".equals(res.getStatus())) {
+                        return (List<AuctionItem>) res.getData();
+                    }
+                    return new java.util.ArrayList<>();
+                });
     }
 }
