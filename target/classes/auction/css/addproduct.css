@@ -1,0 +1,63 @@
+/* Container chứa cả cụm (HBox trong FXML) */
+.time-picker-container {
+    -fx-background-color: #f8f9fa;
+    -fx-background-radius: 10;
+    -fx-border-color: #e9ecef;
+    -fx-border-radius: 10;
+    -fx-padding: 5;
+}
+
+/* Tùy chỉnh DatePicker */
+.date-picker {
+    -fx-background-color: transparent;
+}
+.date-picker > .text-field {
+    -fx-background-color: white;
+    -fx-background-radius: 5 0 0 5;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 1;
+    -fx-border-radius: 5 0 0 5;
+}
+.date-picker > .arrow-button {
+    -fx-background-color: #3498db;
+    -fx-background-radius: 0 5 5 0;
+}
+.date-picker > .arrow-button > .arrow {
+    -fx-background-color: white;
+}
+
+/* Tùy chỉnh Spinner */
+.spinner {
+    -fx-background-color: white;
+    -fx-background-radius: 5;
+    -fx-border-color: #dee2e6;
+    -fx-border-radius: 5;
+}
+.spinner > .text-field {
+    -fx-background-color: transparent;
+    -fx-alignment: CENTER;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2d3436;
+}
+.spinner > .increment-arrow-button,
+.spinner > .decrement-arrow-button {
+    -fx-background-color: transparent;
+    -fx-body-color: transparent;
+}
+.spinner > .increment-arrow-button:hover,
+.spinner > .decrement-arrow-button:hover {
+    -fx-background-color: #e9ecef;
+}
+.text-field, .text-area, .combo-box {
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 1.2;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-transition: all 0.3s;
+}
+
+.text-field:focused, .text-area:focused, .combo-box:focused {
+    -fx-border-color: #3498db; /* Màu xanh thương hiệu */
+    -fx-background-color: white;
+    -fx-effect: dropshadow(three-pass-box, rgba(52, 152, 219, 0.2), 8, 0, 0, 0);
+}
