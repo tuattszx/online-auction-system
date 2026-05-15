@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.util.List;
 
 public class MainViewController extends ProfileController {
+    public Label lbbalance;
     @FXML private TextField txtsearch;
     @FXML private ComboBox<String> sortPrice, sortTime;
     @FXML private Label lbusername;
@@ -51,7 +52,7 @@ public class MainViewController extends ProfileController {
         // Cần ép kiểu String cho ComboBox để tránh lỗi type-safety
         sortPrice.getItems().addAll("Giá tăng dần", "Giá giảm dần");
         sortTime.getItems().addAll("Thời gian tăng dần", "Thời gian giảm dần");
-
+        lbbalance.setText(DataSession.getInstance().getLoggedInUser() != null ? DataSession.getInstance().getLoggedInUser().getBalance() + " $" : "0 $");
         // GỌI HÀM: Để tải dữ liệu ngay khi mở trang
         loadItems();
     }

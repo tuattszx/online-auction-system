@@ -1,19 +1,23 @@
 package auction.client.controllers;
 
 import auction.client.ClientNetwork;
+import auction.client.services.UploadItemTask;
 import auction.client.session.DataSession;
 import auction.client.utils.ImageService;
 import auction.common.message.Message;
 import auction.common.model.items.Item;
 import auction.server.utils.CloudinaryUtil;
+import javafx.animation.FadeTransition;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.event.ActionEvent;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.io.File;
 import java.io.IOException;
@@ -234,43 +238,15 @@ public class SellerController {
                     return;
                 }
             }
-            // 4. Xử lý Ảnh: Upload lên Cloudinary để lấy danh sách URL
 
-                List<String> allImageUrls = new ArrayList<>();
-                if (selectedFiles != null && !selectedFiles.isEmpty()) {
-                    for (File file : selectedFiles) {
-                        // Tải ảnh lên Cloudinary
+            UploadItemTask task=new UploadItemTask(newItem,selectedFiles,categoryName);
 
-                        String url = ImageService.uploadToCloud(file);;
-                        progressbar.setVisible(true);
-                        if (url != null) {
-                            allImageUrls.add(url);
-                        }
-                    }
-                }
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
 
-                // 5. Đóng gói payload gửi đi: Thay mảng byte bằng danh sách URL
-                Object[] payload = new Object[]{newItem, allImageUrls, categoryName};
-
-
-                Message request = new Message("ADD_ITEM", payload);
-            // 6. Gửi qua ClientNetwork
-            System.out.println("Đang gửi yêu cầu thêm sản phẩm lên Server...");
-            Message response = ClientNetwork.getInstance().sendRequest(request);
-
-            // 7. Xử lý kết quả trả về từ Server
-            if (response != null && "SUCCESS".equals(response.getStatus())) {
-                ViewManager.showAlert(Alert.AlertType.INFORMATION, "Thành công", "Sản phẩm đã được đăng đấu giá thành công!");
-                progressbar.setVisible(false);
-
-                // Xóa trắng form và quay về danh sách sản phẩm
-                clearFields();
-                showMyProducts();
-            } else {
-                String errorMsg = (response != null) ? response.getStatus() : "Server không phản hồi";
-                ViewManager.showAlert(Alert.AlertType.ERROR, "Thất bại", "Lỗi: " + errorMsg);
-            }
-
+            clearFields();
+            showMyProducts();
         } catch (NumberFormatException e) {
             ViewManager.showAlert(Alert.AlertType.ERROR, "Lỗi định dạng", "Giá và kích thước phải là số hợp lệ!");
         } catch (Exception e) {

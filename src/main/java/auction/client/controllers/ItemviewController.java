@@ -317,13 +317,11 @@ public class ItemviewController {
         XYChart.Series<String, Number> series = new XYChart.Series<>();
         Item currentItem=DataSession.getInstance().getSelectedItem();
 
-        if (priceChartData == null || priceChartData.isEmpty() || priceChartData.get(0) == null) {
-            if (currentItem != null) {
-                String startTime = currentItem.getStartTime().format(DateTimeFormatter.ofPattern("HH:mm:ss"));
-                series.getData().add(new XYChart.Data<>(startTime, currentItem.getCurrentPrice()));
-            }
-        }
-        else{
+        if (currentItem == null) return;
+        String startTime = currentItem.getStartTime().format(DateTimeFormatter.ofPattern("HH:mm:ss"));
+        series.getData().add(new XYChart.Data<>(startTime, currentItem.getStartingPrice()));
+
+        if (priceChartData != null && !priceChartData.isEmpty()) {
             for (Object[] dataPoint : priceChartData) {
                 String time = dataPoint[0].toString();
                 Number price = (Number) dataPoint[1];
