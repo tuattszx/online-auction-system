@@ -12,6 +12,8 @@ public class AuctionServer {
     private static final ExecutorService threadPool = Executors.newFixedThreadPool(50);
 
     public static void main(String[] args) {
+        auction.server.utils.AuctionTask auctionTask = new auction.server.utils.AuctionTask();
+        auctionTask.start();
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
             System.out.println("Server đấu giá đang chạy tại port: " + PORT);
 
@@ -26,6 +28,7 @@ public class AuctionServer {
             e.printStackTrace();
         } finally {
             // Đóng Thread Pool khi tắt Server
+            auctionTask.stop();
             threadPool.shutdown();
         }
     }

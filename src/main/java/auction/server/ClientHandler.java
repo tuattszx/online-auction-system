@@ -310,7 +310,7 @@ public class ClientHandler implements Runnable {
                         responseData = "Lỗi hệ thống khi lưu lịch sử đấu giá!";
                     }
                 } else {
-                    responseData = "Không thể đặt giá. Có thể giá đã thay đổi!";
+                    responseData = "Không thể đặt giá. Số dư khả dụng của bạn không đủ!";
                 }
             }
         } catch (Exception e) {
