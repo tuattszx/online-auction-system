@@ -264,7 +264,6 @@ public class ItemviewController {
             AuctionSubscriptionManager.getInstance().unsubscribe(currentItem.getId(), bidUpdateCallback);
         }
 
-        ViewManager.removeView("main-view.fxml");
         DataSession.getInstance().setSelectedItem(null);
         ViewManager.switchScene(event,"main-view.fxml", "Trang chủ");
 

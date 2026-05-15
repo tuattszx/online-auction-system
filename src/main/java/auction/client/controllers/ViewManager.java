@@ -9,11 +9,11 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
-import javafx.stage.Window;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -21,7 +21,11 @@ public class ViewManager {
     private static final Map<String, Parent> views = new HashMap<>();
     private static final String FXML_PATH_PREFIX = "/auction/view/";
     private static final String ICON_PATH = "/auction/img/logo.png";
-
+    private static final List<String> NO_CACHE_VIEWS = List.of(
+            "item-view.fxml",
+            "cart-view.fxml",
+            "main-view.fxml"
+    );
     /**
      * Lấy view từ cache hoặc load từ FXML file
      * @param fxmlPath đường dẫn file FXML (ví dụ: "main-view.fxml")
@@ -33,20 +37,25 @@ public class ViewManager {
             throw new IllegalArgumentException("FXML path không thể rỗng!");
         }
 
+        boolean shouldSkipCache = NO_CACHE_VIEWS.contains(fxmlPath);
+        if (!shouldSkipCache && views.containsKey(fxmlPath)) {
+            return views.get(fxmlPath);
+        }
         try {
             FXMLLoader loader = new FXMLLoader(
-                    Objects.requireNonNull(
-                            ViewManager.class.getResource(FXML_PATH_PREFIX + fxmlPath),
-                            "Không tìm thấy file: " + fxmlPath
-                    )
+                Objects.requireNonNull(
+                    ViewManager.class.getResource(FXML_PATH_PREFIX + fxmlPath),
+                    "Không tìm thấy file: " + fxmlPath
+                )
             );
-
-            // Thiết lập đa ngôn ngữ
             loader.setResources(LanguageManager.getBundle());
-
-            // Trả về Parent mới hoàn toàn, kích hoạt initialize() mới của Controller
-            return loader.load();
-
+            Parent root = loader.load();
+            if (!shouldSkipCache) {
+                views.put(fxmlPath, root);
+            } else {
+                System.out.println("🔄 Reloading dynamic view: " + fxmlPath);
+            }
+            return root;
         } catch (NullPointerException e) {
             throw new IOException("File FXML không tồn tại: " + fxmlPath, e);
         }
@@ -80,17 +89,9 @@ public class ViewManager {
                 throw new RuntimeException("Node không được add vào Scene!");
             }
 
-            Stage stage;
-            if (event.getSource() instanceof Node) {
-                Scene currentScene = ((Node) event.getSource()).getScene();
-                if (currentScene != null && currentScene.getWindow() != null) {
-                    stage = (Stage) currentScene.getWindow();
-                } else {
-                    // Nếu lấy từ event bị null, hãy lấy cửa sổ đang focus/hiện tại của App
-                    stage = (Stage) Stage.getWindows().filtered(Window::isShowing).get(0);
-                }
-            } else {
-                stage = (Stage) Stage.getWindows().filtered(Window::isShowing).get(0);
+            Stage stage = (Stage) scene.getWindow();
+            if (stage == null) {
+                throw new RuntimeException("Scene không được add vào Stage!");
             }
 
             // Load view mới
@@ -108,9 +109,11 @@ public class ViewManager {
             }
 
             // Chuyển scene
-            Scene newScene = new Scene(root);
-            stage.setScene(newScene); // Tạo scene mới hoàn toàn
-            stage.show();
+            if (stage.getScene() == null) {
+                stage.setScene(new Scene(root));
+            } else {
+                stage.getScene().setRoot(root);
+            }
 
         } catch (IllegalArgumentException e) {
             showAlert(Alert.AlertType.ERROR, "Lỗi Input", e.getMessage());

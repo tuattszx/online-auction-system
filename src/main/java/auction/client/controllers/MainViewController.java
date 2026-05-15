@@ -322,7 +322,6 @@ public class MainViewController extends ProfileController {
 
         // 8. Sự kiện click vào Card
         card.setOnMouseClicked(event -> {
-            ViewManager.removeView("item-view.fxml");
             DataSession.getInstance().setSelectedItem(item);
             // Chỉ chuyển cảnh nếu không bấm trúng nút "Đấu giá"
             if (event.getTarget() != bidBtn) {
