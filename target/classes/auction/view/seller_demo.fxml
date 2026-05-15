@@ -179,7 +179,7 @@
         <ScrollPane fitToWidth="true" prefHeight="839.0" prefWidth="1026.0" style="-fx-background-color: transparent; -fx-background: #f4f4f4;">
          <StackPane prefHeight="768.0" prefWidth="1024.0">
             <children>
-                <VBox fx:id="vboxMyProducts" prefHeight="859.0" prefWidth="1010.0" spacing="25" style="-fx-padding: 35; -fx-background-color: #f8f9fa;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+                <VBox fx:id="vboxMyProducts" prefHeight="859.0" prefWidth="1010.0" spacing="25" style="-fx-padding: 35; -fx-background-color: #f8f9fa;" visible="false" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
 
                     <HBox alignment="CENTER_LEFT" spacing="20">
                         <VBox spacing="5">
@@ -217,7 +217,7 @@
                         </TableView>
                     </VBox>
                 </VBox>
-                <VBox fx:id="vboxAddProduct" spacing="25" style="-fx-padding: 40; -fx-background-color: #f8f9fa;" stylesheets="@../css/addproduct.css" visible="false" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+                <VBox fx:id="vboxAddProduct" spacing="25" style="-fx-padding: 40; -fx-background-color: #f8f9fa;" stylesheets="@../css/addproduct.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
 
                     <VBox spacing="5">
                         <Label style="-fx-text-fill: #2d3436; -fx-font-weight: bold;" text="%sellerdemo.label.CreateNewProduct">
@@ -290,11 +290,11 @@
                                 <Label style="-fx-font-weight: bold; -fx-text-fill: #444;" text="%sellerdemo.label.StartDateandTime" />
                                 <HBox alignment="CENTER_LEFT" spacing="8" style="-fx-background-color: #f1f3f5; -fx-padding: 8; -fx-background-radius: 8;">
                                     <DatePicker fx:id="startDatePicker" prefHeight="35" prefWidth="130" style="-fx-background-radius: 5;" />
-                                    <Spinner fx:id="startHour" prefHeight="35" prefWidth="65" />
+                                    <Spinner fx:id="startHour" editable="true" prefHeight="35" prefWidth="65" />
                                     <Label style="-fx-font-weight: bold;" text=":" />
-                                    <Spinner fx:id="startMin" prefHeight="35" prefWidth="65" />
+                                    <Spinner fx:id="startMin" editable="true" prefHeight="35" prefWidth="65" />
                                     <Label style="-fx-font-weight: bold;" text=":" />
-                                    <Spinner fx:id="startSec" prefHeight="35" prefWidth="65" />
+                                    <Spinner fx:id="startSec" editable="true" prefHeight="35" prefWidth="65" />
                                 </HBox>
                             </VBox>
 
@@ -302,11 +302,11 @@
                                 <Label style="-fx-font-weight: bold; -fx-text-fill: #444;" text="%sellerdemo.label.EndDateandTime" />
                                 <HBox alignment="CENTER_LEFT" spacing="8" style="-fx-background-color: #f1f3f5; -fx-padding: 8; -fx-background-radius: 8;">
                                     <DatePicker fx:id="endDatePicker" prefHeight="35" prefWidth="130" style="-fx-background-radius: 5;" />
-                                    <Spinner fx:id="endHour" prefHeight="35" prefWidth="65" />
+                                    <Spinner fx:id="endHour" editable="true" prefHeight="35" prefWidth="65" />
                                     <Label style="-fx-font-weight: bold;" text=":" />
-                                    <Spinner fx:id="endMin" prefHeight="35" prefWidth="65" />
+                                    <Spinner fx:id="endMin" editable="true" prefHeight="35" prefWidth="65" />
                                     <Label style="-fx-font-weight: bold;" text=":" />
-                                    <Spinner fx:id="endSec" prefHeight="35" prefWidth="65" />
+                                    <Spinner fx:id="endSec" editable="true" prefHeight="35" prefWidth="65" />
                                 </HBox>
                             </VBox>
                         </HBox>

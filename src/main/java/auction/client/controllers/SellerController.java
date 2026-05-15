@@ -71,6 +71,17 @@ public class SellerController {
     public void initialize() {
         showMyProducts();
         progressbar.setVisible(false);
+        // Cấu hình cho Giờ (0 - 23)
+        startHour.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 23, 0));
+        endHour.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 23, 0));
+
+        // Cấu hình cho Phút (0 - 59)
+        startMin.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, 0));
+        endMin.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, 0));
+
+        // Cấu hình cho Giây (0 - 59)
+        startSec.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, 0));
+        endSec.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, 0));
     }
 
     @FXML

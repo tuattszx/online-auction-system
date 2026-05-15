@@ -5,6 +5,7 @@ import javafx.beans.property.*;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
+import java.util.Objects;
 
 public class AuctionItem implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -72,4 +73,19 @@ public class AuctionItem implements Serializable {
 
     public String getStatus() { return status.get(); }
     public void setStatus(String status) { this.status.set(status); }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true; // Nếu cùng địa chỉ ô nhớ thì là 1
+        if (o == null || getClass() != o.getClass()) return false; // Nếu khác loại thì không phải
+        AuctionItem that = (AuctionItem) o;
+        // So sánh dựa trên ID duy nhất của sản phẩm
+        return idVal == that.idVal;
+    }
+
+    @Override
+    public int hashCode() {
+        // Tạo mã băm dựa trên ID để Java nhận diện nhanh trong List/Set
+        return Objects.hash(idVal);
+    }
 }
