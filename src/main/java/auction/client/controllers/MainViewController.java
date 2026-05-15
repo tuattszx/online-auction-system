@@ -257,20 +257,16 @@ public class MainViewController extends ProfileController {
                 heartIcon.setStyle("-fx-text-fill: #ccc; -fx-font-size: 18px; -fx-cursor: hand;");
             }
         });
-// Hiệu ứng đổi màu khi click vào tim (Like/Unlike)
+// 2. Lúc Click:
         heartIcon.setOnMouseClicked(e -> {
-            // Logic xử lý yêu thích tại đây
-            if (heartIcon.getStyle().contains("#ff4d4d")) {
-                // Xóa khỏi danh sách yêu thích
-                DataSession.getInstance().removeFavorite(item);
+            if (DataSession.getInstance().getFavoriteItems().contains(item)) {
+                DataSession.getInstance().removeFavorite(item); // Xóa nếu đã có
                 heartIcon.setStyle("-fx-text-fill: #ccc; -fx-font-size: 18px; -fx-cursor: hand;");
             } else {
+                DataSession.getInstance().addFavorite(item); // Thêm nếu chưa có
                 heartIcon.setStyle("-fx-text-fill: #ff4d4d; -fx-font-size: 18px; -fx-cursor: hand;");
-                DataSession.getInstance().addFavorite(item);
-                // Thêm vào danh sách yêu thích
-                System.out.println("Đã thêm vào yêu thích: " + item.getName());
             }
-            e.consume(); // Ngăn sự kiện click lan ra Card
+            e.consume();
         });
 
         nameAndHeartBox.getChildren().addAll(nameLabel, heartIcon);
