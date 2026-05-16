@@ -24,6 +24,8 @@ import java.net.Socket;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class ClientHandler implements Runnable {
     private Socket socket;
@@ -86,6 +88,12 @@ public class ClientHandler implements Runnable {
                             break;
                         case "GET_MY_AUCTIONS":
                             handleGetMyAuctions(msg, out);
+                            break;
+                        case "SEND_BID_TO_USER":
+                            handleSendMessageBid(msg, out);
+                            break;
+                        case "GET_MESSAGE":
+                            handleGetMessage(msg, out);
                             break;
                         // Thêm các case khác như BID, VIEW_PRODUCT...
                     }
@@ -414,6 +422,48 @@ public class ClientHandler implements Runnable {
             System.err.println("Lỗi handleGetMyAuctions: " + e.getMessage());
             msg.setStatus("ERROR");
             msg.setData(null);
+        } finally {
+            out.writeObject(msg);
+            out.flush();
+            out.reset();
+        }
+    }
+
+    private void handleSendMessageBid(Message msg, ObjectOutputStream out) throws IOException {
+        try {
+            // Dữ liệu nhận được từ ItemviewController: Object[] {selectedItem, currentUser}
+            Object[] data = (Object[]) msg.getData();
+            Item item = (Item) data[0];
+            User user = (User) data[1];
+            Long amount = (Long) data[2];
+            int idBid = user.getId();
+            List<Bid> previousBids = bidDao.getBidsByItemId(item.getId());
+            Set<Integer> targetUserIds = previousBids.stream()
+                    .map(Bid::getIdUser)
+                    .filter(userId -> userId != idBid)
+                    .collect(Collectors.toSet());
+
+            String notificationMessage = "Món hàng " + item.getName() + " đã được người dùng " + user.getUsername() + " đấu giá cao hơn với giá " + amount ;
+            for (int userId : targetUserIds) {
+                bidDao.addNotification(userId, notificationMessage);
+            }
+            msg.setStatus("SUCCESS");
+        } catch (Exception e) {
+            msg.setStatus("ERROR");
+        } finally {
+            out.writeObject(msg);
+            out.flush();
+            out.reset();
+        }
+    }
+    private void handleGetMessage(Message msg, ObjectOutputStream out) throws  IOException{
+        try{
+            Integer id = (Integer) msg.getData();
+            List<String> notification = bidDao.getNotification(id);
+            msg.setStatus("SUCCESS");
+            msg.setData(notification);
+        }catch (Exception e){
+            msg.setStatus("ERROR");
         } finally {
             out.writeObject(msg);
             out.flush();
