@@ -87,13 +87,16 @@ public class NotificationViewController {
         return row;
     }
     public void loadNotifications() {
+        // 1. Xóa danh sách cũ đi để tải mới
         vboxMainNotifications.getChildren().clear();
 
+        // 2. Giữ nguyên tiêu đề "Mới" như thiết kế ban đầu
         Label lblMoi = new Label("Mới");
         lblMoi.setStyle("-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #050505;");
         VBox.setMargin(lblMoi, new Insets(10, 0, 5, 16));
         vboxMainNotifications.getChildren().add(lblMoi);
 
+        // 3. Gọi background task lấy dữ liệu từ Server
         Task<Message> getMessageTask = new Task<>() {
             @Override
             protected Message call() throws Exception {
@@ -101,17 +104,25 @@ public class NotificationViewController {
                 return ClientNetwork.getInstance().sendRequest(request);
             }
         };
+
         getMessageTask.setOnSucceeded(event -> {
             Message response = getMessageTask.getValue();
-            System.out.println(response.getStatus());
             if (response != null && "SUCCESS".equals(response.getStatus())) {
                 List<String> notifications = (List<String>) response.getData();
                 Platform.runLater(() -> {
                     if (notifications != null) {
                         for (String note : notifications) {
-                            // Using a default avatar and splitting message logic if needed,
-                            // but based on current server code, it's a single string message.
-                            vboxMainNotifications.getChildren().add(new Label(note));
+                            String defaultAvatar = "https://www.w3schools.com/howto/img_avatar.png";
+
+                            HBox notificationItem = createNotificationItem(
+                                    defaultAvatar,
+                                    "",
+                                    note,
+                                    "Vừa xong",
+                                    true
+                            );
+
+                            vboxMainNotifications.getChildren().add(notificationItem);
                         }
                     }
                 });

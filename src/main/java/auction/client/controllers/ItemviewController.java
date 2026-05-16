@@ -241,7 +241,7 @@ public class ItemviewController implements Cleanable {
                                 Task<Message> sendMessageBid = new Task<>() {
                                     @Override
                                     protected Message call() throws Exception {
-                                        Object[] obj = {selectedItem, currentUser};
+                                        Object[] obj = {selectedItem, currentUser, amount};
                                         return network.sendRequest(new Message("SEND_BID_TO_USER", obj));
                                     }
                                 };
