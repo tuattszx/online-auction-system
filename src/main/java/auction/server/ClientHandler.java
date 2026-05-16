@@ -457,8 +457,9 @@ public class ClientHandler implements Runnable {
     }
     private void handleGetMessage(Message msg, ObjectOutputStream out) throws  IOException{
         try{
-            User user = (User) msg.getData();
-            List<String> notification = bidDao.getNotification(user.getId());
+            Integer id = (Integer) msg.getData();
+            List<String> notification = bidDao.getNotification(id);
+            System.out.println(id + " " + notification.size());
             msg.setStatus("SUCCESS");
             msg.setData(notification);
         }catch (Exception e){

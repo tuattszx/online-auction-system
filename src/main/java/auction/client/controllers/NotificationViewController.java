@@ -103,6 +103,7 @@ public class NotificationViewController {
         };
         getMessageTask.setOnSucceeded(event -> {
             Message response = getMessageTask.getValue();
+            System.out.println(response.getStatus());
             if (response != null && "SUCCESS".equals(response.getStatus())) {
                 List<String> notifications = (List<String>) response.getData();
                 Platform.runLater(() -> {
