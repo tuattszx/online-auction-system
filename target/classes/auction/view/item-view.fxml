@@ -22,7 +22,6 @@
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
@@ -117,12 +116,21 @@
                               </Label>
                               <HBox spacing="50.0">
                                  <children>
-
-                                    <Hyperlink fx:id="btnShowMore" onAction="#handleShowMore" style="-fx-text-fill: #0052ff; -fx-font-weight: bold; -fx-padding: 0;" text="%itemview.hyperlink.showmore" />
-                                    <Label onMouseClicked="#handleLineChart" prefHeight="18.0" prefWidth="90.0" style="-fx-text-fill: #0052ff;" text="%itemview.label.linechart">
+                                    <Label fx:id="lbShow" onMouseClicked="#handleShow" style="-fx-text-fill: #0052ff;" text="Show more">
                                        <font>
                                           <Font name="System Bold" size="12.0" />
                                        </font>
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor>
+                                    </Label>
+                                    <Label layoutX="243.0" layoutY="10.0" onMouseClicked="#handleLineChart" prefHeight="18.0" prefWidth="90.0" style="-fx-text-fill: #0052ff;" text="%itemview.label.linechart">
+                                       <font>
+                                          <Font name="System Bold" size="12.0" />
+                                       </font>
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor>
                                     </Label>
                                  </children>
                               </HBox>
@@ -305,8 +313,14 @@
                                     </Label>
                                     <HBox spacing="10.0">
                                        <children>
-                                          <Button fx:id="btnPlaceBid" maxWidth="Infinity" onAction="#handlePlaceBid" prefHeight="45.0" style="-fx-background-color: white; -fx-border-color: #0052ff; -fx-text-fill: #0052ff; -fx-font-weight: bold;" text="%itemview.button.placebid" HBox.hgrow="ALWAYS" />
-                                          <Button fx:id="btnMaxBid" maxWidth="Infinity" prefHeight="45.0" style="-fx-background-color: #0052ff; -fx-text-fill: white; -fx-font-weight: bold;" text="%itemview.button.setmaxbid" HBox.hgrow="ALWAYS" />
+                                          <Button fx:id="btnPlaceBid" maxWidth="Infinity" onAction="#handlePlaceBid" prefHeight="45.0" style="-fx-background-color: white; -fx-border-color: #0052ff; -fx-text-fill: #0052ff; -fx-font-weight: bold;" text="%itemview.button.placebid" HBox.hgrow="ALWAYS">
+                                             <cursor>
+                                                <Cursor fx:constant="HAND" />
+                                             </cursor></Button>
+                                          <Button fx:id="btnMaxBid" maxWidth="Infinity" prefHeight="45.0" style="-fx-background-color: #0052ff; -fx-text-fill: white; -fx-font-weight: bold;" text="%itemview.button.setmaxbid" HBox.hgrow="ALWAYS">
+                                             <cursor>
+                                                <Cursor fx:constant="HAND" />
+                                             </cursor></Button>
                                        </children>
                                     </HBox>
                                  </children>
