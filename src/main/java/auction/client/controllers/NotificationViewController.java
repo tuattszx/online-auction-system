@@ -3,6 +3,7 @@ package auction.client.controllers;
 import auction.client.ClientNetwork;
 import auction.client.session.DataSession;
 import auction.common.message.Message;
+import auction.server.dao.impl.BidDaoImpl;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
@@ -96,11 +97,10 @@ public class NotificationViewController {
         Task<Message> getMessageTask = new Task<>() {
             @Override
             protected Message call() throws Exception {
-                Message request = new Message("GET_MESSAGE", DataSession.getInstance().getLoggedInUser());
+                Message request = new Message("GET_MESSAGE", DataSession.getInstance().getLoggedInUser().getId());
                 return ClientNetwork.getInstance().sendRequest(request);
             }
         };
-
         getMessageTask.setOnSucceeded(event -> {
             Message response = getMessageTask.getValue();
             if (response != null && "SUCCESS".equals(response.getStatus())) {
@@ -108,7 +108,7 @@ public class NotificationViewController {
                 Platform.runLater(() -> {
                     if (notifications != null) {
                         for (String note : notifications) {
-                            // Using a default avatar and splitting message logic if needed, 
+                            // Using a default avatar and splitting message logic if needed,
                             // but based on current server code, it's a single string message.
                             vboxMainNotifications.getChildren().add(new Label(note));
                         }

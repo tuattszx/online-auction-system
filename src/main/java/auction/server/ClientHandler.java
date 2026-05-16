@@ -442,7 +442,7 @@ public class ClientHandler implements Runnable {
                     .filter(userId -> userId != idBid)
                     .collect(Collectors.toSet());
 
-            String notificationMessage = "Món hàng " + item.getName() + " đã được người dùng " + user.getUsername() + " đấu giá cao hơn!" ;
+            String notificationMessage = "Món hàng " + item.getName() + " đã được người dùng " + user.getUsername() + " đấu giá cao hơn với giá " + item.getCurrentPrice() ;
             for (int userId : targetUserIds) {
                 bidDao.addNotification(userId, notificationMessage);
             }
@@ -462,7 +462,7 @@ public class ClientHandler implements Runnable {
             msg.setStatus("SUCCESS");
             msg.setData(notification);
         }catch (Exception e){
-            msg.setData("ERROR");
+            msg.setStatus("ERROR");
         } finally {
             out.writeObject(msg);
             out.flush();
