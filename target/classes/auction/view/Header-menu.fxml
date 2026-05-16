@@ -75,7 +75,7 @@
         <Region prefHeight="99.0" prefWidth="0.0" HBox.hgrow="ALWAYS" />
         <StackPane alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="106.0" prefWidth="139.0" HBox.hgrow="ALWAYS">
             <children>
-                <AnchorPane fx:id="bellContainer" maxHeight="-Infinity" maxWidth="-Infinity" onMouseClicked="#handleShowNotifications" style="-fx-cursor: hand;" StackPane.alignment="CENTER">
+                <AnchorPane fx:id="bellContainer" maxHeight="-Infinity" maxWidth="-Infinity" onMouseClicked="#onBellClick" style="-fx-cursor: hand;" StackPane.alignment="CENTER">
                     <children>
                         <ImageView fitHeight="29.0" fitWidth="29.0" layoutX="1.0" pickOnBounds="true" preserveRatio="true">
                             <image>
@@ -90,7 +90,7 @@
                         </StackPane>
                     </children>
                 </AnchorPane>
-                <VBox fx:id="notifPane" alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="474.0" prefWidth="275.0" spacing="10.0" style="-fx-background-radius: 10; -fx-background-color: #20639B; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 10, 0, 0, 5); -fx-padding: 15;" translateY="35.0" visible="false" StackPane.alignment="TOP_RIGHT">
+                <VBox fx:id="notifPane" alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="474.0" prefWidth="275.0" spacing="10.0" style="-fx-background-radius: 10; -fx-background-color: #20639B; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 10, 0, 0, 5); -fx-padding: 15;" translateX="205.0" translateY="60.0" visible="false" StackPane.alignment="TOP_RIGHT">
                     <children>
                         <HBox alignment="CENTER_LEFT" spacing="100.0">
                             <children>
