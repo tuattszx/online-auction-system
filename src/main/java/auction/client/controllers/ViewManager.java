@@ -1,5 +1,6 @@
 package auction.client.controllers;
 
+import auction.client.services.Cleanable;
 import auction.client.services.LanguageManager;
 import javafx.event.Event;
 import javafx.fxml.FXMLLoader;
@@ -50,6 +51,12 @@ public class ViewManager {
             );
             loader.setResources(LanguageManager.getBundle());
             Parent root = loader.load();
+
+            Object controller = loader.getController();
+            if (controller != null) {
+                root.setUserData(controller);
+            }
+
             if (!shouldSkipCache) {
                 views.put(fxmlPath, root);
             } else {
@@ -92,6 +99,14 @@ public class ViewManager {
             Stage stage = (Stage) scene.getWindow();
             if (stage == null) {
                 throw new RuntimeException("Scene không được add vào Stage!");
+            }
+
+            if (scene.getRoot() != null) {
+                Object oldController = scene.getRoot().getUserData();
+                if (oldController instanceof Cleanable) {
+                    System.out.println("ViewManager phát hiện Controller cũ hỗ trợ Cleanable. Đang dọn dẹp...");
+                    ((Cleanable) oldController).cleanup();
+                }
             }
 
             // Load view mới

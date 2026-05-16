@@ -1,7 +1,10 @@
 package auction.client.controllers;
 
 import auction.client.services.AuctionManager;
+import auction.client.services.AuctionSubscriptionManager;
+import auction.client.services.Cleanable;
 import auction.client.session.DataSession;
+import auction.common.message.BidUpdateNotification;
 import auction.common.model.items.AuctionItem;
 import auction.common.model.users.User;
 import javafx.application.Platform;
@@ -15,8 +18,11 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
 
-public class AuctionDashboardController {
+public class AuctionDashboardController implements Cleanable {
 
     @FXML
     private TableView<AuctionItem> auctionTable;
@@ -36,11 +42,26 @@ public class AuctionDashboardController {
 
     @FXML private HBox searchBar; // Liên kết với thanh tìm kiếm
 
+    private Consumer<BidUpdateNotification> dashboardBidUpdateCallback;
+
+    private final List<Integer> subscribedItemIds = new ArrayList<>();
+
     // Hàm dùng để ẩn thanh tìm kiếm và thu hồi lại diện tích trống
     public void hideSearchBar() {
         if (searchBar != null) {
             searchBar.setVisible(false);
             searchBar.setManaged(false); // Dòng này cực kỳ quan trọng: nó giúp các thành phần khác tự động tràn vào lấp chỗ trống, không để lại một khoảng trắng vô duyên.
+        }
+    }
+
+    @Override
+    public void cleanup() {
+        if (dashboardBidUpdateCallback != null) {
+            for (int itemId : subscribedItemIds) {
+                AuctionSubscriptionManager.getInstance().unsubscribe(itemId, dashboardBidUpdateCallback);
+            }
+            System.out.println("✅ Đã giải phóng toàn bộ luồng lắng nghe trên Dashboard (" + subscribedItemIds.size() + " items).");
+            subscribedItemIds.clear();
         }
     }
 
@@ -59,6 +80,7 @@ public class AuctionDashboardController {
         // 2.cấu hình hiển thị cột Status
         setupStatusColumn();
 
+        setupRealtimeCallback();
         // 3. Khởi tạo dữ liệu mẫu
         User currentUser = DataSession.getInstance().getLoggedInUser();
         if (currentUser != null) {
@@ -77,13 +99,54 @@ public class AuctionDashboardController {
         });
     }
 
+    private void setupRealtimeCallback() {
+        User currentUser = DataSession.getInstance().getLoggedInUser();
+        if (currentUser == null) return;
+
+        this.dashboardBidUpdateCallback = notification -> {
+            Platform.runLater(() -> {
+                // Duyệt qua danh sách các dòng đang hiển thị trên bảng
+                for (AuctionItem item : auctionTable.getItems()) {
+                    if (item.getId() == notification.getItemId()) {
+
+                        // 1. Cập nhật giá cao nhất hiện tại trên dòng đó
+                        item.setCurrentBid(notification.getNewPrice());
+
+                        // 2. Tự động tính toán lại Trạng thái Winning / Losing nóng tại chỗ
+                        if (notification.getBidderName().equals(currentUser.getUsername())) {
+                            item.setStatus("Winning");
+                            item.setYourBid(notification.getNewPrice()); // Cập nhật luôn mức giá của bạn
+                        } else {
+                            item.setStatus("Losing");
+                        }
+
+                        // 3. Ép TableView vẽ lại để cập nhật màu sắc CSS ngay lập tức
+                        auctionTable.refresh();
+                        break;
+                    }
+                }
+            });
+        };
+    }
+
     private void loadMyAuctions(int userId) {
+        cleanup();
+        auctionTable.getItems().clear();
+
         AuctionManager.getInstance().getMyAuctionsAsync(userId).thenAccept(list -> {
             Platform.runLater(() -> {
                 auctionTable.getItems().setAll(list);
+
+                for (AuctionItem item : list) {
+                    AuctionSubscriptionManager.getInstance().subscribe(item.getId(), dashboardBidUpdateCallback);
+                    subscribedItemIds.add(item.getId()); // Lưu lại ID
+                }
+                auctionTable.refresh();
             });
         });
-    }private void handleAuctionItemSelection(AuctionItem selected, MouseEvent event) {
+    }
+
+    private void handleAuctionItemSelection(AuctionItem selected, MouseEvent event) {
         if (selected == null) return;
 
         // Hiển thị trạng thái đang tải (nếu cần)

@@ -3,6 +3,7 @@ package auction.client.controllers;
 import auction.client.ClientNetwork;
 import auction.client.services.AuctionManager;
 import auction.client.services.AuctionSubscriptionManager;
+import auction.client.services.Cleanable;
 import auction.client.session.DataSession;
 import auction.client.utils.ServerTimeSync;
 import auction.common.message.BidUpdateNotification;
@@ -37,7 +38,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class ItemviewController {
+public class ItemviewController implements Cleanable {
     private AuctionTimerManager timer;
     @FXML private ImageView mainImage;
     @FXML private Label itemNameLabel;
@@ -113,6 +114,18 @@ public class ItemviewController {
         setItemData(selectedItem);
          lbstarttime.setText(toString(currentItem.getStartTime()));
          lbendtime.setText(toString(currentItem.getEndTime()));
+    }
+
+    @Override
+    public void cleanup() {
+        if (currentItem != null && bidUpdateCallback != null) {
+            AuctionSubscriptionManager.getInstance().unsubscribe(currentItem.getId(), bidUpdateCallback);
+            System.out.println("ItemviewController: Đã hủy subscribe real-time thành công cho item ID: " + currentItem.getId());
+        }
+        if (timeline != null) {
+            timeline.stop();
+        }
+        DataSession.getInstance().setSelectedItem(null);
     }
 
     private String toString(LocalDateTime time) {
@@ -259,25 +272,6 @@ public class ItemviewController {
         }
     }
     @FXML
-    public void onBackToMainClick(ActionEvent event){
-        ViewManager.switchScene(event, "main-view.fxml", "Trang chủ");
-    }
-    @FXML
-    public void OnMouseBacktoMain(MouseEvent event){
-        if (currentItem != null && bidUpdateCallback != null) {
-            AuctionSubscriptionManager.getInstance().unsubscribe(currentItem.getId(), bidUpdateCallback);
-        }
-
-        DataSession.getInstance().setSelectedItem(null);
-        ViewManager.switchScene(event,"main-view.fxml", "Trang chủ");
-
-    }
-    @FXML
-    public void OnMouseCart(MouseEvent event){
-        ViewManager.switchScene(event,"cart_view.fxml", "rỏ hàng");
-
-    }
-    @FXML
     public void handleShowMore(ActionEvent event){
         Vboxdetails.setVisible(true);
         priceChart.setVisible(false);
@@ -293,17 +287,6 @@ public class ItemviewController {
     public void handleLineChart(MouseEvent event){
         priceChart.setVisible(true);
         Vboxdetails.setVisible(false);
-    }
-    @FXML
-    public void onSellerClick(MouseEvent event) throws IOException {
-        ViewManager.switchScene(event, "seller_demo.fxml", "seller page");
-    }
-    @FXML
-    public void onProfileClick(MouseEvent event) throws IOException {
-        if (DataSession.getInstance().getLoggedInUser() == null) return;
-
-        String view = DataSession.getInstance().getLoggedInUser().getRole().equals("ADMIN") ? "admin-view.fxml" : "profile-view.fxml";
-        ViewManager.switchScene(event, view, "Hồ sơ cá nhân");
     }
 
     private void updateChartDirectly(LocalDateTime time, long price) {

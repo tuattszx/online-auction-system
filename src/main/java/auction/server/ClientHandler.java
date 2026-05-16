@@ -324,6 +324,7 @@ public class ClientHandler implements Runnable {
 
             out.writeObject(msg);
             out.flush();
+            out.reset();
 
             if (notification != null) {
                 ClientManager.broadcast(notification);
