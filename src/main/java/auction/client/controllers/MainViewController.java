@@ -34,11 +34,18 @@ import java.util.List;
 
 public class MainViewController extends ProfileController {
     public Label lbbalance;
-    @FXML private TextField txtsearch;
-    @FXML private ComboBox<String> sortPrice, sortTime;
-    @FXML private Label lbusername;
-    @FXML private FlowPane flitems;
-    @FXML private ScrollPane scrollCategories; // Phải trùng với fx:id="scrollCategories" trong FXML
+    @FXML
+    private TextField txtsearch;
+    @FXML
+    private ComboBox<String> sortPrice, sortTime;
+    @FXML
+    private Label lbusername;
+    @FXML
+    private FlowPane flitems;
+    @FXML
+    private ScrollPane scrollCategories; // Phải trùng với fx:id="scrollCategories" trong FXML
+    @FXML
+    protected HeaderMenuController headerMenuController;
 
     // SỬA LỖI: Khai báo biến network
     private ClientNetwork network = ClientNetwork.getInstance();
@@ -52,7 +59,7 @@ public class MainViewController extends ProfileController {
         // Cần ép kiểu String cho ComboBox để tránh lỗi type-safety
         sortPrice.getItems().addAll("Giá tăng dần", "Giá giảm dần");
         sortTime.getItems().addAll("Thời gian tăng dần", "Thời gian giảm dần");
-        lbbalance.setText(DataSession.getInstance().getLoggedInUser() != null ? DataSession.getInstance().getLoggedInUser().getBalance() + " $" : "0 $");
+        headerMenuController.setBalance(DataSession.getInstance().getLoggedInUser() != null ? DataSession.getInstance().getLoggedInUser().getBalance() + " $" : "0 $");
         // GỌI HÀM: Để tải dữ liệu ngay khi mở trang
         loadItems();
     }
@@ -213,7 +220,7 @@ public class MainViewController extends ProfileController {
             if (imageUrl != null && !imageUrl.isEmpty()) {
                 try {
                     // 3. Tạo Image trực tiếp từ URL (để true để load ngầm)
-                    Image img = new Image(optimizedUrl,140,180,true ,true,true);
+                    Image img = new Image(optimizedUrl, 140, 180, true, true, true);
                     imgView.setImage(img);
                     imageLoaded = true;
                 } catch (Exception e) {
@@ -315,7 +322,7 @@ public class MainViewController extends ProfileController {
 
         statusContainer.getChildren().addAll(dot, lblStatus);
         // 7. Gom tất cả vào Card
-        card.getChildren().addAll(imgView,statusContainer, nameAndHeartBox, priceLabel, bidBtn);
+        card.getChildren().addAll(imgView, statusContainer, nameAndHeartBox, priceLabel, bidBtn);
 
         // 8. Sự kiện click vào Card
         card.setOnMouseClicked(event -> {
@@ -328,43 +335,28 @@ public class MainViewController extends ProfileController {
 
         return card;
     }
-    @FXML
-    public void onProfileClick(MouseEvent event) throws IOException {
-        if (DataSession.getInstance().getLoggedInUser() == null) return;
-
-        String view = DataSession.getInstance().getLoggedInUser().getRole().equals("ADMIN") ? "admin-view.fxml" : "profile-view.fxml";
-        ViewManager.switchScene(event, view, "Hồ sơ cá nhân");
-    }
-
-    @FXML
-    private void onSearchAction() {
-        // Implement sau
-    }
 
     @FXML
     public void onItemClick(MouseEvent event) {
         ViewManager.switchScene(event, "item-view.fxml", "Chi tiết sản phẩm");
     }
-@FXML
-public void scrollRight() {
-    if (scrollCategories != null) {
-        double currentValue = scrollCategories.getHvalue();
-        // Tính toán vị trí mới
-        double newValue = currentValue + 0.2;
 
-        if (newValue > 1.0) newValue = 1.0;
+    @FXML
+    public void scrollRight() {
+        if (scrollCategories != null) {
+            double currentValue = scrollCategories.getHvalue();
+            // Tính toán vị trí mới
+            double newValue = currentValue + 0.2;
 
-        // Đặt giá trị mới cho thanh cuộn
-        scrollCategories.setHvalue(newValue);
+            if (newValue > 1.0) newValue = 1.0;
 
-        // In ra console để kiểm tra xem hàm có chạy không
-        System.out.println("Đã bấm nút cuộn phải. Vị trí hiện tại: " + newValue);
-    } else {
-        System.out.println("Lỗi: scrollCategories đang bị null!");
-    }
-}
-    public void GoToFavoriteView(MouseEvent event){
-        ViewManager.switchScene(event,"favourite_view.fxml", " yêu thích");
+            // Đặt giá trị mới cho thanh cuộn
+            scrollCategories.setHvalue(newValue);
 
+            // In ra console để kiểm tra xem hàm có chạy không
+            System.out.println("Đã bấm nút cuộn phải. Vị trí hiện tại: " + newValue);
+        } else {
+            System.out.println("Lỗi: scrollCategories đang bị null!");
+        }
     }
 }

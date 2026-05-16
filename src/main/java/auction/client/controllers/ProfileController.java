@@ -44,6 +44,9 @@ public class ProfileController  {
     @FXML private VBox paneVerification;
     @FXML private HBox hboxsignout;
     @FXML private ComboBox<String> languagePicker; // Parameterized ComboBox
+    @FXML private HBox searchBar; // Liên kết với thanh tìm kiếm
+    @FXML
+    private HeaderMenuController headerMenuController;
     private List<Region> allIndicators;
     ClientNetwork network = ClientNetwork.getInstance();
     private void hideAllPanes(VBox targetPane) {
@@ -88,6 +91,10 @@ public class ProfileController  {
             lbphonenumber.setText(user.getPhoneNumber());
 
         }
+        if (headerMenuController != null) {
+            headerMenuController.hideSearchBar();
+        }
+        headerMenuController.setBalance(DataSession.getInstance().getLoggedInUser() != null ? DataSession.getInstance().getLoggedInUser().getBalance() + " $" : "0 $");
     }
     private void showIndicator(Region activeIndicator) {
         // Ẩn tất cả gạch xanh đi

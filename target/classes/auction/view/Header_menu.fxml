@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.text.Font?>
+
+<HBox alignment="CENTER_LEFT" maxHeight="91.0" minHeight="91.0" prefHeight="91.0" prefWidth="1200.0" spacing="15.0" style="-fx-background-color: white; -fx-border-color: #eee; -fx-border-width: 0 0 1 0;" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auction.client.controllers.HeaderMenuController">
+    <padding>
+        <Insets left="20.0" right="20.0" />
+    </padding>
+    <children>
+        <VBox alignment="CENTER" prefWidth="70.0">
+            <children>
+                <ImageView fitHeight="64.0" fitWidth="84.0" onMouseClicked="#OnMouseBacktoMain" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@../img/logo-uet.jpg" />
+                    </image>
+                    <cursor>
+                        <Cursor fx:constant="HAND" />
+                    </cursor>
+                </ImageView>
+            </children>
+        </VBox>
+        <Region onMouseClicked="#OnMouseCart" prefHeight="99.0" prefWidth="0.0" HBox.hgrow="ALWAYS" />
+        <ImageView fitHeight="34.0" fitWidth="32.0" onMouseClicked="#OnMouseCart" pickOnBounds="true" preserveRatio="true">
+            <image>
+                <Image url="@../img/cart.png" />
+            </image>
+        </ImageView>
+        <Region prefHeight="99.0" prefWidth="0.0" HBox.hgrow="ALWAYS" />
+        <HBox fx:id="searchBar" alignment="CENTER_LEFT" maxHeight="40.0" prefHeight="40.0" prefWidth="395.0" style="-fx-background-color: #f1f3f5; -fx-background-radius: 20; -fx-border-color: #ddd; -fx-border-radius: 20;">
+            <children>
+                <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@../img/search-icon-png-11.png" />
+                    </image>
+                    <HBox.margin>
+                        <Insets left="12.0" />
+                    </HBox.margin>
+                </ImageView>
+                <TextField fx:id="txtsearch" prefHeight="28.0" prefWidth="417.0" promptText="%mainview.textfield.searchforitem" style="-fx-background-color: transparent; -fx-border-color: transparent;" />
+            </children>
+        </HBox>
+        <Region prefHeight="99.0" prefWidth="0.0" HBox.hgrow="ALWAYS" />
+        <Label fx:id="lbsell" onMouseClicked="#onSellerClick" prefHeight="28.0" prefWidth="26.0" style="-fx-font-weight: bold; -fx-cursor: hand;" text="%mainview.label.sell" textFill="#0052ff">
+            <font>
+                <Font size="14.0" />
+            </font>
+        </Label>
+        <Region prefHeight="99.0" prefWidth="0.0" HBox.hgrow="ALWAYS" />
+        <HBox alignment="CENTER" onMouseClicked="#GoToFavoriteView" prefHeight="41.0" prefWidth="45.0">
+            <children>
+                <ImageView fitHeight="54.0" fitWidth="29.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@../img/images.png" />
+                    </image>
+                    <cursor>
+                        <Cursor fx:constant="HAND" />
+                    </cursor>
+                </ImageView>
+            </children>
+        </HBox>
+        <Region prefHeight="99.0" prefWidth="0.0" HBox.hgrow="ALWAYS" />
+        <StackPane alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="106.0" prefWidth="139.0" HBox.hgrow="ALWAYS">
+            <children>
+                <AnchorPane fx:id="bellContainer" maxHeight="-Infinity" maxWidth="-Infinity" onMouseClicked="#onBellClick" style="-fx-cursor: hand;" StackPane.alignment="CENTER">
+                    <children>
+                        <ImageView fitHeight="29.0" fitWidth="29.0" layoutX="1.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../img/6645163.png" />
+                            </image>
+                        </ImageView>
+                        <StackPane layoutX="15.0" layoutY="-5.0" prefHeight="18.0" prefWidth="18.0">
+                            <children>
+                                <Circle fill="RED" radius="9.0" stroke="WHITE" strokeType="INSIDE" />
+                                <Label style="-fx-font-size: 10px; -fx-font-weight: bold;" text="3" textFill="WHITE" />
+                            </children>
+                        </StackPane>
+                    </children>
+                </AnchorPane>
+                <VBox fx:id="notifPane" alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="474.0" prefWidth="275.0" spacing="10.0" style="-fx-background-radius: 10; -fx-background-color: #20639B; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 10, 0, 0, 5); -fx-padding: 15;" translateX="205.0" translateY="60.0" visible="false" StackPane.alignment="TOP_RIGHT">
+                    <children>
+                        <HBox alignment="CENTER_LEFT" spacing="100.0">
+                            <children>
+                                <Label style="-fx-font-size: 20px; -fx-font-weight: bold;" text="Thông báo" textFill="WHITE" />
+                                <Label style="-fx-text-fill: #2e89ff; -fx-cursor: hand;" text="..." />
+                            </children>
+                        </HBox>
+                        <HBox spacing="10.0">
+                            <children>
+                                <Button style="-fx-background-color: #2e89ff; -fx-background-radius: 20; -fx-text-fill: white;" text="Tất cả" />
+                                <Button style="-fx-background-color: #3a3b3c; -fx-background-radius: 20; -fx-text-fill: white;" text="Chưa đọc" />
+                            </children>
+                        </HBox>
+                        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefHeight="350.0" style="-fx-background: transparent; -fx-background-color: transparent;" vbarPolicy="AS_NEEDED">
+                            <content>
+                                <VBox fx:id="vboxNotifItems" spacing="5.0" style="-fx-background-color: #242526;" />
+                            </content>
+                        </ScrollPane>
+                    </children>
+                </VBox>
+            </children>
+        </StackPane>
+        <Region prefHeight="99.0" prefWidth="0.0" HBox.hgrow="ALWAYS" />
+        <VBox alignment="CENTER" prefHeight="99.0" prefWidth="128.0">
+            <children>
+                <HBox alignment="CENTER" onMouseClicked="#onProfileClick">
+                    <children>
+                        <ImageView fitHeight="36.0" fitWidth="36.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../img/pngtree-blue-user-icon-profile-and-account-vector-design-vector-sign-vector-png-image_46129432.jpg" />
+                            </image>
+                        </ImageView>
+                        <VBox alignment="CENTER">
+                            <children>
+                                <Label style="-fx-font-size: 10px;" text="%mainview.label.balance" textFill="#0025ff" />
+                                <Label fx:id="lbbalance" prefHeight="17.0" prefWidth="73.0" style="-fx-font-weight: bold;" text="1.000.000$" />
+                            </children>
+                        </VBox>
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
+    </children>
+</HBox>

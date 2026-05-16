@@ -37,26 +37,7 @@
                   <Insets left="20.0" right="20.0" />
                </padding>
                <children>
-                  <VBox alignment="CENTER" prefHeight="93.0" prefWidth="79.0" spacing="10.0" HBox.hgrow="ALWAYS">
-                     <children>
-                        <ImageView fitHeight="49.0" fitWidth="73.0" onMouseClicked="#OnMouseBacktoMain" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../img/logo-uet.jpg" />
-                           </image>
-                           <cursor>
-                              <Cursor fx:constant="HAND" />
-                           </cursor>
-                        </ImageView>
-                        <Label alignment="CENTER" prefHeight="30.0" prefWidth="87.0" textAlignment="CENTER" textFill="#2125ff">
-                           <font>
-                              <Font name="Arial" size="16.0" />
-                           </font>
-                        </Label>
-                     </children>
-                     <padding>
-                        <Insets top="30.0" />
-                     </padding>
-                  </VBox>
+                  <fx:include fx:id="headerMenu" source="Header_menu.fxml" />
                   <Region minWidth="-Infinity" prefHeight="59.0" prefWidth="0.0" HBox.hgrow="ALWAYS" />
                   <MenuButton mnemonicParsing="false" style="-fx-background-color: white;" text="%profile.menubutton.categories">
                      <items>

@@ -63,6 +63,12 @@ public class ItemviewController {
     @FXML
     private TableColumn<Bid, String> colPrice;
 
+    @FXML
+    private HeaderMenuController headerMenuController;
+
+    @FXML private HBox searchBar; // Liên kết với thanh tìm kiếm
+
+
     private PauseTransition errorTimeout = new PauseTransition(javafx.util.Duration.seconds(3));
     private Consumer<BidUpdateNotification> bidUpdateCallback;
 
@@ -94,9 +100,7 @@ public class ItemviewController {
 
 
         // Hiện số dư người dùng
-        if (DataSession.getInstance().getLoggedInUser() != null) {
-            lbbalance.setText(String.format("%,d$", DataSession.getInstance().getLoggedInUser().getBalance()));
-        }
+        headerMenuController.setBalance(DataSession.getInstance().getLoggedInUser() != null ? DataSession.getInstance().getLoggedInUser().getBalance() + " $" : "0 $");
 
         // Initialize bidTable columns
         colBidder.setCellValueFactory(cellData -> {

@@ -31,6 +31,10 @@ public class FavoriteViewController extends MainViewController {
         DataSession.getInstance().getFavoriteItems().addListener((ListChangeListener<Item>) c -> {
             renderFavorites();
         });
+        if (headerMenuController != null) {
+            headerMenuController.hideSearchBar();
+        }
+        headerMenuController.setBalance(DataSession.getInstance().getLoggedInUser() != null ? DataSession.getInstance().getLoggedInUser().getBalance() + " $" : "0 $");
     }
 
     private void renderFavorites() {

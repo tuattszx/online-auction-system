@@ -18,39 +18,7 @@
    <children>
       <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <HBox alignment="CENTER_LEFT" maxHeight="91.0" minHeight="91.0" prefHeight="91.0" prefWidth="1200.0" spacing="15.0" style="-fx-background-color: white; -fx-border-color: #eee; -fx-border-width: 0 0 1 0;">
-               <padding><Insets left="20.0" right="20.0" /></padding>
-               <children>
-                  <VBox alignment="CENTER" prefWidth="70.0">
-                     <children>
-                        <ImageView fitHeight="64.0" fitWidth="84.0" onMouseClicked="#OnMouseBacktoMain" pickOnBounds="true" preserveRatio="true">
-                           <image><Image url="@../img/logo-uet.jpg" /></image>
-                           <cursor><Cursor fx:constant="HAND" /></cursor>
-                        </ImageView>
-                     </children>
-                  </VBox>
-                  <Region HBox.hgrow="ALWAYS" />
-                  <ImageView fitHeight="34.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true"><image><Image url="@../img/cart.png" /></image></ImageView>
-                  <Region HBox.hgrow="ALWAYS" />
-                  <ImageView fitHeight="54.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true"><image><Image url="@../img/images.png" /></image></ImageView>
-                  <Region HBox.hgrow="ALWAYS" />
-                  <ImageView fitHeight="28.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true"><image><Image url="@../img/chuong.jpg" /></image></ImageView>
-                  <Region HBox.hgrow="ALWAYS" />
-                  <HBox alignment="CENTER" onMouseClicked="#onProfileClick" spacing="10">
-                     <children>
-                        <ImageView fitHeight="36.0" fitWidth="36.0" pickOnBounds="true" preserveRatio="true">
-                           <image><Image url="@../img/pngtree-blue-user-icon-profile-and-account-vector-design-vector-sign-vector-png-image_46129432.jpg" /></image>
-                        </ImageView>
-                        <VBox alignment="CENTER_LEFT">
-                           <children>
-                              <Label style="-fx-font-size: 10px;" text="ACCOUNT" textFill="#888" />
-                              <Label fx:id="lbUsername" style="-fx-font-weight: bold;" text="User Name" />
-                           </children>
-                        </VBox>
-                     </children>
-                  </HBox>
-               </children>
-            </HBox>
+            <fx:include fx:id="headerMenu" source="Header_menu.fxml" />
 
             <HBox spacing="20.0" style="-fx-padding: 20;">
                <children>
