@@ -45,7 +45,6 @@ public class ItemviewController implements Cleanable {
     @FXML private Label lbCurrentBid;
     @FXML private Label lbShortDesc;
     @FXML private Label lbbalance;
-    @FXML private Hyperlink btnShowMore;
     @FXML private VBox Vboxdetails;
     @FXML private LineChart<String ,Number> priceChart;
     @FXML private TextField txtBid;
@@ -54,6 +53,7 @@ public class ItemviewController implements Cleanable {
     @FXML private Label lbendtime;
     @FXML private HBox statusContainer;
     @FXML private Label lblStatus;
+    @FXML private Label lbShow;
     @FXML private Circle dot;
     @FXML
     private TableView<Bid> bidTable;
@@ -272,16 +272,16 @@ public class ItemviewController implements Cleanable {
         }
     }
     @FXML
-    public void handleShowMore(ActionEvent event){
+    public void handleShow(MouseEvent event){
+        if(lbShow.getText().equals("Show more")){
         Vboxdetails.setVisible(true);
         priceChart.setVisible(false);
-        btnShowMore.setText("Show less");
-    }
-    @FXML
-    public void handleShowLess(ActionEvent event){
-        Vboxdetails.setVisible(false);
-        priceChart.setVisible(false);
-        btnShowMore.setText("Show more");
+        lbShow.setText("Show less");}
+        else{
+            Vboxdetails.setVisible(false);
+            priceChart.setVisible(false);
+            lbShow.setText("Show more");
+        }
     }
     @FXML
     public void handleLineChart(MouseEvent event){
