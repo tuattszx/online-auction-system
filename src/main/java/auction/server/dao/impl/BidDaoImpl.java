@@ -74,6 +74,32 @@ public class BidDaoImpl implements BidDao {
         }
     }
 
+    public boolean addNotification(int userId, String message) {
+        String sql = "INSERT INTO NOTIFICATIONS (user_id, message) VALUES (?, ?)";
+        try (Connection conn = DatabaseManager.getInstance().getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, userId);
+            pstmt.setString(2, message);
+            return pstmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public List<String> getNotification(int userId){
+        List<String> notifications = new ArrayList<>();
+        String sql = "SELECT message FROM NOTIFICATIONS WHERE user_id = ? ORDER BY id DESC";
+        try (Connection conn = DatabaseManager.getInstance().getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) notifications.add(rs.getString("message"));
+        }
+        catch (SQLException e){
+            e.printStackTrace();
+        }
+        return notifications;
+    }
     private Bid mapResultSetToBid(ResultSet rs) throws SQLException {
         Bid bid = new Bid();
         bid.setId(rs.getInt("id"));

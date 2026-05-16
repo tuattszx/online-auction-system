@@ -1,6 +1,10 @@
 package auction.client.controllers;
 
+import auction.client.ClientNetwork;
 import auction.client.session.DataSession;
+import auction.common.message.Message;
+import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -13,6 +17,8 @@ import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
+
+import java.util.List;
 
 public class NotificationViewController {
     @FXML private HBox searchBar; // Liên kết với thanh tìm kiếm
@@ -80,21 +86,37 @@ public class NotificationViewController {
         return row;
     }
     public void loadNotifications() {
-        // Xóa dữ liệu cũ nếu có
         vboxMainNotifications.getChildren().clear();
 
-        // Thêm Label tiêu đề "Mới" hoặc "Trước đó" đúng chuẩn FB
         Label lblMoi = new Label("Mới");
         lblMoi.setStyle("-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #050505;");
         VBox.setMargin(lblMoi, new Insets(10, 0, 5, 16));
         vboxMainNotifications.getChildren().add(lblMoi);
 
-        // Mẫu nạp dữ liệu từ Database/List của bạn
-        // Giả sử bạn có list dữ liệu, chỉ cần loop và add vào:
-     //   HBox item1 = createNotificationItem("@../img/thanlan.jpg", "Huyen Trang", "đã đặt giá cao hơn...", "1 giờ", true);
-       // HBox item2 = createNotificationItem("thanlan.jpg", "Huyen Trang", "đã thắng phiên đấu giá...", "9 giờ", false);
+        Task<Message> getMessageTask = new Task<>() {
+            @Override
+            protected Message call() throws Exception {
+                Message request = new Message("GET_MESSAGE", DataSession.getInstance().getLoggedInUser());
+                return ClientNetwork.getInstance().sendRequest(request);
+            }
+        };
 
-      //  vboxMainNotifications.getChildren().add(item1);
-       // vboxMainNotifications.getChildren().add(item2);
+        getMessageTask.setOnSucceeded(event -> {
+            Message response = getMessageTask.getValue();
+            if (response != null && "SUCCESS".equals(response.getStatus())) {
+                List<String> notifications = (List<String>) response.getData();
+                Platform.runLater(() -> {
+                    if (notifications != null) {
+                        for (String note : notifications) {
+                            // Using a default avatar and splitting message logic if needed, 
+                            // but based on current server code, it's a single string message.
+                            vboxMainNotifications.getChildren().add(new Label(note));
+                        }
+                    }
+                });
+            }
+        });
+
+        new Thread(getMessageTask).start();
     }
 }

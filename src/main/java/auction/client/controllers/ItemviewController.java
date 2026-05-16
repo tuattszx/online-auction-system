@@ -14,6 +14,7 @@ import auction.common.model.users.User;
 import javafx.animation.*;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 
@@ -68,7 +69,8 @@ public class ItemviewController implements Cleanable {
     private HeaderMenuController headerMenuController;
 
     @FXML private HBox searchBar; // Liên kết với thanh tìm kiếm
-
+    ClientNetwork network = ClientNetwork.getInstance();
+    
 
     private PauseTransition errorTimeout = new PauseTransition(javafx.util.Duration.seconds(3));
     private Consumer<BidUpdateNotification> bidUpdateCallback;
@@ -236,8 +238,14 @@ public class ItemviewController implements Cleanable {
                             if ("SUCCESS".equals(response.getStatus())) {
                                 txtBid.clear();
                                 showBidError("Đặt giá thành công!", true);
-                                // Lưu ý: Không cần gọi updateAllData ở đây nữa
-                                // vì SubscriptionManager sẽ tự cập nhật khi nhận thông báo Broadcast
+                                Task<Message> sendMessageBid = new Task<>() {
+                                    @Override
+                                    protected Message call() throws Exception {
+                                        Object[] obj = {selectedItem, currentUser};
+                                        return network.sendRequest(new Message("SEND_BID_TO_USER", obj));
+                                    }
+                                };
+                                new Thread(sendMessageBid).start();
                             } else {
                                 showBidError(response.getData().toString(), false);
                             }

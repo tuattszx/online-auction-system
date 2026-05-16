@@ -7,4 +7,6 @@ import java.util.List;
 public interface BidDao extends GenericDAO<Bid, Integer> {
     List<Bid> getBidsByItemId(int itemId);
     List<Bid> getBidsByUserId(int userId);
+    boolean addNotification(int userId, String message);
+    List<String> getNotification(int userId);
 }
