@@ -43,18 +43,18 @@ public class HeaderMenuController {
 
     @FXML
     public void OnMouseCart(MouseEvent event){
-        ViewManager.switchScene(event,"cart_view.fxml", "rỏ hàng");
+        ViewManager.switchScene(event,"cart-view.fxml", "rỏ hàng");
 
     }
 
     @FXML
     public void onSellerClick(MouseEvent event) throws IOException {
-        ViewManager.switchScene(event, "seller_demo.fxml", "seller page");
+        ViewManager.switchScene(event, "seller-view.fxml", "seller page");
     }
 
     @FXML
     public void GoToFavoriteView(MouseEvent event){
-        ViewManager.switchScene(event,"favourite_view.fxml", " yêu thích");
+        ViewManager.switchScene(event,"favourite-view.fxml", " yêu thích");
 
     }
 
@@ -74,7 +74,7 @@ public class HeaderMenuController {
 
     @FXML
     public void onBellClick(MouseEvent event) throws IOException {
-        ViewManager.switchScene(event, "notification_view.fxml", "thông báo");
+        ViewManager.switchScene(event, "notification-view.fxml", "thông báo");
     }
 
     @FXML

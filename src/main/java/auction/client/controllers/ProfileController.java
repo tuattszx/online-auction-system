@@ -160,7 +160,7 @@ public class ProfileController  {
     }
     @FXML
     public void onSellerClick(MouseEvent event) throws IOException {
-        ViewManager.switchScene(event, "seller_demo.fxml", "seller page");
+        ViewManager.switchScene(event, "seller-view.fxml", "seller page");
     }
     @FXML
     public void OnMouseBacktoMain(MouseEvent event){

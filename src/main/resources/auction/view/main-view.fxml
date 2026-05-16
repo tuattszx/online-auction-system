@@ -22,7 +22,7 @@
    <children>
       <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <fx:include fx:id="headerMenu" source="Header_menu.fxml" />
+            <fx:include fx:id="headerMenu" source="Header-menu.fxml" />
 
             <StackPane alignment="CENTER_RIGHT" maxHeight="80.0" prefHeight="80.0" prefWidth="1200.0" style="-fx-background-color: white; -fx-border-color: #eee; -fx-border-width: 0 0 1 0;">
                <children>
