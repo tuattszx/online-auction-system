@@ -94,6 +94,9 @@ public class ClientHandler implements Runnable {
                         case "GET_MESSAGE":
                             handleGetMessage(msg, out);
                             break;
+                        case "MARK_AS_READ":
+                            handleMaskAsRead(msg, out);
+                            break;
                         // Thêm các case khác như BID, VIEW_PRODUCT...
                     }
                 }
@@ -478,6 +481,26 @@ public class ClientHandler implements Runnable {
             msg.setData(listNotifications);
         }catch (Exception e){
             msg.setStatus("ERROR");
+        } finally {
+            out.writeObject(msg);
+            out.flush();
+            out.reset();
+        }
+    }
+    private void handleMaskAsRead(Message msg, ObjectOutputStream out) throws IOException {
+        try {
+            Integer notificationId = (Integer) msg.getData();
+            boolean isUpdated = notificationDao.markAsRead(notificationId);
+            if (isUpdated) {
+                msg.setStatus("SUCCESS");
+            } else {
+                msg.setStatus("FAILED");
+                msg.setData("Không tìm thấy thông báo hoặc đã được đánh dấu là đã đọc.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            msg.setStatus("ERROR");
+            msg.setData("Lỗi Server: " + e.getMessage());
         } finally {
             out.writeObject(msg);
             out.flush();

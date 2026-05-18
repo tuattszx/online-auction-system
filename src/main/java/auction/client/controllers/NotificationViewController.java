@@ -40,6 +40,7 @@ public class NotificationViewController {
 
     @FXML
     public void initialize(){
+        setupRealtimeNotification();
         loadNotifications();
         if (headerMenuController != null) {
             headerMenuController.hideSearchBar();
@@ -126,9 +127,10 @@ public class NotificationViewController {
 
         // XỬ LÝ SỰ KIỆN CLICK VÀ ĐIỀU HƯỚNG CHÍNH XÁC THEO FILE FXML
         row.setOnMouseClicked(e -> {
-            note.setRead(true);
-            if (row.getChildren().get(row.getChildren().size() - 1) instanceof Circle) {
-                row.getChildren().remove(row.getChildren().size() - 1);
+            if (!note.isRead()) {
+                note.setRead(true);
+                row.getChildren().removeIf(node -> node instanceof Circle && ((Circle) node).getFill().toString().contains("1877f2"));
+                ClientNetwork.getInstance().sendRequest(new Message("MARK_AS_READ", note.getId()));
             }
 
             try {
