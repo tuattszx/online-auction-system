@@ -23,6 +23,7 @@ public class ViewManager {
     private static final String FXML_PATH_PREFIX = "/auction/view/";
     private static final String ICON_PATH = "/auction/img/logo.png";
     private static final List<String> NO_CACHE_VIEWS = List.of(
+            "notification-view",
             "item-view.fxml",
             "cart-view.fxml",
             "main-view.fxml"

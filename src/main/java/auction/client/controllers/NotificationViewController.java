@@ -27,6 +27,7 @@ import javafx.scene.text.TextFlow;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -108,16 +109,13 @@ public class NotificationViewController {
 
         // 1. 🔥 BÓC TÁCH NỘI DUNG CHI TIẾT THEO TỪNG LOẠI THÔNG BÁO
         if (note instanceof BidNotification bidNote) {
-            defaultAvatar = "https://www.w3schools.com/howto/img_avatar.png";
+            defaultAvatar = getClass().getResource("/auction/img/hammernotif.jpg").toExternalForm();
 
             messageText = String.format("Món hàng mã số #%d đã bị %s đè giá lên %,d $.",
                     bidNote.getItemId(), bidNote.getBidderName(), bidNote.getNewPrice());
 
         } else if (note instanceof ItemNotification itemNote) {
-            defaultAvatar = "https://cdn-icons-png.flaticon.com/512/9425/9425832.png";
-
-            messageText = String.format("Sản phẩm #%d có trạng thái mới: %s. \nGhi chú từ Admin: %s",
-                    itemNote.getItemId(), itemNote.getItemStatus(), itemNote.getAdminNote());
+            defaultAvatar = getClass().getResource("/auction/img/itemnotif.jpg").toExternalForm();
         }
 
         String timeDisplay = formatRelativeTime(note.getCreatedAt());
@@ -130,7 +128,13 @@ public class NotificationViewController {
             if (!note.isRead()) {
                 note.setRead(true);
                 row.getChildren().removeIf(node -> node instanceof Circle && ((Circle) node).getFill().toString().contains("1877f2"));
-                ClientNetwork.getInstance().sendRequest(new Message("MARK_AS_READ", note.getId()));
+                new Thread(() -> {
+                    try {
+                        ClientNetwork.getInstance().sendRequest(new Message("MARK_AS_READ", note.getId()));
+                    } catch (Exception ex) {
+                        System.err.println("Không thể cập nhật trạng thái đã đọc: " + ex.getMessage());
+                    }
+                }).start();
             }
 
             try {
@@ -191,30 +195,36 @@ public class NotificationViewController {
         vboxMainNotifications.getChildren().add(lblMoi);
 
         // 3. Gọi background task lấy dữ liệu từ Server
-        Task<Message> getMessageTask = new Task<>() {
+        Task<List<HBox>> loadNotifTask = new Task<>() {
             @Override
-            protected Message call() throws Exception {
+            protected List<HBox> call() throws Exception {
                 Message request = new Message("GET_MESSAGE", DataSession.getInstance().getLoggedInUser().getId());
-                return ClientNetwork.getInstance().sendRequest(request);
-            }
-        };
+                Message response=ClientNetwork.getInstance().sendRequest(request);
 
-        getMessageTask.setOnSucceeded(event -> {
-            Message response = getMessageTask.getValue();
-            if (response != null && "SUCCESS".equals(response.getStatus())) {
-                List<Notification> notifications = (List<Notification>) response.getData();
-                Platform.runLater(() -> {
+                List<HBox> uiRows=new ArrayList<>();
+                if (response != null && "SUCCESS".equals(response.getStatus())) {
+                    List<Notification> notifications = (List<Notification>) response.getData();
                     if (notifications != null) {
                         for (Notification note : notifications) {
                             HBox notificationItem = createNotificationItemRow(note);
-                            vboxMainNotifications.getChildren().add(notificationItem);
+                            uiRows.add(notificationItem);
                         }
                     }
-                });
+                }
+                return uiRows;
             }
+        };;
+
+        loadNotifTask.setOnSucceeded(event -> {
+            List<HBox> readyRows = loadNotifTask.getValue();
+            Platform.runLater(() -> {
+                if (readyRows != null && !readyRows.isEmpty()) {
+                    vboxMainNotifications.getChildren().addAll(readyRows);
+                }
+            });
         });
 
-        new Thread(getMessageTask).start();
+        new Thread(loadNotifTask).start();
     }
 
     private String formatRelativeTime(LocalDateTime createdAt) {

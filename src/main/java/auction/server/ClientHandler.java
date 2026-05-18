@@ -8,6 +8,7 @@ import auction.common.model.items.AuctionItem;
 import auction.common.model.items.Item;
 import auction.common.model.items.ItemImage;
 import auction.common.model.notifications.BidNotification;
+import auction.common.model.notifications.ItemNotification;
 import auction.common.model.notifications.Notification;
 import auction.common.model.users.Account;
 import auction.common.model.users.User;
@@ -213,6 +214,9 @@ public class ClientHandler implements Runnable {
             if (isSuccess) {
                 msg.setStatus("SUCCESS");
                 System.out.println("Đã thêm sản phẩm mới: " + item.getName());
+                LocalDateTime now = LocalDateTime.now();
+                handleSendMessageAddItem(item, now);
+
             } else {
                 msg.setStatus("FAILED");
             }
@@ -473,6 +477,39 @@ public class ClientHandler implements Runnable {
             e.printStackTrace();
         }
     }
+
+    private void handleSendMessageAddItem(Item item, LocalDateTime now) {
+        try {
+            // 1. Khởi tạo đối tượng ItemNotification bằng Constructor đầy đủ tham số
+            // Tham số truyền vào theo cấu trúc class của bạn: (id, userId, title, message, itemId, itemStatus, adminNote)
+            String title = "Đăng sản phẩm thành công!";
+            String messageText = String.format("Sản phẩm '%s' của bạn đã được đăng ký đấu giá thành công và đang chờ admin phê duyệt.", item.getName());
+
+            ItemNotification itemNotif = new ItemNotification(
+                    0,
+                    item.getSellerId(),
+                    title,
+                    messageText,
+                    item.getId(),
+                    "PENDING",
+                    "Chợ phê duyệt!"
+            );
+
+            itemNotif.setCreatedAt(now);
+
+            // 2. Ghi nhận lịch sử thông báo xuống Database bảng notifications
+            notificationDao.add(itemNotif);
+
+            // 3. Bắn tin nhắn trực tiếp xuống luồng Socket của chính Client này
+            this.sendObject(itemNotif);
+            System.out.println("DEBUG: Đã phát thông báo đăng sản phẩm real-time thành công cho User ID: " + item.getSellerId());
+
+        } catch (Exception e) {
+            System.err.println("Lỗi khi xử lý tạo/gửi thông báo đăng sản phẩm: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
     private void handleGetMessage(Message msg, ObjectOutputStream out) throws  IOException{
         try{
             Integer id = (Integer) msg.getData();
@@ -487,6 +524,7 @@ public class ClientHandler implements Runnable {
             out.reset();
         }
     }
+
     private void handleMaskAsRead(Message msg, ObjectOutputStream out) throws IOException {
         try {
             Integer notificationId = (Integer) msg.getData();
