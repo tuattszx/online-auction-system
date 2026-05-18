@@ -16,6 +16,10 @@ public class ClientManager {
         System.out.println("ClientManager: -1 client. Total: " + activeClients.size());
     }
 
+    public static List<ClientHandler> getActiveClients() {
+        return java.util.Collections.unmodifiableList(activeClients);
+    }
+
     /**
      * Gửi dữ liệu tới TẤT CẢ mọi người đang online
      */

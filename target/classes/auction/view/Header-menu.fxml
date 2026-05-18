@@ -82,10 +82,10 @@
                                 <Image url="@../img/6645163.png" />
                             </image>
                         </ImageView>
-                        <StackPane layoutX="15.0" layoutY="-5.0" prefHeight="18.0" prefWidth="18.0">
+                        <StackPane fx:id="badgeContainer" layoutX="15.0" layoutY="-5.0" prefHeight="18.0" prefWidth="18.0">
                             <children>
                                 <Circle fill="RED" radius="9.0" stroke="WHITE" strokeType="INSIDE" />
-                                <Label style="-fx-font-size: 10px; -fx-font-weight: bold;" text="3" textFill="WHITE" />
+                                <Label fx:id="lblBellBadge" style="-fx-font-size: 10px; -fx-font-weight: bold;" text="0" textFill="WHITE" />
                             </children>
                         </StackPane>
                     </children>

@@ -1,12 +1,15 @@
 package auction.client.controllers;
 
+import auction.client.services.NotificationSubscriptionManager;
 import auction.client.session.DataSession;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.input.MouseEvent;
 
@@ -20,9 +23,27 @@ public class HeaderMenuController {
     @FXML private AnchorPane bellContainer;
     @FXML private VBox notifPane;
     @FXML private VBox vboxNotifItems;
+    @FXML private StackPane badgeContainer;
+    @FXML private Label lblBellBadge;
 
     @FXML private HBox searchBar; // Liên kết với thanh tìm kiếm
 
+    private int unreadCount=0;
+
+    @FXML
+    public void initialize() {
+        // Khởi tạo trạng thái ban đầu: 0 thông báo ẩn chấm đỏ
+        updateBadgeUI();
+
+        // DĂNG KÝ TỔNG ĐÀI REAL-TIME: Hễ mạng nhận được thông báo đè giá là nhảy số luôn
+        NotificationSubscriptionManager.getInstance().subscribe(newNotif -> {
+            Platform.runLater(() -> {
+                // Tăng biến đếm thông báo chưa đọc
+                unreadCount++;
+                updateBadgeUI();
+            });
+        });
+    }
     // Hàm dùng để ẩn thanh tìm kiếm và thu hồi lại diện tích trống
     public void hideSearchBar() {
         if (searchBar != null) {
@@ -30,6 +51,17 @@ public class HeaderMenuController {
             searchBar.setManaged(false); // Dòng này cực kỳ quan trọng: nó giúp các thành phần khác tự động tràn vào lấp chỗ trống, không để lại một khoảng trắng vô duyên.
         }
     }
+
+    private void updateBadgeUI() {
+        if (unreadCount > 0) {
+            lblBellBadge.setText(String.valueOf(unreadCount));
+            badgeContainer.setVisible(true);
+        } else {
+            lblBellBadge.setText("0");
+            badgeContainer.setVisible(false);
+        }
+    }
+
     // Viết thêm hàm này để các Controller khác gọi tới
     public void setBalance(String amount) {
         lbbalance.setText(amount);

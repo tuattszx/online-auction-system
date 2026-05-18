@@ -3,6 +3,8 @@ package auction.client;
 import auction.client.services.AuctionSubscriptionManager;
 import auction.common.message.BidUpdateNotification;
 import auction.common.message.Message;
+import auction.common.model.notifications.Notification;
+
 import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.Socket;
@@ -49,6 +51,10 @@ public class ClientNetwork {
                         // TRƯỜNG HỢP 1: Server tự đẩy về (Broadcast)
                         // ta báo cho UI cập nhật
                         AuctionSubscriptionManager.getInstance().notifyUpdate(notification);
+                    }
+                    else if (obj instanceof Notification notification) {
+                        // TRƯỜNG HỢP MỚI: Bắt thông báo chấm đỏ/hộp thư real-time từ Server gửi riêng
+                        auction.client.services.NotificationSubscriptionManager.getInstance().notifyNewNotification(notification);
                     }
                     else if (obj instanceof Message response) {
                         // TRƯỜNG HỢP 2: Phản hồi cho một lệnh ta đã gửi (Login, GetItem...)
