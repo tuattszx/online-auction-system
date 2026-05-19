@@ -10,11 +10,7 @@
     -fx-text-fill: #555;
 }
 
-.root-pane {
-    -fx-background-image: url("../img/login.png");
-    -fx-background-size: cover;
-    -fx-background-position: center;
-}
+
 
 .label-account {
     -fx-font-family: "Montserrat";
@@ -412,13 +408,8 @@
 }
 .auction-card:hover {
     -fx-translate-y: -5;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.15), 15, 0, 0, 10);
 }
 
-.card-image {
-    /* Bo góc trên của ảnh */
-    -fx-clip: rect(0, 240, 160, 0);
-}
 
 .item-name {
     -fx-font-weight: bold;

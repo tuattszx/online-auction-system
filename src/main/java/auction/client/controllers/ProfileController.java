@@ -64,9 +64,9 @@ public class ProfileController  {
     }
     public void initialize() {
         // hiện gạch xanh
-        allIndicators = Arrays.asList(accountIndicator, addressesIndicator, paymentIndicator,VeriIndicator,emailIndicator);
-        showIndicator(accountIndicator);
-        hideAllPanes(paneAccount);
+        allIndicators = Arrays.asList(accountIndicator, addressesIndicator, paymentIndicator,emailIndicator,VeriIndicator);
+        updateSidebarUI(btnAccount, accountIndicator);
+        hideAllPanes(paneAccount); //
         User user = DataSession.getInstance().getLoggedInUser();
         // chọn ngôn ngữ trong adress
         ObservableList<String> countries = FXCollections.observableArrayList(
@@ -96,43 +96,58 @@ public class ProfileController  {
         }
         headerMenuController.setBalance(DataSession.getInstance().getLoggedInUser() != null ? DataSession.getInstance().getLoggedInUser().getBalance() + " $" : "0 $");
     }
-    private void showIndicator(Region activeIndicator) {
-        // Ẩn tất cả gạch xanh đi
-        for (Region r : allIndicators) {
-            if (r != null) r.setVisible(false);
+    private void updateSidebarUI(HBox selectedBtn, Region selectedIndicator) {
+        // 1. Tạo danh sách chứa tất cả các HBox nút bấm của bạn
+        List<HBox> allButtons = Arrays.asList(btnAccount, btnAddresses, btnPayment, btnEmail, btnVeri);
+
+        // 2. Duyệt qua từng cặp Nút và Gạch để cập nhật Style đồng loạt bằng vòng lặp for
+        for (int i = 0; i < allButtons.size(); i++) {
+            HBox btn = allButtons.get(i);
+            Region indicator = allIndicators.get(i);
+
+            if (btn == null) continue;
+
+            // Lấy chữ Label nằm bên trong HBox hiện tại để chỉnh màu chữ
+            Label lbl = (Label) btn.getChildren().stream()
+                    .filter(node -> node instanceof Label)
+                    .findFirst().orElse(null);
+
+            if (btn == selectedBtn) {
+                // Nút ĐƯỢC BẤM: Nền sáng nhẹ, chữ trắng đậm nổi bật
+                btn.setStyle("-fx-background-color:  #e8f0fe; -fx-background-radius: 8;");
+                if (lbl != null) lbl.setStyle("-fx-text-fill:  #1a73e8; -fx-font-weight: bold;");
+                if (indicator != null) indicator.setVisible(true);
+            } else {
+                // Các nút CÒN LẠI: Nền trong suốt, chữ xám mờ tinh tế nhường spotlight
+                btn.setStyle("-fx-background-color: transparent; -fx-background-radius: 8;");
+                if (lbl != null) lbl.setStyle("-fx-text-fill:  #1a73e8; -fx-font-weight: normal;");
+                if (indicator != null) indicator.setVisible(false);
+            }
         }
-        // Chỉ hiện cái gạch của mục vừa bấm
-        activeIndicator.setVisible(true);
     }
+
     @FXML
-    private void handleSidebarClick(MouseEvent event) {
-        // 1. Tắt hết tất cả gạch xanh đang hiện
-        accountIndicator.setVisible(false);
-        addressesIndicator.setVisible(false);
-        paymentIndicator.setVisible(false);
-        emailIndicator.setVisible(false);
-        VeriIndicator.setVisible(false);
+    private void handleSidebarClick(MouseEvent event) { //
+        // 1. Kiểm tra xem HBox nào vừa được bấm dựa trên event
+        HBox clickedBox = (HBox) event.getSource(); //
+        String id = clickedBox.getId(); //
 
-        // 2. Kiểm tra xem HBox nào vừa được bấm dựa trên fx:id
-        HBox clickedBox = (HBox) event.getSource();
-        String id = clickedBox.getId();
-
-        // 3. Bật gạch xanh tương ứng lên
-        if (id.equals("btnAccount")) {
-            accountIndicator.setVisible(true);
-            hideAllPanes(paneAccount);
-        } else if (id.equals("btnAddresses")) {
-            addressesIndicator.setVisible(true);
-            hideAllPanes(paneAddresses);
-        } else if (id.equals("btnPayment")) {
-            paymentIndicator.setVisible(true);
+        // 2. Gọi hàm đồng bộ giao diện cho các HBox nút bấm ở Sidebar trái
+        if (id.equals("btnAccount")) { //
+            updateSidebarUI(btnAccount, accountIndicator);
+            hideAllPanes(paneAccount); // Ẩn các Pane khác, hiện paneAccount bên phải
+        } else if (id.equals("btnAddresses")) { //
+            updateSidebarUI(btnAddresses, addressesIndicator);
+            hideAllPanes(paneAddresses); // Ẩn các Pane khác, hiện paneAddresses bên phải
+        } else if (id.equals("btnPayment")) { //
+            updateSidebarUI(btnPayment, paymentIndicator);
             hideAllPanes(panePayment);
         } else if (id.equals("btnEmail")) {
-            emailIndicator.setVisible(true);
-            hideAllPanes(paneEmails);
+            updateSidebarUI(btnEmail, emailIndicator);
+            hideAllPanes(paneEmails); //
         } else if (id.equals("btnVeri")) {
-            VeriIndicator.setVisible(true);
-            hideAllPanes(paneVerification);
+            updateSidebarUI(btnVeri, VeriIndicator);
+            hideAllPanes(paneVerification); //
         }
     }
     @FXML

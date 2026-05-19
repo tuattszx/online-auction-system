@@ -37,17 +37,20 @@
          <center>
             <HBox alignment="CENTER" prefHeight="672.0" prefWidth="775.0" spacing="20.0" style="-fx-background-color: transparent; -fx-background: transparent;" BorderPane.alignment="CENTER">
                <children>
-                  <VBox alignment="TOP_CENTER" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="564.0" prefWidth="218.0" spacing="15.0" style="-fx-background-color: #34495e; -fx-background-radius: 15;">
+                  <VBox alignment="TOP_CENTER" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="564.0" prefWidth="240.0" spacing="8.0" style="-fx-background-color: #f8f9fa; -fx-background-radius: 16; -fx-border-color: #e9ecef; -fx-border-width: 1; -fx-border-radius: 16;" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1">
                      <padding>
-                        <Insets left="15.0" top="20.0" />
+                        <Insets left="12.0" right="12.0" top="25.0" />
                      </padding>
                      <children>
-                        <HBox fx:id="btnAccount" alignment="CENTER_LEFT" onMouseClicked="#handleSidebarClick" prefHeight="29.0" prefWidth="185.0" spacing="10.0">
+                        <HBox fx:id="btnAccount" alignment="CENTER_LEFT" onMouseClicked="#handleSidebarClick" prefHeight="42.0" prefWidth="216.0" spacing="12.0" style="-fx-background-color: #e8f0fe; -fx-background-radius: 8;">
+                           <padding>
+                              <Insets left="15.0" right="15.0" />
+                           </padding>
                            <children>
-                              <Region fx:id="accountIndicator" minHeight="-Infinity" prefHeight="23.0" prefWidth="2.0" style="-fx-background-color: white;" />
-                              <Label style="-fx-text-fill: white;" text="%profile.title">
+                              <Region fx:id="accountIndicator" minHeight="-Infinity" prefHeight="18.0" prefWidth="4.0" style="-fx-background-color: #1a73e8; -fx-background-radius: 2;" />
+                              <Label style="-fx-text-fill: #1a73e8; -fx-font-weight: bold;" text="%profile.title">
                                  <font>
-                                    <Font name="Arial" size="15.0" />
+                                    <Font name="Segoe UI" size="14.0" />
                                  </font>
                               </Label>
                            </children>
@@ -55,12 +58,16 @@
                               <Cursor fx:constant="HAND" />
                            </cursor>
                         </HBox>
-                        <HBox fx:id="btnAddresses" alignment="CENTER_LEFT" layoutX="25.0" layoutY="30.0" onMouseClicked="#handleSidebarClick" prefHeight="29.0" prefWidth="185.0" spacing="10.0">
+
+                        <HBox fx:id="btnAddresses" alignment="CENTER_LEFT" onMouseClicked="#handleSidebarClick" prefHeight="42.0" prefWidth="216.0" spacing="12.0" style="-fx-background-radius: 8; -fx-background-color: transparent;">
+                           <padding>
+                              <Insets left="15.0" right="15.0" />
+                           </padding>
                            <children>
-                              <Region fx:id="addressesIndicator" minHeight="-Infinity" prefHeight="23.0" prefWidth="2.0" style="-fx-background-color: white;" visible="false" />
-                              <Label style="-fx-text-fill: white;" text="%profile.label.address">
+                              <Region fx:id="addressesIndicator" minHeight="-Infinity" prefHeight="18.0" prefWidth="4.0" style="-fx-background-color: #1a73e8; -fx-background-radius: 2;" visible="false" />
+                              <Label style="-fx-text-fill: #495057;" text="%profile.label.address">
                                  <font>
-                                    <Font name="Arial" size="15.0" />
+                                    <Font name="Segoe UI" size="14.0" />
                                  </font>
                               </Label>
                            </children>
@@ -68,12 +75,16 @@
                               <Cursor fx:constant="HAND" />
                            </cursor>
                         </HBox>
-                        <HBox fx:id="btnPayment" alignment="CENTER_LEFT" layoutX="25.0" layoutY="75.0" onMouseClicked="#handleSidebarClick" prefHeight="29.0" prefWidth="185.0" spacing="10.0">
+
+                        <HBox fx:id="btnPayment" alignment="CENTER_LEFT" onMouseClicked="#handleSidebarClick" prefHeight="42.0" prefWidth="216.0" spacing="12.0" style="-fx-background-radius: 8; -fx-background-color: transparent;">
+                           <padding>
+                              <Insets left="15.0" right="15.0" />
+                           </padding>
                            <children>
-                              <Region fx:id="paymentIndicator" minHeight="-Infinity" prefHeight="23.0" prefWidth="2.0" style="-fx-background-color: white;" visible="false" />
-                              <Label style="-fx-text-fill: white;" text="%profile.label.payment">
+                              <Region fx:id="paymentIndicator" minHeight="-Infinity" prefHeight="18.0" prefWidth="4.0" style="-fx-background-color: #1a73e8; -fx-background-radius: 2;" visible="false" />
+                              <Label style="-fx-text-fill: #495057;" text="%profile.label.payment">
                                  <font>
-                                    <Font name="Arial" size="15.0" />
+                                    <Font name="Segoe UI" size="14.0" />
                                  </font>
                               </Label>
                            </children>
@@ -81,12 +92,16 @@
                               <Cursor fx:constant="HAND" />
                            </cursor>
                         </HBox>
-                        <HBox fx:id="btnEmail" alignment="CENTER_LEFT" layoutX="25.0" layoutY="119.0" onMouseClicked="#handleSidebarClick" prefHeight="29.0" prefWidth="185.0" spacing="10.0">
+
+                        <HBox fx:id="btnEmail" alignment="CENTER_LEFT" onMouseClicked="#handleSidebarClick" prefHeight="42.0" prefWidth="216.0" spacing="12.0" style="-fx-background-radius: 8; -fx-background-color: transparent;">
+                           <padding>
+                              <Insets left="15.0" right="15.0" />
+                           </padding>
                            <children>
-                              <Region fx:id="emailIndicator" minHeight="-Infinity" prefHeight="23.0" prefWidth="2.0" style="-fx-background-color: white;" visible="false" />
-                              <Label style="-fx-text-fill: white;" text="%profile.label.email_notification">
+                              <Region fx:id="emailIndicator" minHeight="-Infinity" prefHeight="18.0" prefWidth="4.0" style="-fx-background-color: #1a73e8; -fx-background-radius: 2;" visible="false" />
+                              <Label style="-fx-text-fill: #495057;" text="%profile.label.email_notification">
                                  <font>
-                                    <Font name="Arial" size="15.0" />
+                                    <Font name="Segoe UI" size="14.0" />
                                  </font>
                               </Label>
                            </children>
@@ -94,12 +109,16 @@
                               <Cursor fx:constant="HAND" />
                            </cursor>
                         </HBox>
-                        <HBox fx:id="btnVeri" alignment="CENTER_LEFT" layoutX="25.0" layoutY="164.0" onMouseClicked="#handleSidebarClick" prefHeight="29.0" prefWidth="185.0" spacing="10.0">
+
+                        <HBox fx:id="btnVeri" alignment="CENTER_LEFT" onMouseClicked="#handleSidebarClick" prefHeight="42.0" prefWidth="216.0" spacing="12.0" style="-fx-background-radius: 8; -fx-background-color: transparent;">
+                           <padding>
+                              <Insets left="15.0" right="15.0" />
+                           </padding>
                            <children>
-                              <Region fx:id="VeriIndicator" minHeight="-Infinity" prefHeight="23.0" prefWidth="2.0" style="-fx-background-color: white;" visible="false" />
-                              <Label style="-fx-text-fill: white;" text="%profile.label.verification">
+                              <Region fx:id="VeriIndicator" minHeight="-Infinity" prefHeight="18.0" prefWidth="4.0" style="-fx-background-color: #1a73e8; -fx-background-radius: 2;" visible="false" />
+                              <Label style="-fx-text-fill: #495057;" text="%profile.label.verification">
                                  <font>
-                                    <Font name="Arial" size="15.0" />
+                                    <Font name="Segoe UI" size="14.0" />
                                  </font>
                               </Label>
                            </children>
@@ -107,17 +126,22 @@
                               <Cursor fx:constant="HAND" />
                            </cursor>
                         </HBox>
-                        <HBox fx:id="hboxsignout" alignment="CENTER_LEFT" layoutX="26.0" layoutY="210.0" onMouseClicked="#onSignOutClick" prefHeight="29.0" prefWidth="185.0" spacing="10.0">
+
+                        <Region VBox.vgrow="ALWAYS" />
+
+                        <HBox fx:id="hboxsignout" alignment="CENTER_LEFT" onMouseClicked="#onSignOutClick" prefHeight="42.0" prefWidth="216.0" spacing="12.0" style="-fx-background-radius: 8; -fx-background-color: transparent;">
+                           <padding>
+                              <Insets bottom="15.0" left="15.0" right="15.0" />
+                           </padding>
                            <children>
-                              <Region fx:id="VeriIndicator1" minHeight="-Infinity" prefHeight="23.0" prefWidth="2.0" style="-fx-background-color: white;" visible="false" />
-                              <ImageView fitHeight="24.0" fitWidth="39.0" pickOnBounds="true" preserveRatio="true">
+                              <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true" style="-fx-opacity: 0.7;">
                                  <image>
                                     <Image url="@../img/signout.png" />
                                  </image>
                               </ImageView>
-                              <Label style="-fx-text-fill: white;" text="%profile.button.signout">
+                              <Label style="-fx-text-fill: #e63946; -fx-font-weight: bold;" text="%profile.button.signout">
                                  <font>
-                                    <Font name="Arial" size="15.0" />
+                                    <Font name="Segoe UI" size="14.0" />
                                  </font>
                               </Label>
                            </children>
@@ -126,8 +150,7 @@
                            </cursor>
                         </HBox>
                      </children>
-                  </VBox>
-                  <ScrollPane fitToWidth="true" hbarPolicy="NEVER" maxWidth="1.7976931348623157E308" pannable="true" prefHeight="587.0" prefWidth="483.0" style="-fx-background-radius: 15; -fx-border-radius: 15; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);" vbarPolicy="NEVER" HBox.hgrow="ALWAYS">
+                  </VBox>                  <ScrollPane fitToWidth="true" hbarPolicy="NEVER" maxWidth="1.7976931348623157E308" pannable="true" prefHeight="587.0" prefWidth="483.0" style="-fx-background-radius: 15; -fx-border-radius: 15; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);" vbarPolicy="NEVER" HBox.hgrow="ALWAYS">
                      <content>
                         <StackPane style="-fx-border-radius: 15; -fx-background-radius: 15; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);">
                            <children>
