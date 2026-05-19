@@ -38,6 +38,8 @@ public class DataSession {
     public void clear() {
         loggedInUser = null;
         selectedItem = null;
+        favoriteItems.clear();
+        unreadNotificationCount=0;
     }
     // đẩy Item vào danh sách để đưa lên Favorite_view
     public ObservableList<Item> getFavoriteItems() {
