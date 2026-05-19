@@ -238,14 +238,6 @@ public class ItemviewController implements Cleanable {
                             if ("SUCCESS".equals(response.getStatus())) {
                                 txtBid.clear();
                                 showBidError("Đặt giá thành công!", true);
-                                Task<Message> sendMessageBid = new Task<>() {
-                                    @Override
-                                    protected Message call() throws Exception {
-                                        Object[] obj = {selectedItem, currentUser, amount};
-                                        return network.sendRequest(new Message("SEND_BID_TO_USER", obj));
-                                    }
-                                };
-                                new Thread(sendMessageBid).start();
                             } else {
                                 showBidError(response.getData().toString(), false);
                             }

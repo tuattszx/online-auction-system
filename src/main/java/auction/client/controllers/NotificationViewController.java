@@ -1,14 +1,19 @@
 package auction.client.controllers;
 
 import auction.client.ClientNetwork;
+import auction.client.services.AuctionManager;
+import auction.client.services.NotificationSubscriptionManager;
 import auction.client.session.DataSession;
 import auction.common.message.Message;
-import auction.server.dao.impl.BidDaoImpl;
+import auction.common.model.notifications.BidNotification;
+import auction.common.model.notifications.ItemNotification;
+import auction.common.model.notifications.Notification;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -19,23 +24,32 @@ import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class NotificationViewController {
     @FXML private HBox searchBar; // Liên kết với thanh tìm kiếm
     @FXML
     private HeaderMenuController headerMenuController;
     @FXML
+    private VBox vboxMainNotifications;
+    private Consumer<Notification> realtimeCallback;
+
+    @FXML
     public void initialize(){
+        setupRealtimeNotification();
         loadNotifications();
         if (headerMenuController != null) {
             headerMenuController.hideSearchBar();
         }
         headerMenuController.setBalance(DataSession.getInstance().getLoggedInUser() != null ? DataSession.getInstance().getLoggedInUser().getBalance() + " $" : "0 $");
     }
-    @FXML
-    private VBox vboxMainNotifications;
-    private HBox createNotificationItem(String avatarUrl, String userName, String actionText, String timeStr, boolean isUnread) {
+
+    private HBox createNotificationItem(String avatarUrl, String titleText, String actionText, String timeStr, boolean isUnread) {
         HBox row = new HBox();
         row.setAlignment(Pos.CENTER_LEFT);
         row.setPadding(new Insets(8, 16, 8, 16));
@@ -60,13 +74,14 @@ public class NotificationViewController {
         HBox.setHgrow(textContainer, Priority.ALWAYS);
 
         // Dùng TextFlow để có thể bôi đậm tên, viết thường hành động
-        Text textName = new Text(userName + " ");
-        textName.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
+        Text textTitle = new Text(titleText);
+        textTitle.setStyle("-fx-font-weight: bold; -fx-font-size: 14px; -fx-fill: #050505;");
 
         Text textAction = new Text(actionText);
         textAction.setStyle("-fx-font-size: 14px;");
 
-        TextFlow textFlow = new TextFlow(textName, textAction);
+        TextFlow titleFlow = new TextFlow(textTitle);
+        TextFlow messageFlow = new TextFlow(textAction);
 
         Label lblTime = new Label(timeStr);
         lblTime.setStyle("-fx-font-size: 12px; -fx-text-fill: #65676b;");
@@ -74,7 +89,7 @@ public class NotificationViewController {
             lblTime.setStyle("-fx-font-size: 12px; -fx-text-fill: #1877f2; -fx-font-weight: bold;");
         }
 
-        textContainer.getChildren().addAll(textFlow, lblTime);
+        textContainer.getChildren().addAll(titleFlow,messageFlow, lblTime);
 
         row.getChildren().addAll(avatar, textContainer);
 
@@ -86,6 +101,89 @@ public class NotificationViewController {
 
         return row;
     }
+
+    private HBox createNotificationItemRow(Notification note) {
+        String defaultAvatar = "https://www.w3schools.com/howto/img_avatar.png";
+        String titleText = note.getTitle();
+        String messageText = note.getMessage();
+
+        // 1. 🔥 BÓC TÁCH NỘI DUNG CHI TIẾT THEO TỪNG LOẠI THÔNG BÁO
+        if (note instanceof BidNotification bidNote) {
+            defaultAvatar = getClass().getResource("/auction/img/hammernotif.jpg").toExternalForm();
+
+            messageText = String.format("Món hàng mã số #%d đã bị %s đè giá lên %,d $.",
+                    bidNote.getItemId(), bidNote.getBidderName(), bidNote.getNewPrice());
+
+        } else if (note instanceof ItemNotification itemNote) {
+            defaultAvatar = getClass().getResource("/auction/img/itemnotif.jpg").toExternalForm();
+        }
+
+        String timeDisplay = formatRelativeTime(note.getCreatedAt());
+
+        // Gọi hàm build giao diện thô với dữ liệu đã được bóc tách riêng biệt
+        HBox row = createNotificationItem(defaultAvatar, titleText, messageText, timeDisplay, !note.isRead());
+
+        // XỬ LÝ SỰ KIỆN CLICK VÀ ĐIỀU HƯỚNG CHÍNH XÁC THEO FILE FXML
+        row.setOnMouseClicked(e -> {
+            if (!note.isRead()) {
+                note.setRead(true);
+                row.getChildren().removeIf(node -> node instanceof Circle && ((Circle) node).getFill().toString().contains("1877f2"));
+                new Thread(() -> {
+                    try {
+                        ClientNetwork.getInstance().sendRequest(new Message("MARK_AS_READ", note.getId()));
+                    } catch (Exception ex) {
+                        System.err.println("Không thể cập nhật trạng thái đã đọc: " + ex.getMessage());
+                    }
+                }).start();
+            }
+
+            try {
+                // Trường hợp A: Thông báo liên quan đến ĐẤU GIÁ (BidNotification) -> Vào item-view.fxml
+                if (note instanceof BidNotification bidNote) {
+                    System.out.println("Điều hướng tới sản phẩm ID: " + bidNote.getItemId());
+
+                    AuctionManager.getInstance().getLatestItemAsync(bidNote.getItemId())
+                            .thenAccept(item -> {
+                                        Platform.runLater(() -> {
+                                            if (item != null) {
+                                                DataSession.getInstance().setSelectedItem(item);
+                                                ViewManager.switchScene(e, "item-view.fxml", "Chi tiết: " + item.getName());
+                                            } else {
+                                                System.err.println("Không tìm thấy sản phẩm!");
+                                            }
+                                        });
+                            });
+                }
+
+                // Trường hợp B: Thông báo liên quan đến SẢN PHẨM (ItemNotification) -> Vào seller-view.fxml
+                else if (note instanceof ItemNotification itemNote) {
+                    ViewManager.switchScene(e, "seller-view.fxml", "Quản lý bán hàng");
+                }
+            } catch (Exception ex) {
+                System.err.println("Lỗi khi chuyển màn hình từ thông báo: " + ex.getMessage());
+                ex.printStackTrace();
+            }
+        });
+
+        return row;
+    }
+
+    private void setupRealtimeNotification() {
+        this.realtimeCallback = newNotif -> {
+            Platform.runLater(() -> {
+                HBox newNotificationItem = createNotificationItemRow(newNotif);
+
+                // Chèn lên đầu danh sách (dưới chữ "Mới")
+                if (vboxMainNotifications.getChildren().size() > 1) {
+                    vboxMainNotifications.getChildren().add(1, newNotificationItem);
+                } else {
+                    vboxMainNotifications.getChildren().add(newNotificationItem);
+                }
+            });
+        };
+        NotificationSubscriptionManager.getInstance().subscribe(realtimeCallback);
+    }
+
     public void loadNotifications() {
         // 1. Xóa danh sách cũ đi để tải mới
         vboxMainNotifications.getChildren().clear();
@@ -97,38 +195,61 @@ public class NotificationViewController {
         vboxMainNotifications.getChildren().add(lblMoi);
 
         // 3. Gọi background task lấy dữ liệu từ Server
-        Task<Message> getMessageTask = new Task<>() {
+        Task<List<HBox>> loadNotifTask = new Task<>() {
             @Override
-            protected Message call() throws Exception {
+            protected List<HBox> call() throws Exception {
                 Message request = new Message("GET_MESSAGE", DataSession.getInstance().getLoggedInUser().getId());
-                return ClientNetwork.getInstance().sendRequest(request);
-            }
-        };
+                Message response=ClientNetwork.getInstance().sendRequest(request);
 
-        getMessageTask.setOnSucceeded(event -> {
-            Message response = getMessageTask.getValue();
-            if (response != null && "SUCCESS".equals(response.getStatus())) {
-                List<String> notifications = (List<String>) response.getData();
-                Platform.runLater(() -> {
+                List<HBox> uiRows=new ArrayList<>();
+                if (response != null && "SUCCESS".equals(response.getStatus())) {
+                    List<Notification> notifications = (List<Notification>) response.getData();
                     if (notifications != null) {
-                        for (String note : notifications) {
-                            String defaultAvatar = "https://www.w3schools.com/howto/img_avatar.png";
-
-                            HBox notificationItem = createNotificationItem(
-                                    defaultAvatar,
-                                    "",
-                                    note,
-                                    "Vừa xong",
-                                    true
-                            );
-
-                            vboxMainNotifications.getChildren().add(notificationItem);
+                        for (Notification note : notifications) {
+                            HBox notificationItem = createNotificationItemRow(note);
+                            uiRows.add(notificationItem);
                         }
                     }
-                });
+                }
+                return uiRows;
             }
+        };;
+
+        loadNotifTask.setOnSucceeded(event -> {
+            List<HBox> readyRows = loadNotifTask.getValue();
+            Platform.runLater(() -> {
+                if (readyRows != null && !readyRows.isEmpty()) {
+                    vboxMainNotifications.getChildren().addAll(readyRows);
+                }
+            });
         });
 
-        new Thread(getMessageTask).start();
+        new Thread(loadNotifTask).start();
+    }
+
+    private String formatRelativeTime(LocalDateTime createdAt) {
+        if (createdAt == null) return "Không rõ";
+
+        LocalDateTime now = LocalDateTime.now();
+        Duration duration = Duration.between(createdAt, now);
+
+        long seconds = duration.getSeconds();
+        long minutes = duration.toMinutes();
+        long hours = duration.toHours();
+        long days = duration.toDays();
+
+        if (seconds < 60) {
+            return "Vừa xong";
+        } else if (minutes < 60) {
+            return minutes + " phút trước";
+        } else if (hours < 24) {
+            return hours + " giờ trước";
+        } else if (days < 7) {
+            return days + " ngày trước";
+        } else {
+            // Nếu quá lâu rồi (trên 7 ngày) thì hiển thị ngày tháng cụ thể luôn
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            return createdAt.format(formatter);
+        }
     }
 }

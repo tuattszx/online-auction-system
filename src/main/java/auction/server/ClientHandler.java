@@ -7,16 +7,13 @@ import auction.common.model.categories.Category;
 import auction.common.model.items.AuctionItem;
 import auction.common.model.items.Item;
 import auction.common.model.items.ItemImage;
+import auction.common.model.notifications.BidNotification;
+import auction.common.model.notifications.ItemNotification;
+import auction.common.model.notifications.Notification;
 import auction.common.model.users.Account;
 import auction.common.model.users.User;
-import auction.server.dao.BidDao;
-import auction.server.dao.CategoryDao;
-import auction.server.dao.ItemDao;
-import auction.server.dao.UserDao;
-import auction.server.dao.impl.BidDaoImpl;
-import auction.server.dao.impl.CategoryDaoImpl;
-import auction.server.dao.impl.ItemDaoImpl;
-import auction.server.dao.impl.UserDaoImpl;
+import auction.server.dao.*;
+import auction.server.dao.impl.*;
 import auction.server.utils.ImageService;
 
 import java.io.*;
@@ -33,10 +30,15 @@ public class ClientHandler implements Runnable {
     private final ItemDao itemDao = new ItemDaoImpl();
     private final CategoryDao categoryDao = new CategoryDaoImpl();
     private final BidDao bidDao = new BidDaoImpl();
+    private final NotificationDAO notificationDao=new NotificationDaoImpl();
     private ObjectOutputStream out;
+    private User loggedInUser;
 
     public ClientHandler(Socket socket) {
         this.socket = socket;
+    }
+    public User getLoggedInUser() {
+        return loggedInUser;
     }
 
     @Override
@@ -54,6 +56,7 @@ public class ClientHandler implements Runnable {
                     System.out.println("Server nhận lệnh: " + command);
 
                     if (command.equals("SIGNOUT")) {
+                        this.loggedInUser=null;
                         handleSignout(msg, out);
                         break; // Thoát vòng lặp để đóng socket
                     }
@@ -89,11 +92,11 @@ public class ClientHandler implements Runnable {
                         case "GET_MY_AUCTIONS":
                             handleGetMyAuctions(msg, out);
                             break;
-                        case "SEND_BID_TO_USER":
-                            handleSendMessageBid(msg, out);
-                            break;
                         case "GET_MESSAGE":
                             handleGetMessage(msg, out);
+                            break;
+                        case "MARK_AS_READ":
+                            handleMaskAsRead(msg, out);
                             break;
                         // Thêm các case khác như BID, VIEW_PRODUCT...
                     }
@@ -133,6 +136,7 @@ public class ClientHandler implements Runnable {
 
         if (user != null) {
             msg.setStatus("SUCCESS");
+            this.loggedInUser=user;
             msg.setData(user);
         } else {
             msg.setStatus("FAILED");
@@ -210,6 +214,9 @@ public class ClientHandler implements Runnable {
             if (isSuccess) {
                 msg.setStatus("SUCCESS");
                 System.out.println("Đã thêm sản phẩm mới: " + item.getName());
+                LocalDateTime now = LocalDateTime.now();
+                handleSendMessageAddItem(item, now);
+
             } else {
                 msg.setStatus("FAILED");
             }
@@ -314,6 +321,8 @@ public class ClientHandler implements Runnable {
                                 now,
                                 newEndTime
                         );
+
+                        handleSendMessageBid(currentItem, bidRequest, now);
                     } else {
                         responseData = "Lỗi hệ thống khi lưu lịch sử đấu giá!";
                     }
@@ -429,26 +438,85 @@ public class ClientHandler implements Runnable {
         }
     }
 
-    private void handleSendMessageBid(Message msg, ObjectOutputStream out) throws IOException {
+    private void handleSendMessageBid(Item item,Bid bidRequest,LocalDateTime now) {
         try {
-            // Dữ liệu nhận được từ ItemviewController: Object[] {selectedItem, currentUser}
-            Object[] data = (Object[]) msg.getData();
-            Item item = (Item) data[0];
-            User user = (User) data[1];
-            Long amount = (Long) data[2];
-            int idBid = user.getId();
+            int idBid = bidRequest.getIdUser();
             List<Bid> previousBids = bidDao.getBidsByItemId(item.getId());
             Set<Integer> targetUserIds = previousBids.stream()
                     .map(Bid::getIdUser)
                     .filter(userId -> userId != idBid)
                     .collect(Collectors.toSet());
 
-            String notificationMessage = "Món hàng " + item.getName() + " đã được người dùng " + user.getUsername() + " đấu giá cao hơn với giá " + amount ;
-            for (int userId : targetUserIds) {
-                bidDao.addNotification(userId, notificationMessage);
+            if (!targetUserIds.isEmpty()) {
+                String title = "Bạn đã bị đè giá!";
+                String messageText = String.format("Món hàng '%s' đã được người dùng %s đấu giá cao hơn với giá %,d $",
+                        item.getName(), bidRequest.getBidderName(), bidRequest.getBidAmount());
+
+                BidNotification bidNotif = new BidNotification(
+                        0,
+                        0,
+                        title,
+                        messageText,
+                        item.getId(),
+                        bidRequest.getBidAmount(),
+                        bidRequest.getBidderName()
+                );
+                bidNotif.setCreatedAt(now);
+
+                notificationDao.insertNotificationsBatch(targetUserIds, bidNotif);
+
+                for (ClientHandler client : ClientManager.getActiveClients()) {
+                    User onlineUser = client.getLoggedInUser();
+                    if (onlineUser != null && targetUserIds.contains(onlineUser.getId())) {
+                        bidNotif.setUserId(onlineUser.getId());
+                        client.sendObject(bidNotif);
+                    }
+                }
             }
-            msg.setStatus("SUCCESS");
         } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void handleSendMessageAddItem(Item item, LocalDateTime now) {
+        try {
+            // 1. Khởi tạo đối tượng ItemNotification bằng Constructor đầy đủ tham số
+            // Tham số truyền vào theo cấu trúc class của bạn: (id, userId, title, message, itemId, itemStatus, adminNote)
+            String title = "Đăng sản phẩm thành công!";
+            String messageText = String.format("Sản phẩm '%s' của bạn đã được đăng ký đấu giá thành công và đang chờ admin phê duyệt.", item.getName());
+
+            ItemNotification itemNotif = new ItemNotification(
+                    0,
+                    item.getSellerId(),
+                    title,
+                    messageText,
+                    item.getId(),
+                    "PENDING",
+                    "Chợ phê duyệt!"
+            );
+
+            itemNotif.setCreatedAt(now);
+
+            // 2. Ghi nhận lịch sử thông báo xuống Database bảng notifications
+            notificationDao.add(itemNotif);
+
+            // 3. Bắn tin nhắn trực tiếp xuống luồng Socket của chính Client này
+            this.sendObject(itemNotif);
+            System.out.println("DEBUG: Đã phát thông báo đăng sản phẩm real-time thành công cho User ID: " + item.getSellerId());
+
+        } catch (Exception e) {
+            System.err.println("Lỗi khi xử lý tạo/gửi thông báo đăng sản phẩm: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private void handleGetMessage(Message msg, ObjectOutputStream out) throws  IOException{
+        try{
+            Integer id = (Integer) msg.getData();
+            List<Notification> listNotifications = notificationDao.getNotificationsByUserId(id);
+            msg.setStatus("SUCCESS");
+            msg.setData(listNotifications);
+        }catch (Exception e){
             msg.setStatus("ERROR");
         } finally {
             out.writeObject(msg);
@@ -456,14 +524,21 @@ public class ClientHandler implements Runnable {
             out.reset();
         }
     }
-    private void handleGetMessage(Message msg, ObjectOutputStream out) throws  IOException{
-        try{
-            Integer id = (Integer) msg.getData();
-            List<String> notification = bidDao.getNotification(id);
-            msg.setStatus("SUCCESS");
-            msg.setData(notification);
-        }catch (Exception e){
+
+    private void handleMaskAsRead(Message msg, ObjectOutputStream out) throws IOException {
+        try {
+            Integer notificationId = (Integer) msg.getData();
+            boolean isUpdated = notificationDao.markAsRead(notificationId);
+            if (isUpdated) {
+                msg.setStatus("SUCCESS");
+            } else {
+                msg.setStatus("FAILED");
+                msg.setData("Không tìm thấy thông báo hoặc đã được đánh dấu là đã đọc.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
             msg.setStatus("ERROR");
+            msg.setData("Lỗi Server: " + e.getMessage());
         } finally {
             out.writeObject(msg);
             out.flush();
