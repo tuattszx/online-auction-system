@@ -610,7 +610,7 @@ public class ItemDaoImpl implements ItemDao {
                 Item closedItem = finalizeAuctionAndGetItem(itemId);
 
                 if (closedItem != null) {
-                    auction.server.services.NotificationService.sendClosedNotifications(closedItem, java.time.LocalDateTime.now());
+                    auction.server.utils.NotificationService.sendClosedNotifications(closedItem, java.time.LocalDateTime.now());
                 }
             }
         } catch (SQLException e) {
@@ -640,7 +640,7 @@ public class ItemDaoImpl implements ItemDao {
 
                 // 3. Nếu DB cập nhật thành công -> Kích hoạt bắn thông báo real-time
                 if (isUpdated) {
-                    auction.server.services.NotificationService.sendOpenNotifications(item, java.time.LocalDateTime.now());
+                    auction.server.utils.NotificationService.sendOpenNotifications(item, java.time.LocalDateTime.now());
                 }
             }
         } catch (SQLException e) {
