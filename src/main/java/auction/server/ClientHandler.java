@@ -31,6 +31,7 @@ public class ClientHandler implements Runnable {
     private final CategoryDao categoryDao = new CategoryDaoImpl();
     private final BidDao bidDao = new BidDaoImpl();
     private final NotificationDAO notificationDao=new NotificationDaoImpl();
+    private final FavouriteDao favouriteDao= new FavouriteDaoImpl();
     private ObjectOutputStream out;
     private User loggedInUser;
 
@@ -97,6 +98,15 @@ public class ClientHandler implements Runnable {
                             break;
                         case "MARK_AS_READ":
                             handleMaskAsRead(msg, out);
+                            break;
+                        case "ADD_FAVOURITE":
+                            handleFavourite(msg, out, true);
+                            break;
+                        case "REMOVE_FAVOURITE":
+                            handleFavourite(msg, out, false);
+                            break;
+                        case "GET_FAVOURITES":
+                            handleGetFavourites(msg, out);
                             break;
                         // Thêm các case khác như BID, VIEW_PRODUCT...
                     }
@@ -535,6 +545,43 @@ public class ClientHandler implements Runnable {
                 msg.setStatus("FAILED");
                 msg.setData("Không tìm thấy thông báo hoặc đã được đánh dấu là đã đọc.");
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+            msg.setStatus("ERROR");
+            msg.setData("Lỗi Server: " + e.getMessage());
+        } finally {
+            out.writeObject(msg);
+            out.flush();
+            out.reset();
+        }
+    }
+
+    private void handleFavourite(Message msg,ObjectOutputStream out, boolean isAdd) throws IOException{
+        try{
+            Object[] payload = (Object[]) msg.getData();
+            int userId = (int) payload[0];
+            int itemId = (int) payload[1];
+
+            boolean isAdded = isAdd ? favouriteDao.addFavourite(userId, itemId) : favouriteDao.removeFavourite(userId, itemId);
+            msg.setStatus(isAdded ? "SUCCESS" : "FAILED");
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            msg.setStatus("ERROR");
+            msg.setData("Lỗi Server: " + e.getMessage());
+        } finally {
+            out.writeObject(msg);
+            out.flush();
+            out.reset();
+        }
+    }
+
+    private void handleGetFavourites(Message msg, ObjectOutputStream out) throws IOException {
+        try {
+            int userId = (int) msg.getData();
+            List<Integer> favouriteItems = favouriteDao.getFavoriteItemIdsByUserId(userId);
+            msg.setStatus("SUCCESS");
+            msg.setData(favouriteItems);
         } catch (Exception e) {
             e.printStackTrace();
             msg.setStatus("ERROR");

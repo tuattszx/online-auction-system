@@ -606,7 +606,42 @@ public class ItemDaoImpl implements ItemDao {
             while (rs.next()) {
                 int itemId = rs.getInt("id");
                 System.out.println("Đang kết toán cho sản phẩm ID: " + itemId);
-                finalizeAuction(itemId);
+
+                Item closedItem = finalizeAuctionAndGetItem(itemId);
+
+                if (closedItem != null) {
+                    auction.server.utils.NotificationService.sendClosedNotifications(closedItem, java.time.LocalDateTime.now());
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void processIncomingItems() {
+        String sqlSelect = "SELECT id, name, id_seller, current_price FROM ITEMS WHERE start_time <= NOW() AND status = 'PENDING'";
+
+        try (Connection conn = DatabaseManager.getInstance().getConnection();
+             PreparedStatement ps = conn.prepareStatement(sqlSelect);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                // 1. Dựng Object Item tạm thời từ dữ liệu quét được
+                Item item = new Item();
+                item.setId(rs.getInt("id"));
+                item.setName(rs.getString("name"));
+                item.setSellerId(rs.getInt("id_seller"));
+                item.setCurrentPrice(rs.getInt("current_price"));
+
+                System.out.println("Đang mở bán cho sản phẩm: " + item.getName());
+
+                // 2. Cập nhật trạng thái xuống DB thành OPEN
+                boolean isUpdated = updateStatus(item.getId(), "OPEN");
+
+                // 3. Nếu DB cập nhật thành công -> Kích hoạt bắn thông báo real-time
+                if (isUpdated) {
+                    auction.server.utils.NotificationService.sendOpenNotifications(item, java.time.LocalDateTime.now());
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -614,14 +649,15 @@ public class ItemDaoImpl implements ItemDao {
     }
 
     // Hàm finalizeAuction thực hiện trừ BALANCE và frozen_balance
-    public boolean finalizeAuction(int itemId) {
+    public Item finalizeAuctionAndGetItem(int itemId) {
         Connection conn = null;
         try {
             conn = DatabaseManager.getInstance().getConnection();
             conn.setAutoCommit(false);
 
-            // 1. Lấy thông tin người thắng, người bán và giá cuối
-            String sqlInfo = "SELECT id_current_bidder, current_price, id_seller FROM ITEMS WHERE id = ? FOR UPDATE";
+            // 1. Lấy thông tin đầy đủ của Item (Thêm name để tí làm nội dung tin nhắn công bố)
+            String sqlInfo = "SELECT name, id_current_bidder, current_price, id_seller FROM ITEMS WHERE id = ? FOR UPDATE";
+            String itemName = "";
             int winnerId = 0, sellerId = 0;
             long finalPrice = 0;
 
@@ -629,15 +665,17 @@ public class ItemDaoImpl implements ItemDao {
                 ps.setInt(1, itemId);
                 ResultSet rs = ps.executeQuery();
                 if (rs.next()) {
+                    itemName = rs.getString("name");
                     winnerId = rs.getInt("id_current_bidder");
                     finalPrice = rs.getLong("current_price");
                     sellerId = rs.getInt("id_seller");
+                } else {
+                    return null; // Item không tồn tại
                 }
             }
 
-            // 2. Nếu có người thắng, thực hiện chuyển tiền
+            // 2. Nếu có người thắng, thực hiện chuyển tiền (Giữ nguyên logic cực tốt của bạn)
             if (winnerId != 0) {
-                // Trừ tiền BALANCE và rã đông frozen_balance của người thắng
                 String sqlWinner = "UPDATE users SET BALANCE = BALANCE - ?, frozen_balance = frozen_balance - ? WHERE ID = ?";
                 try (PreparedStatement ps = conn.prepareStatement(sqlWinner)) {
                     ps.setLong(1, finalPrice);
@@ -646,7 +684,6 @@ public class ItemDaoImpl implements ItemDao {
                     ps.executeUpdate();
                 }
 
-                // Cộng tiền vào BALANCE cho người bán
                 String sqlSeller = "UPDATE users SET BALANCE = BALANCE + ? WHERE ID = ?";
                 try (PreparedStatement ps = conn.prepareStatement(sqlSeller)) {
                     ps.setLong(1, finalPrice);
@@ -664,11 +701,20 @@ public class ItemDaoImpl implements ItemDao {
 
             conn.commit();
             System.out.println("Kết toán thành công sản phẩm: " + itemId);
-            return true;
+
+            // 4. Đóng gói thông tin thành một Object Item hoàn chỉnh trả về
+            Item item = new Item();
+            item.setId(itemId);
+            item.setName(itemName);
+            item.setSellerId(sellerId);
+            item.setCurrentPrice((int) finalPrice);
+
+            return item;
+
         } catch (Exception e) {
             if (conn != null) try { conn.rollback(); } catch (SQLException ex) {}
             e.printStackTrace();
-            return false;
+            return null;
         } finally {
             if (conn != null) try { conn.close(); } catch (SQLException e) {}
         }

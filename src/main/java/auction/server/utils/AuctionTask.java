@@ -14,6 +14,7 @@ public class AuctionTask {
         scheduler.scheduleAtFixedRate(() -> {
             try {
                 ((ItemDaoImpl) itemDao).processExpiredItems();
+                ((ItemDaoImpl) itemDao).processIncomingItems();
             } catch (Exception e) {
                 System.err.println("[AuctionTask] Lỗi thực thi: " + e.getMessage());
             }

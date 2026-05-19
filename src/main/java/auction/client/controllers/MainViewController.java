@@ -77,11 +77,27 @@ public class MainViewController extends ProfileController {
                 // Gửi request thông qua kết nối Socket
                 Message response = network.sendRequest(new Message("GET_ALL_ITEMS", null));
 
-                if (response != null && "SUCCESS".equals(response.getStatus())) {
-                    return (List<Item>) response.getData();
-                } else {
+                if (response == null || !"SUCCESS".equals(response.getStatus())) {
                     throw new RuntimeException("Server không phản hồi hoặc có lỗi xảy ra");
                 }
+
+                List<Item> allItems = (List<Item>) response.getData();
+                if (DataSession.getInstance().getLoggedInUser() != null){
+                    int userId= DataSession.getInstance().getLoggedInUser().getId();
+                    Message favResponse=network.sendRequest( new Message("GET_FAVOURITES",userId));
+
+                    if (favResponse != null && "SUCCESS".equals(favResponse.getStatus())) {
+                        List<Integer> favoriteItems = (List<Integer>) favResponse.getData();
+                        Platform.runLater(() -> DataSession.getInstance().getFavoriteItems().clear());
+
+                        for (Item item : allItems) {
+                            if (favoriteItems.contains(item.getId())) {
+                                Platform.runLater(() -> DataSession.getInstance().addFavorite(item));
+                            }
+                        }
+                    }
+                }
+                return allItems;
             }
         };
 
@@ -267,12 +283,16 @@ public class MainViewController extends ProfileController {
         });
 // 2. Lúc Click:
         heartIcon.setOnMouseClicked(e -> {
+            int currentUserId = DataSession.getInstance().getLoggedInUser().getId();
+            Object[] payload = new Object[]{ currentUserId, item.getId() };
             if (DataSession.getInstance().getFavoriteItems().contains(item)) {
                 DataSession.getInstance().removeFavorite(item); // Xóa nếu đã có
                 heartIcon.setStyle("-fx-text-fill: #ccc; -fx-font-size: 18px; -fx-cursor: hand;");
+                ClientNetwork.getInstance().sendRequestAsync(new Message("REMOVE_FAVORITE", payload));
             } else {
                 DataSession.getInstance().addFavorite(item); // Thêm nếu chưa có
                 heartIcon.setStyle("-fx-text-fill: #ff4d4d; -fx-font-size: 18px; -fx-cursor: hand;");
+                ClientNetwork.getInstance().sendRequestAsync(new Message("ADD_FAVORITE", payload));
             }
             e.consume();
         });
