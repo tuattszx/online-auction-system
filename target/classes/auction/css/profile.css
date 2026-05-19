@@ -141,4 +141,98 @@
     -fx-background-radius: 15;
     -fx-background-color: white; /* Hoặc màu nền của bạn */
 }
+/* ==========================================================================
+   1. PHONG CÁCH THANH NHẬP LIỆU (TEXT FIELD)
+   ========================================================================== */
+.text-field {
+    -fx-background-color:  #e8f0fe; /* Nền xám trắng siêu nhẹ, tạo chiều sâu */
+    -fx-background-radius: 8;      /* Bo góc vừa vặn hiện đại */
+    -fx-border-color: #e2e8f0;     /* Viền xám mờ tinh tế */
+    -fx-border-radius: 8;
+    -fx-border-width: 1;
+    -fx-padding: 10 14 10 14;      /* Tăng khoảng trống bên trong cho chữ dễ đọc */
+    -fx-text-fill: #334155;        /* Màu chữ xám than sang trọng, không dùng đen tuyền */
+    -fx-font-family: "Segoe UI", sans-serif;
+    -fx-font-size: 14px;
+    -fx-transition: all 0.2s ease-in-out; /* Hiệu ứng mượt mà khi click */
+}
+
+/* Hiệu ứng khi người dùng click chuột vào ô nhập (Focus) */
+.text-field:focused {
+    -fx-background-color: #ffffff; /* Đổi sang nền trắng tinh khiết */
+    -fx-border-color: #0052ff;     /* Viền chuyển sang màu xanh thương hiệu */
+    /* Đổ bóng nhòe ánh xanh xung quanh ô nhập (Glow Effect) */
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 82, 255, 0.15), 6, 0, 0, 0);
+}
+
+/* ==========================================================================
+   2. PHONG CÁCH THANH CHỌN (COMBO BOX)
+   ========================================================================== */
+.combo-box {
+    -fx-background-color: #f8fafc;
+    -fx-background-radius: 8;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 8;
+    -fx-border-width: 1;
+    -fx-padding: 5 8 5 12;          /* Cân đối khoảng cách */
+    -fx-font-family: "Segoe UI", sans-serif;
+    -fx-font-size: 14px;
+}
+
+/* Tiêu đề hiển thị bên trong ComboBox */
+.combo-box .label {
+    -fx-text-fill: #334155;
+}
+
+/* Hiệu ứng khi click vào ComboBox */
+.combo-box:focused {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #0052ff;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 82, 255, 0.15), 6, 0, 0, 0);
+}
+
+/* Custom lại cái mũi tên tam giác chỉ xuống cho thanh thoát */
+.combo-box .arrow-button {
+    -fx-background-color: transparent; /* Xóa nền xám thô của mũi tên */
+    -fx-padding: 0 8 0 8;
+}
+.combo-box .arrow {
+    -fx-background-color: #64748b; /* Nhuộm màu xám thanh lịch cho mũi tên */
+    -fx-shape: "M 0 0 L 4 4 L 8 0 Z"; /* Định hình lại mũi tên mảnh mai hơn */
+}
+
+/* ==========================================================================
+   3. PHONG CÁCH DANH SÁCH SỔ XUỐNG (COMBO BOX POPUP)
+   ========================================================================== */
+/* Định dạng khung cửa sổ danh sách khi xổ xuống */
+.combo-box-popup .list-view {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 8;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 8;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(three-pass-box, rgba(15, 23, 42, 0.08), 12, 0, 0, 4); /* Đổ bóng rớt xuống */
+    -fx-padding: 4;
+}
+
+/* Định dạng từng dòng item quốc gia bên trong danh sách */
+.combo-box-popup .list-cell {
+    -fx-background-color: transparent;
+    -fx-padding: 8 12 8 12;
+    -fx-text-fill: #334155;
+    -fx-background-radius: 4; /* Bo góc nhẹ cho dòng được chọn */
+}
+
+/* Khi di chuột qua từng quốc gia (Hover) */
+.combo-box-popup .list-cell:hover {
+    -fx-background-color: #f1f5f9; /* Nền xám sáng nhẹ */
+    -fx-text-fill: #0f172a;
+}
+
+/* Khi một quốc gia được CLICK CHỌN (Sửa dứt điểm dải màu xanh đậm hệ thống ở hình cũ) */
+.combo-box-popup .list-cell:selected {
+    -fx-background-color: #e3f2fd; /* Đổi sang màu nền xanh lam nhạt dịu mát y hệt menu của bạn */
+    -fx-text-fill: #0052ff;        /* Chữ chuyển sang màu xanh thương hiệu đậm */
+    -fx-font-weight: bold;
+}
 
