@@ -1,8 +1,14 @@
 package auction.client.controllers;
 
+import auction.client.ClientNetwork;
 import auction.client.services.NotificationSubscriptionManager;
 import auction.client.session.DataSession;
+import auction.client.utils.ToastManager;
+import auction.common.message.Message;
+import auction.common.model.notifications.BidNotification;
+import auction.common.model.notifications.ItemNotification;
 import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -12,6 +18,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.Stage;
+import javafx.stage.Window;
 
 import java.io.IOException;
 
@@ -28,19 +36,70 @@ public class HeaderMenuController {
 
     @FXML private HBox searchBar; // Liên kết với thanh tìm kiếm
 
-    private int unreadCount=0;
 
     @FXML
     public void initialize() {
         // Khởi tạo trạng thái ban đầu: 0 thông báo ẩn chấm đỏ
-        updateBadgeUI();
+        if (DataSession.getInstance().getLoggedInUser() != null) {
+            Task<Integer> countTask = new Task<>() {
+                @Override
+                protected Integer call() throws Exception {
+                    // Gửi request siêu gọn với Action mới
+                    Message request = new Message("GET_UNREAD_COUNT", DataSession.getInstance().getLoggedInUser().getId());
+                    Message response = ClientNetwork.getInstance().sendRequest(request);
 
+                    // Nếu Server trả về thành công, lấy trực tiếp số int ra
+                    if (response != null && "SUCCESS".equals(response.getStatus())) {
+                        return (Integer) response.getData();
+                    }
+                    return 0;
+                }
+            };
+
+            countTask.setOnSucceeded(e -> {
+                int unreadServerCount = countTask.getValue();
+                DataSession.getInstance().setUnreadNotificationCount(unreadServerCount);
+                updateBadgeUI();
+            });
+
+            new Thread(countTask).start();
+        }
+        else {
+            updateBadgeUI();
+        }
         // DĂNG KÝ TỔNG ĐÀI REAL-TIME: Hễ mạng nhận được thông báo đè giá là nhảy số luôn
         NotificationSubscriptionManager.getInstance().subscribe(newNotif -> {
             Platform.runLater(() -> {
                 // Tăng biến đếm thông báo chưa đọc
-                unreadCount++;
+                DataSession.getInstance().incrementUnreadNotificationCount();
                 updateBadgeUI();
+
+                Stage activeStage = null;
+                if (bellContainer != null && bellContainer.getScene() != null) {
+                    activeStage = (Stage) bellContainer.getScene().getWindow();
+                } else {
+                    // Phương án dự phòng: Quét trong danh sách window đang active của hệ thống
+                    activeStage = Window.getWindows().stream()
+                            .filter(window -> window instanceof Stage)
+                            .map(window -> (Stage) window)
+                            .filter(Stage::isShowing)
+                            .findFirst()
+                            .orElse(null);
+                }
+
+                if (activeStage != null) {
+                    // Tự động phân loại màu sắc Toast dựa vào loại Notification
+                    ToastManager.ToastType toastType = ToastManager.ToastType.SUCCESS;
+                    if (newNotif instanceof BidNotification) {
+                        toastType = ToastManager.ToastType.INFO;
+                    } else if (newNotif instanceof ItemNotification) {
+                        toastType = ToastManager.ToastType.WARNING;
+                    }
+
+                    // Gọi ToastManager của bạn
+                    String fullMessage = newNotif.getTitle() + ": " + newNotif.getMessage();
+                    ToastManager.showToast(activeStage, toastType, fullMessage);
+                }
             });
         });
     }
@@ -53,8 +112,8 @@ public class HeaderMenuController {
     }
 
     private void updateBadgeUI() {
-        if (unreadCount > 0) {
-            lblBellBadge.setText(String.valueOf(unreadCount));
+        if (DataSession.getInstance().getUnreadNotificationCount() > 0) {
+            lblBellBadge.setText(String.valueOf(DataSession.getInstance().getUnreadNotificationCount()));
             badgeContainer.setVisible(true);
         } else {
             lblBellBadge.setText("0");
@@ -107,6 +166,8 @@ public class HeaderMenuController {
     @FXML
     public void onBellClick(MouseEvent event) throws IOException {
         NotificationPopupController.toggleNotification(bellContainer);
+        DataSession.getInstance().setUnreadNotificationCount(0);
+        updateBadgeUI();
       //  ViewManager.switchScene(event, "notification-view.fxml", "thông báo");
         NotificationPopupController.setOnMoreOptionsClickListener(() -> {
             System.out.println("HeaderMenu đã nhận được tín hiệu! Đang chuyển trang an toàn...");

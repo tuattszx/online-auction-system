@@ -108,6 +108,9 @@ public class ClientHandler implements Runnable {
                         case "GET_FAVOURITES":
                             handleGetFavourites(msg, out);
                             break;
+                        case "GET_UNREAD_COUNT":
+                            getUnreadCount(msg, out);
+                            break;
                         // Thêm các case khác như BID, VIEW_PRODUCT...
                     }
                 }
@@ -458,8 +461,8 @@ public class ClientHandler implements Runnable {
                     .collect(Collectors.toSet());
 
             if (!targetUserIds.isEmpty()) {
-                String title = "Bạn đã bị đè giá!";
-                String messageText = String.format("Món hàng '%s' đã được người dùng %s đấu giá cao hơn với giá %,d $",
+                String title = "Món hàng đã bị đè giá!";
+                String messageText = String.format("Món hàng '%s' đã được người dùng %s đấu giá cao hơn với giá %,d ",
                         item.getName(), bidRequest.getBidderName(), bidRequest.getBidAmount());
 
                 BidNotification bidNotif = new BidNotification(
@@ -583,6 +586,23 @@ public class ClientHandler implements Runnable {
             msg.setStatus("SUCCESS");
             msg.setData(favouriteItems);
         } catch (Exception e) {
+            e.printStackTrace();
+            msg.setStatus("ERROR");
+            msg.setData("Lỗi Server: " + e.getMessage());
+        } finally {
+            out.writeObject(msg);
+            out.flush();
+            out.reset();
+        }
+    }
+
+    private void getUnreadCount(Message msg, ObjectOutputStream out) throws IOException {
+        try{
+            int userId = (int) msg.getData();
+            int unreadCount = notificationDao.countUnreadByUserId(userId);
+            msg.setStatus("SUCCESS");
+            msg.setData(unreadCount);
+        }catch (Exception e) {
             e.printStackTrace();
             msg.setStatus("ERROR");
             msg.setData("Lỗi Server: " + e.getMessage());

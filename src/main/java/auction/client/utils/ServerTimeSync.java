@@ -1,7 +1,9 @@
 package auction.client.utils;
+import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 
 public class ServerTimeSync {
     private static long timeOffset = 0; // Độ lệch tính bằng mili giây
@@ -20,5 +22,31 @@ public class ServerTimeSync {
         return Instant.ofEpochMilli(synchronizedMillis)
                 .atZone(ZoneId.systemDefault())
                 .toLocalDateTime();
+    }
+
+    public static String formatRelativeTime(LocalDateTime createdAt) {
+        if (createdAt == null) return "Không rõ";
+
+        LocalDateTime now = LocalDateTime.now();
+        Duration duration = Duration.between(createdAt, now);
+
+        long seconds = duration.getSeconds();
+        long minutes = duration.toMinutes();
+        long hours = duration.toHours();
+        long days = duration.toDays();
+
+        if (seconds < 60) {
+            return "Vừa xong";
+        } else if (minutes < 60) {
+            return minutes + " phút trước";
+        } else if (hours < 24) {
+            return hours + " giờ trước";
+        } else if (days < 7) {
+            return days + " ngày trước";
+        } else {
+            // Nếu quá lâu rồi (trên 7 ngày) thì hiển thị ngày tháng cụ thể luôn
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            return createdAt.format(formatter);
+        }
     }
 }

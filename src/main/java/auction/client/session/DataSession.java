@@ -17,6 +17,8 @@ public class DataSession {
 
     private Item selectedItem;
 
+    private int unreadNotificationCount;
+
     private DataSession() {}
 
     public static DataSession getInstance() {
@@ -50,5 +52,15 @@ public class DataSession {
 
     public void removeFavorite(Item item) {
         favoriteItems.remove(item);
+    }
+
+    public int getUnreadNotificationCount() {
+        return unreadNotificationCount;
+    }
+    public void setUnreadNotificationCount(int count) {
+        this.unreadNotificationCount = count;
+    }
+    public void incrementUnreadNotificationCount() {
+        this.unreadNotificationCount++;
     }
 }

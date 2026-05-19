@@ -125,6 +125,26 @@ public class NotificationDaoImpl implements NotificationDAO {
     }
 
     @Override
+    public int countUnreadByUserId(int userId) {
+        String sql = "SELECT COUNT(*) FROM NOTIFICATIONS WHERE user_id = ? AND is_read = 0";
+
+        try (Connection conn = DatabaseManager.getInstance().getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, userId);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    @Override
     public boolean add(Notification notification) {
         // Tận dụng chính hàm Batch chạy cho 1 phần tử đơn lẻ
         return insertNotificationsBatch(Set.of(notification.getUserId()), notification);

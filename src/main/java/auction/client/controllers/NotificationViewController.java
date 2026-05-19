@@ -31,6 +31,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
+import static auction.client.utils.ServerTimeSync.formatRelativeTime;
+
 public class NotificationViewController {
     @FXML private HBox searchBar; // Liên kết với thanh tìm kiếm
     @FXML
@@ -110,9 +112,6 @@ public class NotificationViewController {
         // 1. 🔥 BÓC TÁCH NỘI DUNG CHI TIẾT THEO TỪNG LOẠI THÔNG BÁO
         if (note instanceof BidNotification bidNote) {
             defaultAvatar = getClass().getResource("/auction/img/hammernotif.jpg").toExternalForm();
-
-            messageText = String.format("Món hàng mã số #%d đã bị %s đè giá lên %,d $.",
-                    bidNote.getItemId(), bidNote.getBidderName(), bidNote.getNewPrice());
 
         } else if (note instanceof ItemNotification itemNote) {
             defaultAvatar = getClass().getResource("/auction/img/itemnotif.jpg").toExternalForm();
@@ -225,31 +224,5 @@ public class NotificationViewController {
         });
 
         new Thread(loadNotifTask).start();
-    }
-
-    private String formatRelativeTime(LocalDateTime createdAt) {
-        if (createdAt == null) return "Không rõ";
-
-        LocalDateTime now = LocalDateTime.now();
-        Duration duration = Duration.between(createdAt, now);
-
-        long seconds = duration.getSeconds();
-        long minutes = duration.toMinutes();
-        long hours = duration.toHours();
-        long days = duration.toDays();
-
-        if (seconds < 60) {
-            return "Vừa xong";
-        } else if (minutes < 60) {
-            return minutes + " phút trước";
-        } else if (hours < 24) {
-            return hours + " giờ trước";
-        } else if (days < 7) {
-            return days + " ngày trước";
-        } else {
-            // Nếu quá lâu rồi (trên 7 ngày) thì hiển thị ngày tháng cụ thể luôn
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-            return createdAt.format(formatter);
-        }
     }
 }

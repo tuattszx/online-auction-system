@@ -80,24 +80,7 @@ public class MainViewController extends ProfileController {
                 if (response == null || !"SUCCESS".equals(response.getStatus())) {
                     throw new RuntimeException("Server không phản hồi hoặc có lỗi xảy ra");
                 }
-
-                List<Item> allItems = (List<Item>) response.getData();
-                if (DataSession.getInstance().getLoggedInUser() != null){
-                    int userId= DataSession.getInstance().getLoggedInUser().getId();
-                    Message favResponse=network.sendRequest( new Message("GET_FAVOURITES",userId));
-
-                    if (favResponse != null && "SUCCESS".equals(favResponse.getStatus())) {
-                        List<Integer> favoriteItems = (List<Integer>) favResponse.getData();
-                        Platform.runLater(() -> DataSession.getInstance().getFavoriteItems().clear());
-
-                        for (Item item : allItems) {
-                            if (favoriteItems.contains(item.getId())) {
-                                Platform.runLater(() -> DataSession.getInstance().addFavorite(item));
-                            }
-                        }
-                    }
-                }
-                return allItems;
+                return  (List<Item>) response.getData();
             }
         };
 
@@ -109,6 +92,9 @@ public class MainViewController extends ProfileController {
 
             // Gọi hàm render của bạn để hiển thị lên UI
             renderItems(result);
+            if (DataSession.getInstance().getLoggedInUser() != null && result != null) {
+                loadUserFavoritesInBackground(result);
+            }
         });
 
         // 3. Khi Task thất bại (Lỗi mạng, Server sập, hoặc lỗi Serialization)
@@ -123,6 +109,37 @@ public class MainViewController extends ProfileController {
         Thread thread = new Thread(loadTask);
         thread.setDaemon(true); // Đảm bảo thread này tắt khi bạn đóng ứng dụng
         thread.start();
+    }
+
+    private void loadUserFavoritesInBackground(List<Item> allItems) {
+        Task<Void> favTask = new Task<>() {
+            @Override
+            protected Void call() throws Exception {
+                int userId = DataSession.getInstance().getLoggedInUser().getId();
+
+                Message favResponse = network.sendRequest(new Message("GET_FAVOURITES", userId));
+
+                if (favResponse != null && "SUCCESS".equals(favResponse.getStatus())) {
+                    List<Integer> favoriteIds = (List<Integer>) favResponse.getData();
+
+                    // Đẩy dữ liệu vào DataSession
+                    Platform.runLater(() -> {
+                        DataSession.getInstance().getFavoriteItems().clear();
+
+                        for (Item item : allItems) {
+                            if (favoriteIds.contains(item.getId())) {
+                                DataSession.getInstance().addFavorite(item);
+                            }
+                        }
+                    });
+                }
+                return null;
+            }
+        };
+
+        Thread favThread = new Thread(favTask);
+        favThread.setDaemon(true); // Đảm bảo luồng ngầm tự tắt khi đóng App
+        favThread.start();
     }
 
     private VBox createSkeletonCard() {
@@ -288,11 +305,11 @@ public class MainViewController extends ProfileController {
             if (DataSession.getInstance().getFavoriteItems().contains(item)) {
                 DataSession.getInstance().removeFavorite(item); // Xóa nếu đã có
                 heartIcon.setStyle("-fx-text-fill: #ccc; -fx-font-size: 18px; -fx-cursor: hand;");
-                ClientNetwork.getInstance().sendRequestAsync(new Message("REMOVE_FAVORITE", payload));
+                ClientNetwork.getInstance().sendRequestAsync(new Message("REMOVE_FAVOURITE", payload));
             } else {
                 DataSession.getInstance().addFavorite(item); // Thêm nếu chưa có
                 heartIcon.setStyle("-fx-text-fill: #ff4d4d; -fx-font-size: 18px; -fx-cursor: hand;");
-                ClientNetwork.getInstance().sendRequestAsync(new Message("ADD_FAVORITE", payload));
+                ClientNetwork.getInstance().sendRequestAsync(new Message("ADD_FAVOURITE", payload));
             }
             e.consume();
         });

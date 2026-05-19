@@ -151,6 +151,58 @@ public class ViewManager {
         }
     }
 
+    public static void switchScene(Stage stage, String fxmlPath, String title) {
+        try {
+            if (stage == null) throw new IllegalArgumentException("Stage không thể null!");
+            if (fxmlPath == null || fxmlPath.isEmpty()) throw new IllegalArgumentException("FXML path không thể rỗng!");
+
+            Scene currentScene = stage.getScene();
+
+            // Thực hiện dọn dẹp tài nguyên thông qua interface Cleanable từ controller cũ
+            if (currentScene != null && currentScene.getRoot() != null) {
+                Object oldController = currentScene.getRoot().getUserData();
+                if (oldController instanceof Cleanable) {
+                    System.out.println("ViewManager phát hiện Controller cũ hỗ trợ Cleanable. Đang dọn dẹp...");
+                    ((Cleanable) oldController).cleanup();
+                }
+            }
+
+            // Tải giao diện mới
+            Parent root = getView(fxmlPath);
+            if (root == null) throw new RuntimeException("Không thể load view: " + fxmlPath);
+
+            setStageIcon(stage);
+
+            if (title != null && !title.isEmpty()) {
+                stage.setTitle(title);
+            }
+
+            // Gán view vào cửa sổ chính
+            if (currentScene == null) {
+                stage.setScene(new Scene(root));
+            } else {
+                currentScene.setRoot(root);
+            }
+        } catch (IllegalArgumentException e) {
+            showAlert(Alert.AlertType.ERROR, "Lỗi Input", e.getMessage());
+            System.err.println("❌ Validation Error: " + e.getMessage());
+        } catch (ClassCastException e) {
+            showAlert(Alert.AlertType.ERROR, "Lỗi Type", e.getMessage());
+            System.err.println("❌ Type Error: " + e.getMessage());
+        } catch (RuntimeException e) {
+            showAlert(Alert.AlertType.ERROR, "Lỗi Runtime", e.getMessage());
+            System.err.println("❌ Runtime Error: " + e.getMessage());
+        } catch (IOException e) {
+            showAlert(Alert.AlertType.ERROR, "Lỗi Tải File", "Không tìm thấy file: " + fxmlPath);
+            System.err.println("❌ IOException: " + e.getMessage());
+            e.printStackTrace();
+        } catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "Lỗi Không Xác Định", e.getMessage());
+            System.err.println("❌ Unexpected Error: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
     /**
      * Set icon cho stage (với try-with-resources để avoid leak)
      */
