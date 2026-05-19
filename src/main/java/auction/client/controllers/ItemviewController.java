@@ -6,6 +6,7 @@ import auction.client.services.AuctionSubscriptionManager;
 import auction.client.services.Cleanable;
 import auction.client.session.DataSession;
 import auction.client.utils.ServerTimeSync;
+import auction.client.utils.ToastManager;
 import auction.common.message.BidUpdateNotification;
 import auction.common.message.Message;
 import auction.common.model.bid.Bid;
@@ -30,6 +31,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.stage.Stage;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -238,6 +240,15 @@ public class ItemviewController implements Cleanable {
                             if ("SUCCESS".equals(response.getStatus())) {
                                 txtBid.clear();
                                 showBidError("Đặt giá thành công!", true);
+
+                                    // Lấy Stage gốc thông qua linh kiện giao diện có sẵn
+                                    Stage currentStage = (Stage) txtBid.getScene().getWindow();
+
+                                    // Bắn thông báo nổi lên góc màn hình
+                                // Hiện mẫu Thành công (Success)
+                                ToastManager.showToast(currentStage, ToastManager.ToastType.SUCCESS, "Success: Updated your bid");
+
+
                             } else {
                                 showBidError(response.getData().toString(), false);
                             }

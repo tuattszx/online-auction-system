@@ -106,7 +106,15 @@ public class HeaderMenuController {
 
     @FXML
     public void onBellClick(MouseEvent event) throws IOException {
-        ViewManager.switchScene(event, "notification-view.fxml", "thông báo");
+        NotificationPopupController.toggleNotification(bellContainer);
+      //  ViewManager.switchScene(event, "notification-view.fxml", "thông báo");
+        NotificationPopupController.setOnMoreOptionsClickListener(() -> {
+            System.out.println("HeaderMenu đã nhận được tín hiệu! Đang chuyển trang an toàn...");
+
+            // Gọi CHÍNH XÁC hàm switchScene của bạn bằng 'event' của chiếc chuông
+            // Vì chiếc chuông nằm ở Stage gốc, ViewManager sẽ không bao giờ bị lỗi ép kiểu nữa!
+            ViewManager.switchScene(event, "notification-view.fxml", "thông báo");
+        });
     }
 
     @FXML
