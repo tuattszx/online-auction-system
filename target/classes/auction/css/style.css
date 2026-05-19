@@ -442,3 +442,6 @@
     -fx-background-radius: 5;
     -fx-border-radius: 5;
 }
+.my-custom-region {
+    -fx-background-color: #e8f0fe;
+}

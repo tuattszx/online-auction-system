@@ -11,6 +11,7 @@ import javafx.event.ActionEvent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.fxml.FXML;
@@ -45,6 +46,7 @@ public class ProfileController  {
     @FXML private HBox hboxsignout;
     @FXML private ComboBox<String> languagePicker; // Parameterized ComboBox
     @FXML private HBox searchBar; // Liên kết với thanh tìm kiếm
+    @FXML private ScrollPane mainScrollPane;
     @FXML
     private HeaderMenuController headerMenuController;
     private List<Region> allIndicators;
@@ -64,6 +66,11 @@ public class ProfileController  {
     }
     public void initialize() {
         // hiện gạch xanh
+        if (mainScrollPane != null) {
+            mainScrollPane.addEventFilter(javafx.scene.input.ScrollEvent.ANY, event -> {
+                event.consume(); // "Nuốt" sự kiện cuộn, khóa cứng khung nhìn
+            });
+        }
         allIndicators = Arrays.asList(accountIndicator, addressesIndicator, paymentIndicator,emailIndicator,VeriIndicator);
         updateSidebarUI(btnAccount, accountIndicator);
         hideAllPanes(paneAccount); //

@@ -23,7 +23,7 @@
 <?import org.controlsfx.control.SearchableComboBox?>
 <?import org.controlsfx.control.ToggleSwitch?>
 
-<AnchorPane prefHeight="670.0" prefWidth="775.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auction.client.controllers.ProfileController">
+<AnchorPane prefHeight="845.0" prefWidth="775.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auction.client.controllers.ProfileController">
    <stylesheets>
       <URL value="@../css/style.css" />
    </stylesheets>
@@ -33,9 +33,9 @@
             <fx:include fx:id="headerMenu" source="Header-menu.fxml" />
          </top>
          <center>
-            <HBox alignment="CENTER" prefHeight="672.0" prefWidth="775.0" spacing="20.0" style="-fx-background-color: transparent; -fx-background: transparent;" BorderPane.alignment="CENTER">
+            <HBox alignment="CENTER" prefHeight="675.0" prefWidth="775.0" spacing="20.0" style="-fx-background-color: transparent; -fx-background: transparent;" BorderPane.alignment="CENTER">
                <children>
-                  <VBox alignment="TOP_CENTER" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="564.0" prefWidth="240.0" spacing="8.0" style="-fx-background-color: #f8f9fa; -fx-background-radius: 16; -fx-border-color: #e9ecef; -fx-border-width: 1; -fx-border-radius: 16;" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1">
+                  <VBox alignment="TOP_CENTER" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="668.0" prefWidth="240.0" spacing="8.0" style="-fx-background-color: #f8f9fa; -fx-background-radius: 16; -fx-border-color: #e9ecef; -fx-border-width: 1; -fx-border-radius: 16;" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1">
                      <padding>
                         <Insets left="12.0" right="12.0" top="25.0" />
                      </padding>
@@ -125,7 +125,7 @@
                            </cursor>
                         </HBox>
 
-                        <Region VBox.vgrow="ALWAYS" />
+                        <Region prefHeight="348.0" prefWidth="214.0" VBox.vgrow="ALWAYS" />
 
                         <HBox fx:id="hboxsignout" alignment="CENTER_LEFT" onMouseClicked="#onSignOutClick" prefHeight="42.0" prefWidth="216.0" spacing="12.0" style="-fx-background-radius: 8; -fx-background-color: transparent;">
                            <padding>
@@ -148,18 +148,19 @@
                            </cursor>
                         </HBox>
                      </children>
-                  </VBox>                  <ScrollPane fitToWidth="true" hbarPolicy="NEVER" maxWidth="1.7976931348623157E308" pannable="true" prefHeight="587.0" prefWidth="483.0" style="-fx-background-radius: 15; -fx-border-radius: 15; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);" vbarPolicy="NEVER" HBox.hgrow="ALWAYS">
+                  </VBox>
+                  <ScrollPane fx:id="mainScrollPane" fitToWidth="true" hbarPolicy="NEVER" maxWidth="1.7976931348623157E308" prefHeight="732.0" prefWidth="455.0" style="-fx-background-color: transparent; -fx-viewport-fill: transparent; -fx-border-color: transparent; -fx-border-width: 0; -fx-box-border: transparent;" vbarPolicy="NEVER" HBox.hgrow="ALWAYS">
                      <content>
-                        <StackPane style="-fx-border-radius: 15; -fx-background-radius: 15; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);">
+                        <StackPane prefHeight="585.0" style="-fx-border-radius: 15; -fx-background-radius: 15; -fx-background-color: white;">
                            <children>
-                              <VBox fx:id="paneAddresses" layoutX="10.0" layoutY="10.0" maxWidth="1.7976931348623157E308" prefHeight="700.0" spacing="3.0" style="-fx-background-color: white; -fx-border-color: white;" visible="false">
+                              <VBox fx:id="paneAddresses" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="695.0" prefWidth="454.0" spacing="10.0" style="-fx-background-color: white; -fx-background-radius: 15; -fx-border-radius: 15;">
                                  <children>
                                     <Label text="%profile.label.address">
                                        <font>
                                           <Font name="Arial" size="24.0" />
                                        </font>
                                     </Label>
-                                    <Region prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
+                                    <Region prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: #e8f0fe;" />
                                     <VBox prefHeight="63.0" prefWidth="865.0">
                                        <children>
                                           <Label text="%profile.label.address">
@@ -176,7 +177,7 @@
                                                             <Font size="10.0" />
                                                          </font>
                                                       </Label>
-                                                      <TextField maxWidth="500.0" prefHeight="35.0" prefWidth="225.0" style="-fx-background-color: #f0f2f5; -fx-border-color: transparent; -fx-background-radius: 0;" VBox.vgrow="ALWAYS" />
+                                                      <TextField maxWidth="500.0" prefHeight="35.0" prefWidth="225.0" style="-fx-background-color: #e8f0fe; -fx-border-color: #e8f0fe;" VBox.vgrow="ALWAYS" />
                                                    </children>
                                                 </VBox>
                                                 <VBox HBox.hgrow="ALWAYS">
@@ -186,56 +187,57 @@
                                                             <Font size="10.0" />
                                                          </font>
                                                       </Label>
-                                                      <TextField prefHeight="35.0" prefWidth="226.0" style="-fx-background-color: #f0f2f5; -fx-border-color: transparent; -fx-background-radius: 0;" VBox.vgrow="ALWAYS" />
+                                                      <TextField prefHeight="35.0" prefWidth="226.0" style="-fx-background-color: #e8f0fe; -fx-border-color: #e8f0fe;" VBox.vgrow="ALWAYS" />
                                                    </children>
                                                 </VBox>
                                              </children>
                                           </HBox>
                                        </children>
                                     </VBox>
-                                    <Region layoutX="31.0" layoutY="39.0" prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
-                                    <VBox layoutX="31.0" layoutY="41.0" prefHeight="48.0" prefWidth="443.0">
+                                    <Region prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: #e8f0fe;" />
+                                    <VBox prefHeight="48.0" prefWidth="443.0">
                                        <children>
                                           <Label text="%profile.label.phone">
                                              <font>
                                                 <Font size="10.0" />
                                              </font>
                                           </Label>
-                                          <TextField prefHeight="35.0" prefWidth="441.0" style="-fx-background-color: #f0f2f5; -fx-border-color: transparent; -fx-background-radius: 0;" />
+                                          <TextField prefHeight="35.0" prefWidth="441.0" style="-fx-background-color: #e8f0fe; -fx-border-color: #e8f0fe;" />
                                        </children>
                                     </VBox>
-                                    <Region layoutX="31.0" layoutY="103.0" prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
-                                    <VBox layoutX="31.0" layoutY="119.0" prefHeight="48.0" prefWidth="443.0">
+                                    <Region prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: #e8f0fe;" />
+                                    <VBox prefHeight="48.0" prefWidth="443.0">
                                        <children>
                                           <Label text="%profile.label.Country">
                                              <font>
                                                 <Font size="10.0" />
                                              </font>
                                           </Label>
-                                          <SearchableComboBox fx:id="countryPicker" style="-fx-background-color: #f0f2f5;" styleClass="searchable-combo-box" />
+                                          <SearchableComboBox fx:id="countryPicker" style="-fx-background-color: #e8f0fe; -fx-border-color: #e8f0fe;" styleClass="searchable-combo-box" />
                                        </children>
                                     </VBox>
-                                    <Region layoutX="31.0" layoutY="164.0" prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
-                                    <VBox layoutX="31.0" layoutY="165.0" prefHeight="101.0" prefWidth="443.0">
+                                    <Region prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: #e8f0fe;" />
+                                    <VBox prefHeight="101.0" prefWidth="443.0">
                                        <children>
                                           <Label text="%profile.label.DeliveryAddress" />
-                                          <TextArea prefHeight="47.0" prefWidth="441.0" promptText="ddd" style="-fx-background-color: #f0f2f5; -fx-border-color: #f0f2f5; -fx-background-radius: 0; -fx-control-inner-background: #f0f2f5; -fx-border-width: 0;" />
+                                          <TextArea prefHeight="47.0" prefWidth="441.0" promptText="ddd" style="-fx-background-color: #e8f0fe; -fx-border-color: #e8f0fe;" />
                                        </children>
                                     </VBox>
-                                    <Button mnemonicParsing="false" prefHeight="37.0" prefWidth="101.0" style="-fx-border-radius: 0; -fx-background-radius: 0; -fx-background-color: #0052ff; -fx-text-fill: white;" text="%profile.label.save" />
+                                    <Button mnemonicParsing="false" prefHeight="37.0" prefWidth="101.0" style="-fx-border-radius: 4; -fx-background-radius: 4; -fx-background-color: #0052ff; -fx-text-fill: white;" text="%profile.label.save" />
+                                    <Region prefHeight="219.0" prefWidth="414.0" />
                                  </children>
                                  <padding>
-                                    <Insets left="20.0" right="10.0" />
+                                    <Insets bottom="15.0" left="20.0" right="20.0" top="15.0" />
                                  </padding>
                               </VBox>
-                              <VBox fx:id="panePayment" maxWidth="1.7976931348623157E308" prefHeight="700.0" spacing="3.0" style="-fx-background-color: white; -fx-border-color: white; -fx-background-radius: 15; -fx-border-radius: 15;" visible="false">
+                              <VBox fx:id="panePayment" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="695.0" prefWidth="454.0" spacing="10.0" style="-fx-background-color: white; -fx-background-radius: 15; -fx-border-radius: 15;" visible="false" StackPane.alignment="TOP_LEFT">
                                  <children>
                                     <Label text="%profile.label.payment">
                                        <font>
                                           <Font name="Arial" size="24.0" />
                                        </font>
                                     </Label>
-                                    <Region prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
+                                    <Region prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: #e8f0fe;" />
                                     <VBox prefHeight="76.0" prefWidth="441.0">
                                        <children>
                                           <Label text="%profile.label.Creditcard" />
@@ -244,36 +246,37 @@
                                                 <Font size="11.0" />
                                              </font>
                                           </Label>
-                                          <TextField prefHeight="57.0" prefWidth="441.0" style="-fx-background-color: #f0f2f5; -fx-border-color: transparent; -fx-background-radius: 0;" />
+                                          <TextField prefHeight="35.0" prefWidth="441.0" style="-fx-background-color: #e8f0fe; -fx-border-color: #e8f0fe; -fx-background-radius: 4;" />
                                        </children>
                                     </VBox>
-                                    <Region layoutX="31.0" layoutY="39.0" prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
-                                    <VBox layoutX="31.0" layoutY="47.0" prefHeight="63.0" prefWidth="865.0">
+                                    <Region prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: #e8f0fe;" />
+                                    <VBox prefHeight="63.0" prefWidth="865.0">
                                        <children>
                                           <Label text="%profile.label.cardnumber">
                                              <font>
                                                 <Font size="11.0" />
                                              </font>
                                           </Label>
-                                          <TextField prefHeight="57.0" prefWidth="441.0" style="-fx-background-color: #f0f2f5; -fx-border-color: transparent; -fx-background-radius: 0;" />
+                                          <TextField prefHeight="35.0" prefWidth="441.0" style="-fx-background-color: #e8f0fe; -fx-border-color: transparent #e8f0fe; -fx-background-radius: 4;" />
                                        </children>
                                     </VBox>
-                                    <Region layoutX="31.0" layoutY="127.0" prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
-                                    <Button mnemonicParsing="false" onAction="#btnSaveSetting" prefHeight="40.0" prefWidth="101.0" style="-fx-border-radius: 0; -fx-background-radius: 0; -fx-background-color: #0052FF; -fx-text-fill: white;" text="%profile.label.change" />
+                                    <Region prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: #e8f0fe;" />
+                                    <Button mnemonicParsing="false" onAction="#btnSaveSetting" prefHeight="40.0" prefWidth="101.0" style="-fx-border-radius: 4; -fx-background-radius: 4; -fx-background-color: #0052FF; -fx-text-fill: white;" text="%profile.label.change" />
+                                    <Region prefHeight="319.0" prefWidth="414.0" visible="false" />
                                  </children>
                                  <padding>
-                                    <Insets left="20.0" right="10.0" />
+                                    <Insets bottom="15.0" left="20.0" right="20.0" top="15.0" />
                                  </padding>
                               </VBox>
-                              <VBox fx:id="paneEmails" layoutX="10.0" layoutY="10.0" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="505.0" spacing="3.0" style="-fx-background-color: white; -fx-border-color: white; -fx-background-radius: 15; -fx-border-radius: 15;" visible="false">
+                              <VBox fx:id="paneEmails" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="695.0" prefWidth="505.0" spacing="10.0" style="-fx-background-color: white; -fx-background-radius: 15; -fx-border-radius: 15;" visible="false">
                                  <children>
                                     <Label text="%profile.label.notification">
                                        <font>
                                           <Font name="Arial" size="24.0" />
                                        </font>
                                     </Label>
-                                    <Region maxWidth="1.7976931348623157E308" prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
-                                    <VBox prefHeight="76.0" prefWidth="441.0">
+                                    <Region maxWidth="1.7976931348623157E308" prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: #e8f0fe;" />
+                                    <VBox prefHeight="55.0" prefWidth="441.0">
                                        <children>
                                           <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" prefHeight="100.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
                                              <children>
@@ -300,8 +303,8 @@
                                           </HBox>
                                        </children>
                                     </VBox>
-                                    <Region layoutX="31.0" layoutY="39.0" prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
-                                    <VBox layoutX="31.0" layoutY="47.0" prefHeight="76.0" prefWidth="441.0">
+                                    <Region prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: #e8f0fe;" />
+                                    <VBox prefHeight="55.0" prefWidth="441.0">
                                        <children>
                                           <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" prefHeight="100.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
                                              <children>
@@ -328,8 +331,8 @@
                                           </HBox>
                                        </children>
                                     </VBox>
-                                    <Region layoutX="31.0" layoutY="127.0" prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
-                                    <VBox layoutX="31.0" layoutY="131.0" maxWidth="1.7976931348623157E308" prefHeight="76.0" prefWidth="441.0">
+                                    <Region prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: #e8f0fe;" />
+                                    <VBox maxWidth="1.7976931348623157E308" prefHeight="55.0" prefWidth="441.0">
                                        <children>
                                           <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" prefHeight="100.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
                                              <children>
@@ -356,8 +359,8 @@
                                           </HBox>
                                        </children>
                                     </VBox>
-                                    <Region layoutX="31.0" layoutY="127.0" prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
-                                    <VBox layoutX="31.0" layoutY="215.0" maxWidth="1.7976931348623157E308" prefHeight="76.0" prefWidth="441.0">
+                                    <Region prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: #e8f0fe;" />
+                                    <VBox maxWidth="1.7976931348623157E308" prefHeight="55.0" prefWidth="441.0">
                                        <children>
                                           <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" prefHeight="100.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
                                              <children>
@@ -384,21 +387,22 @@
                                           </HBox>
                                        </children>
                                     </VBox>
-                                    <Region layoutX="31.0" layoutY="127.0" prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
-                                    <Button mnemonicParsing="false" onAction="#btnSaveSetting" prefHeight="40.0" prefWidth="101.0" style="-fx-border-radius: 0; -fx-background-radius: 0; -fx-background-color: #0052FF; -fx-text-fill: white;" text="%profile.label.change" />
+                                    <Region prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: #e8f0fe;" />
+                                    <Button mnemonicParsing="false" onAction="#btnSaveSetting" prefHeight="40.0" prefWidth="101.0" style="-fx-border-radius: 4; -fx-background-radius: 4; -fx-background-color: #0052FF; -fx-text-fill: white;" text="%profile.label.change" />
+                                    <Region prefHeight="233.0" prefWidth="414.0" />
                                  </children>
                                  <padding>
-                                    <Insets left="20.0" right="10.0" />
+                                    <Insets bottom="15.0" left="20.0" right="20.0" top="15.0" />
                                  </padding>
                               </VBox>
-                              <VBox fx:id="paneVerification" layoutX="10.0" layoutY="10.0" maxWidth="1.7976931348623157E308" prefHeight="700.0" spacing="3.0" style="-fx-background-color: white; -fx-border-color: white; -fx-background-radius: 15; -fx-border-radius: 15;" visible="false">
+                              <VBox fx:id="paneVerification" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="695.0" spacing="10.0" style="-fx-background-color: white; -fx-background-radius: 15; -fx-border-radius: 15;" visible="false">
                                  <children>
                                     <Label text="%profile.label.verification">
                                        <font>
                                           <Font name="Arial" size="24.0" />
                                        </font>
                                     </Label>
-                                    <Region prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
+                                    <Region prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: #e8f0fe;" />
                                     <HBox alignment="CENTER_LEFT" prefHeight="63.0" prefWidth="441.0">
                                        <children>
                                           <Label maxWidth="500.0" prefHeight="19.0" prefWidth="228.0" text="%profile.label.EMAIL" HBox.hgrow="ALWAYS">
@@ -411,16 +415,19 @@
                                                 <ImageView fitHeight="25.0" fitWidth="21.0" pickOnBounds="true" preserveRatio="true">
                                                    <image>
                                                       <Image url="@../img/verified.png" />
-                                                   </image></ImageView>
+                                                   </image>
+                                                </ImageView>
                                                 <TextFlow maxWidth="250.0" prefHeight="43.0" prefWidth="238.0" HBox.hgrow="ALWAYS">
                                                    <Text style="-fx-fill: #24b47e; -fx-font-weight: bold;" text="%profile.label.Youremailsuccessfully">
                                                       <font>
                                                          <Font size="11.0" />
-                                                      </font></Text>
+                                                      </font>
+                                                   </Text>
                                                    <Text style="-fx-fill: #6b7c93;" text="%profile.label.verifyaccount">
                                                       <font>
                                                          <Font size="11.0" />
-                                                      </font></Text>
+                                                      </font>
+                                                   </Text>
                                                    <padding>
                                                       <Insets bottom="10.0" top="10.0" />
                                                    </padding>
@@ -429,21 +436,21 @@
                                           </HBox>
                                        </children>
                                     </HBox>
-                                    <Region layoutX="31.0" layoutY="39.0" prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
-                                    <VBox layoutX="31.0" layoutY="47.0" prefHeight="63.0" prefWidth="865.0" />
+                                    <Region prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: #e8f0fe;" />
+                                    <Region prefHeight="506.0" prefWidth="414.0" />
                                  </children>
                                  <padding>
-                                    <Insets left="20.0" right="10.0" />
+                                    <Insets bottom="15.0" left="20.0" right="20.0" top="15.0" />
                                  </padding>
                               </VBox>
-                              <VBox fx:id="paneAccount" maxWidth="1.7976931348623157E308" spacing="3.0" style="-fx-background-color: white; -fx-background-radius: 15; -fx-border-radius: 15; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);">
+                              <VBox fx:id="paneAccount" maxWidth="1.7976931348623157E308" prefHeight="695.0" prefWidth="454.0" spacing="10.0" style="-fx-background-color: white; -fx-background-radius: 15; -fx-border-radius: 15;" visible="false" StackPane.alignment="TOP_LEFT">
                                  <children>
                                     <Label text="%profile.label.account">
                                        <font>
                                           <Font name="Arial" size="24.0" />
                                        </font>
                                     </Label>
-                                    <Region prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
+                                    <Region maxHeight="-Infinity" minHeight="-Infinity" prefHeight="1.0" prefWidth="1.0" style="-fx-background-color: #e8f0fe;" />
                                     <VBox prefHeight="63.0" prefWidth="865.0">
                                        <children>
                                           <Label text="%profile.label.name" />
@@ -462,8 +469,8 @@
                                           </Label>
                                        </children>
                                     </VBox>
-                                    <Region layoutX="31.0" layoutY="39.0" prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
-                                    <VBox layoutX="31.0" layoutY="41.0" prefHeight="48.0" prefWidth="443.0">
+                                    <Region maxHeight="-Infinity" minHeight="-Infinity" prefHeight="1.0" prefWidth="1.0" style="-fx-background-color: #e8f0fe; -fx-border-width: 1;" />
+                                    <VBox prefHeight="48.0" prefWidth="443.0">
                                        <children>
                                           <Label text="%profile.label.username" />
                                           <Label fx:id="lbusername" text="%profile.label.admin">
@@ -481,8 +488,8 @@
                                           </Label>
                                        </children>
                                     </VBox>
-                                    <Region layoutX="31.0" layoutY="103.0" prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
-                                    <VBox layoutX="31.0" layoutY="41.0" prefHeight="48.0" prefWidth="443.0">
+                                    <Region maxHeight="-Infinity" minHeight="-Infinity" prefHeight="1.0" prefWidth="1.0" style="-fx-background-color: #e8f0fe; -fx-border-width: 1;" />
+                                    <VBox prefHeight="48.0" prefWidth="443.0">
                                        <children>
                                           <Label text="%profile.label.email" />
                                           <Label fx:id="lbemail" text="admin@gmail.com">
@@ -500,24 +507,28 @@
                                           </Label>
                                        </children>
                                     </VBox>
-                                    <Region layoutX="31.0" layoutY="164.0" prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
-                                    <VBox layoutX="31.0" layoutY="165.0" prefHeight="101.0" prefWidth="443.0">
+                                    <Region maxHeight="-Infinity" minHeight="-Infinity" prefHeight="1.0" prefWidth="1.0" style="-fx-background-color: #e8f0fe; -fx-border-width: 1;" />
+                                    <VBox prefHeight="-1.0" prefWidth="443.0" spacing="10.0">
                                        <children>
-                                          <Label text="%profile.label.password" />
-                                          <Label fx:id="lbname21" text="********">
-                                             <font>
-                                                <Font size="17.0" />
-                                             </font>
-                                          </Label>
-                                          <Label style="-fx-text-fill: #0052ff;" text="%profile.label.change" textFill="#1541c5">
-                                             <font>
-                                                <Font name="System Bold" size="13.0" />
-                                             </font>
-                                             <cursor>
-                                                <Cursor fx:constant="HAND" />
-                                             </cursor>
-                                          </Label>
-                                          <Region prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
+                                          <VBox>
+                                             <children>
+                                                <Label text="%profile.label.password" />
+                                                <Label fx:id="lbname21" text="********">
+                                                   <font>
+                                                      <Font size="17.0" />
+                                                   </font>
+                                                </Label>
+                                                <Label style="-fx-text-fill: #0052ff;" text="%profile.label.change" textFill="#1541c5">
+                                                   <font>
+                                                      <Font name="System Bold" size="13.0" />
+                                                   </font>
+                                                   <cursor>
+                                                      <Cursor fx:constant="HAND" />
+                                                   </cursor>
+                                                </Label>
+                                             </children>
+                                          </VBox>
+                                          <Region prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray;" />
                                           <VBox prefHeight="48.0" prefWidth="443.0">
                                              <children>
                                                 <Label text="%profile.label.phone" />
@@ -538,32 +549,31 @@
                                           </VBox>
                                        </children>
                                     </VBox>
-                                    <Region layoutX="31.0" layoutY="164.0" prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
-                                    <VBox layoutX="31.0" layoutY="41.0" prefHeight="48.0" prefWidth="443.0">
+                                    <Region maxHeight="-Infinity" minHeight="-Infinity" prefHeight="1.0" prefWidth="1.0" style="-fx-background-color: #e8f0fe; -fx-border-width: 1;" />
+                                    <VBox prefHeight="48.0" prefWidth="443.0">
                                        <children>
                                           <Label text="%profile.label.language" />
-                                          <ComboBox fx:id="languagePicker" maxWidth="1.7976931348623157E308" prefHeight="37.0" prefWidth="443.0" promptText="%profile.label.languageDefault" style="-fx-border-color: white; -fx-background-color: lightgray;" />
+                                          <ComboBox fx:id="languagePicker" maxWidth="1.7976931348623157E308" prefHeight="35.0" prefWidth="443.0" promptText="%profile.label.languageDefault" style="-fx-border-color: #e8f0fe; -fx-background-color: #e8f0fe; -fx-background-radius: 4; -fx-border-radius: 4;" />
                                        </children>
                                     </VBox>
-                                    <Region prefHeight="1.0" prefWidth="443.0" style="-fx-background-color: lightgray; -ox-border-color: light grey;" />
-                                    <VBox layoutX="31.0" layoutY="356.0" prefHeight="48.0" prefWidth="443.0">
+                                    <Region maxHeight="-Infinity" minHeight="-Infinity" prefHeight="1.0" prefWidth="1.0" style="-fx-background-color: #e8f0fe; -fx-border-width: 1;" />
+                                    <VBox prefHeight="48.0" prefWidth="443.0">
                                        <children>
                                           <Label text="%profile.label.biddingcurrency" />
-                                          <ComboBox maxWidth="1.7976931348623157E308" prefHeight="37.0" prefWidth="443.0" promptText="dollar" style="-fx-border-color: white; -fx-background-color: lightgray;" />
+                                          <ComboBox maxWidth="1.7976931348623157E308" prefHeight="35.0" prefWidth="443.0" promptText="dollar" style="-fx-border-color: #e8f0fe; -fx-background-color: #e8f0fe; -fx-background-radius: 4; -fx-border-radius: 4;" />
                                        </children>
                                     </VBox>
-                                    <Region layoutX="31.0" layoutY="445.0" opacity="0.0" prefHeight="37.0" prefWidth="441.0" style="-fx-background-color: lightgray; -ox-border-color: light grey; hfx-max-height: 20;" />
-                                    <Button mnemonicParsing="false" onAction="#btnSaveSetting" prefHeight="40.0" prefWidth="101.0" style="-fx-border-radius: 0; -fx-background-radius: 0; -fx-background-color: #0052ff; -fx-text-fill: white;" text="%profile.label.change" />
+                                    <Region maxHeight="-Infinity" minHeight="-Infinity" prefHeight="1.0" prefWidth="1.0" style="-fx-background-color: #e8f0fe; -fx-border-width: 1;" visible="false" />
+                                    <Button mnemonicParsing="false" onAction="#btnSaveSetting" prefHeight="40.0" prefWidth="101.0" style="-fx-border-radius: 4; -fx-background-radius: 4; -fx-background-color: #0052ff; -fx-text-fill: white;" text="%profile.label.change" />
                                  </children>
                                  <padding>
-                                    <Insets left="20.0" right="10.0" />
+                                    <Insets bottom="15.0" left="20.0" right="20.0" top="15.0" />
                                  </padding>
                               </VBox>
                            </children>
                         </StackPane>
                      </content>
-                  </ScrollPane>
-               </children>
+                  </ScrollPane>               </children>
                <padding>
                   <Insets bottom="20.0" left="30.0" right="30.0" top="20.0" />
                </padding>
