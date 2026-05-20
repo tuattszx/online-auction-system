@@ -113,8 +113,16 @@ public class ClientHandler implements Runnable {
                             getUnreadCount(msg, out);
                             break;
                         case "UPDATE_PROFILE":
-                            System.out.println("-> Server đã nhận được lệnh UPDATE_PROFILE!");
                             handleUpdateProfile(msg,out);
+                            break;
+                        case "GET_SELLER_PRODUCTS":
+                            handleGetItemBySeller(msg,out);
+                            break;
+                        case "DELETE_ITEM":
+                            handleDeleteItem(msg,out);
+                            break;
+                        case "UPDATE_ITEM":
+                            handleUpdateItem(msg,out);
                             break;
                         // Thêm các case khác như BID, VIEW_PRODUCT...
                     }
@@ -617,13 +625,11 @@ public class ClientHandler implements Runnable {
             out.reset();
         }
     }
+
     private void handleUpdateProfile(Message msg, ObjectOutputStream out) throws IOException {
             try {
                 // 1. Lấy đối tượng User từ thuộc tính 'data' (Sử dụng getData() thay vì getObject())
                 User userToUpdate = (User) msg.getData();
-
-                // 2. Khởi tạo đối tượng xử lý tầng DB ở phía Server
-                UserDaoImpl userDao = new UserDaoImpl();
 
                 // 3. Thực thi lưu thông tin đã sửa xuống Database
                 boolean success = userDao.update(userToUpdate);
@@ -652,5 +658,114 @@ public class ClientHandler implements Runnable {
                 System.err.println("Error while handling update profile: " + e.getMessage());
                 e.printStackTrace();
             }
+    }
+
+    private void handleGetItemBySeller(Message msg, ObjectOutputStream out) throws IOException {
+        try {
+            int sellerId = (int) msg.getData();
+            List<Item> itemsBySeller = itemDao.getItemsBySeller(sellerId);
+            msg.setStatus("SUCCESS");
+            msg.setData(itemsBySeller);
+        } catch (Exception e) {
+            e.printStackTrace();
+            msg.setStatus("ERROR");
+            msg.setData("Lỗi Server: " + e.getMessage());
+        } finally {
+            out.writeObject(msg);
+            out.flush();
+            out.reset();
         }
+    }
+
+    private void handleDeleteItem(Message msg, ObjectOutputStream out) throws IOException{
+        try{
+            int idItem=(int) msg.getData();
+            boolean isDeleted = itemDao.delete(idItem);
+            msg.setStatus(isDeleted ? "SUCCESS" : "FAILED");
+        }catch (Exception e){
+            e.printStackTrace();
+            msg.setStatus("ERROR");
+            msg.setData("Lỗi Server: " + e.getMessage());
+        } finally {
+            out.writeObject(msg);
+            out.flush();
+            out.reset();
+        }
+    }
+
+    private void handleUpdateItem(Message msg, ObjectOutputStream out) throws IOException{
+        try{
+            Object[] payload = (Object[]) msg.getData();
+            Item item = (Item) payload[0];
+            List<String> imageUrls = (List<String>) payload[1];
+            String categoryName = (String) payload[2];
+
+            if (imageUrls != null && !imageUrls.isEmpty()) {
+                for (int i = 0; i < imageUrls.size(); i++) {
+                    ItemImage itemImg = new ItemImage();
+                    itemImg.setUrlImage(imageUrls.get(i));
+                    itemImg.setDefault(i == 0);
+                    item.addImages(itemImg);
+                }
+            }
+
+            if (categoryName != null && !categoryName.trim().isEmpty()) {
+                Category category = categoryDao.getCategoryByName(categoryName);
+                if (category != null) {
+                    item.addCategories(category);
+                }
+            }
+
+            boolean isSuccess = itemDao.update(item);
+
+            if (isSuccess) {
+                msg.setStatus("SUCCESS");
+                msg.setData("Cập nhật thành công!");
+
+                LocalDateTime now = LocalDateTime.now();
+                handleSendMessageUpdateItem(item, now);
+            } else {
+                msg.setStatus("FAILED");
+                msg.setData("Cập nhật thất bại! Vui lòng kiểm tra lại trạng thái sản phẩm.");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            msg.setStatus("SERVER_ERROR");
+            msg.setData("Lỗi Server: " + e.getMessage());
+        }
+
+        // 6. Trả kết quả phản hồi về cho Client
+        out.writeObject(msg);
+        out.flush();
+        out.reset();
+    }
+
+    private void handleSendMessageUpdateItem(Item item, LocalDateTime now) {
+        try {
+            String title = "Chỉnh sửa sản phẩm thành công!";
+            String messageText = String.format("Sản phẩm '%s' của bạn đã được cập nhật thông tin thành công.", item.getName());
+
+            ItemNotification itemNotif = new ItemNotification(
+                    0,
+                    item.getSellerId(),
+                    title,
+                    messageText,
+                    item.getId(),
+                    "PENDING",
+                    "Cập nhật thông tin mới"
+            );
+            itemNotif.setCreatedAt(now);
+
+            // Lưu vết vào DB bảng notifications
+            notificationDao.add(itemNotif);
+
+            // Bắn tín hiệu real-time hiển thị chuông thông báo cho Client ngay lập tức
+            this.sendObject(itemNotif);
+
+        } catch (Exception e) {
+            System.err.println("Lỗi khi tạo thông báo cập nhật sản phẩm: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
 }

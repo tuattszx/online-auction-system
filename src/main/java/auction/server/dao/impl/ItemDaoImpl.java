@@ -321,9 +321,10 @@ public class ItemDaoImpl implements ItemDao {
     public boolean updateItem(Item item) {
         String sql = "UPDATE ITEMS SET name = ?, description = ?, start_price = ?, " +
                 "start_time = ?, end_time = ?, length = ?, width = ?, height = ?, current_price = ? " +
-                "WHERE id = ?";
+                "WHERE id = ? AND status = 'UNAPPROVED'";
 
         Connection conn = null;
+        int affectedRows=0;
         try {
             conn = DatabaseManager.getInstance().getConnection();
             conn.setAutoCommit(false);
@@ -340,7 +341,12 @@ public class ItemDaoImpl implements ItemDao {
                 pstmt.setLong(9, item.getStartingPrice());
                 pstmt.setInt(10, item.getId());
 
-                pstmt.executeUpdate();
+                affectedRows=pstmt.executeUpdate();
+            }
+
+            if (affectedRows == 0) {
+                conn.rollback();
+                return false;
             }
 
             try (PreparedStatement delCat = conn.prepareStatement("DELETE FROM ITEM_CATEGORIES WHERE id_item = ?")) {
@@ -349,12 +355,13 @@ public class ItemDaoImpl implements ItemDao {
             }
             insertCategories(item.getId(), item.getCategories(), conn);
 
-            try (PreparedStatement delImg = conn.prepareStatement("DELETE FROM images WHERE id_item = ?")) {
-                delImg.setInt(1, item.getId());
-                delImg.executeUpdate();
+            if (item.getImages() != null && !item.getImages().isEmpty()) {
+                try (PreparedStatement delImg = conn.prepareStatement("DELETE FROM images WHERE id_item = ?")) {
+                    delImg.setInt(1, item.getId());
+                    delImg.executeUpdate();
+                }
+                insertImages(item.getId(), item.getImages(), conn);
             }
-            insertImages(item.getId(), item.getImages(), conn);
-
             conn.commit();
             return true;
         } catch (SQLException e) {
@@ -626,20 +633,26 @@ public class ItemDaoImpl implements ItemDao {
              ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
-                // 1. Dựng Object Item tạm thời từ dữ liệu quét được
-                Item item = new Item();
-                item.setId(rs.getInt("id"));
-                item.setName(rs.getString("name"));
-                item.setSellerId(rs.getInt("id_seller"));
-                item.setCurrentPrice(rs.getInt("current_price"));
+                int itemId = rs.getInt("id");
+                String itemName = rs.getString("name");
+                int sellerId = rs.getInt("id_seller");
+                int currentPrice = rs.getInt("current_price");
 
-                System.out.println("Đang mở bán cho sản phẩm: " + item.getName());
+                String sqlLock = "UPDATE ITEMS SET status = 'OPEN' WHERE id = ? AND status = 'PENDING'";
+                int rowsAffected = 0;
 
-                // 2. Cập nhật trạng thái xuống DB thành OPEN
-                boolean isUpdated = updateStatus(item.getId(), "OPEN");
+                try (PreparedStatement psLock = conn.prepareStatement(sqlLock)) {
+                    psLock.setInt(1, itemId);
+                    rowsAffected = psLock.executeUpdate();
+                }
 
-                // 3. Nếu DB cập nhật thành công -> Kích hoạt bắn thông báo real-time
-                if (isUpdated) {
+                if (rowsAffected > 0) {
+                    Item item = new Item();
+                    item.setId(itemId);
+                    item.setName(itemName);
+                    item.setSellerId(sellerId);
+                    item.setCurrentPrice(currentPrice);
+
                     auction.server.utils.NotificationService.sendOpenNotifications(item, java.time.LocalDateTime.now());
                 }
             }
@@ -655,8 +668,19 @@ public class ItemDaoImpl implements ItemDao {
             conn = DatabaseManager.getInstance().getConnection();
             conn.setAutoCommit(false);
 
-            // 1. Lấy thông tin đầy đủ của Item (Thêm name để tí làm nội dung tin nhắn công bố)
-            String sqlInfo = "SELECT name, id_current_bidder, current_price, id_seller FROM ITEMS WHERE id = ? FOR UPDATE";
+            String sqlLock = "UPDATE ITEMS SET status = 'CLOSED' WHERE id = ? AND (status = 'OPEN' OR status = 'PENDING')";
+            int rowsAffected = 0;
+            try (PreparedStatement ps = conn.prepareStatement(sqlLock)) {
+                ps.setInt(1, itemId);
+                rowsAffected = ps.executeUpdate();
+            }
+
+            if (rowsAffected == 0) {
+                conn.rollback();
+                return null;
+            }
+
+            String sqlInfo = "SELECT name, id_current_bidder, current_price, id_seller FROM ITEMS WHERE id = ?";
             String itemName = "";
             int winnerId = 0, sellerId = 0;
             long finalPrice = 0;
@@ -669,12 +693,9 @@ public class ItemDaoImpl implements ItemDao {
                     winnerId = rs.getInt("id_current_bidder");
                     finalPrice = rs.getLong("current_price");
                     sellerId = rs.getInt("id_seller");
-                } else {
-                    return null; // Item không tồn tại
                 }
             }
 
-            // 2. Nếu có người thắng, thực hiện chuyển tiền (Giữ nguyên logic cực tốt của bạn)
             if (winnerId != 0) {
                 String sqlWinner = "UPDATE users SET BALANCE = BALANCE - ?, frozen_balance = frozen_balance - ? WHERE ID = ?";
                 try (PreparedStatement ps = conn.prepareStatement(sqlWinner)) {
@@ -692,17 +713,8 @@ public class ItemDaoImpl implements ItemDao {
                 }
             }
 
-            // 3. Chuyển trạng thái Item sang CLOSED
-            String sqlClose = "UPDATE ITEMS SET status = 'CLOSED' WHERE id = ?";
-            try (PreparedStatement ps = conn.prepareStatement(sqlClose)) {
-                ps.setInt(1, itemId);
-                ps.executeUpdate();
-            }
-
             conn.commit();
-            System.out.println("Kết toán thành công sản phẩm: " + itemId);
 
-            // 4. Đóng gói thông tin thành một Object Item hoàn chỉnh trả về
             Item item = new Item();
             item.setId(itemId);
             item.setName(itemName);

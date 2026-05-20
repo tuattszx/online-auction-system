@@ -14,31 +14,43 @@ public class UploadItemTask extends Task<Message> {
     private final Item item;
     private final List<File> files;
     private final String category;
+    private final boolean isEditMode;
 
     public UploadItemTask(Item item, List<File> files, String category) {
         this.item = item;
         this.files = files;
         this.category = category;
+        this.isEditMode=false;
         this.updateTitle(item.getName()); // Tên item hiển thị trên thanh loading
+    }
+
+    public UploadItemTask(Item item, List<File> files, String category, boolean isEditMode) {
+        this.item = item;
+        this.files = files;
+        this.category = category;
+        this.isEditMode=isEditMode;
+        this.updateTitle(item.getName());
     }
 
     @Override
     protected Message call() throws Exception {
         List<String> imageUrls = new ArrayList<>();
-        int total = files.size();
 
-        for (int i = 0; i < total; i++) {
-            if (isCancelled()) break;
+        if (files != null && !files.isEmpty()) {
+            int total = files.size();
+            for (int i = 0; i < total; i++) {
+                if (isCancelled()) break;
 
-            updateMessage("Đang tải ảnh " + (i + 1) + "/" + total);
-            String url = ImageService.uploadToCloud(files.get(i));
-            if (url != null) imageUrls.add(url);
+                updateMessage("Đang tải ảnh " + (i + 1) + "/" + total);
+                String url = ImageService.uploadToCloud(files.get(i));
+                if (url != null) imageUrls.add(url);
 
-            updateProgress(i + 1, total); // Cập nhật thanh ProgressBar
+                updateProgress(i + 1, total); // Cập nhật thanh ProgressBar
+            }
         }
-
         updateMessage("Đang lưu lên Server...");
         Object[] payload = new Object[]{item, imageUrls, category};
-        return ClientNetwork.getInstance().sendRequest(new Message("ADD_ITEM", payload));
+        String command = isEditMode ? "UPDATE_ITEM" : "ADD_ITEM";
+        return ClientNetwork.getInstance().sendRequest(new Message(command, payload));
     }
 }

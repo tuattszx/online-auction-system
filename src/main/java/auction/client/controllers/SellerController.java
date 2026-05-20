@@ -8,9 +8,17 @@ import auction.common.message.Message;
 import auction.common.model.items.Item;
 import auction.server.utils.CloudinaryUtil;
 import javafx.animation.FadeTransition;
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
@@ -45,6 +53,15 @@ public class SellerController {
     @FXML private Spinner<Integer> endHour;
     @FXML private Spinner<Integer> endMin;
     @FXML private Spinner<Integer> endSec;
+
+    @FXML private TableView<Item> productTable;
+    @FXML private TableColumn<Item, Integer> colSn;
+    @FXML private TableColumn<Item, String> colName;
+    @FXML private TableColumn<Item, Long> colStartingPrice;
+    @FXML private TableColumn<Item, Long> colCurrentPrice;
+    @FXML private TableColumn<Item, String> colStatus;
+    @FXML private TableColumn<Item, Object> colSold; // Dùng Object hoặc Void để tự render đồ họa
+    @FXML private TableColumn<Item, Void> colAction;
     // Khai báo các VBox nội dung (phần bên phải)
     @FXML ProgressBar progressbar;
 
@@ -79,10 +96,17 @@ public class SellerController {
     @FXML
     private HeaderMenuController headerMenuController;
 
+    private final ObservableList<Item> sellerProductList = FXCollections.observableArrayList();
+    private boolean isEditMode = false;
+    private int editingItemId = -1;
+
     @FXML
     public void initialize() {
         headerMenuController.resetText();
         headerMenuController.hideSearchBar();
+        setupTableColumns();
+        setupRowFactory();
+        loadSellerProducts();
         showMyProducts();
         progressbar.setVisible(false);
         // Cấu hình cho Giờ (0 - 23)
@@ -97,6 +121,198 @@ public class SellerController {
         startSec.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, 0));
         endSec.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, 0));
     }
+
+    private void setupTableColumns() {
+        // Cột STT tăng dần tự động
+        colSn.setCellFactory(column -> new TableCell<>() {
+            @Override
+            protected void updateItem(Integer item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setText(null);
+                } else {
+                    setText(String.valueOf(getIndex() + 1));
+                }
+            }
+        });
+
+        // Ánh xạ các thuộc tính cơ bản
+        colName.setCellValueFactory(new PropertyValueFactory<>("name"));
+
+        colStartingPrice.setCellValueFactory(new PropertyValueFactory<>("startingPrice"));
+        colStartingPrice.setCellFactory(col -> new TableCell<>() {
+            @Override
+            protected void updateItem(Long price, boolean empty) {
+                super.updateItem(price, empty);
+                setText(empty || price == null ? null : String.format("%,d $", price));
+            }
+        });
+
+        colCurrentPrice.setCellValueFactory(new PropertyValueFactory<>("currentPrice"));
+        colCurrentPrice.setCellFactory(col -> new TableCell<>() {
+            @Override
+            protected void updateItem(Long price, boolean empty) {
+                super.updateItem(price, empty);
+                setText(empty || price == null ? null : String.format("%,d $", price));
+            }
+        });
+
+        colStatus.setCellValueFactory(new PropertyValueFactory<>("status"));
+
+        // 🔥 LOGIC CỘT SOLD: Nếu status = 'CLOSED' và có currentBidderId != null -> Hiện dấu tích xanh
+        colSold.setCellFactory(column -> new TableCell<>() {
+            private final Label lblCheck = new Label("✓ Đã bán");
+            {
+                lblCheck.setStyle("-fx-text-fill: #2ecc71; -fx-font-weight: bold;");
+            }
+            @Override
+            protected void updateItem(Object item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    Item rowItem = getTableView().getItems().get(getIndex());
+                    if ("CLOSED".equalsIgnoreCase(rowItem.getStatus()) && rowItem.getCurrentBidderId() != null && rowItem.getCurrentBidderId() > 0) {
+                        setGraphic(lblCheck);
+                    } else {
+                        setGraphic(new Label("—"));
+                    }
+                }
+            }
+        });
+
+        // 🔥 CỘT HÀNH ĐỘNG: Tạo nút Modify (Sửa) và DELETE (Xóa) chuyên nghiệp
+        colAction.setCellFactory(param -> new TableCell<>() {
+            private final Button btnModify = new Button("MODIFY");
+            private final Button btnDelete = new Button("DELETE");
+            private final HBox container = new HBox(btnModify, btnDelete);
+            {
+                container.setSpacing(10);
+                container.setAlignment(Pos.CENTER);
+                btnModify.setStyle("-fx-background-color: #3498db; -fx-text-fill: white; -fx-cursor: hand; -fx-background-radius: 5;");
+                btnDelete.setStyle("-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-cursor: hand; -fx-background-radius: 5;");
+
+                btnModify.setOnAction(e -> {
+                    Item selected = getTableView().getItems().get(getIndex());
+                    handleModifyAction(selected);
+                });
+
+                btnDelete.setOnAction(e -> {
+                    Item selected = getTableView().getItems().get(getIndex());
+                    handleDeleteAction(selected);
+                });
+            }
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    Item rowItem = getTableView().getItems().get(getIndex());
+                    String status = rowItem.getStatus() != null ? rowItem.getStatus().toUpperCase() : "";
+
+                    if (!"UNAPPROVED".equals(status)) {
+                        btnModify.setDisable(true);
+                        btnModify.setStyle("-fx-background-color: #bdc3c7; -fx-text-fill: #7f8c8d; -fx-cursor: not-allowed; -fx-background-radius: 5;");
+                    } else {
+                        btnModify.setDisable(false);
+                        btnModify.setStyle("-fx-background-color: #3498db; -fx-text-fill: white; -fx-cursor: hand; -fx-background-radius: 5;");
+                    }
+
+                    setGraphic(container);
+                }
+            }
+        });
+    }
+
+    private void loadSellerProducts() {
+        if (DataSession.getInstance().getLoggedInUser() == null) return;
+
+        Task<List<Item>> task = new Task<>() {
+            @Override
+            protected List<Item> call() throws Exception {
+                Message request = new Message("GET_SELLER_PRODUCTS", DataSession.getInstance().getLoggedInUser().getId());
+                Message response = ClientNetwork.getInstance().sendRequest(request);
+
+                if (response != null && "SUCCESS".equals(response.getStatus())) {
+                    return (List<Item>) response.getData();
+                }
+                return new ArrayList<>();
+            }
+        };
+
+        task.setOnSucceeded(e -> {
+            sellerProductList.setAll(task.getValue());
+            productTable.setItems(sellerProductList);
+            productTable.refresh();
+        });
+
+        new Thread(task).start();
+    }
+
+    private void handleModifyAction(Item item) {
+        String currentStatus = item.getStatus();
+        if (!"UNAPPROVED".equals(currentStatus)) {
+            ViewManager.showAlert(Alert.AlertType.WARNING,
+                    "Không thể chỉnh sửa",
+                    "Sản phẩm '" + item.getName() + "' đang ở trạng thái [" + currentStatus + "]. Bạn chỉ được quyền sửa đổi những sản phẩm chưa được duyệt (UNAPPROVED)!");
+            return;
+        }
+        isEditMode = true;
+        editingItemId = item.getId(); // Giữ lại ID gốc để làm mấu chốt WHERE gửi lên Server khi ấn Save
+
+        // Bơm ngược thông tin chuỗi thô
+        txtTitle.setText(item.getName());
+        txtPrice.setText(String.valueOf(item.getStartingPrice()));
+        txtDescription.setText(item.getDescription());
+        txtLength.setText(String.valueOf(item.getLength()));
+        txtWidth.setText(String.valueOf(item.getWidth()));
+        txtHeight.setText(String.valueOf(item.getHeight()));
+
+        // Bơm ngược Thời gian bắt đầu
+        if (item.getStartTime() != null) {
+            startDatePicker.setValue(item.getStartTime().toLocalDate());
+            startHour.getValueFactory().setValue(item.getStartTime().getHour());
+            startMin.getValueFactory().setValue(item.getStartTime().getMinute());
+            startSec.getValueFactory().setValue(item.getStartTime().getSecond());
+        }
+
+        // Bơm ngược Thời gian kết thúc
+        if (item.getEndTime() != null) {
+            endDatePicker.setValue(item.getEndTime().toLocalDate());
+            endHour.getValueFactory().setValue(item.getEndTime().getHour());
+            endMin.getValueFactory().setValue(item.getEndTime().getMinute());
+            endSec.getValueFactory().setValue(item.getEndTime().getSecond());
+        }
+
+        lblFileName.setText("(Chế độ chỉnh sửa thông tin - Giữ nguyên ảnh cũ nếu không chọn lại)");
+        showAddProduct(); // Quay sang Tab Form
+    }
+
+    private void handleDeleteAction(Item item) {
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION, "Bạn có chắc chắn muốn xóa sản phẩm '" + item.getName() + "'?", ButtonType.YES, ButtonType.NO);
+        confirm.setTitle("Xác nhận hành động xóa");
+        confirm.showAndWait().ifPresent(res -> {
+            if (res == ButtonType.YES) {
+                new Thread(() -> {
+                    Message request = new Message("DELETE_ITEM", item.getId());
+                    Message response = ClientNetwork.getInstance().sendRequest(request);
+
+                    Platform.runLater(() -> {
+                        if (response != null && "SUCCESS".equals(response.getStatus())) {
+                            // Cập nhật nóng UI bằng cách gán status thành DELETED
+                            item.setStatus("DELETED");
+                            productTable.refresh();
+                            ViewManager.showAlert(Alert.AlertType.INFORMATION, "Thành công", "Đã xóa sản phẩm thành công!");
+                        } else {
+                            ViewManager.showAlert(Alert.AlertType.ERROR, "Lỗi", "Không thể xóa sản phẩm vào lúc này!");
+                        }
+                    });
+                }).start();
+            }
+        });
+    }
+
     @FXML
     private void handleSidebarClick(MouseEvent event) {
         // Lấy đúng HBox vừa được bấm chuột vào
@@ -134,6 +350,32 @@ public class SellerController {
 
             handleShowConfiguration(null);
         }
+    }
+
+    private void setupRowFactory() {
+        productTable.setRowFactory(tv -> {
+            TableRow<Item> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (!row.isEmpty() && event.getButton() == MouseButton.PRIMARY) {
+                    Item selected = row.getItem();
+                    String currentStatus = selected.getStatus() != null ? selected.getStatus().toUpperCase() : "";
+
+                    if (currentStatus.equals("PENDING") || currentStatus.equals("OPEN") || currentStatus.equals("CLOSED")) {
+                        productTable.setCursor(Cursor.WAIT);
+
+                        // Đồng bộ lưu thông tin vào Session chung của hệ thống trước khi nhảy cảnh
+                        DataSession.getInstance().setSelectedItem(selected);
+
+                        try {
+                            ViewManager.switchScene(event, "item-view.fxml", "Chi tiết: " + selected.getName());
+                        } finally {
+                            productTable.setCursor(Cursor.DEFAULT);
+                        }
+                    }
+                }
+            });
+            return row;
+        });
     }
 
     // Hàm dọn dẹp trạng thái màu sắc khi chuyển đổi qua lại giữa các tab
@@ -307,14 +549,42 @@ public class SellerController {
                 }
             }
 
-            UploadItemTask task=new UploadItemTask(newItem,selectedFiles,categoryName);
+            UploadItemTask task;
+            if (isEditMode) {
+                newItem.setId(editingItemId);
+                task=new UploadItemTask(newItem, selectedFiles, categoryName, true);
+            }else {
+                // NẾU LÀ THÊM MỚI TOÀN CỤC: Gọi Task đẩy luồng tải ảnh Cloudinary của bạn lên
+                task = new UploadItemTask(newItem, selectedFiles, categoryName);
+            }
+            progressbar.setVisible(true);
+            progressbar.progressProperty().bind(task.progressProperty());
+
+            task.setOnSucceeded(e -> {
+                progressbar.setVisible(false);
+                progressbar.progressProperty().unbind();
+
+                Message response = task.getValue();
+                if (response != null && "SUCCESS".equals(response.getStatus())) {
+                    // Không dùng Alert gây gián đoạn màn hình, nạp lại dữ liệu và chuyển tab nhẹ nhàng
+                    loadSellerProducts();
+                    clearFields();
+                    showMyProducts();
+                } else {
+                    ViewManager.showAlert(Alert.AlertType.ERROR, "Thất bại",
+                            response != null ? (String) response.getData() : "Lỗi kết nối Server!");
+                }
+            });
+
+            task.setOnFailed(e -> {
+                progressbar.setVisible(false);
+                progressbar.progressProperty().unbind();
+                ViewManager.showAlert(Alert.AlertType.ERROR, "Lỗi", "Gặp sự cố hệ thống khi xử lý!");
+            });
 
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
-
-            clearFields();
-            showMyProducts();
         } catch (NumberFormatException e) {
             ViewManager.showAlert(Alert.AlertType.ERROR, "Lỗi định dạng", "Giá và kích thước phải là số hợp lệ!");
         } catch (Exception e) {

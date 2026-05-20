@@ -143,7 +143,9 @@
                     <VBox prefHeight="761.0" prefWidth="939.0" style="-fx-background-color: white; -fx-background-radius: 15; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 15, 0, 0, 5); -fx-padding: 15;" VBox.vgrow="ALWAYS">
                         <TableView fx:id="productTable" prefHeight="616.0" prefWidth="909.0" style="-fx-background-color: transparent;" styleClass="modern-table" stylesheets="@../css/table.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1">
                             <columns>
-                                <TableColumn fx:id="colName" prefWidth="250.0" text="Name" />
+                                <TableColumn fx:id="colSn" prefWidth="60.0" style="-fx-alignment: CENTER;" text="#" />
+
+                                <TableColumn fx:id="colName" prefWidth="190.0" style="-fx-alignment: CENTER;" text="Name" />
 
                                 <TableColumn fx:id="colStartingPrice" prefWidth="130.0" style="-fx-alignment: CENTER;" text="Starting Price" />
 
