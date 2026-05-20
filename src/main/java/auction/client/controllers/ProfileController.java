@@ -59,11 +59,6 @@ public class ProfileController  {
 
     public void initialize() {
         // hiện gạch xanh
-        if (mainScrollPane != null) {
-            mainScrollPane.addEventFilter(javafx.scene.input.ScrollEvent.ANY, event -> {
-                event.consume(); // "Nuốt" sự kiện cuộn, khóa cứng khung nhìn
-            });
-        }
         allIndicators = Arrays.asList(accountIndicator, addressesIndicator, paymentIndicator,emailIndicator,VeriIndicator);
         updateSidebarUI(btnAccount, accountIndicator);
         hideAllPanes(paneAccount); //
