@@ -1,180 +1,10 @@
-/* =========================================
-   ADMIN VIEW STYLES
-   ========================================= */
+/* ==========================================================================
+   CSS CHO ADMIN VIEW - PHONG CÁCH SÁNG SỦA (LIGHT THEME)
+   ========================================================================== */
 
-/* Sidebar Menu Buttons */
-.admin-menu-btn {
-    -fx-background-color: transparent;
-    -fx-text-fill: #88a1b9;
-    -fx-font-size: 16px;
-    -fx-padding: 12 15;
-    -fx-cursor: hand;
-    -fx-background-radius: 10;
-    -fx-transition: 0.3s;
-}
-
-.admin-menu-btn:hover {
-    -fx-background-color: rgba(0, 210, 255, 0.1);
-    -fx-text-fill: #00d2ff;
-}
-
-.admin-menu-btn-active {
-    -fx-background-color: linear-gradient(to right, #00d2ff, #3a7bd5);
-    -fx-text-fill: white;
-    -fx-font-size: 16px;
-    -fx-font-weight: bold;
-    -fx-padding: 12 15;
-    -fx-background-radius: 10;
-}
-
-/* Back Button */
-.back-button {
-    -fx-background-color: rgba(255, 255, 255, 0.1);
-    -fx-text-fill: #00d2ff;
-    -fx-border-color: #00d2ff;
-    -fx-border-radius: 10;
-    -fx-background-radius: 10;
-    -fx-cursor: hand;
-    -fx-transition: all 0.3s ease-in-out;
-}
-
-.back-button:hover {
-    -fx-background-color: #00d2ff;
-    -fx-text-fill: white;
-    -fx-effect: dropshadow(gaussian, #00d2ff, 15, 0, 0, 0);
-}
-
-/* Search Field */
-.admin-search-field {
-    -fx-background-color: rgba(255, 255, 255, 0.15);
-    -fx-text-fill: white;
-    -fx-prompt-text-fill: #adb5bd;
-    -fx-background-radius: 20;
-    -fx-border-color: #00d2ff;
-    -fx-border-radius: 20;
-    -fx-padding: 0 15;
-    -fx-transition: all 0.3s;
-}
-
-.admin-search-field:focused {
-    -fx-background-color: rgba(255, 255, 255, 0.2);
-    -fx-border-color: #00d2ff;
-    -fx-effect: dropshadow(three-pass-box, rgba(0, 210, 255, 0.5), 10, 0, 0, 0);
-}
-
-/* Admin Table */
-.admin-table {
-    -fx-background-color: rgba(255, 255, 255, 0.07);
-    -fx-background-radius: 15;
-    -fx-border-color: rgba(255, 255, 255, 0.1);
-    -fx-padding: 5;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.4), 10, 0, 0, 0);
-}
-
-.admin-table .column-header-background {
-    -fx-background-color: transparent;
-}
-
-.admin-table .column-header {
-    -fx-background-color: rgba(0, 210, 255, 0.2);
-    -fx-size: 45;
-}
-
-.admin-table .column-header .label {
-    -fx-text-fill: #00d2ff;
-    -fx-font-weight: bold;
-}
-
-.admin-table .table-row-cell {
-    -fx-background-color: transparent;
-    -fx-text-fill: white;
-    -fx-border-color: rgba(255, 255, 255, 0.05);
-    -fx-border-width: 0 0 1 0;
-}
-
-.admin-table .table-row-cell:filled:hover {
-    -fx-background-color: rgba(255, 255, 255, 0.1);
-}
-
-.admin-table .table-cell {
-    -fx-text-fill: white;
-    -fx-font-size: 14px;
-}
-
-.table-row-cell:hover {
-    -fx-background-color: rgba(0, 210, 255, 0.15);
-    -fx-text-fill: white;
-}
-
-/* Action Buttons */
-.btn-approve {
-    -fx-background-color: linear-gradient(to right, #00b09b, #96c93d);
-    -fx-text-fill: white;
-    -fx-font-weight: bold;
-    -fx-font-size: 14px;
-    -fx-background-radius: 8;
-    -fx-cursor: hand;
-    -fx-effect: dropshadow(gaussian, rgba(0, 176, 155, 0.5), 10, 0, 0, 0);
-}
-
-.btn-approve:hover {
-    -fx-scale-x: 1.05;
-    -fx-scale-y: 1.05;
-    -fx-effect: dropshadow(gaussian, #00b09b, 15, 0, 0, 0);
-}
-
-.btn-lock {
-    -fx-background-color: linear-gradient(to right, #ff416c, #ff4b2b);
-    -fx-text-fill: white;
-    -fx-font-weight: bold;
-    -fx-font-size: 14px;
-    -fx-background-radius: 8;
-    -fx-cursor: hand;
-    -fx-effect: dropshadow(gaussian, rgba(255, 65, 108, 0.5), 10, 0, 0, 0);
-}
-
-.btn-lock:hover {
-    -fx-scale-x: 1.05;
-    -fx-scale-y: 1.05;
-    -fx-effect: dropshadow(gaussian, #ff416c, 15, 0, 0, 0);
-}
-
-/* Thiết kế chung cho thẻ Card */
-.metric-card {
-    -fx-background-color: rgba(255, 255, 255, 0.05); /* Trắng mờ */
-    -fx-background-radius: 15;
-    -fx-border-radius: 15;
-    -fx-padding: 20;
-    -fx-border-color: rgba(255, 255, 255, 0.1);
-    -fx-border-width: 1;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 10, 0, 0, 5);
-}
-
-.metric-card:hover {
-    -fx-background-color: rgba(255, 255, 255, 0.1);
-    -fx-background-radius: 15;
-    -fx-cursor: hand;
-}
-
-/* Vòng tròn nhỏ chứa Icon */
-.icon-circle {
-    -fx-font-size: 20;
-    -fx-background-color: rgba(255, 255, 255, 0.1);
-    -fx-background-radius: 50;
-    -fx-min-width: 40;
-    -fx-min-height: 40;
-    -fx-alignment: center;
-}
-
-/* Kiểu chữ cho nội dung */
-.card-subtitle {
-    -fx-text-fill: #bdc3c7;
-    -fx-font-size: 14;
-    -fx-font-weight: bold;
-}
-
+/* Thẻ giá trị chính trong các khối thống kê (Ví dụ: 125,430$) */
 .card-value {
-    -fx-text-fill: white;
+    -fx-text-fill: #1e293b;       /* Chuyển sang màu xanh đen đậm cao cấp */
     -fx-font-size: 28;
     -fx-font-weight: bold;
     -fx-padding: 15 0 5 0;
@@ -182,39 +12,44 @@
 
 /* Các nhãn thông báo xu hướng */
 .card-trend-up {
-    -fx-text-fill: #2ecc71;
+    -fx-text-fill: #16a34a;       /* Màu xanh lá tươi chuẩn UI sáng */
     -fx-font-size: 12;
 }
 
 .card-trend-neutral {
-    -fx-text-fill: #95a5a6;
+    -fx-text-fill: #ff9800;       /* Đổi sang màu cam/vàng nhẹ cho dễ nhìn trên nền trắng */
     -fx-font-size: 12;
 }
 
+/* Khung bọc ngoài của các biểu đồ */
 .chart-card {
-    -fx-background-color: rgba(255, 255, 255, 0.05);
+    -fx-background-color: #ffffff; /* Nền trắng tinh khôi */
     -fx-background-radius: 15;
     -fx-border-radius: 15;
     -fx-padding: 20;
-    -fx-border-color: rgba(255, 255, 255, 0.1);
+    -fx-border-color: #e2e8f0;    /* Viền xám mờ phân cách nhẹ nhàng */
     -fx-border-width: 1;
+    /* Thêm hiệu ứng đổ bóng mờ nhẹ để khối chart nổi bật lên */
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.04), 10, 0, 0, 4);
 }
 
+/* Tiêu đề của biểu đồ (Ví dụ: Revenue Trend) */
 .chart-title {
-    -fx-text-fill: white;
+    -fx-text-fill: #1e293b;       /* Chuyển từ trắng sang màu chữ tối */
     -fx-font-size: 18;
     -fx-font-weight: bold;
     -fx-padding: 0 0 10 0;
 }
 
-/* Đổi màu chữ cho các trục tọa độ */
+/* Đổi màu chữ cho các con số/tọa độ trên trục đồ thị */
 .axis {
-    -fx-tick-label-fill: #b2b2b2;
+    -fx-tick-label-fill: #64748b;  /* Màu chữ tọa độ xám đậm tinh tế */
     -fx-label-padding: 5;
 }
 
+/* Tên nhãn của trục (Ví dụ: Revenue ($) hoặc Days of Week) */
 .axis-label {
-    -fx-text-fill: #00d2ff;
+    -fx-text-fill: #1a73e8;       /* Đổi từ màu Cyan sáng sang xanh thương hiệu Google */
 }
 
 /* Tùy chỉnh màu nền của lưới biểu đồ */
@@ -222,23 +57,54 @@
     -fx-background-color: transparent;
 }
 
+/* Đường lưới sọc dọc và ngang của biểu đồ */
 .chart-vertical-grid-lines, .chart-horizontal-grid-lines {
-    -fx-stroke: rgba(255, 255, 255, 0.1);
+    -fx-stroke: #f1f5f9;          /* Đổi từ vệt mờ trắng sang vệt xám cực nhẹ */
 }
 
 /* Container của phần chú thích (Legend) */
 .chart-legend {
-    -fx-background-color:  rgba(255, 255, 255, 0.05); /* Nền mờ cho phần chú thích */
+    -fx-background-color: #f8fafc; /* Nền xám trắng nhạt cho khối chú thích */
     -fx-padding: 10;
     -fx-background-radius: 10;
-    /* Để phần chú thích nằm ngang, không phải dọc */
     -fx-orientation: horizontal;
     -fx-alignment: CENTER;
 }
 
-/* Các nhãn chữ trong phần chú thích */
+/* Các nhãn chữ trong phần chú thích (Ví dụ tên các đường màu) */
 .chart-legend-item {
-    -fx-text-fill: white; /* Đổi màu chữ chú thích thành trắng phù hợp nền tối */
+    -fx-text-fill: #334155;       /* Sửa chữ chú thích từ trắng thành xám than */
     -fx-font-size: 13;
 }
+/* Trạng thái mặc định của các nút (Chưa nhấn) */
+.admin-menu-btn {
+    -fx-background-color: transparent; /* Nền trong suốt để lộ màu trắng của Sidebar */
+    -fx-background-radius: 0 16 0 0;   /* Bo sẵn góc trên-phải để khi hover/active không bị lỗi khung */
+    -fx-cursor: hand;
+}
+/* Hiệu ứng chữ bên trong nút chưa nhấn */
+.admin-menu-btn .label {
+    -fx-text-fill: #495057;            /* Chữ màu xám đậm thanh lịch */
+    -fx-font-weight: normal;
+    -fx-font-size: 14;
+}
+/* Hiệu ứng đổi màu nhẹ khi rê chuột qua (Hover) cho sinh động */
+.admin-menu-btn:hover {
+    -fx-background-color: #f8fafc;
+}
 
+
+/* TRẠNG THÁI ACTIVE: NỀN GRADIENT XANH NHẸ NHIỀU TRẮNG & BO 1 GÓC TRÊN-PHẢI */
+.admin-menu-btn-active {
+    /* Đổ màu từ xanh nhạt bạn thích mờ dần sang trắng tinh khôi */
+    -fx-background-color: linear-gradient(to right, #e8f0fe, #ffffff);
+    /* Chỉ bo tròn duy nhất góc Trên - Phải đúng ý bạn */
+    -fx-background-radius: 0 16 0 0;
+    -fx-cursor: default;
+}
+/* Hiệu ứng chữ bên trong nút ĐANG ĐƯỢC CHỌN */
+.admin-menu-btn-active .label {
+    -fx-text-fill: #1a73e8;            /* Chuyển chữ sang màu xanh thương hiệu nổi bật */
+    -fx-font-weight: bold;             /* Làm đậm chữ lên để tạo điểm nhấn */
+    -fx-font-size: 14;
+}

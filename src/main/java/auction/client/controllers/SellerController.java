@@ -13,6 +13,7 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.event.ActionEvent;
 import javafx.stage.FileChooser;
@@ -54,18 +55,23 @@ public class SellerController {
     private VBox vboxMyProducts;
 
     // Khai báo các nút bấm menu bên trái để đổi style khi click
-    @FXML
-    private Button btnNavAdd;
+    // 1. Khai báo chuẩn kiểu dữ liệu HBox theo FXML mới
+    @FXML private HBox btnNavMyProducts;
+    @FXML private HBox btnNavAdd;
+    @FXML private HBox btnNavCustomers;
+    @FXML private HBox btnNavConfig;
 
-    @FXML
-    private Button btnNavMyProducts;
+    // 2. Khai báo các vệt dọc định vị
+    @FXML private Region myProductsIndicator;
+    @FXML private Region addIndicator;
+    @FXML private Region customersIndicator;
+    @FXML private Region configIndicator;
 
-    @FXML
-    private Button btnNavCustomers;
-
-    @FXML
-    private Button btnNavConfig;
-
+    // 3. Khai báo các nhãn Label để đổi màu chữ động
+    @FXML private Label lblMyProducts;
+    @FXML private Label lblAddProduct;
+    @FXML private Label lblCustomers;
+    @FXML private Label lblConfig;
     @FXML
     private Label lblFileName;
 
@@ -91,7 +97,65 @@ public class SellerController {
         startSec.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, 0));
         endSec.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, 0));
     }
+    @FXML
+    private void handleSidebarClick(MouseEvent event) {
+        // Lấy đúng HBox vừa được bấm chuột vào
+        HBox clickedBox = (HBox) event.getSource();
 
+        // Bước A: Đưa tất cả các Tab về trạng thái trống (Xóa màu xanh cũ)
+        resetAllSidebarItems();
+
+        // Bước B: Kích hoạt hiệu ứng màu sắc cho Tab được chọn
+        if (clickedBox == btnNavMyProducts) {
+            btnNavMyProducts.setStyle("-fx-background-color: #e8f0fe; -fx-background-radius: 8;"); // Nền xanh nhạt bạn thích
+            myProductsIndicator.setVisible(true); // Hiện vệt xanh đậm
+            lblMyProducts.setStyle("-fx-text-fill: #1a73e8; -fx-font-weight: bold;"); // Chữ xanh đậm bold
+
+            handleShowMyProducts(null); // Gọi hàm hiển thị giao diện của bạn
+
+        } else if (clickedBox == btnNavAdd) {
+            btnNavAdd.setStyle("-fx-background-color: #e8f0fe; -fx-background-radius: 8;");
+            addIndicator.setVisible(true);
+            lblAddProduct.setStyle("-fx-text-fill: #1a73e8; -fx-font-weight: bold;");
+
+            handleShowAddProduct(null);
+
+        } else if (clickedBox == btnNavCustomers) {
+            btnNavCustomers.setStyle("-fx-background-color: #e8f0fe; -fx-background-radius: 8;");
+            customersIndicator.setVisible(true);
+            lblCustomers.setStyle("-fx-text-fill: #1a73e8; -fx-font-weight: bold;");
+
+            handleShowCustomers(null);
+
+        } else if (clickedBox == btnNavConfig) {
+            btnNavConfig.setStyle("-fx-background-color: #e8f0fe; -fx-background-radius: 8;");
+            configIndicator.setVisible(true);
+            lblConfig.setStyle("-fx-text-fill: #1a73e8; -fx-font-weight: bold;");
+
+            handleShowConfiguration(null);
+        }
+    }
+
+    // Hàm dọn dẹp trạng thái màu sắc khi chuyển đổi qua lại giữa các tab
+    private void resetAllSidebarItems() {
+        // Reset nền HBox
+        btnNavMyProducts.setStyle("-fx-background-color: transparent;");
+        btnNavAdd.setStyle("-fx-background-color: transparent;");
+        btnNavCustomers.setStyle("-fx-background-color: transparent;");
+        btnNavConfig.setStyle("-fx-background-color: transparent;");
+
+        // Ẩn toàn bộ các vệt màu dọc
+        myProductsIndicator.setVisible(false);
+        addIndicator.setVisible(false);
+        customersIndicator.setVisible(false);
+        configIndicator.setVisible(false);
+
+        // Trả chữ về màu xám thường thanh lịch
+        lblMyProducts.setStyle("-fx-text-fill: #495057; -fx-font-weight: normal;");
+        lblAddProduct.setStyle("-fx-text-fill: #495057; -fx-font-weight: normal;");
+        lblCustomers.setStyle("-fx-text-fill: #495057; -fx-font-weight: normal;");
+        lblConfig.setStyle("-fx-text-fill: #495057; -fx-font-weight: normal;");
+    }
     @FXML
     private void handleShowAddProduct(ActionEvent event) {
         showAddProduct();
@@ -135,7 +199,7 @@ public class SellerController {
         setActiveButton(btnNavMyProducts);
     }
 
-    private void setActiveButton(Button activeBtn) {
+    private void setActiveButton(HBox activeBtn) {
         // Reset all buttons to inactive state
         btnNavAdd.setStyle("-fx-background-color: transparent; -fx-text-fill: #bdc3c7;");
         btnNavMyProducts.setStyle("-fx-background-color: transparent; -fx-text-fill: #bdc3c7;");
@@ -143,7 +207,7 @@ public class SellerController {
         btnNavConfig.setStyle("-fx-background-color: transparent; -fx-text-fill: #bdc3c7;");
 
         // Set active button style
-        activeBtn.setStyle("-fx-background-color: #2980b9; -fx-text-fill: white;");
+        activeBtn.setStyle("-fx-background-color:  #e8f0fe; -fx-text-fill:  #1a73e8; -fx-font: bold" );
     }
     @FXML
     private void handleBrowseFiles(ActionEvent event) {
