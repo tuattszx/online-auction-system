@@ -90,24 +90,25 @@ public class CategoryDaoImpl implements CategoryDao {
     }
 
     @Override
-    public Category getCategoryByName(String name) throws SQLException {
-        String sql = "SELECT * FROM CATEGORIES WHERE name = ?";
+    public List<Category> getCategoryByName(List<String> name) throws SQLException {
+        List<Category> list = new ArrayList<>();
+        if (name == null || name.isEmpty()) return list;
+
+        String placeholders = String.join(",", name.stream().map(n -> "?").toArray(String[]::new));
+        String sql = "SELECT * FROM CATEGORIES WHERE name IN (" + placeholders + ") ORDER BY name ASC";
 
         try (Connection conn = DatabaseManager.getInstance().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setString(1, name);
+            for (int i = 0; i < name.size(); i++) {
+                pstmt.setString(i + 1, name.get(i));
+            }
             try (ResultSet rs = pstmt.executeQuery()) {
-                if (rs.next()) {
-                    Category cat = new Category();
-                    cat.setId(rs.getInt("id"));
-                    cat.setName(rs.getString("name"));
-                    cat.setDescription(rs.getString("description"));
-                    return cat;
+                while (rs.next()) {
+                    list.add(mapResultSetToCategory(rs));
                 }
             }
         }
-        return null;
+        return list;
     }
 
     private Category mapResultSetToCategory(ResultSet rs) throws SQLException {

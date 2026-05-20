@@ -205,7 +205,7 @@ public class ClientHandler implements Runnable {
             Object[] payload = (Object[]) msg.getData();
             Item item = (Item) payload[0];
             List<String> imageUrls = (List<String>) payload[1];
-            String categoryName = (String) payload[2];
+            List<String> categoryName = (List<String>) payload[2];
 
             // 2. Xử lý lưu các link ảnh vào đối tượng Item
             for (int i = 0; i < imageUrls.size(); i++) {
@@ -227,12 +227,11 @@ public class ClientHandler implements Runnable {
             }
 
             // 3. Tìm Category object từ Database bằng tên
-            Category category = categoryDao.getCategoryByName(categoryName);
-            if (category != null) {
-                item.addCategories(category);
+            if (categoryName!=null) {
+                List<Category> category = categoryDao.getCategoryByName(categoryName);
+                item.setCategories(category);
+                System.out.println("Dang xu ly category: " + categoryName);
             }
-            System.out.println("Dang xu ly category: " + categoryName);
-
             // 4. Gọi ItemDao để lưu trọn bộ Item (bao gồm cả ảnh và category) vào DB
             // Hàm addItem của bạn đã có Transaction (Rollback) nên cực kỳ an toàn
             boolean isSuccess = itemDao.add(item);
@@ -698,7 +697,7 @@ public class ClientHandler implements Runnable {
             Object[] payload = (Object[]) msg.getData();
             Item item = (Item) payload[0];
             List<String> imageUrls = (List<String>) payload[1];
-            String categoryName = (String) payload[2];
+            List<String> categoryName = (List<String>) payload[2];
 
             if (imageUrls != null && !imageUrls.isEmpty()) {
                 for (int i = 0; i < imageUrls.size(); i++) {
@@ -709,11 +708,9 @@ public class ClientHandler implements Runnable {
                 }
             }
 
-            if (categoryName != null && !categoryName.trim().isEmpty()) {
-                Category category = categoryDao.getCategoryByName(categoryName);
-                if (category != null) {
-                    item.addCategories(category);
-                }
+            if (categoryName != null) {
+                List<Category> category = categoryDao.getCategoryByName(categoryName);
+                item.setCategories(category);
             }
 
             boolean isSuccess = itemDao.update(item);

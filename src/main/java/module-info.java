@@ -16,6 +16,8 @@ module auction {
     // Cho phép JavaFX truy cập vào Controller và View
     opens auction.client.controllers to javafx.fxml;
     opens auction.view to javafx.fxml;
+    opens auction.common.model.items to javafx.base, javafx.fxml;
+    opens auction.common.model.categories to javafx.base, javafx.fxml;
 
     // Nếu bạn có dùng các class Model trong FXML, hãy mở thêm package đó:
     // opens auction.common.model to javafx.fxml;

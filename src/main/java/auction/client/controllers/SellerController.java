@@ -5,6 +5,7 @@ import auction.client.services.UploadItemTask;
 import auction.client.session.DataSession;
 import auction.client.utils.ImageService;
 import auction.common.message.Message;
+import auction.common.model.categories.Category;
 import auction.common.model.items.Item;
 import auction.server.utils.CloudinaryUtil;
 import javafx.animation.FadeTransition;
@@ -164,7 +165,7 @@ public class SellerController {
 
         // 🔥 LOGIC CỘT SOLD: Nếu status = 'CLOSED' và có currentBidderId != null -> Hiện dấu tích xanh
         colSold.setCellFactory(column -> new TableCell<>() {
-            private final Label lblCheck = new Label("✓ Đã bán");
+            private final Label lblCheck = new Label("✓");
             {
                 lblCheck.setStyle("-fx-text-fill: #2ecc71; -fx-font-weight: bold;");
             }
@@ -248,6 +249,7 @@ public class SellerController {
             sellerProductList.setAll(task.getValue());
             productTable.setItems(sellerProductList);
             productTable.refresh();
+            productTable.requestLayout();
         });
 
         new Thread(task).start();
@@ -271,6 +273,18 @@ public class SellerController {
         txtLength.setText(String.valueOf(item.getLength()));
         txtWidth.setText(String.valueOf(item.getWidth()));
         txtHeight.setText(String.valueOf(item.getHeight()));
+
+        categoryComboBox.getCheckModel().clearChecks();
+
+        if (item.getCategories() != null && !item.getCategories().isEmpty()) {
+            for (Category cat : item.getCategories()) {
+                String catName = cat.getName();
+                int index = categoryComboBox.getItems().indexOf(catName);
+                if (index >= 0) {
+                    categoryComboBox.getCheckModel().check(index);
+                }
+            }
+        }
 
         // Bơm ngược Thời gian bắt đầu
         if (item.getStartTime() != null) {
@@ -330,13 +344,20 @@ public class SellerController {
             myProductsIndicator.setVisible(true); // Hiện vệt xanh đậm
             lblMyProducts.setStyle("-fx-text-fill: #1a73e8; -fx-font-weight: bold;"); // Chữ xanh đậm bold
 
-            handleShowMyProducts(null); // Gọi hàm hiển thị giao diện của bạn
+            isEditMode = false;
+            editingItemId = -1;
+            showMyProducts();// Gọi hàm hiển thị giao diện của bạn
 
+            handleShowMyProducts(null);
         } else if (clickedBox == btnNavAdd) {
             btnNavAdd.setStyle("-fx-background-color: #e8f0fe; -fx-background-radius: 8;");
             addIndicator.setVisible(true);
             lblAddProduct.setStyle("-fx-text-fill: #1a73e8; -fx-font-weight: bold;");
 
+            clearFields();
+            isEditMode = false;
+            editingItemId = -1;
+            showMyProducts();
             handleShowAddProduct(null);
 
         } else if (clickedBox == btnNavCustomers) {
@@ -510,11 +531,13 @@ public class SellerController {
             String description = txtDescription.getText();
             List<String> checkedCategories = categoryComboBox.getCheckModel().getCheckedItems();
 
-            // Nối các mục lại thành chuỗi, cách nhau bằng dấu phẩy (Ví dụ: "Art, Jewelry")
-            String categoryName = String.join(", ", checkedCategories);
             // 2. Validation (Kiểm tra dữ liệu đầu vào)
-            if (name.isEmpty() || priceText.isEmpty() || selectedFiles == null || categoryName.isEmpty()) {
-                ViewManager.showAlert(Alert.AlertType.WARNING, "Thiếu thông tin", "Vui lòng nhập Tên, Giá và chọn Ảnh sản phẩm!");
+            if (name.isEmpty() || priceText.isEmpty() || checkedCategories.isEmpty()) {
+                ViewManager.showAlert(Alert.AlertType.WARNING, "Thiếu thông tin", "Vui lòng nhập Tên, Giá khởi điểm và chọn ít nhất một danh mục!");
+                return;
+            }
+            if (!isEditMode && (selectedFiles == null || selectedFiles.isEmpty())) {
+                ViewManager.showAlert(Alert.AlertType.WARNING, "Thiếu thông tin", "Vui lòng chọn ảnh cho sản phẩm mới!");
                 return;
             }
 
@@ -557,10 +580,10 @@ public class SellerController {
             UploadItemTask task;
             if (isEditMode) {
                 newItem.setId(editingItemId);
-                task=new UploadItemTask(newItem, selectedFiles, categoryName, true);
+                task=new UploadItemTask(newItem, selectedFiles, checkedCategories, true);
             }else {
                 // NẾU LÀ THÊM MỚI TOÀN CỤC: Gọi Task đẩy luồng tải ảnh Cloudinary của bạn lên
-                task = new UploadItemTask(newItem, selectedFiles, categoryName);
+                task = new UploadItemTask(newItem, selectedFiles, checkedCategories);
             }
             progressbar.setVisible(true);
             progressbar.progressProperty().bind(task.progressProperty());
@@ -605,6 +628,8 @@ public class SellerController {
      */
     @FXML
     private void clearFields() {
+        isEditMode=false;
+        editingItemId=-1;
         txtTitle.clear();
         txtPrice.clear();
         txtDescription.clear();
