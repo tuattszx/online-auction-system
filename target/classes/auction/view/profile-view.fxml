@@ -150,7 +150,7 @@
                         </HBox>
                      </children>
                   </VBox>
-                  <ScrollPane fx:id="mainScrollPane" fitToWidth="true" hbarPolicy="NEVER" maxWidth="1.7976931348623157E308" prefHeight="732.0" prefWidth="455.0" style="-fx-background-color: transparent; -fx-viewport-fill: transparent; -fx-border-color: transparent; -fx-border-width: 0; -fx-box-border: transparent;" vbarPolicy="NEVER" HBox.hgrow="ALWAYS">
+                  <ScrollPane fx:id="mainScrollPane" fitToWidth="true" hbarPolicy="NEVER" maxWidth="1.7976931348623157E308" pannable="true" prefHeight="732.0" prefWidth="455.0" style="-fx-background-color: transparent; -fx-viewport-fill: transparent; -fx-border-color: transparent; -fx-border-width: 0; -fx-box-border: transparent;" stylesheets="@../css/labelstatus.css" vbarPolicy="ALWAYS" HBox.hgrow="ALWAYS">
                      <content>
                         <StackPane prefHeight="585.0" style="-fx-border-radius: 15; -fx-background-radius: 15; -fx-background-color: white;">
                            <children>
