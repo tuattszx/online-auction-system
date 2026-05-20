@@ -70,9 +70,13 @@ public class SellerController {
     private Label lblFileName;
 
     private List<File> selectedFiles;
+    @FXML
+    private HeaderMenuController headerMenuController;
 
     @FXML
     public void initialize() {
+        headerMenuController.resetText();
+        headerMenuController.hideSearchBar();
         showMyProducts();
         progressbar.setVisible(false);
         // Cấu hình cho Giờ (0 - 23)

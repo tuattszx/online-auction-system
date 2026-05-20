@@ -110,6 +110,9 @@ public class HeaderMenuController {
             searchBar.setManaged(false); // Dòng này cực kỳ quan trọng: nó giúp các thành phần khác tự động tràn vào lấp chỗ trống, không để lại một khoảng trắng vô duyên.
         }
     }
+    public void resetText(){
+        lbsell.setText("Bidder");
+    }
 
     private void updateBadgeUI() {
         if (DataSession.getInstance().getUnreadNotificationCount() > 0) {

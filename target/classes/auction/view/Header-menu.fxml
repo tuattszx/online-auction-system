@@ -52,7 +52,7 @@
             </children>
         </HBox>
         <Region prefHeight="99.0" prefWidth="0.0" HBox.hgrow="ALWAYS" />
-        <Label fx:id="lbsell" onMouseClicked="#onSellerClick" prefHeight="28.0" prefWidth="26.0" style="-fx-font-weight: bold; -fx-cursor: hand;" text="%mainview.label.sell" textFill="#0052ff">
+        <Label fx:id="lbsell" onMouseClicked="#onSellerClick" prefHeight="28.0" prefWidth="75.0" style="-fx-font-weight: bold; -fx-cursor: hand;" text="%mainview.label.sell" textFill="#0052ff">
             <font>
                 <Font size="14.0" />
             </font>
