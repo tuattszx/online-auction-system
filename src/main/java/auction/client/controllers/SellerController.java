@@ -27,6 +27,7 @@ import javafx.event.ActionEvent;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import org.controlsfx.control.CheckComboBox;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,7 +37,8 @@ import java.util.List;
 public class SellerController {
 
     @FXML  TextField txtTitle;
-    @FXML private ComboBox<String> categoryComboBox;
+    @FXML
+    private CheckComboBox<String> categoryComboBox;
     @FXML private TextField txtHeight;
     @FXML private TextField txtLength;
     @FXML private TextField txtWidth;
@@ -102,6 +104,7 @@ public class SellerController {
 
     @FXML
     public void initialize() {
+        categoryComboBox.getItems().addAll("Art", "Interiors", "Jewelry", "Watches", "Fashion", "Coins", "Cars", "Wine", "Books");
         headerMenuController.resetText();
         headerMenuController.hideSearchBar();
         setupTableColumns();
@@ -505,10 +508,12 @@ public class SellerController {
             String name = txtTitle.getText().trim();
             String priceText = txtPrice.getText().trim();
             String description = txtDescription.getText();
-            String categoryName = categoryComboBox.getValue(); // Lấy từ ComboBox
+            List<String> checkedCategories = categoryComboBox.getCheckModel().getCheckedItems();
 
+            // Nối các mục lại thành chuỗi, cách nhau bằng dấu phẩy (Ví dụ: "Art, Jewelry")
+            String categoryName = String.join(", ", checkedCategories);
             // 2. Validation (Kiểm tra dữ liệu đầu vào)
-            if (name.isEmpty() || priceText.isEmpty() || selectedFiles == null) {
+            if (name.isEmpty() || priceText.isEmpty() || selectedFiles == null || categoryName.isEmpty()) {
                 ViewManager.showAlert(Alert.AlertType.WARNING, "Thiếu thông tin", "Vui lòng nhập Tên, Giá và chọn Ảnh sản phẩm!");
                 return;
             }
@@ -609,7 +614,7 @@ public class SellerController {
         txtWeight.clear();
         startDatePicker.setValue(null);
         endDatePicker.setValue(null);
-        categoryComboBox.setValue(null);
+        categoryComboBox.getCheckModel().clearChecks();
         lblFileName.setText("Chưa chọn file");
         selectedFiles = null;
         startHour.getValueFactory().setValue(0);

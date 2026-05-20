@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.String?>
 <?import java.net.URL?>
-<?import javafx.collections.FXCollections?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ProgressBar?>
@@ -25,14 +22,11 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import org.controlsfx.control.CheckComboBox?>
 
 <BorderPane prefHeight="885.0" prefWidth="1225.0" style="-fx-background-color: #f4f4f4;" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auction.client.controllers.SellerController">
     <stylesheets>
-        <URL value="@../css/style.css" />
-        <URL value="@../css/theme.css" />
-        <URL value="@../css/common.css" />
-        <URL value="@../css/components.css" />
-        <URL value="@../css/profile.css" />
+        <URL value="@../css/addproduct.css" />
     </stylesheets>
 
 
@@ -174,7 +168,7 @@
                         <Label style="-fx-text-fill: #636e72; -fx-font-size: 14px;" text="Vui lòng điền đầy đủ thông tin để bắt đầu phiên đấu giá" />
                     </VBox>
 
-                    <GridPane hgap="20" style="-fx-background-color: white; -fx-padding: 30; -fx-background-radius: 15; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 15, 0, 0, 5);" vgap="20">
+                    <GridPane hgap="20" style="-fx-background-color: white; -fx-padding: 30; -fx-background-radius: 15; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 15, 0, 0, 5);" stylesheets="@../css/addproduct.css" vgap="20">
                         <columnConstraints>
                             <ColumnConstraints percentWidth="50" />
                             <ColumnConstraints percentWidth="50" />
@@ -185,23 +179,10 @@
                             <TextField fx:id="txtTitle" prefHeight="40" promptText="%sellerdemo.textfield.ProductName" style="-fx-background-radius: 8; -fx-border-color: #dee2e6; -fx-border-radius: 8; -fx-background-color: white;" />
                         </VBox>
 
-                        <VBox spacing="8" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                        <VBox prefHeight="48.0" prefWidth="407.0" spacing="8" GridPane.columnIndex="1" GridPane.rowIndex="0">
                             <Label style="-fx-font-weight: bold; -fx-text-fill: #444;" text="%sellerdemo.label.category" />
-                            <ComboBox fx:id="categoryComboBox" prefHeight="40" prefWidth="Infinity" promptText="%sellerdemo.combobox.SelectCategory" style="-fx-background-radius: 8; -fx-border-color: #dee2e6; -fx-border-radius: 8; -fx-background-color: white;">
-                                <items>
-                                    <FXCollections fx:factory="observableArrayList">
-                                        <String fx:value="Art" />
-                                        <String fx:value="Interiors" />
-                                        <String fx:value="Jewelry" />
-                                        <String fx:value="Watches" />
-                                        <String fx:value="Fashion" />
-                                        <String fx:value="Coins" />
-                                        <String fx:value="Cars" />
-                                        <String fx:value="Wine" />
-                                        <String fx:value="Books" />
-                                    </FXCollections>
-                                </items>
-                            </ComboBox>
+                            <CheckComboBox fx:id="categoryComboBox" prefHeight="42.0" prefWidth="433.0" stylesheets="@../css/addproduct.css" VBox.vgrow="ALWAYS">
+                            </CheckComboBox>
                         </VBox>
 
                         <VBox spacing="8" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="1">

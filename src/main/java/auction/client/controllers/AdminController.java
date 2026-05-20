@@ -28,6 +28,14 @@ public class AdminController {
 
     @FXML
     public void initialize() {
+        btnApproveItems.getStyleClass().add("admin-menu-btn");
+        btnApproveSeller.getStyleClass().add("admin-menu-btn");
+        btnSettings.getStyleClass().add("admin-menu-btn");
+        btnManageAuctions.getStyleClass().add("admin-menu-btn");
+        btnManageUsers.getStyleClass().add("admin-menu-btn");
+        btnTransactionHistory.getStyleClass().add("admin-menu-btn");
+        btnLockAccount.getStyleClass().add("admin-menu-btn");
+        setActiveButton(btnDashboard);
         // Tạo dữ liệu PieChart mới bao gồm tất cả các thành phần bạn muốn
         ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList(
                 new PieChart.Data("Hàng điện tử", 35),
