@@ -24,7 +24,7 @@
 <?import org.controlsfx.control.SearchableComboBox?>
 <?import org.controlsfx.control.ToggleSwitch?>
 
-<AnchorPane prefHeight="919.0" prefWidth="775.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auction.client.controllers.ProfileController">
+<AnchorPane prefHeight="785.0" prefWidth="775.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auction.client.controllers.ProfileController">
    <stylesheets>
       <URL value="@../css/style.css" />
    </stylesheets>
@@ -34,7 +34,7 @@
             <fx:include fx:id="headerMenu" source="Header-menu.fxml" />
          </top>
          <center>
-            <HBox alignment="CENTER" prefHeight="828.0" prefWidth="775.0" spacing="20.0" style="-fx-background-color: transparent; -fx-background: transparent;" BorderPane.alignment="CENTER">
+            <HBox alignment="CENTER" prefHeight="778.0" prefWidth="775.0" spacing="20.0" style="-fx-background-color: transparent; -fx-background: transparent;" BorderPane.alignment="CENTER">
                <children>
                   <VBox alignment="TOP_CENTER" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="668.0" prefWidth="240.0" spacing="8.0" style="-fx-background-color: #f8f9fa; -fx-background-radius: 16; -fx-border-color: #e8f0fe; -fx-border-width: 1; -fx-border-radius: 16;" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1">
                      <padding>
@@ -126,23 +126,21 @@
                            </cursor>
                         </HBox>
 
-                        <Region prefHeight="348.0" prefWidth="214.0" VBox.vgrow="ALWAYS" />
-
-                        <HBox fx:id="hboxsignout" alignment="CENTER_LEFT" onMouseClicked="#onSignOutClick" prefHeight="42.0" prefWidth="216.0" spacing="12.0" style="-fx-background-radius: 8; -fx-background-color: transparent;">
+                        <HBox fx:id="hboxsignout" alignment="CENTER_RIGHT" onMouseClicked="#onSignOutClick" prefHeight="42.0" prefWidth="188.0" spacing="12.0" style="-fx-background-radius: 8; -fx-background-color: transparent;">
                            <padding>
                               <Insets bottom="15.0" left="15.0" right="15.0" />
                            </padding>
                            <children>
-                              <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true" style="-fx-opacity: 0.7;">
-                                 <image>
-                                    <Image url="@../img/signout.png" />
-                                 </image>
-                              </ImageView>
-                              <Label style="-fx-text-fill: #e63946; -fx-font-weight: bold;" text="%profile.button.signout">
+                              <Label prefHeight="18.0" prefWidth="139.0" style="-fx-text-fill: #e63946; -fx-font-weight: bold;" text="%profile.button.signout">
                                  <font>
                                     <Font name="Segoe UI" size="14.0" />
                                  </font>
                               </Label>
+                              <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true" style="-fx-opacity: 0.7;">
+                                 <image>
+                                    <Image url="@../img/sign-out-54.png" />
+                                 </image>
+                              </ImageView>
                            </children>
                            <cursor>
                               <Cursor fx:constant="HAND" />
