@@ -280,21 +280,6 @@ public class ClientHandler implements Runnable {
         int id = (int) msg.getData();
         Item item = itemDao.getById(id);
         if (item != null) {
-            java.time.LocalDateTime now = java.time.LocalDateTime.now();
-            String oldStatus = item.getStatus();
-
-            if (now.isBefore(item.getStartTime())) {
-                item.setStatus("PENDING");
-            } else if (now.isAfter(item.getEndTime())) {
-                item.setStatus("CLOSED");
-            } else {
-                item.setStatus("OPEN");
-            }
-
-            if (!item.getStatus().equals(oldStatus)) {
-                itemDao.updateStatus(item.getId(), item.getStatus());
-            }
-
             msg.setStatus("SUCCESS");
             msg.setData(item);
         } else {

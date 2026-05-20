@@ -109,6 +109,10 @@ public class ItemDaoImpl implements ItemDao {
                         insertImages(newItemId, item.getImages(), conn);
                         insertCategories(newItemId, item.getCategories(), conn);
                     }
+                    else {
+                        conn.rollback();
+                        return false;
+                    }
                 }
                 conn.commit();
                 return true;

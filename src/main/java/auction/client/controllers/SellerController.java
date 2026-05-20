@@ -529,7 +529,7 @@ public class SellerController {
             String name = txtTitle.getText().trim();
             String priceText = txtPrice.getText().trim();
             String description = txtDescription.getText();
-            List<String> checkedCategories = categoryComboBox.getCheckModel().getCheckedItems();
+            List<String> checkedCategories = new ArrayList<>(categoryComboBox.getCheckModel().getCheckedItems());
 
             // 2. Validation (Kiểm tra dữ liệu đầu vào)
             if (name.isEmpty() || priceText.isEmpty() || checkedCategories.isEmpty()) {
