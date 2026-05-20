@@ -23,6 +23,7 @@
 <?import org.controlsfx.control.SearchableComboBox?>
 <?import org.controlsfx.control.ToggleSwitch?>
 
+<?import javafx.scene.control.PasswordField?>
 <AnchorPane prefHeight="845.0" prefWidth="775.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auction.client.controllers.ProfileController">
    <stylesheets>
       <URL value="@../css/style.css" />
@@ -443,7 +444,7 @@
                                     <Insets bottom="15.0" left="20.0" right="20.0" top="15.0" />
                                  </padding>
                               </VBox>
-                              <VBox fx:id="paneAccount" maxWidth="1.7976931348623157E308" prefHeight="695.0" prefWidth="454.0" spacing="10.0" style="-fx-background-color: white; -fx-background-radius: 15; -fx-border-radius: 15;" visible="false" StackPane.alignment="TOP_LEFT">
+                              <VBox fx:id="paneAccount" maxWidth="1.7976931348623157E308" prefHeight="695.0" prefWidth="454.0" spacing="10.0" style="-fx-background-color: white; -fx-background-radius: 15; -fx-border-radius: 15;" visible="false" StackPane.alignment="TOP_LEFT" xmlns:fx="http://javafx.com/fxml">
                                  <children>
                                     <Label text="%profile.label.account">
                                        <font>
@@ -451,25 +452,43 @@
                                        </font>
                                     </Label>
                                     <Region maxHeight="-Infinity" minHeight="-Infinity" prefHeight="1.0" prefWidth="1.0" style="-fx-background-color: #e8f0fe;" />
+
                                     <VBox prefHeight="63.0" prefWidth="865.0">
                                        <children>
                                           <Label text="%profile.label.name" />
-                                          <Label fx:id="lbname" text="%profile.label.admin">
-                                             <font>
-                                                <Font size="17.0" />
-                                             </font>
-                                          </Label>
-                                          <Label style="-fx-text-fill: #0052ff;" text="%profile.label.change" textFill="#1541c5">
-                                             <font>
-                                                <Font name="System Bold" size="13.0" />
-                                             </font>
-                                             <cursor>
-                                                <Cursor fx:constant="HAND" />
-                                             </cursor>
-                                          </Label>
+                                          <StackPane alignment="CENTER_LEFT">
+                                             <children>
+                                                <VBox fx:id="viewNameBox" spacing="2.0">
+                                                   <children>
+                                                      <Label fx:id="lbname" text="%profile.label.admin">
+                                                         <font>
+                                                            <Font size="17.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <Label onMouseClicked="#showEditName" style="-fx-text-fill: #0052ff;" text="%profile.label.change" textFill="#1541c5">
+                                                         <font>
+                                                            <Font name="System Bold" size="13.0" />
+                                                         </font>
+                                                         <cursor>
+                                                            <Cursor fx:constant="HAND" />
+                                                         </cursor>
+                                                      </Label>
+                                                   </children>
+                                                </VBox>
+                                                <HBox fx:id="editNameBox" alignment="CENTER_LEFT" spacing="10.0" visible="false">
+                                                   <children>
+                                                      <TextField fx:id="txtNameInput" prefWidth="200.0" style="-fx-background-radius: 4; -fx-border-radius: 4;" />
+                                                      <Label onMouseClicked="#hideEditName" style="-fx-text-fill: gray;" text="Cancel">
+                                                         <cursor><Cursor fx:constant="HAND" /></cursor>
+                                                      </Label>
+                                                   </children>
+                                                </HBox>
+                                             </children>
+                                          </StackPane>
                                        </children>
                                     </VBox>
                                     <Region maxHeight="-Infinity" minHeight="-Infinity" prefHeight="1.0" prefWidth="1.0" style="-fx-background-color: #e8f0fe; -fx-border-width: 1;" />
+
                                     <VBox prefHeight="48.0" prefWidth="443.0">
                                        <children>
                                           <Label text="%profile.label.username" />
@@ -489,67 +508,119 @@
                                        </children>
                                     </VBox>
                                     <Region maxHeight="-Infinity" minHeight="-Infinity" prefHeight="1.0" prefWidth="1.0" style="-fx-background-color: #e8f0fe; -fx-border-width: 1;" />
+
                                     <VBox prefHeight="48.0" prefWidth="443.0">
                                        <children>
                                           <Label text="%profile.label.email" />
-                                          <Label fx:id="lbemail" text="admin@gmail.com">
-                                             <font>
-                                                <Font size="17.0" />
-                                             </font>
-                                          </Label>
-                                          <Label style="-fx-text-fill: #0052ff;" text="%profile.label.change" textFill="#1541c5">
-                                             <font>
-                                                <Font name="System Bold" size="13.0" />
-                                             </font>
-                                             <cursor>
-                                                <Cursor fx:constant="HAND" />
-                                             </cursor>
-                                          </Label>
+                                          <StackPane alignment="CENTER_LEFT">
+                                             <children>
+                                                <VBox fx:id="viewEmailBox" spacing="2.0">
+                                                   <children>
+                                                      <Label fx:id="lbemail" text="admin@gmail.com">
+                                                         <font>
+                                                            <Font size="17.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <Label onMouseClicked="#showEditEmail" style="-fx-text-fill: #0052ff;" text="%profile.label.change" textFill="#1541c5">
+                                                         <font>
+                                                            <Font name="System Bold" size="13.0" />
+                                                         </font>
+                                                         <cursor>
+                                                            <Cursor fx:constant="HAND" />
+                                                         </cursor>
+                                                      </Label>
+                                                   </children>
+                                                </VBox>
+                                                <HBox fx:id="editEmailBox" alignment="CENTER_LEFT" spacing="10.0" visible="false">
+                                                   <children>
+                                                      <TextField fx:id="txtEmailInput" prefWidth="200.0" style="-fx-background-radius: 4; -fx-border-radius: 4;" />
+                                                      <Label onMouseClicked="#hideEditEmail" style="-fx-text-fill: gray;" text="Cancel">
+                                                         <cursor><Cursor fx:constant="HAND" /></cursor>
+                                                      </Label>
+                                                   </children>
+                                                </HBox>
+                                             </children>
+                                          </StackPane>
                                        </children>
                                     </VBox>
                                     <Region maxHeight="-Infinity" minHeight="-Infinity" prefHeight="1.0" prefWidth="1.0" style="-fx-background-color: #e8f0fe; -fx-border-width: 1;" />
+
                                     <VBox prefHeight="-1.0" prefWidth="443.0" spacing="10.0">
                                        <children>
                                           <VBox>
                                              <children>
                                                 <Label text="%profile.label.password" />
-                                                <Label fx:id="lbname21" text="********">
-                                                   <font>
-                                                      <Font size="17.0" />
-                                                   </font>
-                                                </Label>
-                                                <Label style="-fx-text-fill: #0052ff;" text="%profile.label.change" textFill="#1541c5">
-                                                   <font>
-                                                      <Font name="System Bold" size="13.0" />
-                                                   </font>
-                                                   <cursor>
-                                                      <Cursor fx:constant="HAND" />
-                                                   </cursor>
-                                                </Label>
+                                                <StackPane alignment="CENTER_LEFT">
+                                                   <children>
+                                                      <VBox fx:id="viewPasswordBox" spacing="2.0">
+                                                         <children>
+                                                            <Label fx:id="lbname21" text="********">
+                                                               <font>
+                                                                  <Font size="17.0" />
+                                                               </font>
+                                                            </Label>
+                                                            <Label onMouseClicked="#showEditPassword" style="-fx-text-fill: #0052ff;" text="%profile.label.change" textFill="#1541c5">
+                                                               <font>
+                                                                  <Font name="System Bold" size="13.0" />
+                                                               </font>
+                                                               <cursor>
+                                                                  <Cursor fx:constant="HAND" />
+                                                               </cursor>
+                                                            </Label>
+                                                         </children>
+                                                      </VBox>
+                                                      <HBox fx:id="editPasswordBox" alignment="CENTER_LEFT" spacing="10.0" visible="false">
+                                                         <children>
+                                                            <PasswordField fx:id="txtPasswordInput" prefWidth="200.0" style="-fx-background-radius: 4; -fx-border-radius: 4;" />
+                                                            <Label onMouseClicked="#hideEditPassword" style="-fx-text-fill: gray;" text="Cancel">
+                                                               <cursor><Cursor fx:constant="HAND" /></cursor>
+                                                            </Label>
+                                                         </children>
+                                                      </HBox>
+                                                   </children>
+                                                </StackPane>
                                              </children>
                                           </VBox>
                                           <Region prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: lightgray;" />
+
                                           <VBox prefHeight="48.0" prefWidth="443.0">
                                              <children>
                                                 <Label text="%profile.label.phone" />
-                                                <Label fx:id="lbphonenumber" text="01234566">
-                                                   <font>
-                                                      <Font size="17.0" />
-                                                   </font>
-                                                </Label>
-                                                <Label style="-fx-text-fill: #0052ff;" text="%profile.label.change" textFill="#1541c5">
-                                                   <font>
-                                                      <Font name="System Bold" size="13.0" />
-                                                   </font>
-                                                   <cursor>
-                                                      <Cursor fx:constant="HAND" />
-                                                   </cursor>
-                                                </Label>
+                                                <StackPane alignment="CENTER_LEFT">
+                                                   <children>
+                                                      <VBox fx:id="viewPhoneBox" spacing="2.0">
+                                                         <children>
+                                                            <Label fx:id="lbphonenumber" text="01234566">
+                                                               <font>
+                                                                  <Font size="17.0" />
+                                                               </font>
+                                                            </Label>
+                                                            <Label onMouseClicked="#showEditPhone" style="-fx-text-fill: #0052ff;" text="%profile.label.change" textFill="#1541c5">
+                                                               <font>
+                                                                  <Font name="System Bold" size="13.0" />
+                                                               </font>
+                                                               <cursor>
+                                                                  <Cursor fx:constant="HAND" />
+                                                               </cursor>
+                                                            </Label>
+                                                         </children>
+                                                      </VBox>
+                                                      <HBox fx:id="editPhoneBox" alignment="CENTER_LEFT" spacing="10.0" visible="false">
+                                                         <children>
+                                                            <TextField fx:id="txtPhoneInput" prefWidth="200.0" style="-fx-background-radius: 4; -fx-border-radius: 4;" />
+                                                            <Label onMouseClicked="#hideEditPhone" style="-fx-text-fill: gray;" text="Cancel">
+                                                               <cursor><Cursor fx:constant="HAND" /></cursor>
+                                                            </Label>
+                                                         </children>
+                                                      </HBox>
+                                                   </children>
+                                                </StackPane>
                                              </children>
                                           </VBox>
                                        </children>
                                     </VBox>
                                     <Region maxHeight="-Infinity" minHeight="-Infinity" prefHeight="1.0" prefWidth="1.0" style="-fx-background-color: #e8f0fe; -fx-border-width: 1;" />
+
                                     <VBox prefHeight="48.0" prefWidth="443.0">
                                        <children>
                                           <Label text="%profile.label.language" />
@@ -557,14 +628,16 @@
                                        </children>
                                     </VBox>
                                     <Region maxHeight="-Infinity" minHeight="-Infinity" prefHeight="1.0" prefWidth="1.0" style="-fx-background-color: #e8f0fe; -fx-border-width: 1;" />
+
                                     <VBox prefHeight="48.0" prefWidth="443.0">
                                        <children>
                                           <Label text="%profile.label.biddingcurrency" />
-                                          <ComboBox maxWidth="1.7976931348623157E308" prefHeight="35.0" prefWidth="443.0" promptText="dollar" style="-fx-border-color: #e8f0fe; -fx-background-color: #e8f0fe; -fx-background-radius: 4; -fx-border-radius: 4;" />
+                                          <ComboBox fx:id="currencyPicker" maxWidth="1.7976931348623157E308" prefHeight="35.0" prefWidth="443.0" promptText="dollar" style="-fx-border-color: #e8f0fe; -fx-background-color: #e8f0fe; -fx-background-radius: 4; -fx-border-radius: 4;" />
                                        </children>
                                     </VBox>
                                     <Region maxHeight="-Infinity" minHeight="-Infinity" prefHeight="1.0" prefWidth="1.0" style="-fx-background-color: #e8f0fe; -fx-border-width: 1;" visible="false" />
-                                    <Button mnemonicParsing="false" onAction="#btnSaveSetting" prefHeight="40.0" prefWidth="101.0" style="-fx-border-radius: 4; -fx-background-radius: 4; -fx-background-color: #0052ff; -fx-text-fill: white;" text="%profile.label.change" />
+
+                                    <Button mnemonicParsing="false" onAction="#btnSaveSetting" prefHeight="40.0" prefWidth="101.0" style="-fx-border-radius: 4; -fx-background-radius: 4; -fx-background-color: #0052ff; -fx-text-fill: white;" text="Save" />
                                  </children>
                                  <padding>
                                     <Insets bottom="15.0" left="20.0" right="20.0" top="15.0" />

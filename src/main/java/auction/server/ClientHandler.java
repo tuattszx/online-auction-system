@@ -70,6 +70,7 @@ public class ClientHandler implements Runnable {
                             handleRegister(msg, out);
                             break;
                         case "ADD_ITEM":
+                            System.out.println("-> Server đã nhận được lệnh AAA_PROFILE!");
                             handleAddItem(msg, out);
                             break;
                         case "GET_ALL_ITEMS":
@@ -110,6 +111,10 @@ public class ClientHandler implements Runnable {
                             break;
                         case "GET_UNREAD_COUNT":
                             getUnreadCount(msg, out);
+                            break;
+                        case "UPDATE_PROFILE":
+                            System.out.println("-> Server đã nhận được lệnh UPDATE_PROFILE!");
+                            handleUpdateProfile(msg,out);
                             break;
                         // Thêm các case khác như BID, VIEW_PRODUCT...
                     }
@@ -612,4 +617,40 @@ public class ClientHandler implements Runnable {
             out.reset();
         }
     }
+    private void handleUpdateProfile(Message msg, ObjectOutputStream out) throws IOException {
+            try {
+                // 1. Lấy đối tượng User từ thuộc tính 'data' (Sử dụng getData() thay vì getObject())
+                User userToUpdate = (User) msg.getData();
+
+                // 2. Khởi tạo đối tượng xử lý tầng DB ở phía Server
+                UserDaoImpl userDao = new UserDaoImpl();
+
+                // 3. Thực thi lưu thông tin đã sửa xuống Database
+                boolean success = userDao.update(userToUpdate);
+
+                // 4. Tạo gói tin phản hồi sử dụng Constructor có sẵn của bạn: Message(String command, Object data)
+                Message responseMsg;
+                if (success) {
+                    // Gửi chuỗi "UPDATE_PROFILE_SUCCESS" qua command
+                    responseMsg = new Message("UPDATE_PROFILE_SUCCESS", userToUpdate);
+                    System.out.println("User " + userToUpdate.getUsername() + " updated successfully!");
+                } else {
+                    // Gửi chuỗi "UPDATE_PROFILE_FAILED" kèm thông báo lỗi hoặc null
+                    responseMsg = new Message("UPDATE_PROFILE_FAILED", "Database update failed");
+                    System.out.println("Failed to update user " + userToUpdate.getUsername());
+                }
+                responseMsg.setRequestId(msg.getRequestId());
+
+                // 5. Gửi trả gói tin phản hồi về client thông qua ObjectOutputStream (out) của bạn
+                // (Bạn nhớ thay thế 'out' bằng tên biến luồng xuất Socket tương ứng trong ServerThread/ClientHandler của mình)
+                if (out != null) {
+                    out.writeObject(responseMsg);
+                    out.flush();
+                }
+
+            } catch (Exception e) {
+                System.err.println("Error while handling update profile: " + e.getMessage());
+                e.printStackTrace();
+            }
+        }
 }

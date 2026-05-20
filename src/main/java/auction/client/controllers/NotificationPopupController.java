@@ -108,8 +108,7 @@ public class NotificationPopupController {
             double x = window.getX() + bellNode.getScene().getX() + bellNode.localToScene(0, 0).getX();
             double y = window.getY() + bellNode.getScene().getY() + bellNode.localToScene(0, 0).getY();
 
-            // Hiển thị ngay dưới chân cái chuông (dịch sang trái 230px để không tràn màn hình)
-            popupInstance.show(window, x - 230, y + bellNode.getBoundsInLocal().getHeight() );
+            popupInstance.show(window, x , y + bellNode.getBoundsInLocal().getHeight() );
         }
     }
     @FXML

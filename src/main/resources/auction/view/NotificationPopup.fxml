@@ -28,7 +28,7 @@
             <Button fx:id="btnUnread" onAction="#handleUnreadClick" text="Chưa đọc" />
         </children>
     </HBox>
-    <ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefHeight="350.0" style="-fx-background: transparent; -fx-background-color: transparent;" vbarPolicy="AS_NEEDED">
+    <ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefHeight="350.0" style="-fx-background: transparent; -fx-background-color: transparent;" vbarPolicy="NEVER">
         <content>
             <VBox fx:id="vboxNotifItems" spacing="5.0" style="-fx-background-color: #242526;" />
         </content>

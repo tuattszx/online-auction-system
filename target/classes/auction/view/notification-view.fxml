@@ -50,7 +50,7 @@
                                     </children>
                                 </HBox>
 
-                                <ScrollPane fitToWidth="true" hbarPolicy="NEVER" style="-fx-background-color: transparent; -fx-background: transparent;" vbarPolicy="AS_NEEDED" VBox.vgrow="ALWAYS">
+                                <ScrollPane fitToWidth="true" hbarPolicy="NEVER" style="-fx-background-color: transparent; -fx-background: transparent;" vbarPolicy="NEVER" VBox.vgrow="ALWAYS">
                                     <content>
                                         <VBox fx:id="vboxMainNotifications" spacing="2.0" style="-fx-background-color: white;">
                                             <padding>
