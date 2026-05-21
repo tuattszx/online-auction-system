@@ -56,4 +56,20 @@ public class AuctionManager {
                     return new java.util.ArrayList<>();
                 });
     }
+
+    public CompletableFuture<Message> setupAutoBidAsync(int itemId,int userId,long maxBid,long incre,String userName){
+        Message request = new Message("SET_UP_AUTO_BID", new Object[]{itemId, userId, maxBid, incre, userName});
+        return ClientNetwork.getInstance().sendRequestAsync(request);
+    }
+
+    public CompletableFuture<Message> cancelAutoBidAsync(int itemId, int userId) {
+        Message request = new Message("CANCEL_AUTO_BID", new Object[]{itemId, userId});
+        return ClientNetwork.getInstance().sendRequestAsync(request);
+    }
+
+    public CompletableFuture<Boolean> checkAutoBidStatusAsync(int itemId, int userId) {
+        Message request = new Message("CHECK_AUTO_BID_STATUS", new Object[]{itemId, userId});
+        return ClientNetwork.getInstance().sendRequestAsync(request)
+                .thenApply(res -> (res != null && "SUCCESS".equals(res.getStatus())) ? (Boolean) res.getData() : false);
+    }
 }

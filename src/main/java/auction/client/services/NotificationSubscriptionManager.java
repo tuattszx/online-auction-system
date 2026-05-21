@@ -1,6 +1,7 @@
 package auction.client.services;
 
 import auction.common.model.notifications.Notification;
+import javafx.application.Platform;
 
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -37,8 +38,16 @@ public class NotificationSubscriptionManager {
      * Kích hoạt gọi tất cả giao diện cập nhật khi ClientNetwork nhận được thông báo mới từ mạng
      */
     public void notifyNewNotification(Notification notification) {
-        for (Consumer<Notification> listener : listeners) {
-            listener.accept(notification);
-        }
+        if (notification == null) return;
+        Platform.runLater(() -> {
+            for (Consumer<Notification> listener : listeners) {
+                try {
+                    listener.accept(notification);
+                } catch (Exception e) {
+                    System.err.println("Lỗi thực thi callback thông báo: " + e.getMessage());
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 }

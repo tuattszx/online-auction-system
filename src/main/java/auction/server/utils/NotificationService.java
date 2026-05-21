@@ -3,6 +3,9 @@ package auction.server.utils;
 import auction.common.model.bid.Bid;
 import auction.common.model.items.Item;
 import auction.common.model.notifications.BidNotification;
+import auction.common.model.notifications.ItemNotification;
+import auction.common.model.notifications.Notification;
+import auction.common.model.users.User;
 import auction.server.ClientHandler;
 import auction.server.ClientManager;
 import auction.server.dao.*;
@@ -139,7 +142,7 @@ public class NotificationService {
     /**
      * Hàm trợ giúp: Tiết kiệm code, vừa lưu DB lẻ vừa check để bắn Socket real-time
      */
-    private static void saveAndSendRealtime(BidNotification notif) {
+    private static void saveAndSendRealtime(Notification notif) {
         // 1. Lưu xuống DB
         notificationDao.add(notif);
 
@@ -180,6 +183,106 @@ public class NotificationService {
             }
         } catch (Exception e) {
             System.err.println("Lỗi gửi thông báo HỦY AUTO BID: " + e.getMessage());
+        }
+    }
+
+    public static void handleSendMessageBid(Item item,Bid bidRequest,LocalDateTime now) {
+        try {
+            int idBid = bidRequest.getIdUser();
+            List<Bid> previousBids = bidDao.getBidsByItemId(item.getId());
+            Set<Integer> targetUserIds = previousBids.stream()
+                    .map(Bid::getIdUser)
+                    .filter(userId -> userId != idBid)
+                    .collect(Collectors.toSet());
+
+            if (!targetUserIds.isEmpty()) {
+                String title = "Món hàng đã bị đè giá!";
+                String messageText = String.format("Món hàng '%s' đã được người dùng %s đấu giá cao hơn với giá %,d ",
+                        item.getName(), bidRequest.getBidderName(), bidRequest.getBidAmount());
+
+                BidNotification bidNotif = new BidNotification(
+                        0,
+                        0,
+                        title,
+                        messageText,
+                        item.getId(),
+                        bidRequest.getBidAmount(),
+                        bidRequest.getBidderName()
+                );
+                bidNotif.setCreatedAt(now);
+
+                notificationDao.insertNotificationsBatch(targetUserIds, bidNotif);
+
+                for (ClientHandler client : ClientManager.getActiveClients()) {
+                    User onlineUser = client.getLoggedInUser();
+                    if (onlineUser != null && targetUserIds.contains(onlineUser.getId())) {
+                        bidNotif.setUserId(onlineUser.getId());
+                        client.sendObject(bidNotif);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void handleSendMessageAddItem(Item item, LocalDateTime now) {
+        try {
+            // 1. Khởi tạo đối tượng ItemNotification bằng Constructor đầy đủ tham số
+            // Tham số truyền vào theo cấu trúc class của bạn: (id, userId, title, message, itemId, itemStatus, adminNote)
+            String title = "Đăng sản phẩm thành công!";
+            String messageText = String.format("Sản phẩm '%s' của bạn đã được đăng ký đấu giá thành công và đang chờ admin phê duyệt.", item.getName());
+
+            ItemNotification itemNotif = new ItemNotification(
+                    0,
+                    item.getSellerId(),
+                    title,
+                    messageText,
+                    item.getId(),
+                    "PENDING",
+                    "Chợ phê duyệt!"
+            );
+
+            itemNotif.setCreatedAt(now);
+
+            // 2. Ghi nhận lịch sử thông báo xuống Database bảng notifications
+            notificationDao.add(itemNotif);
+
+            // 3. Bắn tin nhắn trực tiếp xuống luồng Socket của chính Client này
+            saveAndSendRealtime(itemNotif);
+            System.out.println("DEBUG: Đã phát thông báo đăng sản phẩm real-time thành công cho User ID: " + item.getSellerId());
+
+        } catch (Exception e) {
+            System.err.println("Lỗi khi xử lý tạo/gửi thông báo đăng sản phẩm: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    public static void handleSendMessageUpdateItem(Item item, LocalDateTime now) {
+        try {
+            String title = "Chỉnh sửa sản phẩm thành công!";
+            String messageText = String.format("Sản phẩm '%s' của bạn đã được cập nhật thông tin thành công.", item.getName());
+
+            ItemNotification itemNotif = new ItemNotification(
+                    0,
+                    item.getSellerId(),
+                    title,
+                    messageText,
+                    item.getId(),
+                    "PENDING",
+                    "Cập nhật thông tin mới"
+            );
+            itemNotif.setCreatedAt(now);
+
+            // Lưu vết vào DB bảng notifications
+            notificationDao.add(itemNotif);
+
+            // Bắn tín hiệu real-time hiển thị chuông thông báo cho Client ngay lập tức
+            saveAndSendRealtime(itemNotif);
+
+        } catch (Exception e) {
+            System.err.println("Lỗi khi tạo thông báo cập nhật sản phẩm: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 }

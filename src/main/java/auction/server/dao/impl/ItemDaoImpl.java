@@ -890,19 +890,51 @@ public class ItemDaoImpl implements ItemDao {
     }
 
     private void deleteAutoBidAndNotify(int itemId, int userId, String username, String reason, Connection conn) {
-        String sqlDel = "DELETE FROM AUTOMATIC_BIDS WHERE id_item = ? AND id_user = ?";
-        try (PreparedStatement psDel = conn.prepareStatement(sqlDel)) {
-            psDel.setInt(1, itemId);
-            psDel.setInt(2, userId);
-            int rows = psDel.executeUpdate();
-
-            if (rows > 0) {
+        try {
+            boolean isDeleted= cancelAutoBid(itemId, userId);
+            if (isDeleted) {
                 System.out.println("[AUTO-BID CANCELLED] Gỡ cấu hình của User ID: " + userId);
                 // Đẩy thông báo thời gian thực về Client
                 auction.server.utils.NotificationService.sendAutoBidCancelledNotification(itemId, userId, reason, LocalDateTime.now());
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    @Override
+    public boolean cancelAutoBid(int itemId, int userId) {
+        String sql = "DELETE FROM AUTOMATIC_BIDS WHERE id_item = ? AND id_user = ?";
+        try (Connection conn = DatabaseManager.getInstance().getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, itemId);
+            pstmt.setInt(2, userId);
+
+            int rowsAffected = pstmt.executeUpdate();
+            return rowsAffected > 0; // Trả về true nếu thực sự có cấu hình bị xóa
+        } catch (SQLException e) {
+            System.err.println("Lỗi khi hủy Auto Bid từ User: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public boolean checkAutoBidExists(int itemId, int userId) {
+        String sql = "SELECT 1 FROM AUTOMATIC_BIDS WHERE id_item = ? AND id_user = ?";
+        try (Connection conn = DatabaseManager.getInstance().getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, itemId);
+            pstmt.setInt(2, userId);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                return rs.next(); // Nếu có dòng trả về -> true (đã đặt), ngược lại -> false
+            }
+        } catch (SQLException e) {
+            System.err.println("Lỗi check trạng thái AutoBid: " + e.getMessage());
+            return false;
         }
     }
 }

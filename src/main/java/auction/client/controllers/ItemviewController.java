@@ -5,17 +5,15 @@ import auction.client.services.AuctionManager;
 import auction.client.services.AuctionSubscriptionManager;
 import auction.client.services.Cleanable;
 import auction.client.session.DataSession;
-import auction.client.utils.ServerTimeSync;
 import auction.client.utils.ToastManager;
 import auction.common.message.BidUpdateNotification;
-import auction.common.message.Message;
 import auction.common.model.bid.Bid;
 import auction.common.model.items.*;
+import auction.common.model.notifications.Notification;
 import auction.common.model.users.User;
 import javafx.animation.*;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 
@@ -38,10 +36,8 @@ import javafx.stage.Popup;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.time.Duration;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.function.Consumer;
@@ -77,10 +73,12 @@ public class ItemviewController implements Cleanable {
 
     @FXML private HBox searchBar; // Liên kết với thanh tìm kiếm
     ClientNetwork network = ClientNetwork.getInstance();
-    
+    private Timeline timeline;
+    private Item currentItem; // Object chứa endTime từ Database
 
     private PauseTransition errorTimeout = new PauseTransition(javafx.util.Duration.seconds(3));
     private Consumer<BidUpdateNotification> bidUpdateCallback;
+    private Consumer<Notification> globalNotificationCallback;
 
     @FXML
     public void initialize() {
@@ -88,6 +86,7 @@ public class ItemviewController implements Cleanable {
         Item selectedItem = DataSession.getInstance().getSelectedItem();
 
         if (selectedItem != null) {
+            this.currentItem=selectedItem;
             itemNameLabel.setText(selectedItem.getName());
             lbShortDesc.setText(selectedItem.getDescription());
 
@@ -106,6 +105,7 @@ public class ItemviewController implements Cleanable {
             loadExtraImages(selectedItem.getId());
             updateAllData(selectedItem.getId());
             setupRealtimeUpdate(selectedItem.getId());
+            setupGlobalNotificationListener();
         }
 
 
@@ -130,6 +130,10 @@ public class ItemviewController implements Cleanable {
         if (currentItem != null && bidUpdateCallback != null) {
             AuctionSubscriptionManager.getInstance().unsubscribe(currentItem.getId(), bidUpdateCallback);
             System.out.println("ItemviewController: Đã hủy subscribe real-time thành công cho item ID: " + currentItem.getId());
+        }
+        if (globalNotificationCallback != null) {
+            auction.client.services.NotificationSubscriptionManager.getInstance().unsubscribe(globalNotificationCallback);
+            System.out.println("ItemviewController: Đã gỡ lắng nghe thông báo hủy Auto Bid toàn cục.");
         }
         if (timeline != null) {
             timeline.stop();
@@ -173,6 +177,32 @@ public class ItemviewController implements Cleanable {
         AuctionSubscriptionManager.getInstance().subscribe(itemId, bidUpdateCallback);
     }
 
+    private void setupGlobalNotificationListener() {
+        this.globalNotificationCallback = notification -> {
+            if (currentItem != null && notification instanceof auction.common.model.notifications.BidNotification) {
+                auction.common.model.notifications.BidNotification bidNotif = (auction.common.model.notifications.BidNotification) notification;
+
+                if (bidNotif.getItemId() == currentItem.getId() && bidNotif.getTitle().contains("Cấu hình Đấu giá tự động đã bị HỦY!")) {
+
+                    Platform.runLater(() -> {
+                        if (isAutoBidActive) {
+                            isAutoBidActive = false;
+
+                            btnSetAutoBid.setText("SET AUTO BID");
+                            btnSetAutoBid.setStyle("-fx-background-color: #0052FF; -fx-cursor: hand; -fx-font-weight: bold; -fx-text-fill: white");
+
+                            Stage currentStage = (Stage) btnSetAutoBid.getScene().getWindow();
+                            ToastManager.showToast(currentStage, ToastManager.ToastType.WARNING, bidNotif.getMessage());
+                        }
+                    });
+                }
+            }
+        };
+
+        // Đăng ký Callback này vào tổng đài thông báo đẩy toàn cục
+        auction.client.services.NotificationSubscriptionManager.getInstance().subscribe(globalNotificationCallback);
+    }
+
     private void updateAllData(int itemId) {
         // 1. lay item moi nhat
         AuctionManager.getInstance().getLatestItemAsync(itemId).thenAccept(item -> {
@@ -183,6 +213,24 @@ public class ItemviewController implements Cleanable {
                 });
             }
         });
+
+        User currentUser = DataSession.getInstance().getLoggedInUser();
+        if (currentUser != null) {
+            AuctionManager.getInstance().checkAutoBidStatusAsync(itemId, currentUser.getId()).thenAccept(hasAutoBid -> {
+                Platform.runLater(() -> {
+                    if (hasAutoBid) {
+                        isAutoBidActive = true;
+                        btnSetAutoBid.setText("CANCEL AUTO BID");
+                        btnSetAutoBid.setStyle("-fx-background-color: #EF4444; -fx-cursor: hand; -fx-font-weight: bold; -fx-text-fill: white");
+                    } else {
+                        // Nếu chưa cài -> Trả về nút màu xanh mặc định
+                        isAutoBidActive = false;
+                        btnSetAutoBid.setText("SET AUTO BID");
+                        btnSetAutoBid.setStyle("-fx-background-color: #0052FF; -fx-cursor: hand; -fx-font-weight: bold; -fx-text-fill: white");
+                    }
+                });
+            });
+        }
 
         // 2. Lấy lịch sử Bid
         AuctionManager.getInstance().getBidHistoryAsync(itemId).thenAccept(bids -> {
@@ -340,8 +388,7 @@ public class ItemviewController implements Cleanable {
     }
     @FXML private Label lblDays, lblHours, lblMins, lblSecs;
 
-    private Timeline timeline;
-    private Item currentItem; // Object chứa endTime từ Database
+
 
     public void setItemData(Item item) {
         this.currentItem = item;
@@ -445,20 +492,32 @@ public class ItemviewController implements Cleanable {
         });
     }
     private Popup autoBidPopup;
-    private double currentPrice = 9.0; // Giá € 9 hiện tại của bạn
-    @FXML private Button setMaxBidButton;
+    @FXML private Button btnSetAutoBid;
     private boolean isAutoBidActive = false; // Biến cờ theo dõi trạng thái
 
     @FXML
     void toggleAutoBidPopup(ActionEvent event) {
         if (isAutoBidActive) {
-            isAutoBidActive = false;
+            User currentUser = DataSession.getInstance().getLoggedInUser();
+            if (currentUser == null) return;
 
-            // Trở về trạng thái ban đầu (Màu xanh dương chủ đạo của bạn)
-            setMaxBidButton.setText("Set maximum bid");
-            setMaxBidButton.setStyle("-fx-background-color: #0052FF; -fx-cursor: hand; -fx-font-weight: bold; -fx-text-fill: white");
-
-            // thông báo ...
+            AuctionManager.getInstance().cancelAutoBidAsync(currentItem.getId(), currentUser.getId())
+                    .thenAccept(response -> {
+                        Platform.runLater(() -> {
+                            if (response != null && "SUCCESS".equals(response.getStatus())) {
+                                isAutoBidActive = false;
+                                // Trở về trạng thái ban đầu (Màu xanh dương chủ đạo của bạn)
+                                btnSetAutoBid.setText("SET AUTO BID");
+                                btnSetAutoBid.setStyle("-fx-background-color: #0052FF; -fx-cursor: hand; -fx-font-weight: bold; -fx-text-fill: white");
+                                ToastManager.showToast((Stage) btnSetAutoBid.getScene().getWindow(),
+                                        ToastManager.ToastType.SUCCESS, response.getData().toString());
+                            } else {
+                                String errMsg = response != null ? response.getData().toString() : "Lỗi kết nối!";
+                                ToastManager.showToast((Stage) btnSetAutoBid.getScene().getWindow(),
+                                        ToastManager.ToastType.ERROR, errMsg);
+                            }
+                        });
+                    });
             return;
         }
 
@@ -483,14 +542,11 @@ public class ItemviewController implements Cleanable {
 
             // 🔑 LẤY CONTROLLER CỦA POPUP RA ĐỂ TRUYỀN DỮ LIỆU
             AutoBidController popupController = loader.getController();
-            popupController.setInitData(autoBidPopup, currentItem.getCurrentPrice(),this);
+            popupController.setInitData(autoBidPopup, currentItem.getCurrentPrice(),currentItem.getId(),this);
 
             // Làm sạch content cũ và thêm content mới
             autoBidPopup.getContent().clear();
             autoBidPopup.getContent().add(root);
-
-//            double x = window.getX() + (window.getWidth()- autoBidPopup.getWidth())/2;//+ sourceNode.getScene().getX() + sourceNode.localToScene(0, 0).getX();
-//            double y = window.getY() +(window.getHeight()- autoBidPopup.getHeight())/2;// sourceNode.getScene().getY() + sourceNode.localToScene(0, 0).getY();
             autoBidPopup.centerOnScreen();
             autoBidPopup.show(window);
 
@@ -503,8 +559,8 @@ public class ItemviewController implements Cleanable {
         isAutoBidActive = true;
 
         // Đổi chữ và chuyển sang tone màu xám/vàng hoặc đỏ dịu để báo hiệu "Hủy"
-        setMaxBidButton.setText("Cancel Auto Bid (" + maxPrice + " €)");
-        setMaxBidButton.setStyle("-fx-background-color: #EF4444;-fx-cursor: hand; -fx-font-weight: bold; -fx-text-fill: white");
+        btnSetAutoBid.setText("CANCEL AUTO BID (" + maxPrice + " €)");
+        btnSetAutoBid.setStyle("-fx-background-color: #EF4444;-fx-cursor: hand; -fx-font-weight: bold; -fx-text-fill: white");
         // Bạn có thể đổi màu #64748B thành màu đỏ cam #EF4444 nếu muốn nhấn mạnh hành động bấm vào là HỦY.
     }
 }

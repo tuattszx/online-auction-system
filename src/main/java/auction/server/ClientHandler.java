@@ -15,6 +15,7 @@ import auction.common.model.users.User;
 import auction.server.dao.*;
 import auction.server.dao.impl.*;
 import auction.server.utils.ImageService;
+import auction.server.utils.NotificationService;
 
 import java.io.*;
 import java.net.Socket;
@@ -126,6 +127,12 @@ public class ClientHandler implements Runnable {
                             break;
                         case "SET_UP_AUTO_BID":
                             handleSetupAutoBid(msg,out);
+                            break;
+                        case "CANCEL_AUTO_BID":
+                            handleCancelAutoBid(msg,out);
+                            break;
+                        case "CHECK_AUTO_BID_STATUS":
+                            handleCheckAutoBidStatus(msg, out);
                             break;
                         // Thêm các case khác như BID, VIEW_PRODUCT...
                     }
@@ -243,7 +250,7 @@ public class ClientHandler implements Runnable {
                 msg.setStatus("SUCCESS");
                 System.out.println("Đã thêm sản phẩm mới: " + item.getName());
                 LocalDateTime now = LocalDateTime.now();
-                handleSendMessageAddItem(item, now);
+                NotificationService.handleSendMessageAddItem(item, now);
 
             } else {
                 msg.setStatus("FAILED");
@@ -335,7 +342,7 @@ public class ClientHandler implements Runnable {
                                 newEndTime
                         );
 
-                        handleSendMessageBid(currentItem, bidRequest, now);
+                        NotificationService.handleSendMessageBid(currentItem, bidRequest, now);
                     } else {
                         responseData = "Lỗi hệ thống khi lưu lịch sử đấu giá!";
                     }
@@ -448,78 +455,6 @@ public class ClientHandler implements Runnable {
             out.writeObject(msg);
             out.flush();
             out.reset();
-        }
-    }
-
-    private void handleSendMessageBid(Item item,Bid bidRequest,LocalDateTime now) {
-        try {
-            int idBid = bidRequest.getIdUser();
-            List<Bid> previousBids = bidDao.getBidsByItemId(item.getId());
-            Set<Integer> targetUserIds = previousBids.stream()
-                    .map(Bid::getIdUser)
-                    .filter(userId -> userId != idBid)
-                    .collect(Collectors.toSet());
-
-            if (!targetUserIds.isEmpty()) {
-                String title = "Món hàng đã bị đè giá!";
-                String messageText = String.format("Món hàng '%s' đã được người dùng %s đấu giá cao hơn với giá %,d ",
-                        item.getName(), bidRequest.getBidderName(), bidRequest.getBidAmount());
-
-                BidNotification bidNotif = new BidNotification(
-                        0,
-                        0,
-                        title,
-                        messageText,
-                        item.getId(),
-                        bidRequest.getBidAmount(),
-                        bidRequest.getBidderName()
-                );
-                bidNotif.setCreatedAt(now);
-
-                notificationDao.insertNotificationsBatch(targetUserIds, bidNotif);
-
-                for (ClientHandler client : ClientManager.getActiveClients()) {
-                    User onlineUser = client.getLoggedInUser();
-                    if (onlineUser != null && targetUserIds.contains(onlineUser.getId())) {
-                        bidNotif.setUserId(onlineUser.getId());
-                        client.sendObject(bidNotif);
-                    }
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void handleSendMessageAddItem(Item item, LocalDateTime now) {
-        try {
-            // 1. Khởi tạo đối tượng ItemNotification bằng Constructor đầy đủ tham số
-            // Tham số truyền vào theo cấu trúc class của bạn: (id, userId, title, message, itemId, itemStatus, adminNote)
-            String title = "Đăng sản phẩm thành công!";
-            String messageText = String.format("Sản phẩm '%s' của bạn đã được đăng ký đấu giá thành công và đang chờ admin phê duyệt.", item.getName());
-
-            ItemNotification itemNotif = new ItemNotification(
-                    0,
-                    item.getSellerId(),
-                    title,
-                    messageText,
-                    item.getId(),
-                    "PENDING",
-                    "Chợ phê duyệt!"
-            );
-
-            itemNotif.setCreatedAt(now);
-
-            // 2. Ghi nhận lịch sử thông báo xuống Database bảng notifications
-            notificationDao.add(itemNotif);
-
-            // 3. Bắn tin nhắn trực tiếp xuống luồng Socket của chính Client này
-            this.sendObject(itemNotif);
-            System.out.println("DEBUG: Đã phát thông báo đăng sản phẩm real-time thành công cho User ID: " + item.getSellerId());
-
-        } catch (Exception e) {
-            System.err.println("Lỗi khi xử lý tạo/gửi thông báo đăng sản phẩm: " + e.getMessage());
-            e.printStackTrace();
         }
     }
 
@@ -708,7 +643,7 @@ public class ClientHandler implements Runnable {
                 msg.setData("Cập nhật thành công!");
 
                 LocalDateTime now = LocalDateTime.now();
-                handleSendMessageUpdateItem(item, now);
+                NotificationService.handleSendMessageUpdateItem(item, now);
             } else {
                 msg.setStatus("FAILED");
                 msg.setData("Cập nhật thất bại! Vui lòng kiểm tra lại trạng thái sản phẩm.");
@@ -724,34 +659,6 @@ public class ClientHandler implements Runnable {
         out.writeObject(msg);
         out.flush();
         out.reset();
-    }
-
-    private void handleSendMessageUpdateItem(Item item, LocalDateTime now) {
-        try {
-            String title = "Chỉnh sửa sản phẩm thành công!";
-            String messageText = String.format("Sản phẩm '%s' của bạn đã được cập nhật thông tin thành công.", item.getName());
-
-            ItemNotification itemNotif = new ItemNotification(
-                    0,
-                    item.getSellerId(),
-                    title,
-                    messageText,
-                    item.getId(),
-                    "PENDING",
-                    "Cập nhật thông tin mới"
-            );
-            itemNotif.setCreatedAt(now);
-
-            // Lưu vết vào DB bảng notifications
-            notificationDao.add(itemNotif);
-
-            // Bắn tín hiệu real-time hiển thị chuông thông báo cho Client ngay lập tức
-            this.sendObject(itemNotif);
-
-        } catch (Exception e) {
-            System.err.println("Lỗi khi tạo thông báo cập nhật sản phẩm: " + e.getMessage());
-            e.printStackTrace();
-        }
     }
 
     private void handleSetupAutoBid(Message msg, ObjectOutputStream out) throws IOException {
@@ -819,7 +726,7 @@ public class ClientHandler implements Runnable {
                         bidRequest.setBidAmount(updatedItem.getCurrentPrice());
                         bidRequest.setBidTime(now);
 
-                        handleSendMessageBid(updatedItem, bidRequest , now);
+                        NotificationService.handleSendMessageBid(updatedItem, bidRequest , now);
                     }
                 } else {
                     responseData = "Không thể lưu cấu hình. Vui lòng kiểm tra lại số dư tài khoản!";
@@ -840,6 +747,62 @@ public class ClientHandler implements Runnable {
             if (broadcastNotification != null) {
                 ClientManager.broadcast(broadcastNotification);
             }
+        }
+    }
+
+    private void handleCancelAutoBid(Message msg, ObjectOutputStream out) throws IOException {
+        String status = "FAILED";
+        Object responseData = "Hủy cấu hình tự động thất bại.";
+        try {
+            Object[] payload = (Object[]) msg.getData();
+            int itemId = (int) payload[0];
+            int userId = (int) payload[1];
+
+            boolean isSuccess = itemDao.cancelAutoBid(itemId, userId);
+
+            if (isSuccess) {
+                status = "SUCCESS";
+                responseData = "Đã hủy cấu hình đấu giá tự động của bạn thành công!";
+            } else {
+                responseData = "Hệ thống không tìm thấy cấu hình Auto Bid nào của bạn để hủy!";
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            status = "ERROR";
+            responseData = "Lỗi hệ thống Server: " + e.getMessage();
+        } finally {
+            msg.setStatus(status);
+            msg.setData(responseData);
+
+            out.writeObject(msg);
+            out.flush();
+            out.reset();
+        }
+    }
+
+    private void handleCheckAutoBidStatus(Message msg, ObjectOutputStream out) throws IOException {
+        String status = "FAILED";
+        Object responseData = false; // Mặc định là chưa cài đặt
+        try {
+            Object[] payload = (Object[]) msg.getData();
+            int itemId = (int) payload[0];
+            int userId = (int) payload[1];
+
+            boolean exists = itemDao.checkAutoBidExists(itemId, userId);
+
+            status = "SUCCESS";
+            responseData = exists;
+        } catch (Exception e) {
+            e.printStackTrace();
+            status = "ERROR";
+            responseData = "Lỗi xử lý check Auto Bid ở Server";
+        } finally {
+            msg.setStatus(status);
+            msg.setData(responseData);
+
+            out.writeObject(msg);
+            out.flush();
+            out.reset();
         }
     }
 }
