@@ -2,6 +2,7 @@ package auction.client.controllers;
 
 import auction.client.ClientNetwork;
 import auction.client.services.AuctionManager;
+import auction.client.services.Cleanable;
 import auction.client.services.NotificationSubscriptionManager;
 import auction.client.session.DataSession;
 import auction.common.message.Message;
@@ -310,6 +311,10 @@ public class NotificationPopupController {
             final Stage finalStage = primaryStage;
             // Thực hiện chuyển View
             if (note instanceof BidNotification bidNote) {
+                if (finalStage.getScene() != null && finalStage.getScene().getUserData() instanceof Cleanable) {
+                    ((Cleanable) finalStage.getScene().getUserData()).cleanup();
+                }
+
                 AuctionManager.getInstance().getLatestItemAsync(bidNote.getItemId())
                         .thenAccept(item -> Platform.runLater(() -> {
                             if (item != null) {
@@ -318,6 +323,9 @@ public class NotificationPopupController {
                             }
                         }));
             } else if (note instanceof ItemNotification) {
+                if (finalStage.getScene() != null && finalStage.getScene().getUserData() instanceof Cleanable) {
+                    ((Cleanable) finalStage.getScene().getUserData()).cleanup();
+                }
                 ViewManager.switchScene(finalStage, "seller-view.fxml", "Quản lý bán hàng");
             }
         });

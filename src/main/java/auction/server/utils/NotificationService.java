@@ -151,4 +151,35 @@ public class NotificationService {
             }
         }
     }
+
+    public static void sendAutoBidCancelledNotification(int itemId, int userId, String reason, LocalDateTime now) {
+        try {
+            ItemDao itemDao = new ItemDaoImpl();
+            Item item = itemDao.getById(itemId);
+            String itemName = (item != null) ? item.getName() : "Sản phẩm ẩn";
+
+            // Khởi tạo đối tượng thông báo
+            BidNotification cancelNotif = new BidNotification(
+                    0,
+                    userId,
+                    "Cấu hình Đấu giá tự động đã bị HỦY!",
+                    String.format("Hệ thống đã dừng tính năng Auto Bid cho sản phẩm '%s'. Lý do: %s", itemName, reason),
+                    itemId,
+                    (item != null) ? item.getCurrentPrice() : 0,
+                    "Hệ thống"
+            );
+            cancelNotif.setCreatedAt(now);
+
+            notificationDao.add(cancelNotif);
+
+            for (ClientHandler client : ClientManager.getActiveClients()) {
+                if (client.getLoggedInUser() != null && client.getLoggedInUser().getId() == userId) {
+                    client.sendObject(cancelNotif);
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Lỗi gửi thông báo HỦY AUTO BID: " + e.getMessage());
+        }
+    }
 }

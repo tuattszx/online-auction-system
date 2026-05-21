@@ -17,4 +17,5 @@ public interface ItemDao extends GenericDAO<Item, Integer> {
     boolean approveItem(int itemId, boolean isApproved);
     boolean updateEndTime(int id, LocalDateTime newEndTime);
     List<AuctionItem> getMyAuctions(int userId);
+    boolean setupAutoBid(int itemId, int userId, long maxBid, long increment, String username);
 }

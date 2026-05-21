@@ -489,6 +489,7 @@ public class ItemDaoImpl implements ItemDao {
             }
 
             conn.commit(); // HOÀN TẤT TRANSACTION
+            checkAndTriggerAutomaticBids(idItem, newPrice, conn);
             return true;
 
         } catch (SQLException e) {
@@ -640,7 +641,7 @@ public class ItemDaoImpl implements ItemDao {
                 int itemId = rs.getInt("id");
                 String itemName = rs.getString("name");
                 int sellerId = rs.getInt("id_seller");
-                int currentPrice = rs.getInt("current_price");
+                long currentPrice = rs.getLong("current_price");
 
                 String sqlLock = "UPDATE ITEMS SET status = 'OPEN' WHERE id = ? AND status = 'PENDING'";
                 int rowsAffected = 0;
@@ -723,7 +724,7 @@ public class ItemDaoImpl implements ItemDao {
             item.setId(itemId);
             item.setName(itemName);
             item.setSellerId(sellerId);
-            item.setCurrentPrice((int) finalPrice);
+            item.setCurrentPrice(finalPrice);
 
             return item;
 
@@ -733,6 +734,175 @@ public class ItemDaoImpl implements ItemDao {
             return null;
         } finally {
             if (conn != null) try { conn.close(); } catch (SQLException e) {}
+        }
+    }
+
+    @Override
+    public boolean setupAutoBid(int itemId, int userId, long maxBid, long increment, String username) {
+        String sqlInsertConfig = "INSERT INTO AUTOMATIC_BIDS (id_item, id_user, max_bid, increment) " +
+                "VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE max_bid = ?, increment = ?";
+        Connection conn = null;
+        try {
+            conn = DatabaseManager.getInstance().getConnection();
+            conn.setAutoCommit(false);
+
+            // 1. Lưu cấu hình Auto Bid vào bảng
+            try (PreparedStatement ps = conn.prepareStatement(sqlInsertConfig)) {
+                ps.setInt(1, itemId);
+                ps.setInt(2, userId);
+                ps.setLong(3, maxBid);
+                ps.setLong(4, increment);
+                ps.setLong(5, maxBid);
+                ps.setLong(6, increment);
+                ps.executeUpdate();
+            }
+
+            // 2. Kiểm tra giá và người giữ giá hiện tại
+            long currentPrice = 0;
+            String sqlGetPrice = "SELECT current_price FROM ITEMS WHERE id = ? FOR UPDATE";
+            try (PreparedStatement ps = conn.prepareStatement(sqlGetPrice)) {
+                ps.setInt(1, itemId);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        currentPrice = rs.getLong("current_price");
+                    }
+                }
+            }
+
+            // 3. Thực hiện phát súng nâng giá đầu tiên nếu đủ điều kiện
+            long initialBidAmount = currentPrice + increment;
+            if (initialBidAmount <= maxBid) {
+                conn.commit();
+
+                // Gọi hàm placeBid xử lý dòng tiền
+                boolean isBidSuccess = placeBid(itemId, initialBidAmount, userId);
+                if (isBidSuccess) {
+                    // ĐÂY LÀ AUTO BID: Phải tự ghi lịch sử vì Client không có luồng gửi request trực tiếp lúc này
+                    String sqlInsertBid = "INSERT INTO BIDS (id_item, id_user, bid_amount, bidder_name) VALUES (?, ?, ?, ?)";
+                    try (PreparedStatement ps = conn.prepareStatement(sqlInsertBid)) {
+                        ps.setInt(1, itemId);
+                        ps.setInt(2, userId);
+                        ps.setLong(3, initialBidAmount);
+                        ps.setString(4, username);
+                        ps.executeUpdate();
+                    }
+                    return true;
+                }
+                return false;
+            } else {
+                conn.rollback();
+                return false;
+            }
+        } catch (SQLException e) {
+            if (conn != null) { try { conn.rollback(); } catch (SQLException ex) {} }
+            e.printStackTrace();
+            return false;
+        } finally {
+            if (conn != null) { try { conn.setAutoCommit(true); conn.close(); } catch (SQLException e) {} }
+        }
+    }
+
+    public void checkAndTriggerAutomaticBids(int itemId, long currentPrice, Connection existingConn) {
+        String sqlFindNextAuto = "SELECT a.id_user, a.max_bid, a.increment, u.username " +
+                "FROM AUTOMATIC_BIDS a " +
+                "JOIN users u ON a.id_user = u.id " +
+                "WHERE a.id_item = ? AND a.id_user != (SELECT IFNULL(id_current_bidder, 0) FROM ITEMS WHERE id = ?) " +
+                "ORDER BY a.max_bid DESC, a.created_at ASC LIMIT 1";
+
+        Connection conn = null;
+        try {
+            conn = existingConn != null ? existingConn : DatabaseManager.getInstance().getConnection();
+
+            while (true) {
+                int nextUserId = 0;
+                long maxBid = 0;
+                long increment = 0;
+                String username = "";
+
+                try (PreparedStatement ps = conn.prepareStatement(sqlFindNextAuto)) {
+                    ps.setInt(1, itemId);
+                    ps.setInt(2, itemId);
+                    try (ResultSet rs = ps.executeQuery()) {
+                        if (rs.next()) {
+                            nextUserId = rs.getInt("id_user");
+                            maxBid = rs.getLong("max_bid");
+                            increment = rs.getLong("increment");
+                            username = rs.getString("username");
+                        }
+                    }
+                }
+
+                // Kết thúc vòng lặp khi không còn ai cạnh tranh giá
+                if (nextUserId == 0) {
+                    break;
+                }
+
+                long nextBidAmount = currentPrice + increment;
+
+                if (nextBidAmount <= maxBid) {
+                    boolean success = placeBid(itemId, nextBidAmount, nextUserId);
+
+                    if (success) {
+                        // Lưu lịch sử đấu giá cho tài khoản chạy tự động ngầm
+                        String insertBid = "INSERT INTO BIDS (id_item, id_user, bid_amount, bidder_name) VALUES (?, ?, ?, ?)";
+                        try (PreparedStatement ps = conn.prepareStatement(insertBid)) {
+                            ps.setInt(1, itemId);
+                            ps.setInt(2, nextUserId);
+                            ps.setLong(3, nextBidAmount);
+                            ps.setString(4, username);
+                            ps.executeUpdate();
+                        }
+
+                        String sqlCheckTime = "SELECT end_time FROM ITEMS WHERE id = ?";
+                        try (PreparedStatement psTime = conn.prepareStatement(sqlCheckTime)) {
+                            psTime.setInt(1, itemId);
+                            try (ResultSet rsTime = psTime.executeQuery()) {
+                                if (rsTime.next()) {
+                                    Timestamp endTs = rsTime.getTimestamp("end_time");
+                                    if (endTs != null) {
+                                        LocalDateTime endTime = endTs.toLocalDateTime();
+                                        if (java.time.Duration.between(LocalDateTime.now(), endTime).getSeconds() < 30) {
+                                            LocalDateTime newEndTime = endTime.plusMinutes(2);
+                                            updateEndTime(itemId, newEndTime);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        currentPrice = nextBidAmount; // Cập nhật biến chạy để so sánh vòng lặp tiếp theo
+                    } else {
+                        // Thất bại (Ví dụ: hết tiền khả dụng thực tế) -> Hủy cấu hình
+                        deleteAutoBidAndNotify(itemId, nextUserId, username, "Tài khoản của bạn không đủ số dư khả dụng.",conn);
+                    }
+                } else {
+                    // Vượt quá mức Max Bid của người này -> Xóa cấu hình khỏi hàng đợi
+                    deleteAutoBidAndNotify(itemId, nextUserId, username, "Giá sản phẩm (" + nextBidAmount + " $) đã vượt quá mức giá trần bạn cài đặt.",conn);
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Lỗi hệ thống AutoBid: " + e.getMessage());
+        } finally {
+            if (existingConn == null && conn != null) {
+                try { conn.close(); } catch (SQLException e) {}
+            }
+        }
+    }
+
+    private void deleteAutoBidAndNotify(int itemId, int userId, String username, String reason, Connection conn) {
+        String sqlDel = "DELETE FROM AUTOMATIC_BIDS WHERE id_item = ? AND id_user = ?";
+        try (PreparedStatement psDel = conn.prepareStatement(sqlDel)) {
+            psDel.setInt(1, itemId);
+            psDel.setInt(2, userId);
+            int rows = psDel.executeUpdate();
+
+            if (rows > 0) {
+                System.out.println("[AUTO-BID CANCELLED] Gỡ cấu hình của User ID: " + userId);
+                // Đẩy thông báo thời gian thực về Client
+                auction.server.utils.NotificationService.sendAutoBidCancelledNotification(itemId, userId, reason, LocalDateTime.now());
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 }

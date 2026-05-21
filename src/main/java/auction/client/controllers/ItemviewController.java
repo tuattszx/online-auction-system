@@ -129,7 +129,10 @@ public class ItemviewController implements Cleanable {
         if (timeline != null) {
             timeline.stop();
         }
-        DataSession.getInstance().setSelectedItem(null);
+        Item sessionItem = DataSession.getInstance().getSelectedItem();
+        if (sessionItem != null && currentItem != null && sessionItem.getId() == currentItem.getId()) {
+            DataSession.getInstance().setSelectedItem(null);
+        }
     }
 
     private String toString(LocalDateTime time) {
