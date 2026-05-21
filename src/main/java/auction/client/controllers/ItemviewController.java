@@ -19,7 +19,10 @@ import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Cursor;
+import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
@@ -31,7 +34,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.stage.Popup;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -435,5 +440,68 @@ public class ItemviewController implements Cleanable {
             System.err.println("Lỗi tải ảnh: " + ex.getMessage());
             return null;
         });
+    }
+    private Popup autoBidPopup;
+    private double currentPrice = 9.0; // Giá € 9 hiện tại của bạn
+    @FXML private Button setMaxBidButton;
+    private boolean isAutoBidActive = false; // Biến cờ theo dõi trạng thái
+
+    @FXML
+    void toggleAutoBidPopup(ActionEvent event) {
+        if (isAutoBidActive) {
+            isAutoBidActive = false;
+
+            // Trở về trạng thái ban đầu (Màu xanh dương chủ đạo của bạn)
+            setMaxBidButton.setText("Set maximum bid");
+            setMaxBidButton.setStyle("-fx-background-color: #0052FF; -fx-cursor: hand; -fx-font-weight: bold; -fx-text-fill: white");
+
+            // thông báo ...
+            return;
+        }
+
+        Node sourceNode = (Node) event.getSource();
+        Window window = sourceNode.getScene().getWindow();
+
+        if (autoBidPopup != null && autoBidPopup.isShowing()) {
+            autoBidPopup.hide();
+            return;
+        }
+
+        try {
+            // Khởi tạo popup nếu chưa có
+            if (autoBidPopup == null) {
+                autoBidPopup = new Popup();
+                autoBidPopup.setAutoHide(true);
+            }
+
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/auction/view/autobidding-view.fxml"));
+
+            Parent root = loader.load(); // Load để sinh ra giao diện và controller riêng của nó
+
+            // 🔑 LẤY CONTROLLER CỦA POPUP RA ĐỂ TRUYỀN DỮ LIỆU
+            AutoBidController popupController = loader.getController();
+            popupController.setInitData(autoBidPopup, currentItem.getCurrentPrice(),this);
+
+            // Làm sạch content cũ và thêm content mới
+            autoBidPopup.getContent().clear();
+            autoBidPopup.getContent().add(root);
+
+//            double x = window.getX() + (window.getWidth()- autoBidPopup.getWidth())/2;//+ sourceNode.getScene().getX() + sourceNode.localToScene(0, 0).getX();
+//            double y = window.getY() +(window.getHeight()- autoBidPopup.getHeight())/2;// sourceNode.getScene().getY() + sourceNode.localToScene(0, 0).getY();
+            autoBidPopup.centerOnScreen();
+            autoBidPopup.show(window);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.err.println("Lỗi mở popup AutoBid!");
+        }
+    }
+    public void activateAutoBidStatus(String maxPrice) {
+        isAutoBidActive = true;
+
+        // Đổi chữ và chuyển sang tone màu xám/vàng hoặc đỏ dịu để báo hiệu "Hủy"
+        setMaxBidButton.setText("Cancel Auto Bid (" + maxPrice + " €)");
+        setMaxBidButton.setStyle("-fx-background-color: #EF4444;-fx-cursor: hand; -fx-font-weight: bold; -fx-text-fill: white");
+        // Bạn có thể đổi màu #64748B thành màu đỏ cam #EF4444 nếu muốn nhấn mạnh hành động bấm vào là HỦY.
     }
 }
