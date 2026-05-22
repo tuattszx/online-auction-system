@@ -744,12 +744,13 @@ public class ItemDaoImpl implements ItemDao {
     public boolean setupAutoBid(int itemId, int userId, long maxBid, long increment, String username) {
         String sqlInsertConfig = "INSERT INTO AUTOMATIC_BIDS (id_item, id_user, max_bid, increment) " +
                 "VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE max_bid = ?, increment = ?";
-        Connection conn = null;
-        try {
-            conn = DatabaseManager.getInstance().getConnection();
+
+        boolean isConfigSaved = false;
+        long currentPrice = 0;
+
+        try (Connection conn = DatabaseManager.getInstance().getConnection()) {
             conn.setAutoCommit(false);
 
-            // 1. Lưu cấu hình Auto Bid vào bảng
             try (PreparedStatement ps = conn.prepareStatement(sqlInsertConfig)) {
                 ps.setInt(1, itemId);
                 ps.setInt(2, userId);
@@ -760,8 +761,6 @@ public class ItemDaoImpl implements ItemDao {
                 ps.executeUpdate();
             }
 
-            // 2. Kiểm tra giá và người giữ giá hiện tại
-            long currentPrice = 0;
             String sqlGetPrice = "SELECT current_price FROM ITEMS WHERE id = ? FOR UPDATE";
             try (PreparedStatement ps = conn.prepareStatement(sqlGetPrice)) {
                 ps.setInt(1, itemId);
@@ -771,26 +770,35 @@ public class ItemDaoImpl implements ItemDao {
                     }
                 }
             }
+            conn.commit();
+            isConfigSaved = true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
 
-            // 3. Thực hiện phát súng nâng giá đầu tiên nếu đủ điều kiện
+        if (isConfigSaved) {
             long initialBidAmount = currentPrice + increment;
             if (initialBidAmount <= maxBid) {
-                conn.commit();
 
-                // Gọi hàm placeBid xử lý dòng tiền
                 boolean isBidSuccess = placeBid(itemId, initialBidAmount, userId);
+
                 if (isBidSuccess) {
-                    // ĐÂY LÀ AUTO BID: Phải tự ghi lịch sử vì Client không có luồng gửi request trực tiếp lúc này
                     String sqlInsertBid = "INSERT INTO BIDS (id_item, id_user, bid_amount) VALUES (?, ?, ?)";
-                    try (PreparedStatement ps = conn.prepareStatement(sqlInsertBid)) {
+                    try (Connection conn = DatabaseManager.getInstance().getConnection();
+                         PreparedStatement ps = conn.prepareStatement(sqlInsertBid)) {
                         ps.setInt(1, itemId);
                         ps.setInt(2, userId);
                         ps.setLong(3, initialBidAmount);
                         ps.executeUpdate();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
                     }
 
-                    Item updateItem= getItemById(itemId);
+                    // Lấy thông tin Item độc lập không lồng connection
+                    Item updateItem = getItemById(itemId);
                     if (updateItem != null) {
+                        // Gửi tin real-time đích danh phòng
                         ClientManager.broadcast(new BidUpdateNotification(
                                 itemId,
                                 initialBidAmount,
@@ -804,22 +812,13 @@ public class ItemDaoImpl implements ItemDao {
                         bidRequest.setIdUser(userId);
                         bidRequest.setBidderName(username);
                         bidRequest.setBidAmount(initialBidAmount);
-                        NotificationService.handleSendMessageBid(updateItem,bidRequest,LocalDateTime.now());
+                        NotificationService.handleSendMessageBid(updateItem, bidRequest, LocalDateTime.now());
                     }
                     return true;
                 }
-                return false;
-            } else {
-                conn.rollback();
-                return false;
             }
-        } catch (SQLException e) {
-            if (conn != null) { try { conn.rollback(); } catch (SQLException ex) {} }
-            e.printStackTrace();
-            return false;
-        } finally {
-            if (conn != null) { try { conn.setAutoCommit(true); conn.close(); } catch (SQLException e) {} }
         }
+        return false;
     }
 
     @Override
@@ -830,99 +829,113 @@ public class ItemDaoImpl implements ItemDao {
                 "WHERE a.id_item = ? AND a.id_user != (SELECT IFNULL(id_current_bidder, 0) FROM ITEMS WHERE id = ?) " +
                 "ORDER BY a.max_bid DESC, a.created_at ASC LIMIT 1";
 
-        try (Connection conn = DatabaseManager.getInstance().getConnection()) {
-            while (true) {
-                int nextUserId = 0;
-                long maxBid = 0;
-                long increment = 0;
-                String username = "";
+        while (true) {
+            int nextUserId = 0;
+            long maxBid = 0;
+            long increment = 0;
+            String username = "";
 
-                try (PreparedStatement ps = conn.prepareStatement(sqlFindNextAuto)) {
-                    ps.setInt(1, itemId);
-                    ps.setInt(2, itemId);
-                    try (ResultSet rs = ps.executeQuery()) {
-                        if (rs.next()) {
-                            nextUserId = rs.getInt("id_user");
-                            maxBid = rs.getLong("max_bid");
-                            increment = rs.getLong("increment");
-                            username = rs.getString("username");
-                        }
+            try ( Connection conn= DatabaseManager.getInstance().getConnection();
+                    PreparedStatement ps = conn.prepareStatement(sqlFindNextAuto)) {
+                ps.setInt(1, itemId);
+                ps.setInt(2, itemId);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        nextUserId = rs.getInt("id_user");
+                        maxBid = rs.getLong("max_bid");
+                        increment = rs.getLong("increment");
+                        username = rs.getString("username");
                     }
                 }
+            } catch (SQLException e) {
+                e.printStackTrace();
+                break;
+            }
 
-                // Kết thúc vòng lặp khi không còn ai cạnh tranh giá
-                if (nextUserId == 0) {
-                    break;
-                }
+            // Kết thúc vòng lặp khi không còn ai cạnh tranh giá
+            if (nextUserId == 0) {
+                break;
+            }
 
-                long nextBidAmount = currentPrice + increment;
+            long nextBidAmount = currentPrice + increment;
 
-                if (nextBidAmount <= maxBid) {
-                    boolean success = placeBid(itemId, nextBidAmount, nextUserId);
+            if (nextBidAmount <= maxBid) {
+                boolean success = placeBid(itemId, nextBidAmount, nextUserId);
 
-                    if (success) {
-                        // Lưu lịch sử đấu giá cho tài khoản chạy tự động ngầm
-                        String insertBid = "INSERT INTO BIDS (id_item, id_user, bid_amount) VALUES (?, ?, ?)";
-                        try (PreparedStatement ps = conn.prepareStatement(insertBid)) {
-                            ps.setInt(1, itemId);
-                            ps.setInt(2, nextUserId);
-                            ps.setLong(3, nextBidAmount);
-                            ps.executeUpdate();
-                        }
+                if (success) {
+                    // Lưu lịch sử đấu giá cho tài khoản chạy tự động ngầm
+                    String insertBid = "INSERT INTO BIDS (id_item, id_user, bid_amount) VALUES (?, ?, ?)";
+                    try (Connection conn= DatabaseManager.getInstance().getConnection();
+                            PreparedStatement ps = conn.prepareStatement(insertBid)) {
+                        ps.setInt(1, itemId);
+                        ps.setInt(2, nextUserId);
+                        ps.setLong(3, nextBidAmount);
+                        ps.executeUpdate();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
 
-                        Item updateItem= getItemById(itemId);
-                        if (updateItem != null) {
-                            ClientManager.broadcast(new BidUpdateNotification(
-                                    itemId,
-                                    nextBidAmount,
-                                    username,
-                                    LocalDateTime.now(),
-                                    updateItem.getEndTime()
-                            ));
+                    Item updateItem= getItemById(itemId);
+                    if (updateItem != null) {
+                        ClientManager.broadcast(new BidUpdateNotification(
+                                itemId,
+                                nextBidAmount,
+                                username,
+                                LocalDateTime.now(),
+                                updateItem.getEndTime()
+                        ));
 
-                            Bid bidRequest = new Bid();
-                            bidRequest.setIdItem(itemId);
-                            bidRequest.setIdUser(nextUserId);
-                            bidRequest.setBidderName(username);
-                            bidRequest.setBidAmount(nextBidAmount);
-                            NotificationService.handleSendMessageBid(updateItem,bidRequest,LocalDateTime.now());
-                        }
+                        Bid bidRequest = new Bid();
+                        bidRequest.setIdItem(itemId);
+                        bidRequest.setIdUser(nextUserId);
+                        bidRequest.setBidderName(username);
+                        bidRequest.setBidAmount(nextBidAmount);
+                        NotificationService.handleSendMessageBid(updateItem,bidRequest,LocalDateTime.now());
+                    }
 
-                        String sqlCheckTime = "SELECT end_time FROM ITEMS WHERE id = ?";
-                        try (PreparedStatement psTime = conn.prepareStatement(sqlCheckTime)) {
-                            psTime.setInt(1, itemId);
-                            try (ResultSet rsTime = psTime.executeQuery()) {
-                                if (rsTime.next()) {
-                                    Timestamp endTs = rsTime.getTimestamp("end_time");
-                                    if (endTs != null) {
-                                        LocalDateTime endTime = endTs.toLocalDateTime();
-                                        if (java.time.Duration.between(LocalDateTime.now(), endTime).getSeconds() < 30) {
-                                            LocalDateTime newEndTime = endTime.plusMinutes(2);
-                                            updateEndTime(itemId, newEndTime);
-                                        }
+                    String sqlCheckTime = "SELECT end_time FROM ITEMS WHERE id = ?";
+                    try (Connection conn= DatabaseManager.getInstance().getConnection();
+                            PreparedStatement psTime = conn.prepareStatement(sqlCheckTime)) {
+                        psTime.setInt(1, itemId);
+                        try (ResultSet rsTime = psTime.executeQuery()) {
+                            if (rsTime.next()) {
+                                Timestamp endTs = rsTime.getTimestamp("end_time");
+                                if (endTs != null) {
+                                    LocalDateTime endTime = endTs.toLocalDateTime();
+                                    if (java.time.Duration.between(LocalDateTime.now(), endTime).getSeconds() < 30) {
+                                        LocalDateTime newEndTime = endTime.plusMinutes(2);
+                                        updateEndTime(itemId, newEndTime);
                                     }
                                 }
                             }
                         }
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
 
-                        currentPrice = nextBidAmount; // Cập nhật biến chạy để so sánh vòng lặp tiếp theo
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException ie) {
-                            Thread.currentThread().interrupt();
-                            break;
-                        }
-                    } else {
-                        // Thất bại (Ví dụ: hết tiền khả dụng thực tế) -> Hủy cấu hình
-                        deleteAutoBidAndNotify(itemId, nextUserId, username, "Tài khoản của bạn không đủ số dư khả dụng.",conn);
+                    currentPrice = nextBidAmount; // Cập nhật biến chạy để so sánh vòng lặp tiếp theo
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException ie) {
+                        Thread.currentThread().interrupt();
+                        break;
                     }
                 } else {
+                    try (Connection conn = DatabaseManager.getInstance().getConnection()) {
+                        // Thất bại (Ví dụ: hết tiền khả dụng thực tế) -> Hủy cấu hình
+                        deleteAutoBidAndNotify(itemId, nextUserId, username, "Tài khoản của bạn không đủ số dư khả dụng.", conn);
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                }
+            } else {
+                try (Connection conn= DatabaseManager.getInstance().getConnection()) {
                     // Vượt quá mức Max Bid của người này -> Xóa cấu hình khỏi hàng đợi
-                    deleteAutoBidAndNotify(itemId, nextUserId, username, "Giá sản phẩm (" + nextBidAmount + " $) đã vượt quá mức giá trần bạn cài đặt.",conn);
+                    deleteAutoBidAndNotify(itemId, nextUserId, username, "Giá sản phẩm (" + nextBidAmount + " $) đã vượt quá mức giá trần bạn cài đặt.", conn);
+                } catch (SQLException e) {
+                    e.printStackTrace();
                 }
             }
-        } catch (SQLException e) {
-            System.err.println("Lỗi hệ thống AutoBid: " + e.getMessage());
         }
     }
 

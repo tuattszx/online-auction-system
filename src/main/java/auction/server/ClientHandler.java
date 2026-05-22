@@ -315,9 +315,9 @@ public class ClientHandler implements Runnable {
             if (currentItem == null) {
                 responseData = "Sản phẩm không tồn tại!";
             }
-            /*else if (!"OPEN".equals(currentItem.getStatus())) {
+            else if (!"OPEN".equals(currentItem.getStatus())) {
                 responseData= "Phiên đấu giá đang đóng, không thể đặt giá!";
-            }*/
+            }
             else if (bidRequest.getBidAmount() <= currentItem.getCurrentPrice()) {
                 responseData = "Giá đã bị đẩy lên € " + currentItem.getCurrentPrice() + ". Vui lòng trả cao hơn!";
             } else {
