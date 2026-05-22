@@ -3,6 +3,7 @@ package auction.client.controllers;
 import auction.client.ClientNetwork;
 import auction.client.services.AuctionManager;
 import auction.client.services.AuctionSubscriptionManager;
+import auction.client.services.AuctionTimerManager;
 import auction.client.services.Cleanable;
 import auction.client.session.DataSession;
 import auction.client.utils.ToastManager;

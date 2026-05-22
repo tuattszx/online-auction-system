@@ -2,6 +2,7 @@ package auction.client.controllers;
 
 import auction.client.ClientNetwork;
 import auction.client.services.AuctionManager;
+import auction.client.services.Cleanable;
 import auction.client.services.NotificationSubscriptionManager;
 import auction.client.session.DataSession;
 import auction.common.message.Message;
@@ -33,7 +34,7 @@ import java.util.function.Consumer;
 
 import static auction.client.utils.ServerTimeSync.formatRelativeTime;
 
-public class NotificationViewController {
+public class NotificationViewController implements Cleanable {
     @FXML private HBox searchBar; // Liên kết với thanh tìm kiếm
     @FXML
     private HeaderMenuController headerMenuController;
@@ -49,6 +50,13 @@ public class NotificationViewController {
             headerMenuController.hideSearchBar();
         }
         headerMenuController.setBalance(DataSession.getInstance().getLoggedInUser() != null ? DataSession.getInstance().getLoggedInUser().getBalance() + " $" : "0 $");
+    }
+
+    @Override
+    public void cleanup() {
+        if (realtimeCallback != null) {
+            NotificationSubscriptionManager.getInstance().unsubscribe(realtimeCallback);
+        }
     }
 
     private HBox createNotificationItem(String avatarUrl, String titleText, String actionText, String timeStr, boolean isUnread) {

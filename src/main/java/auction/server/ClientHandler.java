@@ -303,8 +303,12 @@ public class ClientHandler implements Runnable {
         String status = "FAILED";
         Object responseData = "Lỗi không xác định";
         BidUpdateNotification notification = null;
+        int targetItemId=-1;
+        long finalPriceTrigger=0;
         try {
             Bid bidRequest = (Bid) msg.getData();
+            targetItemId = bidRequest.getIdItem();
+            finalPriceTrigger = bidRequest.getBidAmount();
 
             Item currentItem = itemDao.getById(bidRequest.getIdItem());
 
@@ -365,6 +369,17 @@ public class ClientHandler implements Runnable {
 
             if (notification != null) {
                 ClientManager.broadcast(notification);
+            }
+
+            if ("SUCCESS".equals(status) && targetItemId != -1) {
+                final int itemIdFinal = targetItemId;
+                final long priceFinal = finalPriceTrigger;
+
+                Thread autoBidThread = new Thread(() -> {
+                    itemDao.checkAndTriggerAutomaticBids(itemIdFinal, priceFinal);
+                });
+                autoBidThread.setDaemon(true);
+                autoBidThread.start();
             }
         }
     }
@@ -664,7 +679,6 @@ public class ClientHandler implements Runnable {
     private void handleSetupAutoBid(Message msg, ObjectOutputStream out) throws IOException {
         String status = "FAILED";
         Object responseData = "Lỗi thiết lập hệ thống tự động";
-        BidUpdateNotification broadcastNotification=null;
         try {
             Object[] payload = (Object[]) msg.getData();
             int itemId = (int) payload[0];
@@ -681,53 +695,11 @@ public class ClientHandler implements Runnable {
             } else if (maxBid <= currentItem.getCurrentPrice()) {
                 responseData = "Mức giá trần (Max Bid) phải lớn hơn giá hiện tại của sản phẩm!";
             } else {
-                long priceBefore = currentItem.getCurrentPrice();
                 boolean isSuccess = itemDao.setupAutoBid(itemId, userId, maxBid, increment, username);
 
                 if (isSuccess) {
                     status = "SUCCESS";
                     responseData = "Đã kích hoạt cấu hình đấu giá tự động thành công!";
-
-                    Item updatedItem = itemDao.getById(itemId);
-                    if (updatedItem != null && updatedItem.getCurrentPrice() > priceBefore) {
-
-                        java.time.LocalDateTime now = java.time.LocalDateTime.now();
-
-
-                        String finalWinnerName = "Hệ thống";
-                        int finalWinnerId = 0;
-
-                        if (updatedItem.getCurrentBidderId() != null && updatedItem.getCurrentBidderId() > 0) {
-                            finalWinnerId = updatedItem.getCurrentBidderId();
-
-                            if (finalWinnerId == userId) {
-                                finalWinnerName = username;
-                            } else {
-                                User userObj = userDao.getById(finalWinnerId);
-                                if (userObj != null) {
-                                    finalWinnerName = userObj.getUsername();
-                                }
-                            }
-                        }
-
-                        // 🚀 PHÁT BROADCAST ĐỒNG BỘ LÊN MÀN HÌNH CHO TẤT CẢ NGƯỜI XEM
-                        broadcastNotification = new auction.common.message.BidUpdateNotification(
-                                updatedItem.getId(),
-                                updatedItem.getCurrentPrice(),
-                                finalWinnerName,
-                                now,
-                                updatedItem.getEndTime() // Phòng trường hợp Sniper Protection tự cộng thêm 2 phút trong DB
-                        );
-
-                        Bid bidRequest = new Bid();
-                        bidRequest.setIdItem(itemId);
-                        bidRequest.setIdUser(finalWinnerId);
-                        bidRequest.setBidderName(finalWinnerName);
-                        bidRequest.setBidAmount(updatedItem.getCurrentPrice());
-                        bidRequest.setBidTime(now);
-
-                        NotificationService.handleSendMessageBid(updatedItem, bidRequest , now);
-                    }
                 } else {
                     responseData = "Không thể lưu cấu hình. Vui lòng kiểm tra lại số dư tài khoản!";
                 }
@@ -743,10 +715,6 @@ public class ClientHandler implements Runnable {
             out.writeObject(msg);
             out.flush();
             out.reset();
-
-            if (broadcastNotification != null) {
-                ClientManager.broadcast(broadcastNotification);
-            }
         }
     }
 

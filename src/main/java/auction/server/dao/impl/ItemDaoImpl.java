@@ -1,11 +1,15 @@
 package auction.server.dao.impl;
 
+import auction.common.message.BidUpdateNotification;
+import auction.common.model.bid.Bid;
 import auction.common.model.categories.Category;
 import auction.common.model.items.AuctionItem;
 import auction.common.model.items.Item;
 import auction.common.model.items.ItemImage;
+import auction.server.ClientManager;
 import auction.server.DatabaseManager;
 import auction.server.dao.ItemDao;
+import auction.server.utils.NotificationService;
 
 import java.sql.*;
 import java.time.LocalDateTime;
@@ -489,7 +493,6 @@ public class ItemDaoImpl implements ItemDao {
             }
 
             conn.commit(); // HOÀN TẤT TRANSACTION
-            checkAndTriggerAutomaticBids(idItem, newPrice, conn);
             return true;
 
         } catch (SQLException e) {
@@ -778,13 +781,30 @@ public class ItemDaoImpl implements ItemDao {
                 boolean isBidSuccess = placeBid(itemId, initialBidAmount, userId);
                 if (isBidSuccess) {
                     // ĐÂY LÀ AUTO BID: Phải tự ghi lịch sử vì Client không có luồng gửi request trực tiếp lúc này
-                    String sqlInsertBid = "INSERT INTO BIDS (id_item, id_user, bid_amount, bidder_name) VALUES (?, ?, ?, ?)";
+                    String sqlInsertBid = "INSERT INTO BIDS (id_item, id_user, bid_amount) VALUES (?, ?, ?)";
                     try (PreparedStatement ps = conn.prepareStatement(sqlInsertBid)) {
                         ps.setInt(1, itemId);
                         ps.setInt(2, userId);
                         ps.setLong(3, initialBidAmount);
-                        ps.setString(4, username);
                         ps.executeUpdate();
+                    }
+
+                    Item updateItem= getItemById(itemId);
+                    if (updateItem != null) {
+                        ClientManager.broadcast(new BidUpdateNotification(
+                                itemId,
+                                initialBidAmount,
+                                username,
+                                LocalDateTime.now(),
+                                updateItem.getEndTime()
+                        ));
+
+                        Bid bidRequest = new Bid();
+                        bidRequest.setIdItem(itemId);
+                        bidRequest.setIdUser(userId);
+                        bidRequest.setBidderName(username);
+                        bidRequest.setBidAmount(initialBidAmount);
+                        NotificationService.handleSendMessageBid(updateItem,bidRequest,LocalDateTime.now());
                     }
                     return true;
                 }
@@ -802,17 +822,15 @@ public class ItemDaoImpl implements ItemDao {
         }
     }
 
-    public void checkAndTriggerAutomaticBids(int itemId, long currentPrice, Connection existingConn) {
+    @Override
+    public void checkAndTriggerAutomaticBids(int itemId, long currentPrice) {
         String sqlFindNextAuto = "SELECT a.id_user, a.max_bid, a.increment, u.username " +
                 "FROM AUTOMATIC_BIDS a " +
                 "JOIN users u ON a.id_user = u.id " +
                 "WHERE a.id_item = ? AND a.id_user != (SELECT IFNULL(id_current_bidder, 0) FROM ITEMS WHERE id = ?) " +
                 "ORDER BY a.max_bid DESC, a.created_at ASC LIMIT 1";
 
-        Connection conn = null;
-        try {
-            conn = existingConn != null ? existingConn : DatabaseManager.getInstance().getConnection();
-
+        try (Connection conn = DatabaseManager.getInstance().getConnection()) {
             while (true) {
                 int nextUserId = 0;
                 long maxBid = 0;
@@ -844,13 +862,30 @@ public class ItemDaoImpl implements ItemDao {
 
                     if (success) {
                         // Lưu lịch sử đấu giá cho tài khoản chạy tự động ngầm
-                        String insertBid = "INSERT INTO BIDS (id_item, id_user, bid_amount, bidder_name) VALUES (?, ?, ?, ?)";
+                        String insertBid = "INSERT INTO BIDS (id_item, id_user, bid_amount) VALUES (?, ?, ?)";
                         try (PreparedStatement ps = conn.prepareStatement(insertBid)) {
                             ps.setInt(1, itemId);
                             ps.setInt(2, nextUserId);
                             ps.setLong(3, nextBidAmount);
-                            ps.setString(4, username);
                             ps.executeUpdate();
+                        }
+
+                        Item updateItem= getItemById(itemId);
+                        if (updateItem != null) {
+                            ClientManager.broadcast(new BidUpdateNotification(
+                                    itemId,
+                                    nextBidAmount,
+                                    username,
+                                    LocalDateTime.now(),
+                                    updateItem.getEndTime()
+                            ));
+
+                            Bid bidRequest = new Bid();
+                            bidRequest.setIdItem(itemId);
+                            bidRequest.setIdUser(nextUserId);
+                            bidRequest.setBidderName(username);
+                            bidRequest.setBidAmount(nextBidAmount);
+                            NotificationService.handleSendMessageBid(updateItem,bidRequest,LocalDateTime.now());
                         }
 
                         String sqlCheckTime = "SELECT end_time FROM ITEMS WHERE id = ?";
@@ -882,10 +917,6 @@ public class ItemDaoImpl implements ItemDao {
             }
         } catch (SQLException e) {
             System.err.println("Lỗi hệ thống AutoBid: " + e.getMessage());
-        } finally {
-            if (existingConn == null && conn != null) {
-                try { conn.close(); } catch (SQLException e) {}
-            }
         }
     }
 

@@ -1,4 +1,4 @@
-package auction.client.controllers;
+package auction.client.services;
 
 import auction.client.utils.ServerTimeSync;
 import auction.common.model.items.Item;

@@ -1,4 +1,6 @@
 package auction.client.controllers;
+import auction.client.services.AuctionTimerManager;
+import auction.client.services.Cleanable;
 import auction.client.session.DataSession;
 import auction.common.model.items.ItemImage;
 import javafx.animation.Animation;
@@ -29,10 +31,10 @@ import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
 import javafx.scene.paint.Color;
-import java.io.IOException;
+
 import java.util.List;
 
-public class MainViewController extends ProfileController {
+public class MainViewController extends ProfileController implements Cleanable {
     public Label lbbalance;
     @FXML
     private TextField txtsearch;
@@ -49,6 +51,7 @@ public class MainViewController extends ProfileController {
 
     // SỬA LỖI: Khai báo biến network
     private ClientNetwork network = ClientNetwork.getInstance();
+    private final List<AuctionTimerManager> activeCardTimers = new java.util.ArrayList<>();
 
     @FXML
     public void initialize() {
@@ -65,7 +68,7 @@ public class MainViewController extends ProfileController {
     }
 
     private void loadItems() {
-
+        cleanupTimers();
         flitems.getChildren().clear();
         for (int i = 0; i < 10; i++) {
             flitems.getChildren().add(createSkeletonCard());
@@ -395,5 +398,19 @@ public class MainViewController extends ProfileController {
         } else {
             System.out.println("Lỗi: scrollCategories đang bị null!");
         }
+    }
+
+    private void cleanupTimers() {
+        for (AuctionTimerManager timer : activeCardTimers) {
+            if (timer != null) {
+                timer.stop();
+            }
+        }
+        activeCardTimers.clear();
+    }
+
+    @Override
+    public void cleanup() {
+        cleanupTimers();
     }
 }

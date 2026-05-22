@@ -6,6 +6,7 @@ import auction.client.services.Cleanable;
 import auction.client.services.NotificationSubscriptionManager;
 import auction.client.session.DataSession;
 import auction.common.message.Message;
+import auction.common.model.items.Item;
 import auction.common.model.notifications.BidNotification;
 import auction.common.model.notifications.ItemNotification;
 import auction.common.model.notifications.Notification;
@@ -311,6 +312,11 @@ public class NotificationPopupController {
             final Stage finalStage = primaryStage;
             // Thực hiện chuyển View
             if (note instanceof BidNotification bidNote) {
+                Item currentlySelected = DataSession.getInstance().getSelectedItem();
+
+                if (currentlySelected != null && currentlySelected.getId() == bidNote.getItemId()){
+                    return;
+                }
                 if (finalStage.getScene() != null && finalStage.getScene().getUserData() instanceof Cleanable) {
                     ((Cleanable) finalStage.getScene().getUserData()).cleanup();
                 }
