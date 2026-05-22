@@ -11,6 +11,7 @@ public class User extends Account{
     private String shippingPhone;
     private String cardHolderName;
     private String cardNumber;
+    private String language;
 
     public User (){
         super();
@@ -54,6 +55,10 @@ public class User extends Account{
 
     public void setPhoneNumber(String phoneNumber) {this.phoneNumber = phoneNumber;}
     public String getPhoneNumber() {return phoneNumber;}
+
+    public void setLanguage(String language ) {this.language = language;}
+    public String getLanguage() {return language;}
+
 
     public String getShippingPhone() { return shippingPhone; }
     public void setShippingPhone(String shippingPhone) { this.shippingPhone = shippingPhone; }

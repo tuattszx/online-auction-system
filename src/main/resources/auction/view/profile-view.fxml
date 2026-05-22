@@ -8,7 +8,6 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -152,7 +151,7 @@
                      <content>
                         <StackPane style="-fx-border-radius: 15; -fx-background-radius: 15; -fx-background-color: white;">
                            <children>
-                              <VBox fx:id="paneAddresses" spacing="10.0" style="-fx-background-color: white; -fx-background-radius: 15; -fx-border-radius: 15;" visible="false">
+                              <VBox fx:id="paneAddresses" spacing="10.0" style="-fx-background-color: white; -fx-background-radius: 15; -fx-border-radius: 15;">
                                  <children>
                                     <Label text="%profile.label.address">
                                        <font>
@@ -219,7 +218,7 @@
                                     <VBox prefHeight="101.0" prefWidth="443.0">
                                        <children>
                                           <Label text="%profile.label.DeliveryAddress" />
-                                          <TextArea fx:id="txtDeliveryAddressInput" prefHeight="47.0" prefWidth="441.0" promptText="ddd" style="-fx-background-color: #e8f0fe; -fx-border-color: #e8f0fe;" />
+                                          <TextField fx:id="txtDeliveryAddressInput" prefHeight="42.0" prefWidth="415.0" promptText="ccc" style="-fx-background-color: #e8f0fe; -fx-border-color: #e8f0fe;" styleClass="text-field" text="ccc" />
                                        </children>
                                     </VBox>
                                     <Button mnemonicParsing="false" onAction="#btnSaveSetting" prefHeight="37.0" prefWidth="101.0" style="-fx-border-radius: 4; -fx-background-radius: 4; -fx-background-color: #0052ff; -fx-text-fill: white;" text="%profile.label.save" />
@@ -277,7 +276,7 @@
                                     <Insets bottom="15.0" left="20.0" right="20.0" top="15.0" />
                                  </padding>
                               </VBox>
-                              <VBox fx:id="paneAccount" prefHeight="1251.0" prefWidth="455.0" spacing="10.0" style="-fx-background-color: white; -fx-background-radius: 15; -fx-border-radius: 15;" StackPane.alignment="TOP_LEFT" xmlns:fx="http://javafx.com/fxml">
+                              <VBox fx:id="paneAccount" prefHeight="1251.0" prefWidth="455.0" spacing="10.0" style="-fx-background-color: white; -fx-background-radius: 15; -fx-border-radius: 15;" visible="false" StackPane.alignment="TOP_LEFT" xmlns:fx="http://javafx.com/fxml">
                                  <children>
                                     <Label text="%profile.label.account">
                                        <font>
@@ -478,7 +477,7 @@
                                     </VBox>
                                     <Region maxHeight="-Infinity" minHeight="-Infinity" prefHeight="1.0" prefWidth="1.0" style="-fx-background-color: #e8f0fe; -fx-border-width: 1;" visible="false" />
       
-                                    <Button mnemonicParsing="false" onAction="#btnSaveSetting" prefHeight="40.0" prefWidth="101.0" style="-fx-border-radius: 4; -fx-background-radius: 4; -fx-background-color: #0052ff; -fx-text-fill: white;" text="Save" visible="false" />
+                                    <Button mnemonicParsing="false" onAction="#btnSaveSetting" prefHeight="40.0" prefWidth="101.0" style="-fx-border-radius: 4; -fx-background-radius: 4; -fx-background-color: #0052ff; -fx-text-fill: white;" text="Save" />
                                  </children>
                                  <padding>
                                     <Insets bottom="15.0" left="20.0" right="20.0" top="15.0" />
@@ -611,7 +610,7 @@
                                     <Insets bottom="15.0" left="20.0" right="20.0" top="15.0" />
                                  </padding>
                               </VBox>
-                              <VBox fx:id="panePayment" prefHeight="896.0" prefWidth="455.0" spacing="10.0" style="-fx-background-color: white; -fx-background-radius: 15; -fx-border-radius: 15;" StackPane.alignment="TOP_LEFT">
+                              <VBox fx:id="panePayment" prefHeight="896.0" prefWidth="455.0" spacing="10.0" style="-fx-background-color: white; -fx-background-radius: 15; -fx-border-radius: 15;" visible="false" StackPane.alignment="TOP_LEFT">
                                  <children>
                                     <Label text="%profile.label.payment">
                                        <font>

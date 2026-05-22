@@ -64,6 +64,7 @@ public class UserDaoImpl implements UserDao {
                 user.getShippingPhone(),
                 user.getCardHolderName(), // Lấy từ object user
                 user.getCardNumber()      // Lấy từ object user
+                , user.getLanguage()
         );
     }
 
@@ -145,6 +146,15 @@ public class UserDaoImpl implements UserDao {
         user.setAddress(rs.getString("ADDRESS"));
         user.setDisplayName(rs.getString("dis_name"));
         user.setPhoneNumber(rs.getString("phone_number"));
+        user.setFirstName(rs.getString("first_name"));
+        user.setLastName(rs.getString("last_name"));
+        user.setShippingPhone(rs.getString("shipping_phone"));
+        user.setCardNumber(rs.getString("card_number"));
+        user.setCardHolderName(rs.getString("card_holder_name"));
+        user.setCountry(rs.getString("country"));
+        user.setLanguage(rs.getString("country"));
+
+
 
 
         Timestamp timestamp = rs.getTimestamp("created_at");
@@ -200,12 +210,12 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public boolean updateProfile(int userId, String newDisName, String newFirstName, String newLastName,
-                                 String newEmail, String newAddress, String newPhoneNumber, String newCountry, String newshippingPhone,String cardName, String cardNum) {
+                                 String newEmail, String newAddress, String newPhoneNumber, String newCountry, String newshippingPhone,String cardName, String cardNum, String language) {
 
         // Câu lệnh UPDATE map chuẩn xác 7 trường thông tin thông qua ID
         String sql = "UPDATE users SET dis_name = ?, first_name = ?, last_name = ?, EMAIL = ?, "
                 + "ADDRESS = ?, phone_number = ?, country = ?, shipping_phone = ?, "
-                + "card_holder_name = ?, card_number = ? WHERE ID = ?";
+                + "card_holder_name = ?, card_number = ?, language= ? WHERE ID = ?";
 
         try (Connection conn = DatabaseManager.getInstance().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -220,7 +230,8 @@ public class UserDaoImpl implements UserDao {
             pstmt.setString(8,newshippingPhone);
             pstmt.setString(9, cardName);  // Cột card_holder_name
             pstmt.setString(10, cardNum);
-            pstmt.setInt(11, userId);
+            pstmt.setString(11,language);
+            pstmt.setInt(12, userId);
 
             return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {

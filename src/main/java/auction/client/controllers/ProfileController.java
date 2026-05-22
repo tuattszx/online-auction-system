@@ -69,14 +69,24 @@ public class ProfileController  {
         );
         countryPicker.setItems(countries);
 
-        countryPicker.setValue("Vietnam");
-
         languagePicker.getItems().addAll("Tiếng Việt", "English"); // No unchecked call
 
         if (user!= null){
             lbname.setText(user.getDisplayName());
             lbusername.setText(user.getUsername());
             lbemail.setText(user.getEmail());
+            languagePicker.setValue(user.getLanguage());
+            if (txtFirstNameInput != null) txtFirstNameInput.setText(user.getFirstName());
+            if (txtLastNameInput != null) txtLastNameInput.setText(user.getLastName());
+            if (txtShippingPhoneInput != null) txtShippingPhoneInput.setText(user.getShippingPhone());
+            if (txtDeliveryAddressInput != null) txtDeliveryAddressInput.setText(user.getAddress());
+            if (txtCardName != null) {
+                txtCardName.setText(user.getCardHolderName());
+            }
+            if (txtCardNumber != null) {
+                txtCardNumber.setText(user.getCardNumber());
+            }
+
 
             char[] repeat = new char[user.getPassword().length()];
             java.util.Arrays.fill(repeat, '*');
@@ -132,13 +142,14 @@ public class ProfileController  {
         String finalPassword = editPasswordBox.isVisible() ? txtPasswordInput.getText() : user.getPassword();
 
         // 2. Dữ liệu từ tab Address (Lấy từ các Input mới)
-        String finalFirstName = txtFirstNameInput.getText().trim();
-        String finalLastName = txtLastNameInput.getText().trim();
+        String finalFirstName = txtFirstNameInput.getText()!=null ? txtFirstNameInput.getText().trim() : "";
+        String finalLastName = txtLastNameInput.getText() !=null ? txtLastNameInput.getText().trim():"";
         String finalCountry = countryPicker.getValue() != null ? countryPicker.getValue().toString() : "Vietnam";
-        String finalDeliveryAddress = txtDeliveryAddressInput.getText().trim();
-        String finalShippingPhone = txtShippingPhoneInput.getText().trim();
-        String finalCardName = txtCardName.getText().trim();
-        String finalCardNumber = txtCardNumber.getText().trim();
+        String finalDeliveryAddress = txtDeliveryAddressInput.getText() !=null ? txtDeliveryAddressInput.getText() : "";
+        String finalShippingPhone = txtShippingPhoneInput.getText() !=null ? txtShippingPhoneInput.getText() : "";
+        String finalCardName = txtCardName.getText() !=null ? txtCardName.getText().trim() : "";
+        String finalCardNumber = txtCardNumber.getText() !=null ? txtCardNumber.getText().trim():"";
+        String finalLanguage= languagePicker.getValue() != null ? languagePicker.getValue().toString() : "Vietnam";
 
         // 2. Set dữ liệu vào model User
         user.setDisplayName(finalName);
@@ -151,6 +162,7 @@ public class ProfileController  {
         user.setShippingPhone(finalShippingPhone);
         user.setCardHolderName(finalCardName);
         user.setCardNumber(finalCardNumber);
+        user.setLanguage(finalLanguage);
         if (editPasswordBox.isVisible() && !finalPassword.isEmpty()) {
             user.setPassword(finalPassword);
         }
