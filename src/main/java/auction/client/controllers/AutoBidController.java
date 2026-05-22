@@ -77,11 +77,12 @@ import javafx.stage.Popup;
 
                 maxBidField.setDisable(true);
                 incrementField.setDisable(true);
+                startAutoBidButton.setDisable(true);
                 errorLabel.setTextFill(Color.BLUE);
                 errorLabel.setText("Đang gửi yêu cầu lên hệ thống...");
                 errorLabel.setVisible(true);
 
-                AuctionManager.getInstance().setupAutoBidAsync(itemId, loggedInUser.getId(), maxBid, incre, loggedInUser.getUsername())
+                AuctionManager.getInstance().setupAutoBidAsync(itemId, loggedInUser.getId(), maxBid, incre, loggedInUser.getDisplayName())
                         .thenAccept(response -> {
                             Platform.runLater(() -> {
                                 maxBidField.setDisable(false);
@@ -121,7 +122,7 @@ import javafx.stage.Popup;
 
             // --- THÀNH CÔNG ---
             errorLabel.setTextFill(Color.web("#38A169"));
-            errorLabel.setText("✅ Kích hoạt Auto Bid thành công!");
+            errorLabel.setText("Kích hoạt Auto Bid thành công!");
             errorLabel.setVisible(true);
             itemviewController.activateAutoBidStatus(maxBidText);
 

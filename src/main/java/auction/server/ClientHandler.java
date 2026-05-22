@@ -376,7 +376,12 @@ public class ClientHandler implements Runnable {
                 final long priceFinal = finalPriceTrigger;
 
                 Thread autoBidThread = new Thread(() -> {
-                    itemDao.checkAndTriggerAutomaticBids(itemIdFinal, priceFinal);
+                    try {
+                        Thread.sleep(1000);
+                        itemDao.checkAndTriggerAutomaticBids(itemIdFinal, priceFinal);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 });
                 autoBidThread.setDaemon(true);
                 autoBidThread.start();
@@ -700,6 +705,27 @@ public class ClientHandler implements Runnable {
                 if (isSuccess) {
                     status = "SUCCESS";
                     responseData = "Đã kích hoạt cấu hình đấu giá tự động thành công!";
+
+                    msg.setStatus(status);
+                    msg.setData(responseData);
+                    out.writeObject(msg);
+                    out.flush();
+                    out.reset();
+
+                    status = "ALREADY_SENT";
+                    final int itemIdFinal = itemId;
+                    final long currentPriceFinal = currentItem.getCurrentPrice();
+
+                    Thread autoBidTriggerThread = new Thread(() -> {
+                        try {
+                            Thread.sleep(1000);
+                            itemDao.checkAndTriggerAutomaticBids(itemIdFinal, currentPriceFinal);
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                        }
+                    });
+                    autoBidTriggerThread.setDaemon(true);
+                    autoBidTriggerThread.start();
                 } else {
                     responseData = "Không thể lưu cấu hình. Vui lòng kiểm tra lại số dư tài khoản!";
                 }
@@ -709,12 +735,13 @@ public class ClientHandler implements Runnable {
             status = "ERROR";
             responseData = "Lỗi Server: " + e.getMessage();
         } finally {
-            msg.setStatus(status);
-            msg.setData(responseData);
-
-            out.writeObject(msg);
-            out.flush();
-            out.reset();
+            if (!"ALREADY_SENT".equals(status)) {
+                msg.setStatus(status);
+                msg.setData(responseData);
+                out.writeObject(msg);
+                out.flush();
+                out.reset();
+            }
         }
     }
 

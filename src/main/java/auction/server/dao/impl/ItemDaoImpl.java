@@ -906,6 +906,12 @@ public class ItemDaoImpl implements ItemDao {
                         }
 
                         currentPrice = nextBidAmount; // Cập nhật biến chạy để so sánh vòng lặp tiếp theo
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException ie) {
+                            Thread.currentThread().interrupt();
+                            break;
+                        }
                     } else {
                         // Thất bại (Ví dụ: hết tiền khả dụng thực tế) -> Hủy cấu hình
                         deleteAutoBidAndNotify(itemId, nextUserId, username, "Tài khoản của bạn không đủ số dư khả dụng.",conn);
