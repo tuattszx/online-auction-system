@@ -9,5 +9,6 @@ public interface UserDao extends GenericDAO<User, Integer> {
     boolean isEmailExists(String email);
     boolean updatePassword(int userId, String newPassword);
     boolean updateBalance(int id, long amount);
-    boolean updateProfile(int userId, String newName, String newEmail, String newAddress, String newPhoneNumber);
+    boolean updateProfile(int userId, String newDisName, String newFirstName, String newLastName,
+                          String newEmail, String newAddress, String newPhoneNumber, String newCountry, String newshippingPhone,String cardName, String cardNum);
 }

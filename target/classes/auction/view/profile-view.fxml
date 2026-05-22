@@ -152,7 +152,7 @@
                      <content>
                         <StackPane style="-fx-border-radius: 15; -fx-background-radius: 15; -fx-background-color: white;">
                            <children>
-                              <VBox fx:id="paneAddresses" spacing="10.0" style="-fx-background-color: white; -fx-background-radius: 15; -fx-border-radius: 15;">
+                              <VBox fx:id="paneAddresses" spacing="10.0" style="-fx-background-color: white; -fx-background-radius: 15; -fx-border-radius: 15;" visible="false">
                                  <children>
                                     <Label text="%profile.label.address">
                                        <font>
@@ -176,7 +176,7 @@
                                                             <Font size="10.0" />
                                                          </font>
                                                       </Label>
-                                                      <TextField maxWidth="500.0" prefHeight="35.0" prefWidth="225.0" style="-fx-background-color: #e8f0fe; -fx-border-color: #e8f0fe;" VBox.vgrow="ALWAYS" />
+                                                      <TextField fx:id="txtFirstNameInput" maxWidth="500.0" prefHeight="35.0" prefWidth="225.0" style="-fx-background-color: #e8f0fe; -fx-border-color: #e8f0fe;" VBox.vgrow="ALWAYS" />
                                                    </children>
                                                 </VBox>
                                                 <VBox HBox.hgrow="ALWAYS">
@@ -186,7 +186,7 @@
                                                             <Font size="10.0" />
                                                          </font>
                                                       </Label>
-                                                      <TextField prefHeight="35.0" prefWidth="226.0" style="-fx-background-color: #e8f0fe; -fx-border-color: #e8f0fe;" VBox.vgrow="ALWAYS" />
+                                                      <TextField fx:id="txtLastNameInput" prefHeight="35.0" prefWidth="226.0" style="-fx-background-color: #e8f0fe; -fx-border-color: #e8f0fe;" VBox.vgrow="ALWAYS" />
                                                    </children>
                                                 </VBox>
                                              </children>
@@ -201,7 +201,7 @@
                                                 <Font size="10.0" />
                                              </font>
                                           </Label>
-                                          <TextField prefHeight="35.0" prefWidth="441.0" style="-fx-background-color: #e8f0fe; -fx-border-color: #e8f0fe;" />
+                                          <TextField fx:id="txtShippingPhoneInput" prefHeight="35.0" prefWidth="441.0" style="-fx-background-color: #e8f0fe; -fx-border-color: #e8f0fe;" />
                                        </children>
                                     </VBox>
                                     <Region prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: #e8f0fe;" />
@@ -219,10 +219,10 @@
                                     <VBox prefHeight="101.0" prefWidth="443.0">
                                        <children>
                                           <Label text="%profile.label.DeliveryAddress" />
-                                          <TextArea prefHeight="47.0" prefWidth="441.0" promptText="ddd" style="-fx-background-color: #e8f0fe; -fx-border-color: #e8f0fe;" />
+                                          <TextArea fx:id="txtDeliveryAddressInput" prefHeight="47.0" prefWidth="441.0" promptText="ddd" style="-fx-background-color: #e8f0fe; -fx-border-color: #e8f0fe;" />
                                        </children>
                                     </VBox>
-                                    <Button mnemonicParsing="false" prefHeight="37.0" prefWidth="101.0" style="-fx-border-radius: 4; -fx-background-radius: 4; -fx-background-color: #0052ff; -fx-text-fill: white;" text="%profile.label.save" />
+                                    <Button mnemonicParsing="false" onAction="#btnSaveSetting" prefHeight="37.0" prefWidth="101.0" style="-fx-border-radius: 4; -fx-background-radius: 4; -fx-background-color: #0052ff; -fx-text-fill: white;" text="%profile.label.save" />
                                     <Region prefHeight="219.0" prefWidth="414.0" />
                                  </children>
                                  <padding>
@@ -277,7 +277,7 @@
                                     <Insets bottom="15.0" left="20.0" right="20.0" top="15.0" />
                                  </padding>
                               </VBox>
-                              <VBox fx:id="paneAccount" prefHeight="1251.0" prefWidth="455.0" spacing="10.0" style="-fx-background-color: white; -fx-background-radius: 15; -fx-border-radius: 15;" visible="false" StackPane.alignment="TOP_LEFT" xmlns:fx="http://javafx.com/fxml">
+                              <VBox fx:id="paneAccount" prefHeight="1251.0" prefWidth="455.0" spacing="10.0" style="-fx-background-color: white; -fx-background-radius: 15; -fx-border-radius: 15;" StackPane.alignment="TOP_LEFT" xmlns:fx="http://javafx.com/fxml">
                                  <children>
                                     <Label text="%profile.label.account">
                                        <font>
@@ -478,7 +478,7 @@
                                     </VBox>
                                     <Region maxHeight="-Infinity" minHeight="-Infinity" prefHeight="1.0" prefWidth="1.0" style="-fx-background-color: #e8f0fe; -fx-border-width: 1;" visible="false" />
       
-                                    <Button mnemonicParsing="false" onAction="#btnSaveSetting" prefHeight="40.0" prefWidth="101.0" style="-fx-border-radius: 4; -fx-background-radius: 4; -fx-background-color: #0052ff; -fx-text-fill: white;" text="Save" />
+                                    <Button mnemonicParsing="false" onAction="#btnSaveSetting" prefHeight="40.0" prefWidth="101.0" style="-fx-border-radius: 4; -fx-background-radius: 4; -fx-background-color: #0052ff; -fx-text-fill: white;" text="Save" visible="false" />
                                  </children>
                                  <padding>
                                     <Insets bottom="15.0" left="20.0" right="20.0" top="15.0" />
@@ -611,7 +611,7 @@
                                     <Insets bottom="15.0" left="20.0" right="20.0" top="15.0" />
                                  </padding>
                               </VBox>
-                              <VBox fx:id="panePayment" prefHeight="896.0" prefWidth="455.0" spacing="10.0" style="-fx-background-color: white; -fx-background-radius: 15; -fx-border-radius: 15;" visible="false" StackPane.alignment="TOP_LEFT">
+                              <VBox fx:id="panePayment" prefHeight="896.0" prefWidth="455.0" spacing="10.0" style="-fx-background-color: white; -fx-background-radius: 15; -fx-border-radius: 15;" StackPane.alignment="TOP_LEFT">
                                  <children>
                                     <Label text="%profile.label.payment">
                                        <font>
@@ -627,7 +627,7 @@
                                                 <Font size="11.0" />
                                              </font>
                                           </Label>
-                                          <TextField prefHeight="35.0" prefWidth="441.0" style="-fx-background-color: #e8f0fe; -fx-border-color: #e8f0fe; -fx-background-radius: 4;" />
+                                          <TextField fx:id="txtCardName" prefHeight="35.0" prefWidth="441.0" style="-fx-background-color: #e8f0fe; -fx-border-color: #e8f0fe; -fx-background-radius: 4;" />
                                        </children>
                                     </VBox>
                                     <Region prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: #e8f0fe;" />
@@ -638,11 +638,11 @@
                                                 <Font size="11.0" />
                                              </font>
                                           </Label>
-                                          <TextField prefHeight="35.0" prefWidth="441.0" style="-fx-background-color: #e8f0fe; -fx-border-color: transparent #e8f0fe; -fx-background-radius: 4;" />
+                                          <TextField fx:id="txtCardNumber" prefHeight="35.0" prefWidth="441.0" style="-fx-background-color: #e8f0fe; -fx-border-color: transparent #e8f0fe; -fx-background-radius: 4;" />
                                        </children>
                                     </VBox>
                                     <Region prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: #e8f0fe;" />
-                                    <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="101.0" style="-fx-border-radius: 4; -fx-background-radius: 4; -fx-background-color: #0052FF; -fx-text-fill: white;" text="%profile.label.change" />
+                                    <Button mnemonicParsing="false" onAction="#btnSaveSetting" prefHeight="40.0" prefWidth="101.0" style="-fx-border-radius: 4; -fx-background-radius: 4; -fx-background-color: #0052FF; -fx-text-fill: white;" text="%profile.label.change" />
                                     <Region prefHeight="319.0" prefWidth="414.0" visible="false" />
                                  </children>
                                  <padding>

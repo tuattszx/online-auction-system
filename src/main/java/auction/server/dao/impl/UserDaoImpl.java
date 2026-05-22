@@ -52,7 +52,19 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public boolean update(User user) {
-        return updateProfile(user.getId(), user.getDisplayName(), user.getEmail(), user.getAddress(), user.getPhoneNumber());
+        return updateProfile(
+                user.getId(),
+                user.getDisplayName(),
+                user.getFirstName(),    // Thêm trường mới
+                user.getLastName(),     // Thêm trường mới
+                user.getEmail(),
+                user.getAddress(),      // Trường address có sẵn (dùng làm Delivery Address)
+                user.getPhoneNumber(),
+                user.getCountry()    ,// Thêm trường mới
+                user.getShippingPhone(),
+                user.getCardHolderName(), // Lấy từ object user
+                user.getCardNumber()      // Lấy từ object user
+        );
     }
 
     @Override
@@ -187,15 +199,28 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public boolean updateProfile(int userId, String newName, String newEmail, String newAddress,String newPhoneNumber) {
-        String sql = "UPDATE users SET dis_name=?, EMAIL = ?, ADDRESS=?, phone_number=? WHERE ID = ?";
+    public boolean updateProfile(int userId, String newDisName, String newFirstName, String newLastName,
+                                 String newEmail, String newAddress, String newPhoneNumber, String newCountry, String newshippingPhone,String cardName, String cardNum) {
+
+        // Câu lệnh UPDATE map chuẩn xác 7 trường thông tin thông qua ID
+        String sql = "UPDATE users SET dis_name = ?, first_name = ?, last_name = ?, EMAIL = ?, "
+                + "ADDRESS = ?, phone_number = ?, country = ?, shipping_phone = ?, "
+                + "card_holder_name = ?, card_number = ? WHERE ID = ?";
+
         try (Connection conn = DatabaseManager.getInstance().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1,newName);
-            pstmt.setString(2, newEmail);
-            pstmt.setString(3, newAddress);
-            pstmt.setString(4,newPhoneNumber);
-            pstmt.setInt(5,userId);
+
+            pstmt.setString(1, newDisName);
+            pstmt.setString(2, newFirstName);
+            pstmt.setString(3, newLastName);
+            pstmt.setString(4, newEmail);
+            pstmt.setString(5, newAddress); // Sử dụng giá trị nhập từ ô Delivery Address
+            pstmt.setString(6, newPhoneNumber);
+            pstmt.setString(7, newCountry);
+            pstmt.setString(8,newshippingPhone);
+            pstmt.setString(9, cardName);  // Cột card_holder_name
+            pstmt.setString(10, cardNum);
+            pstmt.setInt(11, userId);
 
             return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {

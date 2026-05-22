@@ -49,7 +49,7 @@ public class ProfileController  {
     @FXML private ScrollPane mainScrollPane;
     @FXML private VBox viewNameBox, viewEmailBox, viewPasswordBox, viewPhoneBox;
     @FXML private HBox editNameBox, editEmailBox, editPasswordBox, editPhoneBox;
-    @FXML private TextField txtNameInput, txtEmailInput, txtPhoneInput;
+    @FXML private TextField txtNameInput, txtEmailInput, txtPhoneInput, txtFirstNameInput, txtLastNameInput,txtDeliveryAddressInput, txtShippingPhoneInput, txtCardName, txtCardNumber;
     @FXML private PasswordField txtPasswordInput;
     @FXML private ComboBox<String> currencyPicker; // Khai báo thêm để quản lý Currency
     @FXML
@@ -131,10 +131,26 @@ public class ProfileController  {
         String finalPhone = editPhoneBox.isVisible() ? txtPhoneInput.getText().trim() : lbphonenumber.getText();
         String finalPassword = editPasswordBox.isVisible() ? txtPasswordInput.getText() : user.getPassword();
 
+        // 2. Dữ liệu từ tab Address (Lấy từ các Input mới)
+        String finalFirstName = txtFirstNameInput.getText().trim();
+        String finalLastName = txtLastNameInput.getText().trim();
+        String finalCountry = countryPicker.getValue() != null ? countryPicker.getValue().toString() : "Vietnam";
+        String finalDeliveryAddress = txtDeliveryAddressInput.getText().trim();
+        String finalShippingPhone = txtShippingPhoneInput.getText().trim();
+        String finalCardName = txtCardName.getText().trim();
+        String finalCardNumber = txtCardNumber.getText().trim();
+
         // 2. Set dữ liệu vào model User
         user.setDisplayName(finalName);
         user.setEmail(finalEmail);
         user.setPhoneNumber(finalPhone);
+        user.setFirstName(finalFirstName);
+        user.setLastName(finalLastName);
+        user.setCountry(finalCountry);
+        user.setAddress(finalDeliveryAddress);
+        user.setShippingPhone(finalShippingPhone);
+        user.setCardHolderName(finalCardName);
+        user.setCardNumber(finalCardNumber);
         if (editPasswordBox.isVisible() && !finalPassword.isEmpty()) {
             user.setPassword(finalPassword);
         }
@@ -166,6 +182,22 @@ public class ProfileController  {
                 lbname.setText(user.getDisplayName());
                 lbemail.setText(user.getEmail());
                 lbphonenumber.setText(user.getPhoneNumber());
+
+                if (txtFirstNameInput != null) txtFirstNameInput.setText(user.getFirstName());
+                if (txtLastNameInput != null) txtLastNameInput.setText(user.getLastName());
+                if (txtShippingPhoneInput != null) txtShippingPhoneInput.setText(user.getShippingPhone());
+                if (txtDeliveryAddressInput != null) txtDeliveryAddressInput.setText(user.getAddress());
+                if (txtCardName != null) {
+                    txtCardName.setText(user.getCardHolderName());
+                }
+                if (txtCardNumber != null) {
+                    txtCardNumber.setText(user.getCardNumber());
+                }
+
+                // Đồng bộ cho ComboBox Country
+                if (countryPicker != null && user.getCountry() != null) {
+                    countryPicker.setValue(user.getCountry());
+                }
 
                 // Định dạng lại hiển thị mật khẩu bằng dấu hoa thị (*)
                 if (user.getPassword() != null) {
