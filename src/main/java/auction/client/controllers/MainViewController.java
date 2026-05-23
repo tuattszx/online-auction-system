@@ -377,6 +377,66 @@ public class MainViewController extends ProfileController implements Cleanable {
     }
 
     @FXML
+    private void handleCategoryClick(MouseEvent event) {
+        VBox clickedCategory = (VBox) event.getSource();
+
+        String catIdStr = (String) clickedCategory.getUserData();
+
+        if (catIdStr == null || catIdStr.isEmpty()) {
+            return;
+        }
+
+        int categoryId = Integer.parseInt(catIdStr);
+
+        cleanupTimers();
+        flitems.getChildren().clear();
+        for (int i = 0; i < 10; i++) {
+            flitems.getChildren().add(createSkeletonCard());
+        }
+
+        network.sendRequestAsync(new Message("GET_BY_CATEGORY", categoryId))
+                .thenAccept(response -> {
+                    if (response != null && "SUCCESS".equals(response.getStatus())) {
+                        List<Item> filteredItems = (List<Item>) response.getData();
+
+                        Platform.runLater(() -> {
+                            flitems.getChildren().clear();
+
+                            if (filteredItems == null || filteredItems.isEmpty()) {
+                                // Hiển thị thông báo nếu danh mục trống
+                                Label lbEmpty = new Label("Hiện tại chưa có sản phẩm nào thuộc danh mục này.");
+                                lbEmpty.setStyle("-fx-text-fill: #888888; -fx-font-size: 14px; -fx-padding: 20;");
+                                flitems.getChildren().add(lbEmpty);
+                            } else {
+                                renderItems(filteredItems);
+
+                                if (DataSession.getInstance().getLoggedInUser() != null) {
+                                    loadUserFavoritesInBackground(filteredItems);
+                                }
+                            }
+                        });
+                    } else {
+                        Platform.runLater(() -> {
+                            flitems.getChildren().clear();
+                            System.err.println("Server báo lỗi khi lấy dữ liệu danh mục!");
+                        });
+                    }
+                })
+                .exceptionally(ex -> {
+                    Platform.runLater(() -> {
+                        flitems.getChildren().clear();
+                        System.err.println("Lỗi kết nối mạng: " + ex.getMessage());
+                    });
+                    return null;
+                });
+    }
+
+    @FXML
+    private void handleThisWeekClick(MouseEvent event) {
+        loadItems();
+    }
+
+    @FXML
     public void onItemClick(MouseEvent event) {
         ViewManager.switchScene(event, "item-view.fxml", "Chi tiết sản phẩm");
     }

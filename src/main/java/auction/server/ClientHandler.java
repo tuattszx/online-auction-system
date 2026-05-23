@@ -7,14 +7,11 @@ import auction.common.model.categories.Category;
 import auction.common.model.items.AuctionItem;
 import auction.common.model.items.Item;
 import auction.common.model.items.ItemImage;
-import auction.common.model.notifications.BidNotification;
-import auction.common.model.notifications.ItemNotification;
 import auction.common.model.notifications.Notification;
 import auction.common.model.users.Account;
 import auction.common.model.users.User;
 import auction.server.dao.*;
 import auction.server.dao.impl.*;
-import auction.server.utils.ImageService;
 import auction.server.utils.NotificationService;
 
 import java.io.*;
@@ -22,8 +19,6 @@ import java.net.Socket;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 public class ClientHandler implements Runnable {
     private Socket socket;
@@ -133,6 +128,9 @@ public class ClientHandler implements Runnable {
                             break;
                         case "CHECK_AUTO_BID_STATUS":
                             handleCheckAutoBidStatus(msg, out);
+                            break;
+                        case "GET_BY_CATEGORY":
+                            handleGetItemByCategory(msg, out);
                             break;
                         // Thêm các case khác như BID, VIEW_PRODUCT...
                     }
@@ -378,7 +376,7 @@ public class ClientHandler implements Runnable {
                 Thread autoBidThread = new Thread(() -> {
                     try {
                         Thread.sleep(1000);
-                        itemDao.checkAndTriggerAutomaticBids(itemIdFinal, priceFinal);
+                        itemDao.checkAndTriggerAutomaticBids(itemIdFinal);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -719,7 +717,7 @@ public class ClientHandler implements Runnable {
                     Thread autoBidTriggerThread = new Thread(() -> {
                         try {
                             Thread.sleep(1000);
-                            itemDao.checkAndTriggerAutomaticBids(itemIdFinal, currentPriceFinal);
+                            itemDao.checkAndTriggerAutomaticBids(itemIdFinal);
                         } catch (InterruptedException e) {
                             Thread.currentThread().interrupt();
                         }
@@ -795,6 +793,23 @@ public class ClientHandler implements Runnable {
             msg.setStatus(status);
             msg.setData(responseData);
 
+            out.writeObject(msg);
+            out.flush();
+            out.reset();
+        }
+    }
+
+    private void handleGetItemByCategory(Message msg, ObjectOutputStream out) throws IOException {
+        try {
+            int categoryId = (int) msg.getData();
+            List<Item> itemsByCategory = itemDao.getItemsByCategory(categoryId);
+            msg.setStatus("SUCCESS");
+            msg.setData(itemsByCategory);
+        } catch (Exception e) {
+            e.printStackTrace();
+            msg.setStatus("ERROR");
+            msg.setData("Lỗi Server: " + e.getMessage());
+        } finally {
             out.writeObject(msg);
             out.flush();
             out.reset();

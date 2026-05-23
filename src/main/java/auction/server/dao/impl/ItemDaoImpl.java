@@ -247,7 +247,7 @@ public class ItemDaoImpl implements ItemDao {
         List<Item> list = new ArrayList<>();
         String sql = "SELECT i.* FROM ITEMS i " +
                 "JOIN ITEM_CATEGORIES ic ON i.id = ic.id_item " +
-                "WHERE ic.id_category = ? ORDER BY i.created_time DESC";
+                "WHERE ic.id_category = ? and i.status NOT IN ('UNAPPROVED', 'DELETED') ORDER BY i.created_time DESC";
 
         try (Connection conn = DatabaseManager.getInstance().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -822,29 +822,52 @@ public class ItemDaoImpl implements ItemDao {
     }
 
     @Override
-    public void checkAndTriggerAutomaticBids(int itemId, long currentPrice) {
+    public void checkAndTriggerAutomaticBids(int itemId) {
         String sqlFindNextAuto = "SELECT a.id_user, a.max_bid, a.increment, u.username " +
                 "FROM AUTOMATIC_BIDS a " +
                 "JOIN users u ON a.id_user = u.id " +
-                "WHERE a.id_item = ? AND a.id_user != (SELECT IFNULL(id_current_bidder, 0) FROM ITEMS WHERE id = ?) " +
+                "WHERE a.id_item = ? AND a.id_user != ? " +
                 "ORDER BY a.max_bid DESC, a.created_at ASC LIMIT 1";
+        String sqlGetCurrentState = "SELECT current_price, id_current_bidder, status FROM ITEMS WHERE id = ?";
 
         while (true) {
+            long currentPrice = 0;
+            int idCurrentBidder = 0;
+            String itemStatus = "";
+
+            try ( Connection conn= DatabaseManager.getInstance().getConnection();
+                    PreparedStatement ps = conn.prepareStatement(sqlGetCurrentState)) {
+                ps.setInt(1, itemId);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        currentPrice = rs.getLong("current_price");
+                        idCurrentBidder = rs.getInt("id_current_bidder");
+                        itemStatus = rs.getString("status");
+                    }
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+                break;
+            }
+
+            if (!"OPEN".equals(itemStatus)) {
+                break;
+            }
             int nextUserId = 0;
             long maxBid = 0;
             long increment = 0;
-            String username = "";
+            String nextUsername = "";
 
-            try ( Connection conn= DatabaseManager.getInstance().getConnection();
-                    PreparedStatement ps = conn.prepareStatement(sqlFindNextAuto)) {
+            try (Connection conn = DatabaseManager.getInstance().getConnection();
+                 PreparedStatement ps = conn.prepareStatement(sqlFindNextAuto)) {
                 ps.setInt(1, itemId);
-                ps.setInt(2, itemId);
+                ps.setInt(2, idCurrentBidder);
                 try (ResultSet rs = ps.executeQuery()) {
                     if (rs.next()) {
                         nextUserId = rs.getInt("id_user");
                         maxBid = rs.getLong("max_bid");
                         increment = rs.getLong("increment");
-                        username = rs.getString("username");
+                        nextUsername = rs.getString("username");
                     }
                 }
             } catch (SQLException e) {
@@ -880,7 +903,7 @@ public class ItemDaoImpl implements ItemDao {
                         ClientManager.broadcast(new BidUpdateNotification(
                                 itemId,
                                 nextBidAmount,
-                                username,
+                                nextUsername,
                                 LocalDateTime.now(),
                                 updateItem.getEndTime()
                         ));
@@ -888,7 +911,7 @@ public class ItemDaoImpl implements ItemDao {
                         Bid bidRequest = new Bid();
                         bidRequest.setIdItem(itemId);
                         bidRequest.setIdUser(nextUserId);
-                        bidRequest.setBidderName(username);
+                        bidRequest.setBidderName(nextUsername);
                         bidRequest.setBidAmount(nextBidAmount);
                         NotificationService.handleSendMessageBid(updateItem,bidRequest,LocalDateTime.now());
                     }
@@ -904,7 +927,12 @@ public class ItemDaoImpl implements ItemDao {
                                     LocalDateTime endTime = endTs.toLocalDateTime();
                                     if (java.time.Duration.between(LocalDateTime.now(), endTime).getSeconds() < 30) {
                                         LocalDateTime newEndTime = endTime.plusMinutes(2);
-                                        updateEndTime(itemId, newEndTime);
+                                        String sqlUpdateBox = "UPDATE ITEMS SET end_time = ? WHERE id = ?";
+                                        try (PreparedStatement psUp = conn.prepareStatement(sqlUpdateBox)) {
+                                            psUp.setTimestamp(1, Timestamp.valueOf(newEndTime));
+                                            psUp.setInt(2, itemId);
+                                            psUp.executeUpdate();
+                                        }
                                     }
                                 }
                             }
@@ -913,9 +941,8 @@ public class ItemDaoImpl implements ItemDao {
                         e.printStackTrace();
                     }
 
-                    currentPrice = nextBidAmount; // Cập nhật biến chạy để so sánh vòng lặp tiếp theo
                     try {
-                        Thread.sleep(1000);
+                        Thread.sleep(1500);
                     } catch (InterruptedException ie) {
                         Thread.currentThread().interrupt();
                         break;
@@ -923,7 +950,9 @@ public class ItemDaoImpl implements ItemDao {
                 } else {
                     try (Connection conn = DatabaseManager.getInstance().getConnection()) {
                         // Thất bại (Ví dụ: hết tiền khả dụng thực tế) -> Hủy cấu hình
-                        deleteAutoBidAndNotify(itemId, nextUserId, username, "Tài khoản của bạn không đủ số dư khả dụng.", conn);
+                        deleteAutoBidAndNotify(itemId, nextUserId, nextUsername, "Place bid failed! Canceled auto bid.", conn);
+                        try { Thread.sleep(1000); } catch (InterruptedException ie) { break; }
+                        break;
                     } catch (SQLException e) {
                         e.printStackTrace();
                     }
@@ -931,7 +960,9 @@ public class ItemDaoImpl implements ItemDao {
             } else {
                 try (Connection conn= DatabaseManager.getInstance().getConnection()) {
                     // Vượt quá mức Max Bid của người này -> Xóa cấu hình khỏi hàng đợi
-                    deleteAutoBidAndNotify(itemId, nextUserId, username, "Giá sản phẩm (" + nextBidAmount + " $) đã vượt quá mức giá trần bạn cài đặt.", conn);
+                    deleteAutoBidAndNotify(itemId, nextUserId, nextUsername, "Giá sản phẩm (" + nextBidAmount + " $) đã vượt quá mức giá trần bạn cài đặt.", conn);
+                    try { Thread.sleep(1000); } catch (InterruptedException ie) { break; }
+                    break;
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }

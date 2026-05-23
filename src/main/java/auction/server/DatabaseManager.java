@@ -28,8 +28,8 @@ public class DatabaseManager {
             config.setPassword(PASS);
             config.setDriverClassName("com.mysql.cj.jdbc.Driver");
 
-            config.setMaximumPoolSize(10);
-            config.setMinimumIdle(2);
+            config.setMaximumPoolSize(20);
+            config.setMinimumIdle(3);
             config.setConnectionTimeout(30000);
             config.setIdleTimeout(600000);
             config.setMaxLifetime(1800000);

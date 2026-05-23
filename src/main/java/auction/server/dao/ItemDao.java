@@ -20,5 +20,5 @@ public interface ItemDao extends GenericDAO<Item, Integer> {
     boolean setupAutoBid(int itemId, int userId, long maxBid, long increment, String username);
     boolean cancelAutoBid(int itemId, int userId);
     boolean checkAutoBidExists(int itemId, int userId);
-    void checkAndTriggerAutomaticBids(int itemId, long currentPrice);
+    void checkAndTriggerAutomaticBids(int itemId);
 }

@@ -165,7 +165,7 @@ public class NotificationService {
             BidNotification cancelNotif = new BidNotification(
                     0,
                     userId,
-                    "Cấu hình Đấu giá tự động đã bị HỦY!",
+                    "AUTOBID_CANCELLED",
                     String.format("Hệ thống đã dừng tính năng Auto Bid cho sản phẩm '%s'. Lý do: %s", itemName, reason),
                     itemId,
                     (item != null) ? item.getCurrentPrice() : 0,

@@ -176,7 +176,7 @@ public class SellerController {
                     setGraphic(null);
                 } else {
                     Item rowItem = getTableView().getItems().get(getIndex());
-                    if ("CLOSED".equalsIgnoreCase(rowItem.getStatus()) && rowItem.getCurrentBidderId() != null && rowItem.getCurrentBidderId() > 0) {
+                    if (("CLOSED".equalsIgnoreCase(rowItem.getStatus()) || "DELETED".equalsIgnoreCase(rowItem.getStatus())) && rowItem.getCurrentBidderId() != null && rowItem.getCurrentBidderId() > 0) {
                         setGraphic(lblCheck);
                     } else {
                         setGraphic(new Label("—"));

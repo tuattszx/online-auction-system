@@ -183,7 +183,7 @@ public class ItemviewController implements Cleanable {
             if (currentItem != null && notification instanceof auction.common.model.notifications.BidNotification) {
                 auction.common.model.notifications.BidNotification bidNotif = (auction.common.model.notifications.BidNotification) notification;
 
-                if (bidNotif.getItemId() == currentItem.getId() && bidNotif.getTitle().contains("Cấu hình Đấu giá tự động đã bị HỦY!")) {
+                if (bidNotif.getItemId() == currentItem.getId() && "AUTOBID_CANCELLED".equals(bidNotif.getTitle())) {
 
                     Platform.runLater(() -> {
                         if (isAutoBidActive) {
