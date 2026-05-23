@@ -277,13 +277,13 @@ public class ItemviewController implements Cleanable {
         Item selectedItem = DataSession.getInstance().getSelectedItem();
         User currentUser = DataSession.getInstance().getLoggedInUser();
 
-        /*if ("PENDING".equals(selectedItem.getStatus())) {
+        if ("PENDING".equals(selectedItem.getStatus())) {
             showBidError("Phiên đấu giá chưa bắt đầu!", false);
             return;
         } else if ("CLOSED".equals(selectedItem.getStatus())) {
             showBidError("Phiên đấu giá đã kết thúc!", false);
             return;
-        }*/
+        }
 
         String bidValue = txtBid.getText().trim();
         try {
@@ -332,8 +332,12 @@ public class ItemviewController implements Cleanable {
             throw new IllegalArgumentException("Vui lòng chỉ nhập số!");
         }
 
-        if ("ADMIN".equals(userRole) || userId == sellerId) {
-            throw new IllegalArgumentException("Admin hoặc người bán không thể đấu giá!");
+        if ("ADMIN".equals(userRole)) {
+            throw new IllegalArgumentException("Admin không thể đấu giá!");
+        }
+
+        if (userId == sellerId) {
+            throw new IllegalArgumentException("Người bán không thể đặt giá cho chính sản phẩm của mình!");
         }
 
         if (amount <= currentPrice) {
@@ -528,6 +532,15 @@ public class ItemviewController implements Cleanable {
 
         if (autoBidPopup != null && autoBidPopup.isShowing()) {
             autoBidPopup.hide();
+            return;
+        }
+        if ("ADMIN".contains(DataSession.getInstance().getLoggedInUser().getRole())) {
+            showBidError("Admin không thể cài đặt đấu giá tự động!", false);
+            return;
+        }
+
+        if (currentItem.getSellerId() == DataSession.getInstance().getLoggedInUser().getId()) {
+            showBidError("Người bán không thể cài đặt đấu giá tự động!", false);
             return;
         }
 
