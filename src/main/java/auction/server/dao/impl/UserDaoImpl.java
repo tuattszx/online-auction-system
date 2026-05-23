@@ -152,7 +152,7 @@ public class UserDaoImpl implements UserDao {
         user.setCardNumber(rs.getString("card_number"));
         user.setCardHolderName(rs.getString("card_holder_name"));
         user.setCountry(rs.getString("country"));
-        user.setLanguage(rs.getString("country"));
+        user.setLanguage(rs.getString("language"));
 
 
 

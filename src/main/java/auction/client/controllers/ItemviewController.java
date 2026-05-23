@@ -112,6 +112,7 @@ public class ItemviewController implements Cleanable {
 
         // Hiện số dư người dùng
         headerMenuController.setBalance(DataSession.getInstance().getLoggedInUser() != null ? DataSession.getInstance().getLoggedInUser().getBalance() + " $" : "0 $");
+        headerMenuController.hideSearchBar();
 
         // Initialize bidTable columns
         colBidder.setCellValueFactory(cellData -> {
