@@ -198,7 +198,7 @@
                                     <Separator prefWidth="200.0" style="-fx-padding: 10 0 0 0;" />
                                  </children>
                               </VBox>
-                              <LineChart fx:id="priceChart" prefHeight="300.0" title="%itemview.linechart.bidtrend">
+                              <LineChart fx:id="priceChart" prefHeight="300.0" stylesheets="@../css/historytable.css" title="%itemview.linechart.bidtrend">
                                  <xAxis>
                                     <CategoryAxis label="%itemview.categoryaxis.time" side="BOTTOM" />
                                  </xAxis>
@@ -264,6 +264,17 @@
                                     </VBox>
                                  </children>
                               </HBox>
+                              <HBox fx:id="statusContainer" alignment="CENTER" fillHeight="false" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="38.0" prefWidth="141.0" spacing="6" stylesheets="@../css/labelstatus.css">
+                                 <children>
+                                    <Circle fx:id="dot" radius="4" styleClass="badge-dot" />
+                                    <Label fx:id="lblStatus" styleClass="badge-text" text="UPCOMING" />
+                                 </children>
+                                 <styleClass>
+                                    <String fx:value="badge-container" />
+                                    <String fx:value="badge-dot" />
+                                    <String fx:value="status-upcoming" />
+                                 </styleClass>
+                              </HBox>
                               <HBox spacing="140.0">
                                  <children>
       
@@ -276,30 +287,11 @@
                                           </Label>
                                           <Label fx:id="lbCurrentBid" style="-fx-font-weight: bold;" text="€ 1,600">
                                              <font>
-                                                <Font size="34.0" />
+                                                <Font size="25.0" />
                                              </font>
                                           </Label>
                                        </children>
                                     </VBox>
-                                 </children>
-                                 <HBox fx:id="statusContainer" alignment="CENTER" fillHeight="false" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="38.0" prefWidth="141.0" spacing="6" stylesheets="@../css/labelstatus.css">
-                                    <children>
-                                       <Circle fx:id="dot" radius="4" styleClass="badge-dot" />
-                                       <Label fx:id="lblStatus" styleClass="badge-text" text="UPCOMING" />
-                                    </children>
-                                    <styleClass>
-                                       <String fx:value="badge-container" />
-                                       <String fx:value="badge-dot" />
-                                       <String fx:value="status-upcoming" />
-                                    </styleClass>
-                                 </HBox>
-                              </HBox>
-
-                              <HBox spacing="10.0">
-                                 <children>
-                                    <Button prefHeight="35.0" prefWidth="100.0" style="-fx-background-color: white; -fx-border-color: #ddd; -fx-border-radius: 20;" text="€ 1,700" />
-                                    <Button prefHeight="35.0" prefWidth="100.0" style="-fx-background-color: white; -fx-border-color: #ddd; -fx-border-radius: 20;" text="€ 1,800" />
-                                    <Button prefHeight="35.0" prefWidth="100.0" style="-fx-background-color: white; -fx-border-color: #ddd; -fx-border-radius: 20;" text="€ 1,919" />
                                  </children>
                               </HBox>
 
@@ -361,7 +353,7 @@
                               <Label style="-fx-font-weight: bold;" text="%itemview.label.bidhistory">
                                  <font><Font size="16.0" /></font>
                               </Label>
-                              <TableView fx:id="bidTable" prefHeight="475.0" prefWidth="420.0" style="-fx-background-color: transparent; -fx-selection-bar: transparent;" tableMenuButtonVisible="true">
+                              <TableView fx:id="bidTable" prefHeight="475.0" prefWidth="420.0" style="-fx-background-color: transparent; -fx-selection-bar: transparent;" stylesheets="@../css/historytable.css" tableMenuButtonVisible="true">
                                  <columns>
                                     <TableColumn fx:id="colBidder" prefWidth="150.0" text="%itemview.tablecolumn.bidder" />
                                     <TableColumn fx:id="colTime" prefWidth="120.0" text="%itemview.tablecolumn.time" />

@@ -62,11 +62,18 @@ import javafx.stage.Popup;
             try {
                 long maxBid = Long.parseLong(maxBidText);
                 long incre= Long.parseLong(incrementField.getText().trim());
-                if (maxBid <= currentPrice) {
+                if (maxBid <= currentPrice ) {
                     errorLabel.setTextFill(Color.web("#E53E3E"));
                     errorLabel.setText("⚠️ Giá tối đa phải lớn hơn giá hiện tại!");
                     errorLabel.setVisible(true);
                     return;
+                }
+                if(incre <maxBid*0.01){
+                    errorLabel.setTextFill(Color.web("#E53E3E"));
+                    errorLabel.setText("⚠️ Bước nhảy phải lớn hơn hoặc bằng 1% giá tối đa!");
+                    errorLabel.setVisible(true);
+                    return;
+
                 }
                 User loggedInUser = DataSession.getInstance().getLoggedInUser();
                 if (loggedInUser == null) {

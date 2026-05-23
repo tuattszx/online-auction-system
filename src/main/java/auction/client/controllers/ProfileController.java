@@ -144,12 +144,12 @@ public class ProfileController  {
         // 2. Dữ liệu từ tab Address (Lấy từ các Input mới)
         String finalFirstName = txtFirstNameInput.getText()!=null ? txtFirstNameInput.getText().trim() : "";
         String finalLastName = txtLastNameInput.getText() !=null ? txtLastNameInput.getText().trim():"";
-        String finalCountry = countryPicker.getValue() != null ? countryPicker.getValue().toString() : "Vietnam";
+        String finalCountry = countryPicker.getValue() != null ? countryPicker.getValue() : "Vietnam";
         String finalDeliveryAddress = txtDeliveryAddressInput.getText() !=null ? txtDeliveryAddressInput.getText() : "";
         String finalShippingPhone = txtShippingPhoneInput.getText() !=null ? txtShippingPhoneInput.getText() : "";
         String finalCardName = txtCardName.getText() !=null ? txtCardName.getText().trim() : "";
         String finalCardNumber = txtCardNumber.getText() !=null ? txtCardNumber.getText().trim():"";
-        String finalLanguage= languagePicker.getValue() != null ? languagePicker.getValue().toString() : "Vietnam";
+        String finalLanguage= languagePicker.getValue() != null ? languagePicker.getValue() : "Vietnam";
 
         // 2. Set dữ liệu vào model User
         user.setDisplayName(finalName);
