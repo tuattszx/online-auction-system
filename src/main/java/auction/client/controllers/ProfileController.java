@@ -19,14 +19,17 @@ import javafx.scene.input.MouseEvent;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import org.controlsfx.control.SearchableComboBox;
 
 public class ProfileController  {
     @FXML private SearchableComboBox<String> countryPicker;
-    @FXML private Label lbname;
+    @FXML private Label lbname,lbAlert;
     @FXML private Label lbusername;
     @FXML private Label lbemail;
     @FXML private Label lbname21;
@@ -49,7 +52,7 @@ public class ProfileController  {
     @FXML private ScrollPane mainScrollPane;
     @FXML private VBox viewNameBox, viewEmailBox, viewPasswordBox, viewPhoneBox;
     @FXML private HBox editNameBox, editEmailBox, editPasswordBox, editPhoneBox;
-    @FXML private TextField txtNameInput, txtEmailInput, txtPhoneInput, txtFirstNameInput, txtLastNameInput,txtDeliveryAddressInput, txtShippingPhoneInput, txtCardName, txtCardNumber;
+    @FXML private TextField txtNameInput, txtEmailInput, txtPhoneInput, txtFirstNameInput, txtLastNameInput,txtDeliveryAddressInput, txtShippingPhoneInput, txtCardName, txtCardNumber, txtAmount;
     @FXML private PasswordField txtPasswordInput;
     @FXML private ComboBox<String> currencyPicker; // Khai báo thêm để quản lý Currency
     @FXML
@@ -75,6 +78,7 @@ public class ProfileController  {
             lbname.setText(user.getDisplayName());
             lbusername.setText(user.getUsername());
             lbemail.setText(user.getEmail());
+            lbAlert.setVisible(false);
             languagePicker.setValue(user.getLanguage());
             if (txtFirstNameInput != null) txtFirstNameInput.setText(user.getFirstName());
             if (txtLastNameInput != null) txtLastNameInput.setText(user.getLastName());
@@ -131,9 +135,67 @@ public class ProfileController  {
 
     // --- HÀM LUÔN ĐỒNG BỘ VÀ LƯU KHI ẤN NÚT SAVE CHÍNH ---
     @FXML
+    private void btnSavePayment(ActionEvent event) {
+        User user = DataSession.getInstance().getLoggedInUser();
+        if (user == null) return;
+        String finalCardName = txtCardName.getText() !=null ? txtCardName.getText().trim() : "";
+        String finalCardNumber = txtCardNumber.getText() !=null ? txtCardNumber.getText().trim():"";
+        String amountStr = txtAmount.getText() !=null ? txtAmount.getText().trim():"0.0";
+        if (finalCardNumber.isEmpty() || finalCardName.isEmpty() || amountStr.isEmpty()) {
+            lbAlert.setTextFill(Color.web("#E53E3E"));
+            lbAlert.setText("Vui lòng nhập đầy đủ thông tin thẻ và số tiền cần nạp!");
+            lbAlert.setVisible(true);
+            return;
+        }
+        long amount;
+        try {
+            amount = Long.parseLong(amountStr);
+            if (amount <= 0) {
+                throw new NumberFormatException();
+            }
+        } catch (NumberFormatException e) {
+            lbAlert.setTextFill(Color.web("#E53E3E"));
+            lbAlert.setText( "Số tiền nạp phải là số nguyên dương hợp lệ!");
+            lbAlert.setVisible(true);
+            return;
+        }
+        Map<String, Object> depositData = new HashMap<>();
+        depositData.put("cardName", finalCardName);
+        depositData.put("cardNumber", finalCardNumber);
+        depositData.put("amount", amount);
+        try {
+            Message request = new Message("DEPOSIT_REQUEST", depositData);
+            // Gửi request và đợi phản hồi đồng bộ từ Server
+            Message response = ClientNetwork.getInstance().sendRequest(request);
+
+            if (response != null && "DEPOSIT_SUCCESS".equals(response.getCommand())) {
+                // Ép kiểu dữ liệu User mới nhận về từ Server để cập nhật lại Session
+                User updatedUser = (User) response.getData();
+                DataSession.getInstance().setLoggedInUser(updatedUser);
+
+                ViewManager.showAlert(Alert.AlertType.INFORMATION, "Thành công",
+                        "Nạp tiền thành công! Số dư hiện tại của bạn: $" + updatedUser.getBalance());
+
+                // Xóa sạch ô nhập tiền sau khi nạp thành công
+                txtAmount.clear();
+            } else {
+                // Hiển thị nội dung lỗi phản hồi cụ thể từ Server (Hết tiền, sai thẻ...)
+                String errorMsg = (response != null) ? (String) response.getData() : "Server không phản hồi.";
+                ViewManager.showAlert(Alert.AlertType.ERROR, "Giao dịch thất bại", errorMsg);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            ViewManager.showAlert(Alert.AlertType.ERROR, "Lỗi kết nối", "Không thể kết nối đến máy chủ.");
+        }
+
+    }
+    @FXML
     private void btnSaveSetting(ActionEvent event) {
         User user = DataSession.getInstance().getLoggedInUser();
         if (user == null) return;
+        String finalCardName = txtCardName.getText() !=null ? txtCardName.getText().trim() : "";
+        String finalCardNumber = txtCardNumber.getText() !=null ? txtCardNumber.getText().trim():"";
+        String amountStr = txtAmount.getText() !=null ? txtAmount.getText().trim():"0.0";
 
         // 1. Kiểm tra nếu đang mở ô sửa thì lấy giá trị mới từ ô sửa, ngược lại giữ nguyên giá trị cũ của nhãn Label
         String finalName = editNameBox.isVisible() ? txtNameInput.getText().trim() : lbname.getText();
@@ -147,10 +209,7 @@ public class ProfileController  {
         String finalCountry = countryPicker.getValue() != null ? countryPicker.getValue() : "Vietnam";
         String finalDeliveryAddress = txtDeliveryAddressInput.getText() !=null ? txtDeliveryAddressInput.getText() : "";
         String finalShippingPhone = txtShippingPhoneInput.getText() !=null ? txtShippingPhoneInput.getText() : "";
-        String finalCardName = txtCardName.getText() !=null ? txtCardName.getText().trim() : "";
-        String finalCardNumber = txtCardNumber.getText() !=null ? txtCardNumber.getText().trim():"";
         String finalLanguage= languagePicker.getValue() != null ? languagePicker.getValue() : "Vietnam";
-
         // 2. Set dữ liệu vào model User
         user.setDisplayName(finalName);
         user.setEmail(finalEmail);

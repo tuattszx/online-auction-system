@@ -553,6 +553,7 @@ public class SellerController {
             newItem.setLength(txtLength.getText().isEmpty() ? 0 : Double.parseDouble(txtLength.getText()));
             newItem.setWidth(txtWidth.getText().isEmpty() ? 0 : Double.parseDouble(txtWidth.getText()));
             newItem.setHeight(txtHeight.getText().isEmpty() ? 0 : Double.parseDouble(txtHeight.getText()));
+            newItem.setWeight(txtWeight.getText().isEmpty() ? 0 : Double.parseDouble(txtWeight.getText()));
 
             // Set thời gian (LocalDateTime)
             if (startDatePicker.getValue() != null) {

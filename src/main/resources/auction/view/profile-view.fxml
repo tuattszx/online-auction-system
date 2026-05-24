@@ -610,7 +610,7 @@
                                     <Insets bottom="15.0" left="20.0" right="20.0" top="15.0" />
                                  </padding>
                               </VBox>
-                              <VBox fx:id="panePayment" prefHeight="896.0" prefWidth="455.0" spacing="10.0" style="-fx-background-color: white; -fx-background-radius: 15; -fx-border-radius: 15;" visible="false" StackPane.alignment="TOP_LEFT">
+                              <VBox fx:id="panePayment" prefHeight="896.0" prefWidth="455.0" spacing="10.0" style="-fx-background-color: white; -fx-background-radius: 15; -fx-border-radius: 15;" StackPane.alignment="TOP_LEFT">
                                  <children>
                                     <Label text="%profile.label.payment">
                                        <font>
@@ -641,7 +641,40 @@
                                        </children>
                                     </VBox>
                                     <Region prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: #e8f0fe;" />
-                                    <Button mnemonicParsing="false" onAction="#btnSaveSetting" prefHeight="40.0" prefWidth="101.0" style="-fx-border-radius: 4; -fx-background-radius: 4; -fx-background-color: #0052FF; -fx-text-fill: white;" text="%profile.label.change" />
+
+                                    <VBox prefHeight="63.0" prefWidth="441.0" spacing="5.0">
+                                       <children>
+                                          <Label text="%profile.label.amount" textFill="#4f5d73">
+                                             <font>
+                                                <Font name="System Bold" size="11.0" />
+                                             </font>
+                                          </Label>
+                                          <HBox alignment="CENTER_LEFT" prefHeight="40.0" prefWidth="441.0" style="-fx-background-color: #f1f5f9; -fx-border-color: #cbd5e1; -fx-background-radius: 6; -fx-border-radius: 6; -fx-padding: 0 10 0 10;">
+                                             <children>
+                                                <Label text="\$" textFill="#64748b">
+                                                   <font>
+                                                      <Font name="System Bold" size="16.0" />
+                                                   </font>
+                                                   <HBox.margin>
+                                                      <Insets right="8.0" />
+                                                   </HBox.margin>
+                                                </Label>
+                                                <TextField fx:id="txtAmount" prefHeight="38.0" prefWidth="390.0" promptText="0.00" style="-fx-background-color: transparent; -fx-padding: 0; -fx-text-fill: #1e293b;">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                </TextField>
+                                             </children>
+                                          </HBox>
+                                       </children>
+                                       <VBox.margin>
+                                          <Insets bottom="5.0" top="5.0" />
+                                       </VBox.margin>
+                                    </VBox>
+                                    <Region prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: #e8f0fe;" />
+                                    <Label fx:id="lbAlert" prefHeight="18.0" prefWidth="417.0" text="Label" />
+
+                                    <Button mnemonicParsing="false" onAction="#btnSavePayment" prefHeight="40.0" prefWidth="101.0" style="-fx-border-radius: 4; -fx-background-radius: 4; -fx-background-color: #0052FF; -fx-text-fill: white;" text="%profile.label.change" />
                                     <Region prefHeight="319.0" prefWidth="414.0" visible="false" />
                                  </children>
                                  <padding>

@@ -19,6 +19,7 @@ import java.net.Socket;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 
 public class ClientHandler implements Runnable {
     private Socket socket;
@@ -132,7 +133,11 @@ public class ClientHandler implements Runnable {
                         case "GET_BY_CATEGORY":
                             handleGetItemByCategory(msg, out);
                             break;
-                        // Thêm các case khác như BID, VIEW_PRODUCT...
+                        case "DEPOSIT_REQUEST":
+                            handleDepositRequest(msg, out);
+                            break;
+
+                            // Thêm các case khác như BID, VIEW_PRODUCT...
                     }
                 }
             }
@@ -814,5 +819,47 @@ public class ClientHandler implements Runnable {
             out.flush();
             out.reset();
         }
+    }
+    private void handleDepositRequest(Message msg, ObjectOutputStream out) throws IOException {
+        // Ép kiểu về Map vì Client đóng gói dữ liệu thẻ và số tiền vào Map
+        Map<String, Object> depositData = (Map<String, Object>) msg.getData();
+        String cardNumber = (String) depositData.get("cardNumber");
+        long amount = (long) depositData.get("amount");
+
+        // Giả định bạn có cách lấy thông tin User đang kết nối từ phiên (Session/Context)
+        // Hoặc nếu Client gửi kèm thông tin userId trong gói tin, bạn có thể lấy ra.
+        // Ở đây tôi lấy ví dụ là lấy User hiện tại từ session hệ thống của bạn
+        User currentUser = this.getLoggedInUser();
+
+        // Kiểm tra giả lập kịch bản lỗi hệ thống thẻ (Sandbox cho bài tập lớn)
+        if (cardNumber.endsWith("4444")) {
+            msg.setStatus("FAILED");
+            // Bạn có thể gửi kèm chuỗi thông báo lỗi vào data để Client hiển thị
+            msg.setData("Tài khoản thẻ không đủ số dư (Mã lỗi: 4444).");
+        } else if (cardNumber.endsWith("9999")) {
+            msg.setStatus("FAILED");
+            msg.setData("Thẻ đã bị khóa hoặc hết hạn sử dụng (Mã lỗi: 9999).");
+        } else if (cardNumber.length() < 12) {
+            msg.setStatus("FAILED");
+            msg.setData("Số thẻ không hợp lệ. Vui lòng kiểm tra lại!");
+        } else {
+            // Gọi hàm updateBalance trong UserDao của bạn để cộng tiền vào Database
+            boolean isSuccess = userDao.updateBalance(currentUser.getId(), amount);
+
+            if (isSuccess) {
+                // Cập nhật lại số dư mới vào đối tượng User trong bộ nhớ Server
+                currentUser.setBalance(currentUser.getBalance() + amount);
+
+                msg.setStatus("SUCCESS");
+                // Gửi lại đối tượng User đã cập nhật số dư về để Client đồng bộ UI
+                msg.setData(currentUser);
+            } else {
+                msg.setStatus("FAILED");
+                msg.setData("Lỗi hệ thống khi cập nhật số dư vào Cơ sở dữ liệu.");
+            }
+        }
+        out.reset();
+        out.writeObject(msg);
+        out.flush();
     }
 }

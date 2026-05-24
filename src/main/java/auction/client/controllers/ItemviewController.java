@@ -70,6 +70,21 @@ public class ItemviewController implements Cleanable {
     private TableColumn<Bid, String> colPrice;
 
     @FXML
+    private Label lblCategory;
+
+    @FXML
+    private Label lblHeight;
+
+    @FXML
+    private Label lblLength;
+
+    @FXML
+    private Label lblWidth;
+
+    @FXML
+    private Label lblWeight;
+
+    @FXML
     private HeaderMenuController headerMenuController;
 
     @FXML private HBox searchBar; // Liên kết với thanh tìm kiếm
@@ -90,6 +105,13 @@ public class ItemviewController implements Cleanable {
             this.currentItem=selectedItem;
             itemNameLabel.setText(selectedItem.getName());
             lbShortDesc.setText(selectedItem.getDescription());
+            lblCategory.setText(selectedItem.getCategories().toString());
+            lblHeight.setText(String.valueOf(selectedItem.getHeight()));
+            lblWeight.setText(String.valueOf(selectedItem.getWeight()));
+            lblLength.setText(String.valueOf(selectedItem.getLength()));
+            lblWidth.setText(String.valueOf(selectedItem.getWidth()));
+
+
 
             if (selectedItem.getImages() != null && !selectedItem.getImages().isEmpty()) {
                 String imageUrl = selectedItem.getImages().get(0).getUrlImage();

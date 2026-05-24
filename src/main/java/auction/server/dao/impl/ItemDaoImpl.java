@@ -191,6 +191,7 @@ public class ItemDaoImpl implements ItemDao {
         item.setLength(rs.getDouble("length"));
         item.setWidth(rs.getDouble("width"));
         item.setHeight(rs.getDouble("height"));
+        item.setWeight(rs.getDouble("weight"));
 
         int bidderId = rs.getInt("id_current_bidder");
         if (rs.wasNull()) {
@@ -328,7 +329,7 @@ public class ItemDaoImpl implements ItemDao {
 
     public boolean updateItem(Item item) {
         String sql = "UPDATE ITEMS SET name = ?, description = ?, start_price = ?, " +
-                "start_time = ?, end_time = ?, length = ?, width = ?, height = ?, current_price = ? " +
+                "start_time = ?, end_time = ?, length = ?, width = ?, height = ?,weight =?, current_price = ? " +
                 "WHERE id = ? AND status = 'UNAPPROVED'";
 
         Connection conn = null;
@@ -346,8 +347,9 @@ public class ItemDaoImpl implements ItemDao {
                 pstmt.setDouble(6, item.getLength());
                 pstmt.setDouble(7, item.getWidth());
                 pstmt.setDouble(8, item.getHeight());
-                pstmt.setLong(9, item.getStartingPrice());
-                pstmt.setInt(10, item.getId());
+                pstmt.setDouble(9, item.getWeight());
+                pstmt.setLong(10, item.getStartingPrice());
+                pstmt.setInt(11, item.getId());
 
                 affectedRows=pstmt.executeUpdate();
             }
