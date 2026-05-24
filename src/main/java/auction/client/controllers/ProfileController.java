@@ -168,7 +168,7 @@ public class ProfileController  {
             // Gửi request và đợi phản hồi đồng bộ từ Server
             Message response = ClientNetwork.getInstance().sendRequest(request);
 
-            if (response != null && "DEPOSIT_SUCCESS".equals(response.getCommand())) {
+            if (response != null && "SUCCESS".equals(response.getStatus())) {
                 // Ép kiểu dữ liệu User mới nhận về từ Server để cập nhật lại Session
                 User updatedUser = (User) response.getData();
                 DataSession.getInstance().setLoggedInUser(updatedUser);
@@ -180,6 +180,7 @@ public class ProfileController  {
                 txtAmount.clear();
             } else {
                 // Hiển thị nội dung lỗi phản hồi cụ thể từ Server (Hết tiền, sai thẻ...)
+                System.out.println("--- KIỂU DỮ LIỆU THỰC TẾ: " + response.getData().getClass().getName());
                 String errorMsg = (response != null) ? (String) response.getData() : "Server không phản hồi.";
                 ViewManager.showAlert(Alert.AlertType.ERROR, "Giao dịch thất bại", errorMsg);
             }
