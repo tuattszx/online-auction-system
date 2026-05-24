@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox fx:id="notifPane" alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="474.0" prefWidth="320.0" spacing="10.0" style="-fx-background-radius: 10; -fx-background-color: white; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 10, 0, 0, 5); -fx-padding: 15;" stylesheets="@../css/notification.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auction.client.controllers.NotificationPopupController">
+<VBox fx:id="notifPane" alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="568.0" prefWidth="384.0" spacing="10.0" style="-fx-background-radius: 10; -fx-background-color: white; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 10, 0, 0, 5); -fx-padding: 15;" stylesheets="@../css/notification.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auction.client.controllers.NotificationPopupController">
     <stylesheets>
         <URL value="@../css/notification.css" />
     </stylesheets>
@@ -28,9 +28,9 @@
             <Button fx:id="btnUnread" onAction="#handleUnreadClick" text="Chưa đọc" />
         </children>
     </HBox>
-    <ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefHeight="350.0" style="-fx-background: transparent; -fx-background-color: transparent;" vbarPolicy="NEVER">
+    <ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefHeight="525.0" prefWidth="354.0" style="-fx-background: transparent; -fx-background-color: white;" vbarPolicy="NEVER">
         <content>
-            <VBox fx:id="vboxNotifItems" spacing="5.0" style="-fx-background-color: #242526;" />
+            <VBox fx:id="vboxNotifItems" spacing="5.0" style="-fx-background-color: white;" />
         </content>
     </ScrollPane>
 </children>

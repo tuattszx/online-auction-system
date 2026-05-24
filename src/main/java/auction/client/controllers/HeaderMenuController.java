@@ -40,6 +40,16 @@ public class HeaderMenuController {
     @FXML
     public void initialize() {
         // Khởi tạo trạng thái ban đầu: 0 thông báo ẩn chấm đỏ
+        txtsearch.textProperty().addListener((observable, oldValue, newValue) -> {
+
+            // Lấy tham chiếu của MainViewController từ DataSession ra
+            MainViewController mainVC = DataSession.getInstance().getMainViewController();
+
+            if (mainVC != null) {
+                // Ra lệnh cho MainViewController thực hiện lọc dữ liệu với từ khóa mới (newValue)
+                mainVC.handleSearch(newValue);
+            }
+        });
         if (DataSession.getInstance().getLoggedInUser() != null) {
             Task<Integer> countTask = new Task<>() {
                 @Override

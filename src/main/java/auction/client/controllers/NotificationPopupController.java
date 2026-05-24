@@ -228,7 +228,7 @@ public class NotificationPopupController {
         if (!note.isRead()) {
             row.setStyle("-fx-background-color: #f5f6f7; -fx-background-radius: 8; -fx-cursor: hand;");
         } else {
-            row.setStyle("-fx-background-color: transparent; -fx-background-radius: 8; -fx-cursor: hand;");
+            row.setStyle("-fx-background-color: #f5f6f7; -fx-background-radius: 8; -fx-cursor: hand; -fx-text-fill: #a9a9a9");
         }
 
         // Hover mượt mà
@@ -237,14 +237,14 @@ public class NotificationPopupController {
             if (!note.isRead()) {
                 row.setStyle("-fx-background-color: #f5f6f7; -fx-background-radius: 8;");
             } else {
-                row.setStyle("-fx-background-color: transparent;");
+                row.setStyle("-fx-background-color: #f5f6f7;");
             }
         });
 
         // 1. Thu nhỏ Avatar xuống kích thước Mini: 36x36 (Thay vì 56x56)
         String avatarUrl = "https://www.w3schools.com/howto/img_avatar.png";
         if (note instanceof BidNotification) {
-            avatarUrl = getClass().getResource("/auction/img/hammernotif.jpg").toExternalForm();
+            avatarUrl = getClass().getResource("/auction/img/345629.png").toExternalForm();
         } else if (note instanceof ItemNotification) {
             avatarUrl = getClass().getResource("/auction/img/itemnotif.jpg").toExternalForm();
         }

@@ -9,6 +9,7 @@ import auction.client.session.DataSession;
 import auction.client.utils.ToastManager;
 import auction.common.message.BidUpdateNotification;
 import auction.common.model.bid.Bid;
+import auction.common.model.categories.Category;
 import auction.common.model.items.*;
 import auction.common.model.notifications.Notification;
 import auction.common.model.users.User;
@@ -22,6 +23,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.chart.AreaChart;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
@@ -51,7 +53,7 @@ public class ItemviewController implements Cleanable {
     @FXML private Label lbShortDesc;
     @FXML private Label lbbalance;
     @FXML private VBox Vboxdetails;
-    @FXML private LineChart<String ,Number> priceChart;
+    @FXML private AreaChart<String ,Number> priceChart;
     @FXML private TextField txtBid;
     @FXML private Label lbBidError;
     @FXML private Label lbstarttime;
@@ -105,7 +107,9 @@ public class ItemviewController implements Cleanable {
             this.currentItem=selectedItem;
             itemNameLabel.setText(selectedItem.getName());
             lbShortDesc.setText(selectedItem.getDescription());
-            lblCategory.setText(selectedItem.getCategories().toString());
+            lblCategory.setText(selectedItem.getCategories().stream()
+                    .map(Category::getName)
+                    .toList().toString().replace("[", "").replace("]", ""));
             lblHeight.setText(String.valueOf(selectedItem.getHeight()));
             lblWeight.setText(String.valueOf(selectedItem.getWeight()));
             lblLength.setText(String.valueOf(selectedItem.getLength()));

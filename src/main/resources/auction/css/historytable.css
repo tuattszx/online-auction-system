@@ -86,46 +86,32 @@
 .table-view .show-hide-columns-button:hover {
     -fx-background-color: #F1F5F9;
 }
-/* ==========================================================================
-   1. CẤU HÌNH NỀN VÀ KHUNG CHUNG (CHART BACKGROUND)
-   ========================================================================== */
-/* Nền tổng thể của LineChart - Giữ màu trắng sạch sẽ đồng bộ với App */
+/* =========================================================================
+   TÙY CHỈNH GIAO DIỆN AREA CHART (MÀU XANH THƯƠNG HIỆU CỦA APP)
+   ========================================================================= */
+
+/* 1. Định dạng đường nét vẽ chính (Đường Line phía trên cùng) */
+.chart-series-area-line {
+    -fx-stroke: #0052FF;             /* Màu xanh dương đậm tiệp với nút của bạn */
+    -fx-stroke-width: 2.5px;         /* Độ dày đường vẽ vừa phải, sắc nét */
+}
+
+/* 2. Định dạng vùng đổ bóng phía dưới đường vẽ (Area Fill) */
+.chart-series-area-fill {
+    /* Sử dụng hiệu ứng Gradient chuyển màu mượt mà từ trên xuống dưới */
+    -fx-fill: linear-gradient(to bottom,
+    rgba(0, 82, 255, 0.4) 0%,    /* Phía sát đường vẽ: xanh rõ hơn (độ mờ 40%) */
+    rgba(0, 82, 255, 0.05) 100%  /* Phía dưới đáy: mờ dần về gần như trong suốt */
+    );
+}
 .chart {
-    -fx-padding: 10px;
-    -fx-background-color: #ffffff;
+    -fx-create-symbols: false;
 }
-
-/* Nền của vùng vẽ đồ thị thực tế - Xám cực nhẹ để nổi bật đường Line */
-.chart-plot-background {
-    -fx-background-color: #f8fafc;
+/* Làm mờ các đường lưới nền (Grid Lines) cho biểu đồ đỡ bị rối mắt */
+.chart-alternative-row-visible {
+    -fx-fill: transparent;
 }
-
-/* Đường lưới dọc/ngang mảnh và mờ ảo, không gây rối mắt */
-.chart-vertical-grid-lines,
-.chart-horizontal-grid-lines {
-    -fx-stroke: #e2e8f0;
+.chart-horizontal-grid-lines, .chart-vertical-grid-lines {
+    -fx-stroke: #f1f5f9;             /* Màu xám cực nhẹ giúp biểu đồ trông "thoáng" hơn */
     -fx-stroke-width: 0.8px;
-    -fx-stroke-dash-array: 3 3; /* Nét đứt tinh tế */
-}
-
-/* ĐƯỜNG NẾN GIÁ CHÍNH - Xanh dương hoàng gia cực sang */
-.default-color0.chart-series-line {
-    -fx-stroke: #1a73e8; /* Màu xanh thương hiệu giống hệt nút bấm của bạn */
-    -fx-stroke-width: 3px; /* Làm đường vẽ dày dặn, nét căng */
-
-    /* MẸO QUAN TRỌNG: Tạo một lớp bóng đổ mờ màu xanh nhạt chạy dọc dưới đường Line
-       để đánh lừa thị giác, tạo cảm giác như có vùng gradient lấp đầy */
-    -fx-effect: dropshadow(three-pass-box, rgba(26, 115, 232, 0.2), 8, 0, 0, 4);
-}
-
-/* Tùy chỉnh các chữ số hiển thị trên trục tọa độ (Màu xám Slate dịu mắt) */
-.axis {
-    -fx-tick-label-fill: #64748b;
-    -fx-font-size: 11px;
-    -fx-font-family: 'Segoe UI', Helvetica, sans-serif;
-}
-
-/* Đường biên của 2 trục tọa độ */
-.axis-axis-line {
-    -fx-stroke: #cbd5e1;
 }

@@ -1,5 +1,6 @@
 package auction.client.session;
 
+import auction.client.controllers.MainViewController;
 import auction.common.model.items.Item;
 import auction.common.model.users.User;
 import javafx.collections.FXCollections;
@@ -10,6 +11,15 @@ import java.util.List;
 
 public class DataSession {
     private static DataSession instance;
+    private MainViewController mainViewController;
+
+    public MainViewController getMainViewController() {
+        return mainViewController;
+    }
+
+    public void setMainViewController(MainViewController mainViewController) {
+        this.mainViewController = mainViewController;
+    }
 
     private ObservableList<Item> favoriteItems = FXCollections.observableArrayList();
 

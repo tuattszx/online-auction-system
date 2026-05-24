@@ -14,6 +14,7 @@ import auction.common.model.items.Item;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -32,6 +33,7 @@ import javafx.util.Duration;
 
 import javafx.scene.paint.Color;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainViewController extends ProfileController implements Cleanable {
@@ -49,15 +51,19 @@ public class MainViewController extends ProfileController implements Cleanable {
     @FXML
     protected HeaderMenuController headerMenuController;
 
+    private static final String ACTIVE_CATEGORY_STYLE = "-fx-border-color: #0052ff; -fx-border-width: 0 0 3 0;";
     // SỬA LỖI: Khai báo biến network
     private ClientNetwork network = ClientNetwork.getInstance();
     private final List<AuctionTimerManager> activeCardTimers = new java.util.ArrayList<>();
+    private List<Item> allAssets = new ArrayList<>();
+    private List<Item> filteredAssets = new ArrayList<>();
 
     @FXML
     public void initialize() {
 //        if (UserSession.loggedInUser != null) {
 //            lbusername.setText("Chào: " + UserSession.loggedInUser.getUsername());
 //        }
+        DataSession.getInstance().setMainViewController(this);
 
         // Cần ép kiểu String cho ComboBox để tránh lỗi type-safety
         sortPrice.getItems().addAll("Giá tăng dần", "Giá giảm dần");
@@ -65,6 +71,23 @@ public class MainViewController extends ProfileController implements Cleanable {
         headerMenuController.setBalance(DataSession.getInstance().getLoggedInUser() != null ? DataSession.getInstance().getLoggedInUser().getBalance() + " $" : "0 $");
         // GỌI HÀM: Để tải dữ liệu ngay khi mở trang
         loadItems();
+    }
+    public void handleSearch(String keyword) {
+
+        if (keyword == null || keyword.trim().isEmpty()) {
+            // Nếu ô tìm kiếm trống -> Kho tạm = Toàn bộ kho gốc
+            filteredAssets = new ArrayList<>(allAssets);
+        } else {
+            String lowerKey = keyword.toLowerCase().trim();
+
+            // Lọc bằng Stream và nạp vào kho tạm
+            filteredAssets = allAssets.stream()
+                    .filter(item -> item.getName() != null && item.getName().toLowerCase().contains(lowerKey))
+                    .toList();
+        }
+
+        // 👉 ĐƯA THẲNG KẾT QUẢ VÀO HÀM RENDER ĐỂ CẬP NHẬT GIA DIỆN LẬP TỨC
+        renderItems(filteredAssets);
     }
 
     private void loadItems() {
@@ -92,6 +115,10 @@ public class MainViewController extends ProfileController implements Cleanable {
             List<Item> result = loadTask.getValue();
             flitems.getChildren().clear();
             System.out.println("Đã tải xong " + (result != null ? result.size() : 0) + " sản phẩm.");
+            if (result != null) {
+                this.allAssets = new ArrayList<>(result);       // Nạp đầy kho gốc
+                this.filteredAssets = new ArrayList<>(result);  // Nạp đầy kho tạm ban đầu
+            }
 
             // Gọi hàm render của bạn để hiển thị lên UI
             renderItems(result);
@@ -375,6 +402,7 @@ public class MainViewController extends ProfileController implements Cleanable {
 
         return card;
     }
+    @FXML private HBox categoryBar;
 
     @FXML
     private void handleCategoryClick(MouseEvent event) {
@@ -385,6 +413,13 @@ public class MainViewController extends ProfileController implements Cleanable {
         if (catIdStr == null || catIdStr.isEmpty()) {
             return;
         }
+        for (Node node : categoryBar.getChildren()) {
+            if (node instanceof VBox) {
+                // Xóa bỏ kiểu gạch chân đối với các danh mục không được chọn (trả về trống)
+                node.setStyle("");
+            }
+        }
+        clickedCategory.setStyle(ACTIVE_CATEGORY_STYLE);
 
         int categoryId = Integer.parseInt(catIdStr);
 
@@ -399,8 +434,16 @@ public class MainViewController extends ProfileController implements Cleanable {
                     if (response != null && "SUCCESS".equals(response.getStatus())) {
                         List<Item> filteredItems = (List<Item>) response.getData();
 
+
                         Platform.runLater(() -> {
                             flitems.getChildren().clear();
+                            if (filteredItems != null) {
+                                this.allAssets = new ArrayList<>(filteredItems);
+                                this.filteredAssets = new ArrayList<>(filteredItems);
+                            } else {
+                                this.allAssets.clear();
+                                this.filteredAssets.clear();
+                            }
 
                             if (filteredItems == null || filteredItems.isEmpty()) {
                                 // Hiển thị thông báo nếu danh mục trống
@@ -408,7 +451,7 @@ public class MainViewController extends ProfileController implements Cleanable {
                                 lbEmpty.setStyle("-fx-text-fill: #888888; -fx-font-size: 14px; -fx-padding: 20;");
                                 flitems.getChildren().add(lbEmpty);
                             } else {
-                                renderItems(filteredItems);
+                                renderItems(this.filteredAssets);
 
                                 if (DataSession.getInstance().getLoggedInUser() != null) {
                                     loadUserFavoritesInBackground(filteredItems);
