@@ -707,18 +707,20 @@ public class ItemDaoImpl implements ItemDao {
             }
 
             if (winnerId != 0) {
-                String sqlWinner = "UPDATE users SET BALANCE = BALANCE - ?, frozen_balance = frozen_balance - ? WHERE ID = ?";
+                String sqlWinner = "UPDATE users SET BALANCE = BALANCE - ?, frozen_balance = frozen_balance - ?, actual_expenses = actual_expenses + ? WHERE ID = ?";
                 try (PreparedStatement ps = conn.prepareStatement(sqlWinner)) {
                     ps.setLong(1, finalPrice);
                     ps.setLong(2, finalPrice);
-                    ps.setInt(3, winnerId);
+                    ps.setLong(3, finalPrice);
+                    ps.setInt(4, winnerId);
                     ps.executeUpdate();
                 }
 
-                String sqlSeller = "UPDATE users SET BALANCE = BALANCE + ? WHERE ID = ?";
+                String sqlSeller = "UPDATE users SET BALANCE = BALANCE + ?, total_expenses = total_expenses + ? WHERE ID = ?";
                 try (PreparedStatement ps = conn.prepareStatement(sqlSeller)) {
                     ps.setLong(1, finalPrice);
-                    ps.setInt(2, sellerId);
+                    ps.setLong(2, finalPrice);
+                    ps.setInt(3, sellerId);
                     ps.executeUpdate();
                 }
             }

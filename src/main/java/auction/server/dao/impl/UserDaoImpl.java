@@ -153,6 +153,8 @@ public class UserDaoImpl implements UserDao {
         user.setCardHolderName(rs.getString("card_holder_name"));
         user.setCountry(rs.getString("country"));
         user.setLanguage(rs.getString("language"));
+        user.setFrozenBalance(rs.getLong("frozen_balance"));
+        user.setActualExpenses(rs.getLong("actual_expenses"));
 
 
 

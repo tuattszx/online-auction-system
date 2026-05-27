@@ -66,6 +66,9 @@ public class ClientHandler implements Runnable {
                         case "REGISTER":
                             handleRegister(msg, out);
                             break;
+                        case "GET_USER_BY_ID":
+                            handleGetUserById(msg, out);
+                            break;
                         case "ADD_ITEM":
                             System.out.println("-> Server đã nhận được lệnh AAA_PROFILE!");
                             handleAddItem(msg, out);
@@ -202,6 +205,19 @@ public class ClientHandler implements Runnable {
             }
         }
 
+        out.writeObject(msg);
+        out.flush();
+    }
+
+    private void handleGetUserById(Message msg, ObjectOutputStream out) throws IOException {
+        int userId = (int) msg.getData();
+        User user = userDao.getById(userId);
+        if (user != null) {
+            msg.setStatus("SUCCESS");
+            msg.setData(user);
+        } else {
+            msg.setStatus("FAILED");
+        }
         out.writeObject(msg);
         out.flush();
     }

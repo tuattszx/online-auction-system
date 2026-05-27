@@ -15,6 +15,7 @@ import javafx.scene.Cursor;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 
 import java.io.IOException;
@@ -36,6 +37,17 @@ public class AuctionDashboardController implements Cleanable {
     private TableColumn<AuctionItem, Long> colCurrentBid;
     @FXML
     private TableColumn<AuctionItem, Long> colYourBid;
+
+    @FXML
+    private Label lbAvailableBalance;
+    @FXML
+    private Label lbFrozenOverTotal;
+    @FXML
+    private Label lbFrozenPercentage;
+    @FXML
+    private AnchorPane progressBarFrozen;
+    @FXML
+    private Label lbActualExpenses;
 
     @FXML
     private HeaderMenuController headerMenuController;
@@ -84,8 +96,29 @@ public class AuctionDashboardController implements Cleanable {
         // 3. Khởi tạo dữ liệu mẫu
         User currentUser = DataSession.getInstance().getLoggedInUser();
         if (currentUser != null) {
-            // Gọi dữ liệu từ Server
-            loadMyAuctions(currentUser.getId());
+            auctionTable.setCursor(Cursor.WAIT);
+            AuctionManager.getInstance().getUserByIdAsync(currentUser.getId())
+                    .thenAccept(updatedUser -> {
+                        Platform.runLater(() -> {
+                            auctionTable.setCursor(Cursor.DEFAULT);
+                            if (updatedUser != null) {
+                                DataSession.getInstance().setLoggedInUser(updatedUser);
+                                updateFinancialSummary();
+                            }
+                            // Tiến hành load danh sách các sản phẩm đang tham gia đấu giá
+                            loadMyAuctions(currentUser.getId());
+                        });
+                    })
+                    .exceptionally(ex -> {
+                        Platform.runLater(() -> {
+                            auctionTable.setCursor(Cursor.DEFAULT);
+                            // Nếu lỗi server, fallback dùng tạm dữ liệu local cũ để không chết giao diện
+                            updateFinancialSummary();
+                            loadMyAuctions(currentUser.getId());
+                            ex.printStackTrace();
+                        });
+                        return null;
+                    });
         }
 
         auctionTable.setRowFactory(tv -> {
@@ -99,15 +132,56 @@ public class AuctionDashboardController implements Cleanable {
         });
     }
 
+    private void updateFinancialSummary() {
+        User currentUser = DataSession.getInstance().getLoggedInUser();
+        if (currentUser == null) {
+            lbAvailableBalance.setText("$0");
+            lbFrozenOverTotal.setText("$0 / $0");
+            lbFrozenPercentage.setText("0%");
+            progressBarFrozen.setPrefWidth(0);
+            lbActualExpenses.setText("$0");
+            return;
+        }
+
+        // A. Lấy dữ liệu thô từ User Session (hoặc từ một hàm API/Service nếu có)
+        long availableBalance = currentUser.getBalance();
+
+        // Giả sử thực tế đối tượng User của bạn có các hàm getter này (bạn chỉnh lại tên hàm cho đúng model của bạn nhé)
+        long frozenBalance = currentUser.getFrozenBalance();
+        long totalBalance = availableBalance + frozenBalance;
+        long actualExpenses = currentUser.getActualExpenses();
+
+        // B. Đổ dữ liệu chữ lên các Label định dạng tiền tệ
+        lbAvailableBalance.setText(String.format("$%,d", availableBalance));
+        lbFrozenOverTotal.setText(String.format("$%,d / $%,d", frozenBalance, totalBalance));
+        lbActualExpenses.setText(String.format("$%,d", actualExpenses));
+
+        // C. Tính toán hiển thị thanh Progress Bar trực quan cho Ô số 2
+        if (totalBalance > 0) {
+            double percentage = ((double) frozenBalance / totalBalance) * 100;
+            lbFrozenPercentage.setText(String.format("%.0f%%", percentage));
+
+            // Độ rộng tối đa của thanh tiến trình màu cam nằm trong khung xám là 200px
+            double targetWidth = (percentage / 100.0) * 200.0;
+            progressBarFrozen.setPrefWidth(targetWidth);
+        } else {
+            lbFrozenPercentage.setText("0%");
+            progressBarFrozen.setPrefWidth(0);
+        }
+    }
+
     private void setupRealtimeCallback() {
         User currentUser = DataSession.getInstance().getLoggedInUser();
         if (currentUser == null) return;
 
         this.dashboardBidUpdateCallback = notification -> {
             Platform.runLater(() -> {
+                boolean isTableUpdated = false;
                 // Duyệt qua danh sách các dòng đang hiển thị trên bảng
                 for (AuctionItem item : auctionTable.getItems()) {
                     if (item.getId() == notification.getItemId()) {
+                        long oldPrice = item.getCurrentBid();
+                        long newPrice = notification.getNewPrice();
 
                         // 1. Cập nhật giá cao nhất hiện tại trên dòng đó
                         item.setCurrentBid(notification.getNewPrice());
@@ -115,15 +189,24 @@ public class AuctionDashboardController implements Cleanable {
                         // 2. Tự động tính toán lại Trạng thái Winning / Losing nóng tại chỗ
                         if (notification.getBidderName().equals(currentUser.getUsername())) {
                             item.setStatus("Winning");
-                            item.setYourBid(notification.getNewPrice()); // Cập nhật luôn mức giá của bạn
+                            item.setYourBid(newPrice); // Cập nhật luôn mức giá của bạn
+                            long diff = (item.getYourBid() > 0) ? (newPrice - oldPrice) : newPrice;
+
+                            currentUser.setFrozenBalance(currentUser.getFrozenBalance() + diff);
                         } else {
                             item.setStatus("Losing");
+                            long refundAmount = item.getYourBid();
+                            currentUser.setFrozenBalance(Math.max(0, currentUser.getFrozenBalance() - refundAmount));
                         }
 
                         // 3. Ép TableView vẽ lại để cập nhật màu sắc CSS ngay lập tức
-                        auctionTable.refresh();
+                        isTableUpdated=true;
                         break;
                     }
+                }
+                if (isTableUpdated) {
+                    auctionTable.refresh();
+                    updateFinancialSummary();
                 }
             });
         };

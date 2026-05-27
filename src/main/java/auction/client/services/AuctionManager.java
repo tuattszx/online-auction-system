@@ -6,6 +6,8 @@ import auction.common.message.Message;
 import auction.common.model.bid.Bid;
 import auction.common.model.items.AuctionItem;
 import auction.common.model.items.Item;
+import auction.common.model.users.User;
+
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -71,5 +73,11 @@ public class AuctionManager {
         Message request = new Message("CHECK_AUTO_BID_STATUS", new Object[]{itemId, userId});
         return ClientNetwork.getInstance().sendRequestAsync(request)
                 .thenApply(res -> (res != null && "SUCCESS".equals(res.getStatus())) ? (Boolean) res.getData() : false);
+    }
+
+    public CompletableFuture<User> getUserByIdAsync(int userId) {
+        Message request = new Message("GET_USER_BY_ID", userId);
+        return ClientNetwork.getInstance().sendRequestAsync(request)
+                .thenApply(res -> (res != null && "SUCCESS".equals(res.getStatus())) ? (User) res.getData() : null);
     }
 }

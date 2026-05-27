@@ -12,6 +12,9 @@ public class User extends Account{
     private String cardHolderName;
     private String cardNumber;
     private String language;
+    private long actualExpenses;
+    private long frozenBalance;
+    private long totalExpenses;
 
     public User (){
         super();
@@ -68,6 +71,15 @@ public class User extends Account{
 
     public String getCardNumber() { return cardNumber; }
     public void setCardNumber(String cardNumber) { this.cardNumber = cardNumber; }
+
+    public long getActualExpenses() { return actualExpenses; }
+    public void setActualExpenses(long actualExpenses) { this.actualExpenses = actualExpenses; }
+
+    public long getFrozenBalance() { return frozenBalance; }
+    public void setFrozenBalance(long frozenBalance) { this.frozenBalance = frozenBalance;}
+
+    public long getTotalExpenses() { return totalExpenses; }
+    public void setTotalExpenses(long totalExpenses) { this.totalExpenses = totalExpenses; }
     @Override
     public String toString() {
         return "User{" +
