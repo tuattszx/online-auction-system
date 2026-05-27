@@ -32,17 +32,17 @@
             </children>
         </VBox>
         <Region onMouseClicked="#OnMouseCart" prefHeight="99.0" prefWidth="0.0" HBox.hgrow="ALWAYS" />
-        <ImageView fitHeight="34.0" fitWidth="32.0" onMouseClicked="#OnMouseCart" pickOnBounds="true" preserveRatio="true">
+        <ImageView fitHeight="29.0" fitWidth="29.0" onMouseClicked="#OnMouseCart" pickOnBounds="true" preserveRatio="true">
             <image>
-                <Image url="@../img/cart.png" />
+                <Image url="@../img/shopping-bag-fill.png" />
             </image>
         </ImageView>
         <Region prefHeight="99.0" prefWidth="0.0" HBox.hgrow="ALWAYS" />
         <HBox fx:id="searchBar" alignment="CENTER_LEFT" maxHeight="40.0" prefHeight="40.0" prefWidth="395.0" style="-fx-background-color: #f0f7ff; -fx-background-radius: 20; -fx-border-color: #f0f7ff; -fx-border-radius: 20;">
             <children>
-                <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
+                <ImageView fitHeight="28.0" fitWidth="46.0" pickOnBounds="true" preserveRatio="true">
                     <image>
-                        <Image url="@../img/search-icon-png-11.png" />
+                        <Image url="@../img/magnifying-glass-fill.png" />
                     </image>
                     <HBox.margin>
                         <Insets left="12.0" />
@@ -60,7 +60,7 @@
         <Region prefHeight="99.0" prefWidth="0.0" HBox.hgrow="ALWAYS" />
         <HBox alignment="CENTER" onMouseClicked="#GoToFavoriteView" prefHeight="41.0" prefWidth="45.0">
             <children>
-                <ImageView fitHeight="54.0" fitWidth="29.0" pickOnBounds="true" preserveRatio="true">
+                <ImageView fitHeight="29.0" fitWidth="29.0" pickOnBounds="true" preserveRatio="true">
                     <image>
                         <Image url="@../img/images.png" />
                     </image>
@@ -77,13 +77,16 @@
                     <children>
                         <ImageView fitHeight="29.0" fitWidth="29.0" layoutX="1.0" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@../img/6645163.png" />
+                                <Image url="@../img/bell-simple-fill.png" />
                             </image>
                         </ImageView>
                         <StackPane fx:id="badgeContainer" layoutX="15.0" layoutY="-5.0" prefHeight="18.0" prefWidth="18.0">
                             <children>
-                                <Circle fill="RED" radius="9.0" stroke="WHITE" strokeType="INSIDE" />
-                                <Label fx:id="lblBellBadge" style="-fx-font-size: 10px; -fx-font-weight: bold;" text="0" textFill="WHITE" />
+                                <Circle fill="RED" radius="9.0" stroke="#ff0909" strokeType="INSIDE" />
+                                <Label fx:id="lblBellBadge" style="-fx-font-size: 9px; -fx-font-weight: bold;" text="0" textFill="WHITE">
+                           <font>
+                              <Font size="10.0" />
+                           </font></Label>
                             </children>
                         </StackPane>
                     </children>
@@ -95,17 +98,11 @@
             <children>
                 <HBox alignment="CENTER" onMouseClicked="#onProfileClick">
                     <children>
-                        <ImageView fitHeight="36.0" fitWidth="36.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fitHeight="29.0" fitWidth="29.0" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@../img/pngtree-blue-user-icon-profile-and-account-vector-design-vector-sign-vector-png-image_46129432.jpg" />
+                                <Image url="@../img/user-circle-fill.png" />
                             </image>
                         </ImageView>
-                        <VBox alignment="CENTER">
-                            <children>
-                                <Label style="-fx-font-size: 10px;" text="%mainview.label.balance" textFill="#0025ff" />
-                                <Label fx:id="lbbalance" prefHeight="17.0" prefWidth="73.0" style="-fx-font-weight: bold;" text="1.000.000$" />
-                            </children>
-                        </VBox>
                     </children>
                 </HBox>
             </children>

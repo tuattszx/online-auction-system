@@ -2,6 +2,7 @@ package auction.server.dao;
 
 import auction.common.model.items.AuctionItem;
 import auction.common.model.items.Item;
+import auction.common.model.users.User;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -21,4 +22,5 @@ public interface ItemDao extends GenericDAO<Item, Integer> {
     boolean cancelAutoBid(int itemId, int userId);
     boolean checkAutoBidExists(int itemId, int userId);
     void checkAndTriggerAutomaticBids(int itemId);
+    List<User> getCustomersBySellerId(int sellerId);
 }

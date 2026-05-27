@@ -7,16 +7,23 @@ import auction.client.utils.ImageService;
 import auction.common.message.Message;
 import auction.common.model.categories.Category;
 import auction.common.model.items.Item;
+import auction.common.model.users.User;
+import auction.server.dao.ItemDao;
+import auction.server.dao.UserDao;
 import auction.server.utils.CloudinaryUtil;
 import javafx.animation.FadeTransition;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
@@ -26,6 +33,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.event.ActionEvent;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.controlsfx.control.CheckComboBox;
@@ -37,36 +45,60 @@ import java.util.List;
 
 public class SellerController {
 
-    @FXML  TextField txtTitle;
+    @FXML
+    TextField txtTitle;
     @FXML
     private CheckComboBox<String> categoryComboBox;
-    @FXML private TextField txtHeight;
-    @FXML private TextField txtLength;
-    @FXML private TextField txtWidth;
-    @FXML private TextField txtWeight;
-    @FXML private TextField txtPrice;
-    @FXML private DatePicker startDatePicker;
-    @FXML private DatePicker endDatePicker;
-    @FXML private TextArea txtDescription;
+    @FXML
+    private TextField txtHeight;
+    @FXML
+    private TextField txtLength;
+    @FXML
+    private TextField txtWidth;
+    @FXML
+    private TextField txtWeight;
+    @FXML
+    private TextField txtPrice;
+    @FXML
+    private DatePicker startDatePicker;
+    @FXML
+    private DatePicker endDatePicker;
+    @FXML
+    private TextArea txtDescription;
 
-    @FXML private Spinner<Integer> startHour;
-    @FXML private Spinner<Integer> startMin;
-    @FXML private Spinner<Integer> startSec;
+    @FXML
+    private Spinner<Integer> startHour;
+    @FXML
+    private Spinner<Integer> startMin;
+    @FXML
+    private Spinner<Integer> startSec;
 
-    @FXML private Spinner<Integer> endHour;
-    @FXML private Spinner<Integer> endMin;
-    @FXML private Spinner<Integer> endSec;
+    @FXML
+    private Spinner<Integer> endHour;
+    @FXML
+    private Spinner<Integer> endMin;
+    @FXML
+    private Spinner<Integer> endSec;
 
-    @FXML private TableView<Item> productTable;
-    @FXML private TableColumn<Item, Integer> colSn;
-    @FXML private TableColumn<Item, String> colName;
-    @FXML private TableColumn<Item, Long> colStartingPrice;
-    @FXML private TableColumn<Item, Long> colCurrentPrice;
-    @FXML private TableColumn<Item, String> colStatus;
-    @FXML private TableColumn<Item, Object> colSold; // Dùng Object hoặc Void để tự render đồ họa
-    @FXML private TableColumn<Item, Void> colAction;
+    @FXML
+    private TableView<Item> productTable;
+    @FXML
+    private TableColumn<Item, Integer> colSn;
+    @FXML
+    private TableColumn<Item, String> colName;
+    @FXML
+    private TableColumn<Item, Long> colStartingPrice;
+    @FXML
+    private TableColumn<Item, Long> colCurrentPrice;
+    @FXML
+    private TableColumn<Item, String> colStatus;
+    @FXML
+    private TableColumn<Item, Object> colSold; // Dùng Object hoặc Void để tự render đồ họa
+    @FXML
+    private TableColumn<Item, Void> colAction;
     // Khai báo các VBox nội dung (phần bên phải)
-    @FXML ProgressBar progressbar;
+    @FXML
+    ProgressBar progressbar;
 
     @FXML
     private VBox vboxAddProduct;
@@ -74,26 +106,58 @@ public class SellerController {
     @FXML
     private VBox vboxMyProducts;
 
+    @FXML
+    private VBox vboxCustomers;
+
     // Khai báo các nút bấm menu bên trái để đổi style khi click
     // 1. Khai báo chuẩn kiểu dữ liệu HBox theo FXML mới
-    @FXML private HBox btnNavMyProducts;
-    @FXML private HBox btnNavAdd;
-    @FXML private HBox btnNavCustomers;
-    @FXML private HBox btnNavConfig;
+    @FXML
+    private HBox btnNavMyProducts;
+    @FXML
+    private HBox btnNavAdd;
+    @FXML
+    private HBox btnNavCustomers;
+    @FXML
+    private HBox btnNavConfig;
 
     // 2. Khai báo các vệt dọc định vị
-    @FXML private Region myProductsIndicator;
-    @FXML private Region addIndicator;
-    @FXML private Region customersIndicator;
-    @FXML private Region configIndicator;
+    @FXML
+    private Region myProductsIndicator;
+    @FXML
+    private Region addIndicator;
+    @FXML
+    private Region customersIndicator;
+    @FXML
+    private Region configIndicator;
 
     // 3. Khai báo các nhãn Label để đổi màu chữ động
-    @FXML private Label lblMyProducts;
-    @FXML private Label lblAddProduct;
-    @FXML private Label lblCustomers;
-    @FXML private Label lblConfig;
+    @FXML
+    private Label lblMyProducts;
+    @FXML
+    private Label lblAddProduct;
+    @FXML
+    private Label lblCustomers;
+    @FXML
+    private Label lblConfig;
     @FXML
     private Label lblFileName;
+
+    @FXML
+    private TableView<User> customerTable;
+    @FXML
+    private TableColumn<User, Integer> colId;
+    @FXML
+    private TableColumn<User, String> collName;
+    @FXML
+    private TableColumn<User, String> colPhone;
+    @FXML
+    private TableColumn<User, Void> collAction;
+    @FXML
+    private TextField searchField;
+    @FXML
+    private Button addCustomerBtn;
+
+    private ObservableList<User> masterData = FXCollections.observableArrayList();
 
     private List<File> selectedFiles;
     @FXML
@@ -124,6 +188,32 @@ public class SellerController {
         // Cấu hình cho Giây (0 - 59)
         startSec.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, 0));
         endSec.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, 0));
+
+        // 1. Cấu hình Binding dữ liệu dựa trên các thuộc tính của class User của bạn
+        colId.setCellFactory(column -> new TableCell<User, Integer>() {
+            @Override
+            protected void updateItem(Integer item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setText(null);
+                } else {
+                    // Lấy vị trí hàng hiện tại (bắt đầu từ 0) và cộng thêm 1
+                    setText(String.valueOf(getIndex() + 1));
+                }
+            }
+        });
+        // Gộp FirstName và LastName lại để hiển thị ở cột Name cho đẹp
+        collName.setCellValueFactory(cellData -> {
+            User user = cellData.getValue();
+            String fullName = user.getUsername();
+            return new SimpleStringProperty(fullName.trim());
+        });
+
+        colPhone.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getPhoneNumber()));
+
+        // 2. Cấu hình cột Action sinh tự động 2 nút bấm MO... và DE... đồng bộ như bên Product View
+        setupActionColumn();
+
     }
 
     private void setupTableColumns() {
@@ -166,9 +256,11 @@ public class SellerController {
         // 🔥 LOGIC CỘT SOLD: Nếu status = 'CLOSED' và có currentBidderId != null -> Hiện dấu tích xanh
         colSold.setCellFactory(column -> new TableCell<>() {
             private final Label lblCheck = new Label("✓");
+
             {
                 lblCheck.setStyle("-fx-text-fill: #2ecc71; -fx-font-weight: bold;");
             }
+
             @Override
             protected void updateItem(Object item, boolean empty) {
                 super.updateItem(item, empty);
@@ -190,6 +282,7 @@ public class SellerController {
             private final Button btnModify = new Button("MODIFY");
             private final Button btnDelete = new Button("DELETE");
             private final HBox container = new HBox(btnModify, btnDelete);
+
             {
                 container.setSpacing(10);
                 container.setAlignment(Pos.CENTER);
@@ -206,6 +299,7 @@ public class SellerController {
                     handleDeleteAction(selected);
                 });
             }
+
             @Override
             protected void updateItem(Void item, boolean empty) {
                 super.updateItem(item, empty);
@@ -422,6 +516,7 @@ public class SellerController {
         lblCustomers.setStyle("-fx-text-fill: #495057; -fx-font-weight: normal;");
         lblConfig.setStyle("-fx-text-fill: #495057; -fx-font-weight: normal;");
     }
+
     @FXML
     private void handleShowAddProduct(ActionEvent event) {
         showAddProduct();
@@ -435,7 +530,14 @@ public class SellerController {
     @FXML
     private void handleShowCustomers(ActionEvent event) {
         // TODO: Implement customers view
-        System.out.println("Showing Customers view");
+        vboxAddProduct.setVisible(false);
+        vboxAddProduct.setManaged(false);
+
+        vboxMyProducts.setVisible(false);
+        vboxMyProducts.setManaged(false);
+
+        vboxCustomers.setVisible(true);
+        vboxCustomers.setManaged(true);
         setActiveButton(btnNavCustomers);
     }
 
@@ -445,12 +547,15 @@ public class SellerController {
         System.out.println("Showing Configuration view");
         setActiveButton(btnNavConfig);
     }
+
     private void showAddProduct() {
         vboxAddProduct.setVisible(true);
         vboxAddProduct.setManaged(true);
 
         vboxMyProducts.setVisible(false);
         vboxMyProducts.setManaged(false);
+        vboxCustomers.setVisible(false);
+        vboxCustomers.setManaged(false);
 
         setActiveButton(btnNavAdd);
     }
@@ -461,6 +566,9 @@ public class SellerController {
 
         vboxAddProduct.setVisible(false);
         vboxAddProduct.setManaged(false);
+
+        vboxCustomers.setVisible(false);
+        vboxCustomers.setManaged(false);
 
         setActiveButton(btnNavMyProducts);
     }
@@ -473,8 +581,9 @@ public class SellerController {
         btnNavConfig.setStyle("-fx-background-color: transparent; -fx-text-fill: #bdc3c7;");
 
         // Set active button style
-        activeBtn.setStyle("-fx-background-color:  #e8f0fe; -fx-text-fill:  #1a73e8; -fx-font: bold" );
+        activeBtn.setStyle("-fx-background-color:  #e8f0fe; -fx-text-fill:  #1a73e8; -fx-font: bold");
     }
+
     @FXML
     private void handleBrowseFiles(ActionEvent event) {
 
@@ -512,11 +621,13 @@ public class SellerController {
             }
         }
     }
+
     @FXML
-    public void OnMouseBacktoMain(MouseEvent event){
-        ViewManager.switchScene(event,"main-view.fxml", "Trang chủ");
+    public void OnMouseBacktoMain(MouseEvent event) {
+        ViewManager.switchScene(event, "main-view.fxml", "Trang chủ");
 
     }
+
     @FXML
     public void onBidderClick(MouseEvent event) throws IOException {
         ViewManager.switchScene(event, "profile-view.fxml", "Hồ sơ cá nhân");
@@ -581,8 +692,8 @@ public class SellerController {
             UploadItemTask task;
             if (isEditMode) {
                 newItem.setId(editingItemId);
-                task=new UploadItemTask(newItem, selectedFiles, checkedCategories, true);
-            }else {
+                task = new UploadItemTask(newItem, selectedFiles, checkedCategories, true);
+            } else {
                 // NẾU LÀ THÊM MỚI TOÀN CỤC: Gọi Task đẩy luồng tải ảnh Cloudinary của bạn lên
                 task = new UploadItemTask(newItem, selectedFiles, checkedCategories);
             }
@@ -619,7 +730,7 @@ public class SellerController {
         } catch (Exception e) {
             ViewManager.showAlert(Alert.AlertType.ERROR, "Lỗi hệ thống", e.getMessage());
             e.printStackTrace();
-        }finally {
+        } finally {
             ViewManager.clearCache();
         }
     }
@@ -629,8 +740,8 @@ public class SellerController {
      */
     @FXML
     private void clearFields() {
-        isEditMode=false;
-        editingItemId=-1;
+        isEditMode = false;
+        editingItemId = -1;
         txtTitle.clear();
         txtPrice.clear();
         txtDescription.clear();
@@ -650,5 +761,129 @@ public class SellerController {
         endHour.getValueFactory().setValue(0);
         endMin.getValueFactory().setValue(0);
         endSec.getValueFactory().setValue(0);
+    }
+
+    private void setupActionColumn() {
+        collAction.setCellFactory(param -> new TableCell<User, Void>() {
+            private final Button btnMore = new Button("MO...");
+            private final javafx.scene.layout.HBox container = new javafx.scene.layout.HBox(btnMore);
+
+            {
+                // Thiết kế style phẳng cho nút giống hệt mã gốc của bạn
+                btnMore.setStyle("-fx-background-color: #e2e8f0; -fx-text-fill: #475569; -fx-background-radius: 6; -fx-font-weight: bold; -fx-cursor: hand;");
+                btnMore.setPrefWidth(65);
+                container.setAlignment(javafx.geometry.Pos.CENTER);
+            }
+
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    User currentUser = getTableRow().getItem();
+
+                    btnMore.setOnAction(e -> {
+                        if (currentUser != null) {
+                            openCustomerDetailPopup(currentUser);
+                        }
+                    });
+
+                    setGraphic(container);
+                }
+            }
+
+            // Hàm xử lý load luồng giao diện tùy biến (Custom Popup View)
+            private void openCustomerDetailPopup(User selectedUser) {
+                try {
+                    // Khởi tạo luồng nạp giao diện FXML popup tùy chỉnh
+                    // Hãy thay đổi đường dẫn "/auction/client/views/customer-detail-popup.fxml"
+                    // sao cho khớp chính xác với cấu trúc thư mục tài nguyên của bạn
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/auction/client/views/customer-detail-popup.fxml"));
+                    VBox popupRoot = loader.load();
+
+                    // Lấy instance Controller của popup vừa được khởi tạo ra để truyền đối tượng User sang
+                    CustomerDetailPopupController controller = loader.getController();
+                    controller.setCustomerData(selectedUser);
+
+                    // Tạo một Stage mới (Cửa sổ độc lập nhỏ)
+                    Stage popupStage = new Stage();
+                    popupStage.setTitle("Hồ Sơ Khách Hàng - " + selectedUser.getUsername());
+
+                    // Thiết lập chế độ Modality để khóa màn hình cha phía sau cho tới khi đóng popup
+                    popupStage.initModality(Modality.APPLICATION_MODAL);
+                    // Lấy Stage gốc của bảng chính làm Stage cha
+                    popupStage.initOwner(btnMore.getScene().getWindow());
+
+                    // Tùy chọn: Loại bỏ thanh viền tiêu đề Windows cũ kỹ nếu muốn tự custom nút đóng mở
+                    // popupStage.initStyle(StageStyle.UNDECORATED);
+
+                    Scene scene = new Scene(popupRoot);
+                    popupStage.setScene(scene);
+                    popupStage.setResizable(false); // Không cho người dùng co giãn kích thước popup
+
+                    // Hiển thị cửa sổ popup lên và đợi người dùng thao tác xong
+                    popupStage.showAndWait();
+
+                } catch (Exception ex) {
+                    System.err.println("Lỗi nạp tệp Custom Popup FXML: " + ex.getMessage());
+                    ex.printStackTrace();
+                }
+            }
+        });
+    }
+
+
+    private void loadRealData() {
+        // 1. Lấy thông tin Seller đang đăng nhập từ lớp DataSession (hoặc Session của bạn)
+        // Giả định phương thức lấy User hiện tại là DataSession.getCurrentUser() hoặc tương đương
+        User currentSeller = DataSession.getInstance().getLoggedInUser();
+
+        if (currentSeller == null) {
+            System.err.println("Lỗi: Không tìm thấy phiên đăng nhập của Seller.");
+            return;
+        }
+
+        int sellerId = currentSeller.getId();
+
+        // 2. Chạy Thread riêng để gửi request qua Socket (Tránh đơ giao diện UI chính)
+        new Thread(() -> {
+            // Đóng gói request gửi đi (Lệnh lệnh xử lý lấy khách hàng của Seller)
+            Message request = new Message("GET_CUSTOMERS", String.valueOf(sellerId));
+
+            // Gửi và nhận phản hồi trực tiếp từ Server qua hàm sendRequest() của bạn
+            Message response = ClientNetwork.getInstance().sendRequest(request);
+
+            // 3. Quay trở lại luồng UI để cập nhật dữ liệu lên TableView
+            Platform.runLater(() -> {
+                if (response != null && "SUCCESS".equals(response.getStatus())) {
+
+                    // Nhận danh sách khách hàng ép kiểu List<User> trả về từ gói tin response
+                    List<User> realCustomers = (List<User>) response.getData();
+
+                    masterData.clear();
+                    if (realCustomers != null && !realCustomers.isEmpty()) {
+                        masterData.addAll(realCustomers);
+                    } else {
+                        System.out.println("Seller này chưa có khách hàng nào mua sản phẩm.");
+                    }
+
+                    customerTable.setItems(masterData);
+                    customerTable.refresh(); // Làm mới lại bảng dữ liệu
+
+                } else {
+                    // Hiển thị thông báo lỗi bằng ViewManager giống cấu trúc mẫu của bạn
+                    ViewManager.showAlert(Alert.AlertType.ERROR, "Lỗi",
+                            response != null ? (String) response.getData() : "Không thể lấy danh sách khách hàng từ Server!");
+                }
+            });
+        }).start();
+    }
+    public void onCustomersTabSelected() {
+        // Làm sạch bảng trước khi tải mới để tránh hiển thị đè dữ liệu cũ
+        masterData.clear();
+
+        // Gọi hàm chạy Thread gửi nhận qua Socket TiDB như bình thường
+        loadRealData();
     }
 }

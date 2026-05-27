@@ -157,7 +157,7 @@
                         </TableView>
                     </VBox>
                 </VBox>
-                <VBox fx:id="vboxAddProduct" spacing="25" style="-fx-padding: 40; -fx-background-color: #f8f9fa;" stylesheets="@../css/addproduct.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+                <VBox fx:id="vboxAddProduct" spacing="25" style="-fx-padding: 40; -fx-background-color: #f8f9fa;" stylesheets="@../css/addproduct.css" visible="false" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
 
                     <VBox spacing="5">
                         <Label style="-fx-text-fill: #2d3436; -fx-font-weight: bold;" text="%sellerdemo.label.CreateNewProduct">
@@ -262,6 +262,34 @@
                         <Button onAction="#clearFields" prefHeight="45" prefWidth="120" style="-fx-background-color: transparent; -fx-text-fill: #e74c3c; -fx-border-color: #e74c3c; -fx-border-radius: 10; -fx-font-weight: bold;" text="%sellerdemo.button.Cancel" />
                         <Button onAction="#handleSaveProduct" prefHeight="45" prefWidth="180" style="-fx-background-color: #2ecc71; -fx-text-fill: white; -fx-background-radius: 10; -fx-font-weight: bold; -fx-effect: dropshadow(three-pass-box, rgba(46, 204, 113, 0.4), 10, 0, 0, 4);" text="%sellerdemo.button.Save" />
                     </HBox>
+                </VBox>
+                <VBox fx:id="vboxCustomers" spacing="25" style="-fx-padding: 40; -fx-background-color: #f8f9fa;" stylesheets="@../css/addproduct.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+                    <padding>
+                        <Insets bottom="30.0" left="40.0" right="40.0" top="30.0" />
+                    </padding>
+                    <children>
+                        <VBox spacing="5.0">
+                            <Label text="Customer List" textFill="#1e293b">
+                                <font><Font name="System Bold" size="28.0" /></font>
+                            </Label>
+                            <Label text="Quản lý danh sách khách hàng của bạn" textFill="#64748b" />
+                        </VBox>
+
+                        <VBox style="-fx-background-color: #ffffff; -fx-background-radius: 12; -fx-border-color: #f1f5f9; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 10, 0, 0, 5);" VBox.vgrow="ALWAYS">
+                            <padding><Insets bottom="10.0" left="10.0" right="10.0" top="10.0" /></padding>
+                            <TableView fx:id="customerTable" style="-fx-background-color: transparent;" VBox.vgrow="ALWAYS">
+                                <columns>
+                                    <TableColumn fx:id="colId" prefWidth="60.0" text="#" />
+                                    <TableColumn fx:id="collName" prefWidth="250.0" text="Name" />
+                                    <TableColumn fx:id="colPhone" prefWidth="180.0" text="Phone" />
+                                    <TableColumn fx:id="collAction" prefWidth="150.0" text="Action" />
+                                </columns>
+                                <columnResizePolicy>
+                                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                                </columnResizePolicy>
+                            </TableView>
+                        </VBox>
+                    </children>
                 </VBox>
             </children>
          </StackPane>

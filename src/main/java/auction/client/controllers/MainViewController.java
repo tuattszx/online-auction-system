@@ -37,7 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainViewController extends ProfileController implements Cleanable {
-    public Label lbbalance;
+   // public Label lbbalance;
     @FXML
     private TextField txtsearch;
     @FXML
@@ -68,7 +68,7 @@ public class MainViewController extends ProfileController implements Cleanable {
         // Cần ép kiểu String cho ComboBox để tránh lỗi type-safety
         sortPrice.getItems().addAll("Giá tăng dần", "Giá giảm dần");
         sortTime.getItems().addAll("Thời gian tăng dần", "Thời gian giảm dần");
-        headerMenuController.setBalance(DataSession.getInstance().getLoggedInUser() != null ? DataSession.getInstance().getLoggedInUser().getBalance() + " $" : "0 $");
+     //   headerMenuController.setBalance(DataSession.getInstance().getLoggedInUser() != null ? DataSession.getInstance().getLoggedInUser().getBalance() + " $" : "0 $");
         // GỌI HÀM: Để tải dữ liệu ngay khi mở trang
         loadItems();
     }
@@ -364,6 +364,10 @@ public class MainViewController extends ProfileController implements Cleanable {
         // Hiệu ứng hover cho nút
         bidBtn.setOnMouseEntered(e -> bidBtn.setStyle(bidBtn.getStyle() + "-fx-background-color: #003db3;"));
         bidBtn.setOnMouseExited(e -> bidBtn.setStyle(bidBtn.getStyle() + "-fx-background-color: #0052ff;"));
+        bidBtn.setOnAction(event -> {
+            DataSession.getInstance().setSelectedItem(item);
+            ViewManager.switchScene(event, "item-view.fxml", "Chi tiết");
+        });
 
         HBox statusContainer = new HBox();
         statusContainer.setAlignment(Pos.CENTER);
@@ -394,10 +398,7 @@ public class MainViewController extends ProfileController implements Cleanable {
         // 8. Sự kiện click vào Card
         card.setOnMouseClicked(event -> {
             DataSession.getInstance().setSelectedItem(item);
-            // Chỉ chuyển cảnh nếu không bấm trúng nút "Đấu giá"
-            if (event.getTarget() != bidBtn) {
                 ViewManager.switchScene(event, "item-view.fxml", "Chi tiết");
-            }
         });
 
         return card;

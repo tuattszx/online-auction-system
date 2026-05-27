@@ -6,6 +6,7 @@ import auction.common.model.categories.Category;
 import auction.common.model.items.AuctionItem;
 import auction.common.model.items.Item;
 import auction.common.model.items.ItemImage;
+import auction.common.model.users.User;
 import auction.server.ClientManager;
 import auction.server.DatabaseManager;
 import auction.server.dao.ItemDao;
@@ -1021,5 +1022,47 @@ public class ItemDaoImpl implements ItemDao {
             System.err.println("Lỗi check trạng thái AutoBid: " + e.getMessage());
             return false;
         }
+    }
+    @Override
+    public List<User> getCustomersBySellerId(int sellerId) {
+        List<User> customers = new ArrayList<>();
+
+        // Câu lệnh SQL dựa trên cấu trúc bảng ITEMS thực tế của bạn
+        String sql = "SELECT DISTINCT u.* FROM users u " +
+                "JOIN ITEMS i ON u.ID = i.id_current_bidder " +
+                "WHERE i.id_seller = ? AND i.status = 'CLOSED'";
+
+        try (Connection conn = DatabaseManager.getInstance().getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, sellerId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    // Khởi tạo đối tượng User (Lưu ý: Tên cột 'ID', 'username'.. phải khớp với bảng users của bạn)
+                    User user = new User(
+                            rs.getInt("ID"),             // id lấy từ class cha Account hoặc users
+                            rs.getString("username"),
+                            rs.getString("password"),
+                            rs.getString("email"),
+                            rs.getString("address"),
+                            rs.getLong("balance"),
+                            rs.getString("shippingPhone")
+                    );
+
+                    // Gán các thuộc tính mở rộng của class User như trong ảnh code của bạn
+                    user.setFirstName(rs.getString("firstName"));
+                    user.setLastName(rs.getString("lastName"));
+                    user.setPhoneNumber(rs.getString("phoneNumber"));
+                    user.setCountry(rs.getString("country"));
+                    user.setLanguage(rs.getString("language"));
+
+                    customers.add(user);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return customers;
     }
 }

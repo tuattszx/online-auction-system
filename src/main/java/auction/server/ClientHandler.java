@@ -139,6 +139,9 @@ public class ClientHandler implements Runnable {
                         case "DEPOSIT_REQUEST":
                             handleDepositRequest(msg, out);
                             break;
+                        case "GET_CUSTOMERS":
+                            handleGetCustomers(msg, out);
+                            break;
 
                             // Thêm các case khác như BID, VIEW_PRODUCT...
                     }
@@ -878,5 +881,31 @@ public class ClientHandler implements Runnable {
         out.reset();
         out.writeObject(msg);
         out.flush();
+    }
+    private void handleGetCustomers(Message msg, ObjectOutputStream out) throws IOException {
+        try {
+            // 1. Bóc tách dữ liệu gửi lên từ Client (id của Seller)
+            // Vì Client gửi dạng String.valueOf(sellerId), ta parse về kiểu int
+            int sellerId = Integer.parseInt((String) msg.getData());
+
+            // 2. Gọi xuống tầng DAO thực thi câu lệnh SQL kết nối bảng ITEMS để lấy danh sách User
+            List<User> customers = itemDao.getCustomersBySellerId(sellerId);
+
+            // 3. Đóng gói dữ liệu kết quả trả về khi thành công
+            msg.setStatus("SUCCESS");
+            msg.setData(customers); // Gán danh sách List<User> vào data của gói tin
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            // Đóng gói trạng thái lỗi và thông báo chi tiết trả về Client
+            msg.setStatus("ERROR");
+            msg.setData("Lỗi Server: " + e.getMessage());
+
+        } finally {
+            // 4. Đẩy gói tin phản hồi ngược về Client qua Socket Stream
+            out.writeObject(msg);
+            out.flush();
+            out.reset();
+        }
     }
 }

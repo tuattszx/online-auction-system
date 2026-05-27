@@ -49,7 +49,7 @@ public class NotificationViewController implements Cleanable {
         if (headerMenuController != null) {
             headerMenuController.hideSearchBar();
         }
-        headerMenuController.setBalance(DataSession.getInstance().getLoggedInUser() != null ? DataSession.getInstance().getLoggedInUser().getBalance() + " $" : "0 $");
+        //headerMenuController.setBalance(DataSession.getInstance().getLoggedInUser() != null ? DataSession.getInstance().getLoggedInUser().getBalance() + " $" : "0 $");
     }
 
     @Override
@@ -119,7 +119,7 @@ public class NotificationViewController implements Cleanable {
 
         // 1. 🔥 BÓC TÁCH NỘI DUNG CHI TIẾT THEO TỪNG LOẠI THÔNG BÁO
         if (note instanceof BidNotification bidNote) {
-            defaultAvatar = getClass().getResource("/auction/img/hammernotif.jpg").toExternalForm();
+            defaultAvatar = getClass().getResource("/auction/img/345629.png").toExternalForm();
 
         } else if (note instanceof ItemNotification itemNote) {
             defaultAvatar = getClass().getResource("/auction/img/itemnotif.jpg").toExternalForm();

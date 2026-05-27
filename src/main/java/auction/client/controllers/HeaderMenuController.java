@@ -136,8 +136,8 @@ public class HeaderMenuController {
 
     // Viết thêm hàm này để các Controller khác gọi tới
     public void setBalance(String amount) {
-        lbbalance.setText(amount);
-    }
+//        //lbbalance.setText(amount);
+   }
 
     @FXML
     public void OnMouseBacktoMain(MouseEvent event){
