@@ -253,4 +253,24 @@ public class ViewManager {
         alert.setContentText(message);
         return alert.showAndWait().filter(response -> response == javafx.scene.control.ButtonType.OK).isPresent();
     }
+
+    public static String showInputDialog(String title, String message) {
+        // 1. Khởi tạo đối tượng TextInputDialog mặc định của JavaFX
+        javafx.scene.control.TextInputDialog dialog = new javafx.scene.control.TextInputDialog();
+
+        // 2. Định dạng tiêu đề và nội dung hướng dẫn
+        dialog.setTitle(title != null ? title : "Yêu cầu nhập thông tin");
+        dialog.setHeaderText(null); // Để trống Header cho giao diện thoáng, tinh tế hơn
+        dialog.setContentText(message != null ? message : "Vui lòng nhập nội dung:");
+
+        // 3. Ép Icon ứng dụng lên Stage của Dialog để đồng bộ nhận diện thương hiệu
+        Stage dialogStage = (Stage) dialog.getDialogPane().getScene().getWindow();
+        setStageIcon(dialogStage);
+
+        // 4. Hiển thị Dialog và đứng đợi cho đến khi người dùng tương tác xong
+        java.util.Optional<String> result = dialog.showAndWait();
+
+        // 5. Trả về chuỗi kết quả nếu có, hoặc trả về null nếu họ nhấn nút Huỷ/Cancel
+        return result.orElse(null);
+    }
 }

@@ -70,7 +70,7 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public boolean delete(Integer id) {
-        String sql = "DELETE FROM users WHERE id = ?";
+        String sql = "update users set banned = true where id = ?";
         try (Connection conn = DatabaseManager.getInstance().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, id);
@@ -114,6 +114,27 @@ public class UserDaoImpl implements UserDao {
             e.printStackTrace();
             return false;
         }
+    }
+
+    public Object[] getDashboardStats(){
+        try (Connection conn = DatabaseManager.getInstance().getConnection()){
+            long totalRevenue = 0;
+            try (PreparedStatement ps = conn.prepareStatement("SELECT * from users where id = 1")) {
+                ResultSet rs = ps.executeQuery();
+                if (rs.next()) totalRevenue = rs.getLong("total_expenses");
+            }
+
+            int totalUsers = 0;
+            try (PreparedStatement ps = conn.prepareStatement("SELECT COUNT(*) FROM users")) {
+                ResultSet rs = ps.executeQuery();
+                if (rs.next()) totalUsers = rs.getInt(1);
+            }
+
+            return new Object[]{totalRevenue,totalUsers};
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @Override
@@ -242,4 +263,6 @@ public class UserDaoImpl implements UserDao {
             return false;
         }
     }
+
+
 }

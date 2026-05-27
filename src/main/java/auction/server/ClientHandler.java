@@ -18,6 +18,7 @@ import java.io.*;
 import java.net.Socket;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -68,6 +69,18 @@ public class ClientHandler implements Runnable {
                             break;
                         case "GET_USER_BY_ID":
                             handleGetUserById(msg, out);
+                            break;
+                        case "GET_ALL_USERS":
+                            handleGetAllUsers(msg, out);
+                            break;
+                        case "WARN_USER":
+                            handleWarningUser(msg, out);
+                            break;
+                        case "DELETE_USER":
+                            handleDeleteUser(msg, out);
+                            break;
+                        case "GET_DASHBOARD_STATS":
+                            handleGetDashboardStats(msg,out);
                             break;
                         case "ADD_ITEM":
                             System.out.println("-> Server đã nhận được lệnh AAA_PROFILE!");
@@ -229,6 +242,57 @@ public class ClientHandler implements Runnable {
         }
         out.writeObject(msg);
         out.flush();
+        out.reset();
+    }
+
+    private void handleGetAllUsers(Message msg, ObjectOutputStream out) throws IOException {
+        List<User> users = userDao.getAll();
+        if (users != null) {
+            msg.setStatus("SUCCESS");
+            msg.setData(users);
+        } else {
+            msg.setStatus("FAILED");
+        }
+        out.writeObject(msg);
+        out.flush();
+        out.reset();
+    }
+
+    private void handleWarningUser(Message msg, ObjectOutputStream out) throws IOException {
+        try {
+            Object[] payload= (Object[]) msg.getData();
+            int userId= (int) payload[0];
+            String reason= (String) payload[1];
+
+            NotificationService.sendAdminWarningNotification(userId, reason,LocalDateTime.now());
+            msg.setStatus("SUCCESS");
+        } catch (Exception e) {
+            msg.setStatus("ERROR");
+            e.printStackTrace();
+        }
+        out.writeObject(msg);
+        out.flush();
+        out.reset();
+    }
+
+    private void handleDeleteUser(Message msg, ObjectOutputStream out) throws IOException {
+        try {
+            int idUser = (int) msg.getData();
+            boolean isSuccess= userDao.delete(idUser);
+
+            if (isSuccess) {
+                msg.setStatus("SUCCESS");
+            } else {
+                msg.setStatus("FAILED");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            msg.setStatus("ERROR");
+        } finally {
+            out.writeObject(msg);
+            out.flush();
+            out.reset();
+        }
     }
 
     private void handleSignout(Message msg, ObjectOutputStream out) throws IOException {
@@ -970,4 +1034,31 @@ public class ClientHandler implements Runnable {
         }
     }
 
+    private void handleGetDashboardStats(Message msg, ObjectOutputStream out) throws IOException {
+        try {
+            // Khởi tạo một Map để gom nhóm 4 dữ liệu thống kê
+            Map<String, Object> stats = new HashMap<>();
+            Object[] fromUser= userDao.getDashboardStats();
+            Object[] fromItem= itemDao.getDashboardStats();
+            long totalRevenue = (long) fromUser[0];
+            int liveAuctions = (int) fromItem[0];
+            int totalUsers =(int) fromUser[1];
+            double successRate = (double) fromItem[1];
+
+            stats.put("totalRevenue", totalRevenue);
+            stats.put("liveAuctions", liveAuctions);
+            stats.put("totalUsers", totalUsers);
+            stats.put("successRate", successRate);
+
+            msg.setStatus("SUCCESS");
+            msg.setData(stats);
+        } catch (Exception e) {
+            e.printStackTrace();
+            msg.setStatus("ERROR");
+        } finally {
+            out.writeObject(msg);
+            out.flush();
+            out.reset();
+        }
+    }
 }

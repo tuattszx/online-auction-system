@@ -15,6 +15,7 @@ public class User extends Account{
     private long actualExpenses;
     private long frozenBalance;
     private long totalExpenses;
+    private boolean isBanned;
 
     public User (){
         super();
@@ -80,6 +81,9 @@ public class User extends Account{
 
     public long getTotalExpenses() { return totalExpenses; }
     public void setTotalExpenses(long totalExpenses) { this.totalExpenses = totalExpenses; }
+
+    public boolean isBanned() { return isBanned; }
+    public void setBanned(boolean banned) { isBanned = banned; }
     @Override
     public String toString() {
         return "User{" +

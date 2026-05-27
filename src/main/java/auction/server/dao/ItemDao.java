@@ -25,4 +25,5 @@ public interface ItemDao extends GenericDAO<Item, Integer> {
     List<User> getCustomersBySellerId(int sellerId);
     long getTotalRevenueBySellerId(int sellerId);
 
+    Object[] getDashboardStats();
 }

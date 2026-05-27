@@ -285,4 +285,30 @@ public class NotificationService {
             e.printStackTrace();
         }
     }
+
+    public static void sendAdminWarningNotification(int userId, String reason, LocalDateTime now) {
+        try {
+            BidNotification warnNotif = new BidNotification(
+                    0,
+                    userId,
+                    "CẢNH BÁO TỪ BAN QUẢN TRỊ",
+                    String.format("Tài khoản của bạn nhận được một cảnh báo với lý do: %s. Vui lòng chú ý quy định đấu giá!", reason),
+                    0,
+                    0,
+                    "Admin"
+            );
+            warnNotif.setCreatedAt(now);
+
+            notificationDao.add(warnNotif);
+
+            for (ClientHandler client : ClientManager.getActiveClients()) {
+                if (client.getLoggedInUser() != null && client.getLoggedInUser().getId() == userId) {
+                    client.sendObject(warnNotif);
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

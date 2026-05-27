@@ -158,11 +158,14 @@
 
                                 <TableView fx:id="adminTable" prefHeight="500.0" style="-fx-background-color: #ffffff; -fx-background-radius: 12; -fx-border-color: #e2e8f0; -fx-border-radius: 12; -fx-padding: 5;" VBox.vgrow="ALWAYS">
                                     <columns>
-                                        <TableColumn fx:id="colId" prefWidth="60.0" text="%adminview.tablecolumn.id" />
-                                        <TableColumn fx:id="colUsername" prefWidth="150.0" text="%adminview.tablecolumn.loginname" />
-                                        <TableColumn fx:id="colFullName" prefWidth="200.0" text="%adminview.tablecolumn.fullname" />
-                                        <TableColumn fx:id="colRole" prefWidth="120.0" text="%adminview.tablecolumn.accountbalance" />
-                                        <TableColumn fx:id="colStatus" prefWidth="150.0" text="%adminview.tablecolumn.status" />
+                                        <TableColumn fx:id="colId" prefWidth="60.0" text="STT" />
+                                        <TableColumn fx:id="colUsername" prefWidth="130.0" text="%adminview.tablecolumn.loginname" />
+                                        <TableColumn fx:id="colFullName" prefWidth="160.0" text="%adminview.tablecolumn.fullname" />
+                                        <TableColumn fx:id="colEmail" prefWidth="180.0" text="Email" />
+                                        <TableColumn fx:id="colBalance" prefWidth="130.0" text="%adminview.tablecolumn.accountbalance" />
+                                        <TableColumn fx:id="colFrozen" prefWidth="130.0" text="Frozen" />
+                                        <TableColumn fx:id="colRole" prefWidth="110.0" text="Role" />
+                                        <TableColumn fx:id="colActions" prefWidth="160.0" text="Action" />
                                     </columns>
                                     <columnResizePolicy>
                                         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
@@ -195,8 +198,8 @@
                                                     <Label style="-fx-text-fill: #64748b; -fx-font-size: 14; -fx-font-weight: bold;" text="%adminview.label.totalrevenue" />
                                                 </children>
                                             </HBox>
-                                            <Label fx:id="lblTotalRevenue" style="-fx-text-fill: #1e293b; -fx-font-size: 26; -fx-font-weight: bold; -fx-padding: 10 0 5 0;" text="125,430$" />
-                                            <Label style="-fx-text-fill: #2196f3; -fx-font-size: 12;" text="%adminview.label.+15.2fromlastmonth" />
+                                            <Label fx:id="lblTotalRevenue" style="-fx-text-fill: #1e293b; -fx-font-size: 26; -fx-font-weight: bold; -fx-padding: 10 0 5 0;" text="0$" />
+                                            <Label style="-fx-text-fill: #2196f3; -fx-font-size: 12;"  />
                                         </children>
                                     </VBox>
 
@@ -208,7 +211,7 @@
                                                     <Label style="-fx-text-fill: #64748b; -fx-font-size: 14; -fx-font-weight: bold;" text="%adminview.label.liveauction" />
                                                 </children>
                                             </HBox>
-                                            <Label fx:id="lblLiveAuctions" style="-fx-text-fill: #1e293b; -fx-font-size: 26; -fx-font-weight: bold; -fx-padding: 10 0 5 0;" text="1,042" />
+                                            <Label fx:id="lblLiveAuctions" style="-fx-text-fill: #1e293b; -fx-font-size: 26; -fx-font-weight: bold; -fx-padding: 10 0 5 0;" text="0" />
                                             <Label style="-fx-text-fill: #ff9800; -fx-font-size: 12;" text="%adminview.label.currentlyactive" />
                                         </children>
                                     </VBox>
@@ -221,8 +224,8 @@
                                                     <Label style="-fx-text-fill: #64748b; -fx-font-size: 14; -fx-font-weight: bold;" text="%adminview.label.newuser" />
                                                 </children>
                                             </HBox>
-                                            <Label fx:id="lblNewUsers" style="-fx-text-fill: #1e293b; -fx-font-size: 26; -fx-font-weight: bold; -fx-padding: 10 0 5 0;" text="+156" />
-                                            <Label style="-fx-text-fill: #4caf50; -fx-font-size: 12;" text="%adminview.label.+5.4sinceyes" />
+                                            <Label fx:id="lblUsers" style="-fx-text-fill: #1e293b; -fx-font-size: 26; -fx-font-weight: bold; -fx-padding: 10 0 5 0;" text="0" />
+                                            <Label style="-fx-text-fill: #4caf50; -fx-font-size: 12;"  />
                                         </children>
                                     </VBox>
 
@@ -234,7 +237,7 @@
                                                     <Label style="-fx-text-fill: #64748b; -fx-font-size: 14; -fx-font-weight: bold;" text="%adminview.label.successrate" />
                                                 </children>
                                             </HBox>
-                                            <Label fx:id="lblSuccessRate" style="-fx-text-fill: #1e293b; -fx-font-size: 26; -fx-font-weight: bold; -fx-padding: 10 0 5 0;" text="89.5%" />
+                                            <Label fx:id="lblSuccessRate" style="-fx-text-fill: #1e293b; -fx-font-size: 26; -fx-font-weight: bold; -fx-padding: 10 0 5 0;" text="0%" />
                                             <Label style="-fx-text-fill: #9c27b0; -fx-font-size: 12;" text="%adminview.label.highperformance" />
                                         </children>
                                     </VBox>

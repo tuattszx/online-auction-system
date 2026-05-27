@@ -328,6 +328,33 @@ public class ItemDaoImpl implements ItemDao {
         return  updateStatus(id,"DELETED");
     }
 
+    public Object[] getDashboardStats(){
+        try (Connection conn= DatabaseManager.getInstance().getConnection()) {
+            int liveAuctions=0;
+            try (PreparedStatement ps = conn.prepareStatement("SELECT COUNT(*) FROM ITEMS WHERE status = 'OPEN'")) {
+                ResultSet rs = ps.executeQuery();
+                if (rs.next()) liveAuctions = rs.getInt(1);
+            }
+
+            double successRate=0.0;
+            String rateSql = "SELECT COUNT(*), SUM(CASE WHEN id_current_bidder IS NOT NULL AND id_current_bidder > 0 THEN 1 ELSE 0 END) " +
+                    "FROM items WHERE status IN ('CLOSED', 'DELETED')";
+            try (PreparedStatement ps = conn.prepareStatement(rateSql)) {
+                ResultSet rs = ps.executeQuery();
+                if (rs.next()) {
+                    int totalClosed = rs.getInt(1);
+                    int successfulClosed = rs.getInt(2);
+                    successRate = (totalClosed == 0) ? 0.0 : ((double) successfulClosed / totalClosed) * 100.0;
+                }
+            }
+
+            return new Object[]{liveAuctions,successRate};
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public boolean updateItem(Item item) {
         String sql = "UPDATE ITEMS SET name = ?, description = ?, start_price = ?, " +
                 "start_time = ?, end_time = ?, length = ?, width = ?, height = ?,weight =?, current_price = ? " +

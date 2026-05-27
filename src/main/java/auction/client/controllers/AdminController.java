@@ -4,6 +4,7 @@ import auction.client.ClientNetwork;
 import auction.client.session.DataSession;
 import auction.common.message.Message;
 import auction.common.model.items.Item;
+import auction.common.model.users.User;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -23,7 +24,15 @@ import javafx.scene.shape.Line;
 import javafx.util.Callback;
 import javafx.util.Duration;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 public class AdminController {
+    @FXML Label lblTotalRevenue;
+    @FXML Label lblLiveAuctions;
+    @FXML Label lblUsers;
+    @FXML Label lblSuccessRate;
     @FXML private PieChart categoryChart;
     @FXML
     private TableView<Item> adminProductTable;
@@ -46,6 +55,16 @@ public class AdminController {
     @FXML
     private VBox vboxAdminProducts;
     private ObservableList<Item> masterData = FXCollections.observableArrayList();
+
+    @FXML private TableView<User> adminTable;
+    @FXML private TableColumn<User, Number> colId; // Đổi sang Number để làm STT
+    @FXML private TableColumn<User, String> colUsername;
+    @FXML private TableColumn<User, String> colFullName;
+    @FXML private TableColumn<User, String> colEmail;
+    @FXML private TableColumn<User, Long> colBalance;
+    @FXML private TableColumn<User, Long> colFrozen;
+    @FXML private TableColumn<User, String> colRole;
+    @FXML private TableColumn<User, Void> colActions;
 
     @FXML
     public void initialize() {
@@ -74,25 +93,27 @@ public class AdminController {
         btnLockAccount.getStyleClass().add("admin-menu-btn");
         setActiveButton(btnDashboard);
         // Tạo dữ liệu PieChart mới bao gồm tất cả các thành phần bạn muốn
-        ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList(
-                new PieChart.Data("Hàng điện tử", 35),
-                new PieChart.Data("Đồ cổ", 25),
-                new PieChart.Data("Thời trang", 20),
-                new PieChart.Data("Sách", 10),
-                new PieChart.Data("trang suc", 10),
-                new PieChart.Data("Khác", 6) // Đã thêm "Khác"
-        );
 
-        categoryChart.setData(pieChartData);
+        setupPieChart();
 
-        // (Tùy chọn) Thêm phần trăm vào nhãn để chuyên nghiệp hơn
-        for (PieChart.Data data : pieChartData) {
-            data.nameProperty().bind(
-                    javafx.beans.binding.Bindings.concat(
-                            data.getName(), " ", String.format("%.1f%%", data.getPieValue())
-                    )
-            );
-        }
+        colFullName.setCellValueFactory(cellData -> {
+            User u = cellData.getValue();
+            String fullName = u.getDisplayName() != null ? u.getDisplayName() : (u.getFirstName() + " " + u.getLastName());
+            return new javafx.beans.property.SimpleStringProperty(fullName.trim());
+        });
+
+        colUsername.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getUsername()));
+        colEmail.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getEmail()));
+        colRole.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getRole()));
+        colBalance.setCellValueFactory(cellData -> new javafx.beans.property.SimpleObjectProperty<>(cellData.getValue().getBalance()));
+        colFrozen.setCellValueFactory(cellData -> new javafx.beans.property.SimpleObjectProperty<>(cellData.getValue().getFrozenBalance()));
+
+        setupIdColumn();
+        setupCurrencyColumns();
+        setupActionsColumn();
+
+        loadUsersData();
+        loadDashboardStatistics();
     }
 
     // --- CÁC THÀNH PHẦN MỚI CHO SIDEBAR ---
@@ -114,7 +135,6 @@ public class AdminController {
     @FXML private Button btnApproveSeller;
     @FXML private Button btnLockAccount;
     @FXML private TextField txtSearch;
-    @FXML private TableView<?> adminTable;
 
     // ___ CÁC VBOX ___
     @FXML private VBox VBoxUserManagement;
@@ -147,6 +167,158 @@ public class AdminController {
 
         timeline.play();
         isExpanded = !isExpanded;
+    }
+
+    private void setupIdColumn() {
+        colId.setCellFactory(column -> new TableCell<User, Number>() {
+            @Override
+            protected void updateItem(Number item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setText(null);
+                } else {
+                    setText(String.valueOf(getIndex() + 1));
+                }
+            }
+        });
+    }
+
+    // --- TÁCH HÀM 2: Cấu hình định dạng tiền tệ ($1,000) ---
+    private void setupCurrencyColumns() {
+        // Tạo 1 factory dùng chung cho cả 2 cột tiền để tránh lặp code
+        Callback<TableColumn<User, Long>, TableCell<User, Long>> currencyCellFactory = column -> {
+            return new TableCell<User, Long>() {
+                @Override
+                protected void updateItem(Long price, boolean empty) {
+                    super.updateItem(price, empty);
+                    if (empty || price == null) {
+                        setText(null);
+                    } else {
+                        setText(String.format("$%,d", price));
+                    }
+                }
+            };
+        };
+
+        colBalance.setCellFactory(currencyCellFactory);
+        colFrozen.setCellFactory(currencyCellFactory);
+    }
+
+    // --- TÁCH HÀM 3: Cấu hình cột nút bấm hành động ---
+    private void setupActionsColumn() {
+        colActions.setCellFactory(column -> new TableCell<User, Void>() {
+            private final Button btnWarn = new Button("⚠️");
+            private final Button btnBan = new Button("❌");
+            private final HBox pane = new HBox(btnWarn, btnBan);
+
+            {
+                pane.setSpacing(10);
+                pane.setAlignment(javafx.geometry.Pos.CENTER);
+                btnWarn.setStyle("-fx-background-color: #ff9800; -fx-text-fill: white; -fx-cursor: hand; -fx-background-radius: 4; -fx-padding: 4 8;");
+                btnBan.setStyle("-fx-background-color: #e63946; -fx-text-fill: white; -fx-cursor: hand; -fx-background-radius: 4; -fx-padding: 4 8;");
+
+                btnWarn.setOnAction(e -> handleWarnUser(getTableView().getItems().get(getIndex())));
+                btnBan.setOnAction(e -> handleBanUser(getTableView().getItems().get(getIndex())));
+            }
+
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                setGraphic(empty ? null : pane);
+            }
+        });
+    }
+
+    private void setupPieChart() {
+        ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList(
+                new PieChart.Data("Hàng điện tử", 35),
+                new PieChart.Data("Đồ cổ", 25),
+                new PieChart.Data("Thời trang", 20),
+                new PieChart.Data("Sách", 10),
+                new PieChart.Data("Trang sức", 10),
+                new PieChart.Data("Khác", 6)
+        );
+        categoryChart.setData(pieChartData);
+
+        for (PieChart.Data data : pieChartData) {
+            data.nameProperty().bind(
+                    javafx.beans.binding.Bindings.concat(
+                            data.getName(), " ", String.format("%.1f%%", data.getPieValue())
+                    )
+            );
+        }
+    }
+
+    private void loadUsersData() {
+        Task<List<User>> loadTask = new Task<>() {
+            @Override
+            protected List<User> call() throws Exception {
+                // Giả sử server của bạn trả về Message chứa danh sách toàn bộ User
+                Message response = network.sendRequest(new Message("GET_ALL_USERS", null));
+                if (response != null && "SUCCESS".equals(response.getStatus())) {
+                    return (List<User>) response.getData();
+                }
+                return new ArrayList<>();
+            }
+        };
+
+        loadTask.setOnSucceeded(e -> {
+            adminTable.setItems(FXCollections.observableArrayList(loadTask.getValue()));
+        });
+
+        new Thread(loadTask).start();
+    }
+
+    // Xử lý nút bấm phát thông báo Cảnh báo người dùng
+    private void handleWarnUser(User user) {
+        String reason = ViewManager.showInputDialog("Cảnh báo", "Nhập nội dung cảnh báo gửi tới " + user.getUsername() + ":");
+        if (reason == null || reason.trim().isEmpty()) return;
+
+        Task<Message> warnTask = new Task<>() {
+            @Override
+            protected Message call() throws Exception {
+                Object[] payload = new Object[]{user.getId(), reason};
+                return network.sendRequest(new Message("WARN_USER", payload));
+            }
+        };
+
+        warnTask.setOnSucceeded(e -> {
+            Message response = warnTask.getValue();
+            // BẮT BUỘC: Check trạng thái phản hồi từ Server
+            if (response != null && "SUCCESS".equals(response.getStatus())) {
+                ViewManager.showAlert(Alert.AlertType.INFORMATION, "Thành công", "Đã gửi tin nhắn cảnh báo tới người dùng!");
+            } else {
+                ViewManager.showAlert(Alert.AlertType.ERROR, "Thất bại", "Server không thể xử lý yêu cầu cảnh báo!");
+            }
+        });
+        new Thread(warnTask).start();
+    }
+
+    // Xử lý nút bấm xóa vĩnh viễn người dùng
+    private void handleBanUser(User user) {
+        boolean confirm = ViewManager.confirmAlert("Xác nhận cấm",
+                "Hành động này sẽ cấm [" + user.getUsername() + "] Bạn có chắc không?");
+        if (!confirm) return;
+
+        Task<Message> banTask = new Task<>() {
+            @Override
+            protected Message call() throws Exception {
+                return network.sendRequest(new Message("DELETE_USER", user.getId()));
+            }
+        };
+
+        banTask.setOnSucceeded(e -> {
+            Message response = banTask.getValue();
+            // BẮT BUỘC: Chỉ xóa dòng trên bảng UI khi DB thực sự đã bị xóa thành công
+            if (response != null && "SUCCESS".equals(response.getStatus())) {
+                adminTable.getItems().remove(user);
+                adminTable.refresh();
+                ViewManager.showAlert(Alert.AlertType.INFORMATION, "Thành công", "Đã cấm tài khoản thành công!");
+            } else {
+                ViewManager.showAlert(Alert.AlertType.ERROR, "Thất bại", "Không thể cấm người dùng. Vui lòng thử lại!");
+            }
+        });
+        new Thread(banTask).start();
     }
 
     private void setLabelsVisible(boolean visible) {
@@ -366,5 +538,41 @@ public class AdminController {
                 }
             });
         }).start();
+    }
+
+    private void loadDashboardStatistics() {
+        Task<Map<String, Object>> statsTask = new Task<>() {
+            @Override
+            protected Map<String, Object> call() throws Exception {
+                Message response = network.sendRequest(new Message("GET_DASHBOARD_STATS", null));
+                if (response != null && "SUCCESS".equals(response.getStatus())) {
+                    return (Map<String, Object>) response.getData();
+                }
+                return null;
+            }
+        };
+
+        statsTask.setOnSucceeded(e -> {
+            Map<String, Object> stats = statsTask.getValue();
+            if (stats != null) {
+                // 1. Đổ dữ liệu Total Revenue (Định dạng kiểu tiền tệ: $125,430)
+                long revenue = ((Number) stats.get("totalRevenue")).longValue();
+                lblTotalRevenue.setText(String.format("$%,d", revenue));
+
+                // 2. Đổ dữ liệu Live Auctions
+                int live = ((Number) stats.get("liveAuctions")).intValue();
+                lblLiveAuctions.setText(String.valueOf(live));
+
+                // 3. Đổ dữ liệu Tổng số Users (Lưu ý sửa fx:id trong FXML từ lblUsers thành lblNewUsers hoặc ngược lại cho khớp)
+                int users = ((Number) stats.get("totalUsers")).intValue();
+                lblUsers.setText(String.format("%,d", users));
+
+                // 4. Đổ dữ liệu Tỷ lệ thành công Success Rate (Định dạng 1 chữ số thập phân: 89.5%)
+                double rate = ((Number) stats.get("successRate")).doubleValue();
+                lblSuccessRate.setText(String.format("%.1f%%", rate));
+            }
+        });
+
+        new Thread(statsTask).start();
     }
 }

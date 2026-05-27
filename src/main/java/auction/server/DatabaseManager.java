@@ -42,7 +42,7 @@ public class DatabaseManager {
             System.err.println("Không tìm thấy MySQL Driver: " + e.getMessage());
         }
     }
-    public static Connection getConnection() throws SQLException {
+    public Connection getConnection() throws SQLException {
         if (dataSource==null){
             throw new SQLException();
         }
