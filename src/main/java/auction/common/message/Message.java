@@ -13,11 +13,14 @@ public class Message implements Serializable {
         this.command = command;
         this.data = data;
     }
+    public Message (){}
+
     public Message(String status){
         this.status = status;
     }
     // Getters và Setters
     public String getCommand() { return command; }
+    public void setCommand(String command){this.command=command;}
     public Object getData() { return data; }
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
