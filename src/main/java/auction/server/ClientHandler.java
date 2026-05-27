@@ -412,6 +412,7 @@ public class ClientHandler implements Runnable {
 
         out.writeObject(msg);
         out.flush();
+        out.reset();
     }
 
     private void handleGetPriceChart(Message msg, ObjectOutputStream out) throws IOException {

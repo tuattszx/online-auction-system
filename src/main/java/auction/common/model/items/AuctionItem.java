@@ -34,6 +34,7 @@ public class AuctionItem implements Serializable {
         this.statusVal = status;
         initializeProperties();
     }
+    public AuctionItem(){}
 
     private void initializeProperties() {
         this.id = new SimpleIntegerProperty(idVal);
