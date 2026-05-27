@@ -27,7 +27,7 @@
                         <Label text="%cartview.label.yourbalance" textFill="#888">
                            <font><Font name="System Bold" size="12.0" /></font>
                         </Label>
-                        <Label fx:id="lbbalance" style="-fx-font-size: 28px; -fx-font-weight: bold;" text="\$1,550" />
+                        <Label fx:id="lbAvailableBalance" style="-fx-font-size: 28px; -fx-font-weight: bold;" text="\$0" />
                         <Label style="-fx-cursor: hand;" text="%cartview.label.recharge" textFill="#00a854" />
                      </children>
                   </VBox>
@@ -37,14 +37,14 @@
                            <children>
                               <Label text="%cartview.label.committedexpenses" textFill="#888"><font><Font name="System Bold" size="12.0" /></font></Label>
                               <Region HBox.hgrow="ALWAYS" />
-                              <Label text="69%" textFill="#f5a623" />
+                              <Label fx:id="lbFrozenPercentage" text="0%" textFill="#f5a623" />
                            </children>
                         </HBox>
-                        <Label style="-fx-font-size: 28px; -fx-font-weight: bold;" text="\$3,450 / \$5,000" />
+                        <Label fx:id="lbFrozenOverTotal" style="-fx-font-size: 28px; -fx-font-weight: bold;" text="\$0 / $0" />
                         <Region prefHeight="10.0" />
                         <AnchorPane prefHeight="6.0" style="-fx-background-color: #eee; -fx-background-radius: 5;">
                            <children>
-                              <AnchorPane prefHeight="6.0" prefWidth="200.0" style="-fx-background-color: #f5a623; -fx-background-radius: 5;" />
+                              <AnchorPane fx:id="progressBarFrozen" prefHeight="6.0" prefWidth="200.0" style="-fx-background-color: #f5a623; -fx-background-radius: 5;" />
                            </children>
                         </AnchorPane>
                      </children>
@@ -52,8 +52,8 @@
                   <VBox prefWidth="350.0" style="-fx-background-color: white; -fx-background-radius: 15; -fx-padding: 20; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 10, 0, 0, 5);" HBox.hgrow="ALWAYS">
                      <children>
                         <Label text="%cartview.label.actual" textFill="#888"><font><Font name="System Bold" size="12.0" /></font></Label>
-                        <Label style="-fx-font-size: 28px; -fx-font-weight: bold;" text="\$2,100" />
-                        <Label text="%cartview.label.▲12%thisweek" textFill="#00a854" />
+                        <Label fx:id="lbActualExpenses" style="-fx-font-size: 28px; -fx-font-weight: bold;" text="\$0" />
+                        <Label  textFill="#00a854" />
                      </children>
                   </VBox>
                </children>

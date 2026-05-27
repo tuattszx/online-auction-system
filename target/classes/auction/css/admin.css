@@ -56,11 +56,6 @@
     -fx-transition: all 0.3s;
 }
 
-.admin-search-field:focused {
-    -fx-background-color: rgba(255, 255, 255, 0.2);
-    -fx-border-color: #00d2ff;
-    -fx-effect: dropshadow(three-pass-box, rgba(0, 210, 255, 0.5), 10, 0, 0, 0);
-}
 
 /* Admin Table */
 .admin-table {
@@ -92,9 +87,6 @@
     -fx-border-width: 0 0 1 0;
 }
 
-.admin-table .table-row-cell:filled:hover {
-    -fx-background-color: rgba(255, 255, 255, 0.1);
-}
 
 .admin-table .table-cell {
     -fx-text-fill: white;
@@ -242,9 +234,7 @@
     -fx-font-size: 13;
 }
 .check-combo-box,
-.check-combo-box.combo-box-base,
-.check-combo-box.combo-box-base:focused,
-.check-combo-box.combo-box-base:showing {
+.check-combo-box.combo-box-base{
     -fx-background-color: #ffffff !important;
     -fx-background-insets: 0 !important;
     -fx-background-radius: 8 !important;
@@ -256,11 +246,6 @@
 }
 
 /* Hiệu ứng khi click vào ô chọn */
-.check-combo-box:focused,
-.check-combo-box.combo-box-base:focused {
-    -fx-border-color: #1a73e8 !important;
-    -fx-effect: dropshadow(three-pass-box, rgba(26, 115, 232, 0.15), 6, 0, 0, 0) !important;
-}
 
 /* Nút mũi tên xổ xuống */
 .check-combo-box .arrow-button {
@@ -302,17 +287,7 @@
     -fx-background-color: #ffffff !important;
     -fx-padding: 3 !important;
 }
-.check-combo-box .check-box:selected .box {
-    -fx-background-color: #1a73e8 !important;
-    -fx-border-color: #1a73e8 !important;
-}
-.check-combo-box .check-box:selected .mark {
-    -fx-background-color: #ffffff !important;
-    -fx-shape: "M1.5 4.5L4 7L9 2" !important;
-}
+
 
 /* Xóa bỏ màu xanh đậm mặc định khi click đè dòng hệ thống */
-.check-combo-box .list-cell:filled:selected {
-    -fx-background-color: #f1f5f9 !important;
-    -fx-text-fill: #1a73e8 !important;
-}
+

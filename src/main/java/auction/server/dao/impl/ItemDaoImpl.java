@@ -744,6 +744,32 @@ public class ItemDaoImpl implements ItemDao {
             if (conn != null) try { conn.close(); } catch (SQLException e) {}
         }
     }
+    public long getTotalRevenueBySellerId(int sellerId) {
+        long totalRevenue = 0;
+        // Truy vấn trực tiếp trường total_expenses từ bảng users theo ID của Seller
+        String sql = "SELECT total_expenses FROM users WHERE ID = ?";
+
+        Connection conn = null;
+        try {
+            conn = DatabaseManager.getInstance().getConnection();
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                ps.setInt(1, sellerId);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        totalRevenue = rs.getLong("total_expenses");
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Lỗi truy vấn total_expenses cho Seller: " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            if (conn != null) {
+                try { conn.close(); } catch (SQLException e) { e.printStackTrace(); }
+            }
+        }
+        return totalRevenue;
+    }
 
     @Override
     public boolean setupAutoBid(int itemId, int userId, long maxBid, long increment, String username) {

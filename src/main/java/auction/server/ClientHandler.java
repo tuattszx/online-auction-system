@@ -142,6 +142,12 @@ public class ClientHandler implements Runnable {
                         case "GET_CUSTOMERS":
                             handleGetCustomers(msg, out);
                             break;
+                        case "GET_SELLER_REVENUE":
+                            handleGetSellerRevenue(msg, out);
+                            break;
+                        case "CONFIRM_ITEM":
+                            handleConfirmItem(msg, out);
+                            break;
 
                             // Thêm các case khác như BID, VIEW_PRODUCT...
                     }
@@ -908,4 +914,60 @@ public class ClientHandler implements Runnable {
             out.reset();
         }
     }
+    private void handleGetSellerRevenue(Message msg, ObjectOutputStream out) throws IOException {
+        try {
+            // 1. Bóc tách ID người bán gửi lên từ Client
+            int sellerId = Integer.parseInt((String) msg.getData());
+
+            // 2. Gọi xuống ItemDaoImpl để lấy tổng số tiền thực tế từ Cloud DB
+            long revenue = itemDao.getTotalRevenueBySellerId(sellerId);
+
+            // 3. Đóng gói phản hồi thành công
+            msg.setStatus("SUCCESS");
+            msg.setData(revenue); // Truyền giá trị kiểu số Long về cho Client
+
+        } catch (Exception e) {
+            System.err.println("Lỗi xử lý gói tin tính doanh thu:");
+            e.printStackTrace();
+
+            // Đóng gói phản hồi thất bại
+            msg.setStatus("ERROR");
+            msg.setData(0L); // Trả về số tiền bằng 0 nếu gặp lỗi mạng/DB
+        } finally {
+            // 4. Đẩy ngược gói tin phản hồi về ứng dụng Client qua Socket Stream
+            out.writeObject(msg);
+            out.flush();
+            out.reset();
+        }
+    }
+    private void handleConfirmItem(Message msg, ObjectOutputStream out) throws IOException {
+        try {
+            // 1. Lấy ID sản phẩm gửi từ Client lên
+            Object [] payload=(Object[]) msg.getData();
+            int itemId = (int) payload[0];
+            boolean isApproved=(boolean) payload[1];
+
+            // 2. Chạy câu lệnh SQL chuyển trạng thái sang 'OPEN'
+            boolean isSuccess = itemDao.approveItem(itemId, isApproved);
+
+            // 3. Đóng gói phản hồi dựa vào kết quả thực thi
+            if (isSuccess) {
+                msg.setStatus("SUCCESS");
+                msg.setData(isApproved ? " Sản phẩm đã được chấp nhận" : "Đã từ chối sản phẩm");
+            } else {
+                msg.setStatus("ERROR");
+                msg.setData("Không tìm thấy sản phẩm hoặc sản phẩm không thể cập nhật.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            msg.setStatus("ERROR");
+            msg.setData("Lỗi hệ thống Server: " + e.getMessage());
+        } finally {
+            // Phản hồi lại gói tin về Client qua luồng Stream Socket
+            out.writeObject(msg);
+            out.flush();
+            out.reset();
+        }
+    }
+
 }

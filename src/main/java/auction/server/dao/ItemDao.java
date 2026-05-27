@@ -23,4 +23,6 @@ public interface ItemDao extends GenericDAO<Item, Integer> {
     boolean checkAutoBidExists(int itemId, int userId);
     void checkAndTriggerAutomaticBids(int itemId);
     List<User> getCustomersBySellerId(int sellerId);
+    long getTotalRevenueBySellerId(int sellerId);
+
 }

@@ -26,7 +26,8 @@ public class ViewManager {
             "notification-view",
             "item-view.fxml",
             "cart-view.fxml",
-            "main-view.fxml"
+            "main-view.fxml",
+            "admin-view.fxml"
     );
     /**
      * Lấy view từ cache hoặc load từ FXML file

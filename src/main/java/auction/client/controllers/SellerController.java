@@ -141,6 +141,11 @@ public class SellerController {
     private Label lblConfig;
     @FXML
     private Label lblFileName;
+    @FXML
+    private Label lblCurrencyIcon;
+    @FXML
+    private Label lblTotalRevenue;
+
 
     @FXML
     private TableView<User> customerTable;
@@ -169,6 +174,7 @@ public class SellerController {
 
     @FXML
     public void initialize() {
+        lblCurrencyIcon.setText("$");
         categoryComboBox.getItems().addAll("Art", "Interiors", "Jewelry", "Watches", "Fashion", "Coins", "Cars", "Wine", "Books");
         headerMenuController.resetText();
         headerMenuController.hideSearchBar();
@@ -189,6 +195,7 @@ public class SellerController {
         startSec.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, 0));
         endSec.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, 0));
 
+        loadSellerRevenue();
         // 1. Cấu hình Binding dữ liệu dựa trên các thuộc tính của class User của bạn
         colId.setCellFactory(column -> new TableCell<User, Integer>() {
             @Override
@@ -539,6 +546,7 @@ public class SellerController {
         vboxCustomers.setVisible(true);
         vboxCustomers.setManaged(true);
         setActiveButton(btnNavCustomers);
+        onCustomersTabSelected();
     }
 
     @FXML
@@ -620,17 +628,6 @@ public class SellerController {
                         "Một số file bị bỏ qua do không hợp lệ:\n" + errorLog.toString());
             }
         }
-    }
-
-    @FXML
-    public void OnMouseBacktoMain(MouseEvent event) {
-        ViewManager.switchScene(event, "main-view.fxml", "Trang chủ");
-
-    }
-
-    @FXML
-    public void onBidderClick(MouseEvent event) throws IOException {
-        ViewManager.switchScene(event, "profile-view.fxml", "Hồ sơ cá nhân");
     }
 
     @FXML
@@ -885,5 +882,25 @@ public class SellerController {
 
         // Gọi hàm chạy Thread gửi nhận qua Socket TiDB như bình thường
         loadRealData();
+    }
+    public void loadSellerRevenue() {
+        if (DataSession.getInstance().getLoggedInUser() == null) return;
+        int sellerId = DataSession.getInstance().getLoggedInUser().getId();
+
+        new Thread(() -> {
+            Message request = new Message("GET_SELLER_REVENUE", String.valueOf(sellerId));
+            Message response = ClientNetwork.getInstance().getInstance().sendRequest(request);
+
+            Platform.runLater(() -> {
+                if (response != null && "SUCCESS".equals(response.getStatus())) {
+                    long totalMoney = (long) response.getData();
+
+                    // Định dạng hiển thị số kèm ký hiệu Việt Nam Đồng
+                    lblTotalRevenue.setText(String.valueOf(totalMoney));
+                } else {
+                    lblTotalRevenue.setText("0");
+                }
+            });
+        }).start();
     }
 }
