@@ -881,6 +881,856 @@ public class ClientHandlerTest {
         assertEquals("ERROR", msgResponse.getStatus()); // Trạng thái bắt buộc phải chuyển thành ERROR
         assertNull(msgResponse.getData());               // Data bắt buộc phải bằng null do bạn đã set ở catch
     }
+    @Test
+    @org.junit.jupiter.api.Timeout(value = 5, unit = java.util.concurrent.TimeUnit.SECONDS)
+    public void testHandleGetMessage_DatabaseError() throws Exception {
+        // 1. Chuẩn bị dữ liệu yêu cầu (Sử dụng Mã số sinh viên làm ID mẫu)
+        int targetUserId = 25021620;
+        Message msgRequest = new Message();
+        msgRequest.setCommand("GET_MESSAGE");
+        msgRequest.setData(targetUserId);
+
+        // Giả lập hành vi lỗi: Khi gọi vào DB thì ném ra một lỗi RuntimeException ngầm
+        // AN TOÀN TUYỆT ĐỐI - Dùng mockNotificationDao có sẵn ở đầu Class, không chạm DB thật
+        when(mockNotificationDao.getNotificationsByUserId(targetUserId))
+                .thenThrow(new RuntimeException("SQL Error: Connection refused to database server"));
+
+        // 2. KHƠI THÔNG LUỒNG VÀ KHỞI CHẠY THREAD SERVER (Dùng đúng các biến có sẵn của Class ông)
+        testClientOut.writeObject(msgRequest);
+        testClientOut.flush();
+        testClientOut.reset();
+
+        Thread handlerThread = new Thread(clientHandler);
+        handlerThread.start();
+
+        // Khởi tạo Stream nhận dữ liệu đúng chuẩn giống các hàm test khác của ông
+        testClientIn = new ObjectInputStream(pipeFromServer);
+
+        // 3. Đọc phản hồi và Assert kết quả rơi vào block catch
+        try {
+            Message msgResponse = (Message) testClientIn.readObject();
+
+            assertNotNull(msgResponse);
+            assertEquals("ERROR", msgResponse.getStatus());    // Trạng thái bắt buộc phải chuyển thành ERROR theo block catch
+            assertEquals(targetUserId, msgResponse.getData()); // Data giữ nguyên giá trị ID ban đầu do catch không sửa data
+
+        } finally {
+            // Đảm bảo dừng Thread Server sau khi test xong để tránh treo hệ thống CI/CD
+            if (handlerThread.isAlive()) {
+                handlerThread.interrupt();
+            }
+        }
+    }
+    @Test
+    public void testHandleMarkAsRead_Success() throws Exception {
+        // 1. Chuẩn bị dữ liệu yêu cầu (Ví dụ: notificationId = 123)
+        int targetNotificationId = 123;
+        Message msgRequest = new Message();
+        msgRequest.setCommand("MARK_AS_READ");
+        msgRequest.setData(targetNotificationId);
+
+        // Giả lập hành vi DAO: Cập nhật thành công trả về true - AN TOÀN KHÔNG CHẠM DB
+        when(mockNotificationDao.markAsRead(targetNotificationId)).thenReturn(true);
+
+        // 2. KHƠI THÔNG LUỒNG VÀ KHỞI CHẠY THREAD SERVER
+        testClientOut.writeObject(msgRequest);
+        testClientOut.flush();
+        testClientOut.reset();
+
+        Thread handlerThread = new Thread(clientHandler);
+        handlerThread.start();
+
+        // Khởi tạo Stream nhận dữ liệu từ Server giả lập
+        testClientIn = new ObjectInputStream(pipeFromServer);
+
+        // 3. Đọc phản hồi từ Client ảo và Assert kết quả
+        try {
+            Message msgResponse = (Message) testClientIn.readObject();
+
+            assertNotNull(msgResponse);
+            assertEquals("SUCCESS", msgResponse.getStatus()); // Status bắt buộc phải là SUCCESS khi isUpdated = true
+
+        } finally {
+            if (handlerThread.isAlive()) {
+                handlerThread.interrupt();
+            }
+        }
+    }
+    @Test
+    @org.junit.jupiter.api.Timeout(value = 5, unit = java.util.concurrent.TimeUnit.SECONDS)
+    public void testHandleMarkAsRead_DatabaseError() throws Exception {
+        // 1. Chuẩn bị dữ liệu yêu cầu
+        int targetNotificationId = 555;
+        Message msgRequest = new Message();
+        msgRequest.setCommand("MARK_AS_READ");
+        msgRequest.setData(targetNotificationId);
+
+        // Giả lập hành vi lỗi ngầm: DB ném ra Exception
+        when(mockNotificationDao.markAsRead(targetNotificationId))
+                .thenThrow(new RuntimeException("Deadlock detected or connection lost"));
+
+        // 2. KHƠI THÔNG LUỒNG VÀ KHỞI CHẠY THREAD SERVER
+        testClientOut.writeObject(msgRequest);
+        testClientOut.flush();
+        testClientOut.reset();
+
+        Thread handlerThread = new Thread(clientHandler);
+        handlerThread.start();
+
+        testClientIn = new ObjectInputStream(pipeFromServer);
+
+        // 3. Đọc phản hồi và kiểm tra bẫy catch lỗi Server
+        try {
+            Message msgResponse = (Message) testClientIn.readObject();
+
+            assertNotNull(msgResponse);
+            assertEquals("ERROR", msgResponse.getStatus()); // Phải rơi vào trạng thái ERROR
+            assertTrue(msgResponse.getData().toString().contains("Lỗi Server")); // Kiểm tra chuỗi thông báo lỗi được gán vào Data
+
+        } finally {
+            if (handlerThread.isAlive()) {
+                handlerThread.interrupt();
+            }
+        }
+    }
+    @Test
+    public void testHandleFavourite_Add_Success() throws Exception {
+        // 1. Chuẩn bị dữ liệu yêu cầu (Mảng Object chứa userId và itemId)
+        int userId = 25021620;
+        int itemId = 999;
+        Object[] payload = new Object[]{ userId, itemId };
+
+        Message msgRequest = new Message();
+        msgRequest.setCommand("ADD_FAVOURITE");
+        msgRequest.setData(payload);
+
+        // Giả lập hành vi DAO: addFavourite trả về true - AN TOÀN TUYỆT ĐỐI
+        when(mockFavouriteDao.addFavourite(userId, itemId)).thenReturn(true);
+
+        // 2. KHƠI THÔNG LUỒNG VÀ KHỞI CHẠY THREAD SERVER
+        testClientOut.writeObject(msgRequest);
+        testClientOut.flush();
+        testClientOut.reset();
+
+        Thread handlerThread = new Thread(clientHandler);
+        handlerThread.start();
+
+        testClientIn = new ObjectInputStream(pipeFromServer);
+
+        // 3. Đọc phản hồi và kiểm tra kết quả
+        try {
+            Message msgResponse = (Message) testClientIn.readObject();
+
+            assertNotNull(msgResponse);
+            assertEquals("SUCCESS", msgResponse.getStatus()); // Trạng thái mong muốn là SUCCESS
+
+        } finally {
+            if (handlerThread.isAlive()) {
+                handlerThread.interrupt();
+            }
+        }
+    }
+    @Test
+    @org.junit.jupiter.api.Timeout(value = 5, unit = java.util.concurrent.TimeUnit.SECONDS)
+    public void testHandleFavourite_Remove_DatabaseError() throws Exception {
+        // 1. Chuẩn bị dữ liệu yêu cầu (isAdd sẽ tương ứng với hàm xóa ở Server)
+        int userId = 25021620;
+        int itemId = 888;
+        Object[] payload = new Object[]{ userId, itemId };
+
+        Message msgRequest = new Message();
+        msgRequest.setCommand("REMOVE_FAVOURITE");
+        msgRequest.setData(payload);
+
+        // Giả lập hành vi lỗi: removeFavourite ném lỗi kết nối ngầm
+        when(mockFavouriteDao.removeFavourite(userId, itemId))
+                .thenThrow(new RuntimeException("Database deadlock on connection pool"));
+
+        // 2. KHƠI THÔNG LUỒNG VÀ KHỞI CHẠY THREAD SERVER
+        testClientOut.writeObject(msgRequest);
+        testClientOut.flush();
+        testClientOut.reset();
+
+        Thread handlerThread = new Thread(clientHandler);
+        handlerThread.start();
+
+        testClientIn = new ObjectInputStream(pipeFromServer);
+
+        // 3. Đọc phản hồi và Assert bẫy ngoại lệ catch
+        try {
+            Message msgResponse = (Message) testClientIn.readObject();
+
+            assertNotNull(msgResponse);
+            assertEquals("ERROR", msgResponse.getStatus()); // Hệ thống phải chuyển sang trạng thái ERROR
+            assertTrue(msgResponse.getData().toString().contains("Lỗi Server")); // Kiểm tra chuỗi thông báo lỗi
+
+        } finally {
+            if (handlerThread.isAlive()) {
+                handlerThread.interrupt();
+            }
+        }
+    }
+    @Test
+    public void testHandleGetFavourites_Success() throws Exception {
+        // 1. Chuẩn bị dữ liệu yêu cầu (Ví dụ: userId = 25021620)
+        int targetUserId = 25021620;
+        Message msgRequest = new Message();
+        msgRequest.setCommand("GET_FAVOURITES");
+        msgRequest.setData(targetUserId);
+
+        // Giả lập dữ liệu trả về từ DAO là một danh sách chứa các ID món đồ (Ví dụ: [10, 20, 30])
+        List<Integer> expectedList = java.util.Arrays.asList(10, 20, 30);
+        when(mockFavouriteDao.getFavoriteItemIdsByUserId(targetUserId)).thenReturn(expectedList);
+
+        // 2. KHƠI THÔNG LUỒNG VÀ KHỞI CHẠY THREAD SERVER
+        testClientOut.writeObject(msgRequest);
+        testClientOut.flush();
+        testClientOut.reset();
+
+        Thread handlerThread = new Thread(clientHandler);
+        handlerThread.start();
+
+        testClientIn = new ObjectInputStream(pipeFromServer);
+
+        // 3. Đọc phản hồi từ Client ảo và Assert kết quả
+        try {
+            Message msgResponse = (Message) testClientIn.readObject();
+
+            assertNotNull(msgResponse);
+            assertEquals("SUCCESS", msgResponse.getStatus()); // Trạng thái bắt buộc phải là SUCCESS
+
+            // Ép kiểu dữ liệu nhận được về List và kiểm tra tính chính xác của phần tử
+            List<?> resultList = (List<?>) msgResponse.getData();
+            assertNotNull(resultList);
+            assertEquals(3, resultList.size());
+            assertEquals(10, resultList.get(0));
+
+        } finally {
+            if (handlerThread.isAlive()) {
+                handlerThread.interrupt();
+            }
+        }
+    }
+    @Test
+    @org.junit.jupiter.api.Timeout(value = 5, unit = java.util.concurrent.TimeUnit.SECONDS)
+    public void testHandleGetFavourites_DatabaseError() throws Exception {
+        // 1. Chuẩn bị dữ liệu yêu cầu
+        int targetUserId = 25021620;
+        Message msgRequest = new Message();
+        msgRequest.setCommand("GET_FAVOURITES");
+        msgRequest.setData(targetUserId);
+
+        // Giả lập hành vi lỗi ngầm: DAO ném ra Exception kết nối
+        when(mockFavouriteDao.getFavoriteItemIdsByUserId(targetUserId))
+                .thenThrow(new RuntimeException("SQL Error: Connection pool exhausted"));
+
+        // 2. KHƠI THÔNG LUỒNG VÀ KHỞI CHẠY THREAD SERVER
+        testClientOut.writeObject(msgRequest);
+        testClientOut.flush();
+        testClientOut.reset();
+
+        Thread handlerThread = new Thread(clientHandler);
+        handlerThread.start();
+
+        testClientIn = new ObjectInputStream(pipeFromServer);
+
+        // 3. Đọc phản hồi và Assert bẫy ngoại lệ catch
+        try {
+            Message msgResponse = (Message) testClientIn.readObject();
+
+            assertNotNull(msgResponse);
+            assertEquals("ERROR", msgResponse.getStatus()); // Hệ thống phải chuyển sang trạng thái ERROR
+            assertTrue(msgResponse.getData().toString().contains("Lỗi Server")); // Kiểm tra chuỗi thông báo lỗi
+
+        } finally {
+            if (handlerThread.isAlive()) {
+                handlerThread.interrupt();
+            }
+        }
+    }
+    @Test
+    public void testGetUnreadCount_Success() throws Exception {
+        // 1. Chuẩn bị dữ liệu yêu cầu (Sử dụng ID người dùng mẫu)
+        int targetUserId = 25021620;
+        Message msgRequest = new Message();
+        msgRequest.setCommand("GET_UNREAD_COUNT");
+        msgRequest.setData(targetUserId);
+
+        // Giả lập hành vi DAO: Đếm được 5 thông báo chưa đọc - AN TOÀN TUYỆT ĐỐI
+        int mockCount = 5;
+        when(mockNotificationDao.countUnreadByUserId(targetUserId)).thenReturn(mockCount);
+
+        // 2. KHƠI THÔNG LUỒNG VÀ KHỞI CHẠY THREAD SERVER
+        testClientOut.writeObject(msgRequest);
+        testClientOut.flush();
+        testClientOut.reset();
+
+        Thread handlerThread = new Thread(clientHandler);
+        handlerThread.start();
+
+        testClientIn = new ObjectInputStream(pipeFromServer);
+
+        // 3. Đọc phản hồi và đối chiếu kết quả nhận về
+        try {
+            Message msgResponse = (Message) testClientIn.readObject();
+
+            assertNotNull(msgResponse);
+            assertEquals("SUCCESS", msgResponse.getStatus()); // Trạng thái mong muốn là SUCCESS
+
+            // Kiểm tra số lượng đếm được trong gói tin trả về
+            int resultCount = (int) msgResponse.getData();
+            assertEquals(5, resultCount, "Số lượng thông báo chưa đọc phải khớp với dữ liệu giả lập");
+
+        } finally {
+            if (handlerThread.isAlive()) {
+                handlerThread.interrupt();
+            }
+        }
+    }
+    @Test
+    @org.junit.jupiter.api.Timeout(value = 5, unit = java.util.concurrent.TimeUnit.SECONDS)
+    public void testGetUnreadCount_DatabaseError() throws Exception {
+        // 1. Chuẩn bị dữ liệu yêu cầu
+        int targetUserId = 25021620;
+        Message msgRequest = new Message();
+        msgRequest.setCommand("GET_UNREAD_COUNT");
+        msgRequest.setData(targetUserId);
+
+        // Giả lập hành vi lỗi: Hàm đếm ném ra ngoại lệ hệ thống
+        when(mockNotificationDao.countUnreadByUserId(targetUserId))
+                .thenThrow(new RuntimeException("SQL Error: Connection refused"));
+
+        // 2. KHƠI THÔNG LUỒNG VÀ KHỞI CHẠY THREAD SERVER
+        testClientOut.writeObject(msgRequest);
+        testClientOut.flush();
+        testClientOut.reset();
+
+        Thread handlerThread = new Thread(clientHandler);
+        handlerThread.start();
+
+        testClientIn = new ObjectInputStream(pipeFromServer);
+
+        // 3. Đọc phản hồi và Assert bẫy ngoại lệ catch
+        try {
+            Message msgResponse = (Message) testClientIn.readObject();
+
+            assertNotNull(msgResponse);
+            assertEquals("ERROR", msgResponse.getStatus()); // Hệ thống phải chuyển sang trạng thái ERROR
+            assertTrue(msgResponse.getData().toString().contains("Lỗi Server")); // Đảm bảo chứa chuỗi thông báo lỗi
+
+        } finally {
+            if (handlerThread.isAlive()) {
+                handlerThread.interrupt();
+            }
+        }
+    }
+    @Test
+    public void testHandleUpdateProfile_Success() throws Exception {
+        // 1. Chuẩn bị dữ liệu yêu cầu (Tạo đối tượng User mẫu)
+        User userRequest = new User();
+        userRequest.setUsername("baoanh25");
+        userRequest.setEmail("baoanh@auction.com");
+
+        Message msgRequest = new Message();
+        msgRequest.setCommand("UPDATE_PROFILE");
+        msgRequest.setData(userRequest);
+        msgRequest.setRequestId("REQ-12345");
+
+        // Giả lập hành vi DAO: Cập nhật thành công trả về true
+        when(mockUserDao.update(any(User.class))).thenReturn(true);
+
+        // 2. KHƠI THÔNG LUỒNG VÀ KHỞI CHẠY THREAD SERVER
+        testClientOut.writeObject(msgRequest);
+        testClientOut.flush();
+        testClientOut.reset();
+
+        Thread handlerThread = new Thread(clientHandler);
+        handlerThread.start();
+
+        testClientIn = new ObjectInputStream(pipeFromServer);
+
+        // 3. Đọc phản hồi từ Client ảo và đối chiếu gói tin phản hồi mới
+        try {
+            Message msgResponse = (Message) testClientIn.readObject();
+
+            assertNotNull(msgResponse);
+            // Kiểm tra xem command phản hồi có đúng là chuỗi thành công không
+            assertEquals("UPDATE_PROFILE_SUCCESS", msgResponse.getCommand());
+            assertEquals("REQ-12345", msgResponse.getRequestId()); // Đảm bảo requestId được giữ nguyên
+
+            User updatedUser = (User) msgResponse.getData();
+            assertEquals("baoanh25", updatedUser.getUsername());
+
+        } finally {
+            if (handlerThread.isAlive()) {
+                handlerThread.interrupt();
+            }
+        }
+    }
+    @Test
+    public void testHandleUpdateProfile_Failed() throws Exception {
+        // 1. Chuẩn bị dữ liệu yêu cầu
+        User userRequest = new User();
+        userRequest.setUsername("invalid_user");
+
+        Message msgRequest = new Message();
+        msgRequest.setCommand("UPDATE_PROFILE");
+        msgRequest.setData(userRequest);
+
+        // Giả lập hành vi DAO: Cập nhật thất bại trả về false
+        when(mockUserDao.update(any(User.class))).thenReturn(false);
+
+        // 2. KHƠI THÔNG LUỒNG VÀ KHỞI CHẠY THREAD SERVER
+        testClientOut.writeObject(msgRequest);
+        testClientOut.flush();
+        testClientOut.reset();
+
+        Thread handlerThread = new Thread(clientHandler);
+        handlerThread.start();
+
+        testClientIn = new ObjectInputStream(pipeFromServer);
+
+        // 3. Đọc phản hồi và Assert trạng thái FAILED
+        try {
+            Message msgResponse = (Message) testClientIn.readObject();
+
+            assertNotNull(msgResponse);
+            // Kiểm tra xem command phản hồi có chuyển thành chuỗi thất bại không
+            assertEquals("UPDATE_PROFILE_FAILED", msgResponse.getCommand());
+            assertEquals("Database update failed", msgResponse.getData().toString());
+
+        } finally {
+            if (handlerThread.isAlive()) {
+                handlerThread.interrupt();
+            }
+        }
+    }
+    @Test
+    public void testHandleDeleteItem_Success() throws Exception {
+        // 1. Chuẩn bị dữ liệu giả lập (Given)
+        int itemId = 456;
+        Message msgRequest = new Message("DELETE_ITEM", itemId);
+
+        // Giả lập hành vi DAO: Khi gọi xóa itemId 456 thì trả về true (thành công)
+        when(mockItemDao.delete(itemId)).thenReturn(true);
+
+        // 2. Client gửi dữ liệu đi trước (When)
+        testClientOut.writeObject(msgRequest);
+        testClientOut.flush();
+
+        // Khởi chạy Thread Server độc lập
+        Thread handlerThread = new Thread(clientHandler);
+        handlerThread.start();
+        testClientIn = new ObjectInputStream(pipeFromServer);
+
+        // 3. Phía Client ảo đọc phản hồi (Then)
+        Object objResponse = testClientIn.readObject();
+        assertTrue(objResponse instanceof Message);
+
+        Message msgResponse = (Message) objResponse;
+        assertEquals("SUCCESS", msgResponse.getStatus()); // Check trạng thái trả về là SUCCESS
+
+        // 4. GIẢI PHÓNG THREAD: Gửi tiếp lệnh SIGNOUT để tắt Server, tránh treo test
+        Message msgSignout = new Message("SIGNOUT", null);
+        testClientOut.writeObject(msgSignout);
+        testClientOut.flush();
+        testClientIn.readObject(); // Đọc thông luồng phản hồi SIGNOUT
+
+        handlerThread.join(2000);
+        assertFalse(handlerThread.isAlive());
+
+        // Xác minh hàm delete của DAO được gọi đúng 1 lần với đúng itemId
+        verify(mockItemDao, times(1)).delete(itemId);
+    }
+    @Test
+    public void testHandleDeleteItem_Failed() throws Exception {
+        // 1. Chuẩn bị dữ liệu giả lập (Given)
+        int itemId = 999; // ID không tồn tại chẳng hạn
+        Message msgRequest = new Message("DELETE_ITEM", itemId);
+
+        // Giả lập hành vi DAO: Trả về false (xóa thất bại)
+        when(mockItemDao.delete(itemId)).thenReturn(false);
+
+        // 2. Client gửi dữ liệu đi trước (When)
+        testClientOut.writeObject(msgRequest);
+        testClientOut.flush();
+
+        // Khởi chạy Thread Server
+        Thread handlerThread = new Thread(clientHandler);
+        handlerThread.start();
+        testClientIn = new ObjectInputStream(pipeFromServer);
+
+        // 3. Phía Client ảo đọc phản hồi (Then)
+        Message msgResponse = (Message) testClientIn.readObject();
+        assertEquals("FAILED", msgResponse.getStatus()); // Code gốc gán status "FAILED" nếu isDeleted = false
+
+        // 4. GIẢI PHÓNG THREAD
+        Message msgSignout = new Message("SIGNOUT", null);
+        testClientOut.writeObject(msgSignout);
+        testClientOut.flush();
+        testClientIn.readObject();
+
+        handlerThread.join(2000);
+        assertFalse(handlerThread.isAlive());
+
+        verify(mockItemDao, times(1)).delete(itemId);
+    }
+    @Test
+    public void testHandleDeleteItem_Exception_Error() throws Exception {
+        // 1. Chuẩn bị dữ liệu giả lập lỗi hệ thống (Given)
+        int itemId = 111;
+        Message msgRequest = new Message("DELETE_ITEM", itemId);
+
+        // Ép mockItemDao ném ra một ngoại lệ để nhảy vào block catch {}
+        when(mockItemDao.delete(itemId)).thenThrow(new RuntimeException("SQL syntax error or DB crash"));
+
+        // 2. Client gửi dữ liệu đi trước (When)
+        testClientOut.writeObject(msgRequest);
+        testClientOut.flush();
+
+        // Khởi chạy Thread Server
+        Thread handlerThread = new Thread(clientHandler);
+        handlerThread.start();
+        testClientIn = new ObjectInputStream(pipeFromServer);
+
+        // 3. Phía Client ảo đọc phản hồi lỗi (Then)
+        Message msgResponse = (Message) testClientIn.readObject();
+        assertEquals("ERROR", msgResponse.getStatus());
+        assertNotNull(msgResponse.getData());
+
+        String errorMsg = (String) msgResponse.getData();
+        assertTrue(errorMsg.contains("Lỗi Server: SQL syntax error or DB crash"));
+
+        // 4. GIẢI PHÓNG THREAD
+        Message msgSignout = new Message("SIGNOUT", null);
+        testClientOut.writeObject(msgSignout);
+        testClientOut.flush();
+        testClientIn.readObject();
+
+        handlerThread.join(2000);
+        assertFalse(handlerThread.isAlive());
+
+        verify(mockItemDao, times(1)).delete(itemId);
+    }
+    @Test
+    public void testHandleUpdateItem_Success() throws Exception {
+        // 1. Chuẩn bị dữ liệu giả lập (Given)
+        Item mockItem = new Item(1, "Laptop cu", "Mo ta cu", 5000000, 5000000, null, null, 123, "ACTIVE");
+        List<String> mockUrls = List.of("http://image1.jpg", "http://image2.jpg");
+        List<String> mockCatNames = List.of("Electronics");
+
+        // Đóng gói payload thành mảng Object[] đúng như hàm gốc bóc tách
+        Object[] payload = new Object[]{ mockItem, mockUrls, mockCatNames };
+        Message msgRequest = new Message("UPDATE_ITEM", payload);
+
+        // Giả lập hành vi cho CategoryDao và ItemDao
+        List<Category> mockCategories = List.of(new Category(1, "Electronics","Mo ta danh muc"));
+        when(mockCategoryDao.getCategoryByName(mockCatNames)).thenReturn(mockCategories);
+        when(mockItemDao.update(any(Item.class))).thenReturn(true); // Trả về true (thành công)
+
+        // 2. Client gửi dữ liệu đi trước (When)
+        testClientOut.writeObject(msgRequest);
+        testClientOut.flush();
+
+        // Khởi chạy Thread Server độc lập
+        Thread handlerThread = new Thread(clientHandler);
+        handlerThread.start();
+        testClientIn = new ObjectInputStream(pipeFromServer);
+
+        // 3. Phía Client ảo đọc phản hồi (Then)
+        Object objResponse = testClientIn.readObject();
+        assertTrue(objResponse instanceof Message);
+
+        Message msgResponse = (Message) objResponse;
+        assertEquals("SUCCESS", msgResponse.getStatus());
+        assertEquals("Cập nhật thành công!", msgResponse.getData());
+
+        // 4. GIẢI PHÓNG THREAD ĐỂ TRÁNH TREO TEST
+        Message msgSignout = new Message("SIGNOUT", null);
+        testClientOut.writeObject(msgSignout);
+        testClientOut.flush();
+        testClientIn.readObject(); // Đọc thông luồng phản hồi SIGNOUT
+
+        handlerThread.join(2000);
+        assertFalse(handlerThread.isAlive());
+
+        // Xác minh các DAO đã được gọi đúng luồng
+        verify(mockCategoryDao, times(1)).getCategoryByName(mockCatNames);
+        verify(mockItemDao, times(1)).update(any(Item.class));
+
+    }
+    @Test
+    public void testHandleUpdateItem_Failed() throws Exception {
+        // 1. Chuẩn bị dữ liệu giả lập (Given) - Dùng đúng constructor 9 tham số của Item
+        Item mockItem = new Item(1, "Laptop cu", "Mo ta cu", 5000000, 5000000, null, null, 123, "SOLD");
+
+        // Payload gồm: Item, List ảnh rỗng, List danh mục rỗng
+        Object[] payload = new Object[]{ mockItem, List.of(), List.of() };
+        Message msgRequest = new Message("UPDATE_ITEM", payload);
+
+        // Giả lập: categoryDao trả về list rỗng, itemDao trả về false (cập nhật thất bại)
+        when(mockCategoryDao.getCategoryByName(anyList())).thenReturn(List.of());
+        when(mockItemDao.update(any(Item.class))).thenReturn(false);
+
+        // 2. Client gửi dữ liệu (When)
+        testClientOut.writeObject(msgRequest);
+        testClientOut.flush();
+
+        // Khởi chạy Thread Server
+        Thread handlerThread = new Thread(clientHandler);
+        handlerThread.start();
+        testClientIn = new ObjectInputStream(pipeFromServer);
+
+        // 3. Phía Client ảo đọc phản hồi (Then)
+        Message msgResponse = (Message) testClientIn.readObject();
+        assertEquals("FAILED", msgResponse.getStatus());
+        assertTrue(msgResponse.getData().toString().contains("Cập nhật thất bại!"));
+
+        // 4. GIẢI PHÓNG THREAD
+        Message msgSignout = new Message("SIGNOUT", null);
+        testClientOut.writeObject(msgSignout);
+        testClientOut.flush();
+        testClientIn.readObject();
+
+        handlerThread.join(2000);
+        assertFalse(handlerThread.isAlive());
+    }
+    @Test
+    public void testHandleUpdateItem_ServerError() throws Exception {
+        // 1. Chuẩn bị dữ liệu lỗi (Given)
+        // Cố tình truyền vào một String thay vì mảng Object[] để ép dòng ép kiểu (Object[]) msg.getData() văng Exception
+        Message msgRequest = new Message("UPDATE_ITEM", "Payload sai format de test loi ep kieu");
+
+        // 2. Client gửi dữ liệu đi trước (When)
+        testClientOut.writeObject(msgRequest);
+        testClientOut.flush();
+
+        // Khởi chạy Thread Server độc lập
+        Thread handlerThread = new Thread(clientHandler);
+        handlerThread.start();
+        testClientIn = new ObjectInputStream(pipeFromServer);
+
+        // 3. Phía Client ảo đọc phản hồi lỗi từ block catch (Then)
+        Message msgResponse = (Message) testClientIn.readObject();
+        assertEquals("SERVER_ERROR", msgResponse.getStatus()); // Check đúng status code gốc gán trong catch
+        assertNotNull(msgResponse.getData());
+        assertTrue(msgResponse.getData().toString().contains("Lỗi Server:"));
+
+        // =========================================================================
+        // 4. GIẢI PHÓNG THREAD: Gửi tiếp lệnh SIGNOUT để tắt Server, giải phóng test case
+        // =========================================================================
+        Message msgSignout = new Message("SIGNOUT", null);
+        testClientOut.writeObject(msgSignout);
+        testClientOut.flush();
+        testClientIn.readObject(); // Đọc thông luồng phản hồi SIGNOUT
+
+        handlerThread.join(2000);
+        assertFalse(handlerThread.isAlive());
+    }
+    @Test
+    public void testHandleCancelAutoBid_Success() throws Exception {
+        // 1. Chuẩn bị dữ liệu giả lập (Given)
+        int itemId = 15;
+        int userId = 8;
+        Object[] payload = new Object[]{ itemId, userId };
+        Message msgRequest = new Message("CANCEL_AUTO_BID", payload);
+
+        // Giả lập hành vi DAO: Trả về true khi tìm thấy và xóa thành công cấu hình
+        when(mockItemDao.cancelAutoBid(itemId, userId)).thenReturn(true);
+
+        // 2. Client gửi dữ liệu đi trước (When)
+        testClientOut.writeObject(msgRequest);
+        testClientOut.flush();
+
+        // Khởi chạy Thread Server độc lập
+        Thread handlerThread = new Thread(clientHandler);
+        handlerThread.start();
+        testClientIn = new ObjectInputStream(pipeFromServer);
+
+        // 3. Phía Client ảo đọc phản hồi thành công (Then)
+        Object objResponse = testClientIn.readObject();
+        assertTrue(objResponse instanceof Message);
+
+        Message msgResponse = (Message) objResponse;
+        assertEquals("SUCCESS", msgResponse.getStatus());
+        assertEquals("Đã hủy cấu hình đấu giá tự động của bạn thành công!", msgResponse.getData());
+
+        // 4. GIẢI PHÓNG THREAD TEST BẰNG SIGNOUT
+        Message msgSignout = new Message("SIGNOUT", null);
+        testClientOut.writeObject(msgSignout);
+        testClientOut.flush();
+        testClientIn.readObject(); // Đọc thông luồng phản hồi SIGNOUT
+
+        handlerThread.join(2000);
+        assertFalse(handlerThread.isAlive());
+
+        // Xác minh hàm cancelAutoBid của DAO được gọi chính xác 1 lần
+        verify(mockItemDao, times(1)).cancelAutoBid(itemId, userId);
+    }
+    @Test
+    public void testHandleCancelAutoBid_NotFound() throws Exception {
+        // 1. Chuẩn bị dữ liệu giả lập (Given)
+        int itemId = 999;
+        int userId = 8;
+        Object[] payload = new Object[]{ itemId, userId };
+        Message msgRequest = new Message("CANCEL_AUTO_BID", payload);
+
+        // Giả lập hành vi DAO: Trả về false do không tìm thấy bản ghi cấu hình nào phù hợp
+        when(mockItemDao.cancelAutoBid(itemId, userId)).thenReturn(false);
+
+        // 2. Client gửi dữ liệu (When)
+        testClientOut.writeObject(msgRequest);
+        testClientOut.flush();
+
+        // Khởi chạy Thread Server
+        Thread handlerThread = new Thread(clientHandler);
+        handlerThread.start();
+        testClientIn = new ObjectInputStream(pipeFromServer);
+
+        // 3. Phía Client ảo đọc phản hồi thất bại (Then)
+        Message msgResponse = (Message) testClientIn.readObject();
+        assertEquals("FAILED", msgResponse.getStatus());
+        assertEquals("Hệ thống không tìm thấy cấu hình Auto Bid nào của bạn để hủy!", msgResponse.getData());
+
+        // 4. GIẢI PHÓNG THREAD TEST
+        Message msgSignout = new Message("SIGNOUT", null);
+        testClientOut.writeObject(msgSignout);
+        testClientOut.flush();
+        testClientIn.readObject();
+
+        handlerThread.join(2000);
+        assertFalse(handlerThread.isAlive());
+    }
+    @Test
+    public void testHandleCancelAutoBid_ServerError() throws Exception {
+        // 1. Chuẩn bị dữ liệu lỗi (Given)
+        // Cố tình truyền vào một đối tượng String sai định dạng để ép đoạn bóc tách payload văng ClassCastException
+        Message msgRequest = new Message("CANCEL_AUTO_BID", "Chuoi payload sai dinh dang");
+
+        // 2. Client gửi dữ liệu (When)
+        testClientOut.writeObject(msgRequest);
+        testClientOut.flush();
+
+        // Khởi chạy Thread Server
+        Thread handlerThread = new Thread(clientHandler);
+        handlerThread.start();
+        testClientIn = new ObjectInputStream(pipeFromServer);
+
+        // 3. Phía Client ảo đọc phản hồi lỗi rơi vào block catch (Then)
+        Message msgResponse = (Message) testClientIn.readObject();
+        assertEquals("ERROR", msgResponse.getStatus());
+        assertTrue(msgResponse.getData().toString().contains("Lỗi hệ thống Server:"));
+
+        // 4. GIẢI PHÓNG THREAD TEST
+        Message msgSignout = new Message("SIGNOUT", null);
+        testClientOut.writeObject(msgSignout);
+        testClientOut.flush();
+        testClientIn.readObject();
+
+        handlerThread.join(2000);
+        assertFalse(handlerThread.isAlive());
+    }
+    @Test
+    public void testHandleCheckAutoBidStatus_Exists() throws Exception {
+        // 1. Chuẩn bị dữ liệu giả lập (Given)
+        int itemId = 50;
+        int userId = 9;
+        Object[] payload = new Object[]{ itemId, userId };
+        Message msgRequest = new Message("CHECK_AUTO_BID_STATUS", payload);
+
+        // Giả lập DAO: Trả về true (Đã cài AutoBid)
+        when(mockItemDao.checkAutoBidExists(itemId, userId)).thenReturn(true);
+
+        // 2. Client gửi dữ liệu (When)
+        testClientOut.writeObject(msgRequest);
+        testClientOut.flush();
+
+        // Khởi chạy Thread Server độc lập
+        Thread handlerThread = new Thread(clientHandler);
+        handlerThread.start();
+        testClientIn = new ObjectInputStream(pipeFromServer);
+
+        // 3. Phía Client ảo đọc phản hồi (Then)
+        Object objResponse = testClientIn.readObject();
+        assertTrue(objResponse instanceof Message);
+
+        Message msgResponse = (Message) objResponse;
+        assertEquals("SUCCESS", msgResponse.getStatus());
+        assertEquals(true, msgResponse.getData());
+
+        // 4. GIẢI PHÓNG THREAD TEST
+        Message msgSignout = new Message("SIGNOUT", null);
+        testClientOut.writeObject(msgSignout);
+        testClientOut.flush();
+        testClientIn.readObject();
+
+        handlerThread.join(2000);
+        assertFalse(handlerThread.isAlive());
+        verify(mockItemDao, times(1)).checkAutoBidExists(itemId, userId);
+    }
+
+    @Test
+    public void testHandleCheckAutoBidStatus_NotExists() throws Exception {
+        // 1. Chuẩn bị dữ liệu giả lập (Given)
+        int itemId = 51;
+        int userId = 9;
+        Object[] payload = new Object[]{ itemId, userId };
+        Message msgRequest = new Message("CHECK_AUTO_BID_STATUS", payload);
+
+        // Giả lập DAO: Trả về false (Chưa cài AutoBid)
+        when(mockItemDao.checkAutoBidExists(itemId, userId)).thenReturn(false);
+
+        // 2. Client gửi dữ liệu (When)
+        testClientOut.writeObject(msgRequest);
+        testClientOut.flush();
+
+        // Khởi chạy Thread Server
+        Thread handlerThread = new Thread(clientHandler);
+        handlerThread.start();
+        testClientIn = new ObjectInputStream(pipeFromServer);
+
+        // 3. Phía Client ảo đọc phản hồi (Then)
+        Message msgResponse = (Message) testClientIn.readObject();
+        assertEquals("SUCCESS", msgResponse.getStatus());
+        assertEquals(false, msgResponse.getData());
+
+        // 4. GIẢI PHÓNG THREAD TEST
+        Message msgSignout = new Message("SIGNOUT", null);
+        testClientOut.writeObject(msgSignout);
+        testClientOut.flush();
+        testClientIn.readObject();
+
+        handlerThread.join(2000);
+        assertFalse(handlerThread.isAlive());
+    }
+
+    @Test
+    public void testHandleCheckAutoBidStatus_ServerError() throws Exception {
+        // 1. Chuẩn bị dữ liệu lỗi (Given)
+        // Cố tình truyền sai kiểu dữ liệu để bóc tách payload văng ClassCastException thẳng vào block catch
+        Message msgRequest = new Message("CHECK_AUTO_BID_STATUS", "Payload sai format");
+
+        // 2. Client gửi dữ liệu (When)
+        testClientOut.writeObject(msgRequest);
+        testClientOut.flush();
+
+        // Khởi chạy Thread Server
+        Thread handlerThread = new Thread(clientHandler);
+        handlerThread.start();
+        testClientIn = new ObjectInputStream(pipeFromServer);
+
+        // 3. Phía Client ảo đọc phản hồi lỗi rơi vào block catch (Then)
+        Message msgResponse = (Message) testClientIn.readObject();
+        assertEquals("ERROR", msgResponse.getStatus());
+        assertEquals("Lỗi xử lý check Auto Bid ở Server", msgResponse.getData());
+
+        // 4. GIẢI PHÓNG THREAD TEST AN TOÀN (Áp dụng bài học trước: Không đợi đọc phản hồi khi test lỗi)
+        Message msgSignout = new Message("SIGNOUT", null);
+        testClientOut.writeObject(msgSignout);
+        testClientOut.flush();
+
+        handlerThread.join(1000);
+    }
 
 
 }
