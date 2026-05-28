@@ -3,6 +3,7 @@ package auction.server.dao.impl;
 import auction.common.model.notifications.BidNotification;
 import auction.common.model.notifications.ItemNotification;
 import auction.common.model.notifications.Notification;
+import auction.common.model.notifications.SystemNotification;
 import auction.server.DatabaseManager;
 import auction.server.dao.NotificationDAO;
 
@@ -48,8 +49,15 @@ public class NotificationDaoImpl implements NotificationDAO {
                                 rs.getString("item_status"),
                                 rs.getString("admin_note")
                         );
+                    } else if ("SYSTEM".equals(type)) {
+                        notif = new SystemNotification(
+                                rs.getInt("id"),
+                                rs.getInt("user_id"),
+                                rs.getString("title"),
+                                rs.getString("message"),
+                                rs.getString("admin_sender")
+                        );
                     }
-
                     if (notif != null) {
                         notif.setRead(rs.getBoolean("is_read"));
                         notif.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
@@ -65,8 +73,8 @@ public class NotificationDaoImpl implements NotificationDAO {
 
     @Override
     public boolean insertNotificationsBatch(Set<Integer> userIds, Notification notification) {
-        String sql = "INSERT INTO NOTIFICATIONS (user_id, type, title, message, is_read, item_id, new_price, bidder_name, item_status, admin_note) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO NOTIFICATIONS (user_id, type, title, message, is_read, item_id, new_price, bidder_name, item_status, admin_note, admin_sender) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DatabaseManager.getInstance().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -86,18 +94,28 @@ public class NotificationDaoImpl implements NotificationDAO {
                     pstmt.setString(8, bidNotif.getBidderName());
                     pstmt.setNull(9, Types.VARCHAR);
                     pstmt.setNull(10, Types.VARCHAR);
+                    pstmt.setNull(11, Types.VARCHAR);
                 } else if (notification instanceof ItemNotification itemNotif) {
                     pstmt.setInt(6, itemNotif.getItemId());
                     pstmt.setNull(7, Types.BIGINT);
                     pstmt.setNull(8, Types.VARCHAR);
                     pstmt.setString(9, itemNotif.getItemStatus());
                     pstmt.setString(10, itemNotif.getAdminNote());
+                    pstmt.setNull(11, Types.VARCHAR);
+                } else if (notification instanceof SystemNotification sysNotif) {
+                    pstmt.setNull(6, Types.INTEGER);
+                    pstmt.setNull(7, Types.BIGINT);
+                    pstmt.setNull(8, Types.VARCHAR);
+                    pstmt.setNull(9, Types.VARCHAR);
+                    pstmt.setNull(10, Types.VARCHAR);
+                    pstmt.setString(11, sysNotif.getAdminSender());
                 } else {
                     pstmt.setNull(6, Types.INTEGER);
                     pstmt.setNull(7, Types.BIGINT);
                     pstmt.setNull(8, Types.VARCHAR);
                     pstmt.setNull(9, Types.VARCHAR);
                     pstmt.setNull(10, Types.VARCHAR);
+                    pstmt.setNull(11, Types.VARCHAR);
                 }
                 pstmt.addBatch();
             }

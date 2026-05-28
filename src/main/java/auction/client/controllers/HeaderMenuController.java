@@ -7,6 +7,7 @@ import auction.client.utils.ToastManager;
 import auction.common.message.Message;
 import auction.common.model.notifications.BidNotification;
 import auction.common.model.notifications.ItemNotification;
+import auction.common.model.notifications.SystemNotification;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
@@ -104,6 +105,8 @@ public class HeaderMenuController {
                         toastType = ToastManager.ToastType.INFO;
                     } else if (newNotif instanceof ItemNotification) {
                         toastType = ToastManager.ToastType.WARNING;
+                    } else if (newNotif instanceof SystemNotification){
+                        toastType = ToastManager.ToastType.ERROR;
                     }
 
                     // Gọi ToastManager của bạn

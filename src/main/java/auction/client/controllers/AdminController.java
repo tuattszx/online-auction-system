@@ -208,23 +208,49 @@ public class AdminController {
     private void setupActionsColumn() {
         colActions.setCellFactory(column -> new TableCell<User, Void>() {
             private final Button btnWarn = new Button("⚠️");
-            private final Button btnBan = new Button("❌");
-            private final HBox pane = new HBox(btnWarn, btnBan);
+            private final Button btnToggleBan = new Button();
+            private final HBox pane = new HBox(btnWarn, btnToggleBan);
 
             {
                 pane.setSpacing(10);
                 pane.setAlignment(javafx.geometry.Pos.CENTER);
                 btnWarn.setStyle("-fx-background-color: #ff9800; -fx-text-fill: white; -fx-cursor: hand; -fx-background-radius: 4; -fx-padding: 4 8;");
-                btnBan.setStyle("-fx-background-color: #e63946; -fx-text-fill: white; -fx-cursor: hand; -fx-background-radius: 4; -fx-padding: 4 8;");
+                btnToggleBan.setOnAction(e -> {
+                    User user = (User) getTableRow().getItem();
+                    if (user != null) {
+                        if (user.isBanned()) {
+                            handleUnbanUser(user);
+                        } else {
+                            handleBanUser(user);
+                        }
+                    }
+                });
 
-                btnWarn.setOnAction(e -> handleWarnUser(getTableView().getItems().get(getIndex())));
-                btnBan.setOnAction(e -> handleBanUser(getTableView().getItems().get(getIndex())));
+                btnWarn.setOnAction(e -> {
+                    User user = (User) getTableRow().getItem();
+                    if (user != null) handleWarnUser(user);
+                });
             }
 
             @Override
             protected void updateItem(Void item, boolean empty) {
                 super.updateItem(item, empty);
-                setGraphic(empty ? null : pane);
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    User user = (User) getTableRow().getItem();
+                    if (user != null) {
+                        // Thay đổi trạng thái nút dựa trên trường isBanned của Model
+                        if (user.isBanned()) {
+                            btnToggleBan.setText("🔓"); // Icon Unban
+                            btnToggleBan.setStyle("-fx-background-color: #2ec4b6; -fx-text-fill: white; -fx-cursor: hand; -fx-background-radius: 4; -fx-padding: 4 8;");
+                        } else {
+                            btnToggleBan.setText("❌"); // Icon Ban
+                            btnToggleBan.setStyle("-fx-background-color: #e63946; -fx-text-fill: white; -fx-cursor: hand; -fx-background-radius: 4; -fx-padding: 4 8;");
+                        }
+                    }
+                    setGraphic(pane);
+                }
             }
         });
     }
@@ -294,7 +320,6 @@ public class AdminController {
         new Thread(warnTask).start();
     }
 
-    // Xử lý nút bấm xóa vĩnh viễn người dùng
     private void handleBanUser(User user) {
         boolean confirm = ViewManager.confirmAlert("Xác nhận cấm",
                 "Hành động này sẽ cấm [" + user.getUsername() + "] Bạn có chắc không?");
@@ -309,9 +334,8 @@ public class AdminController {
 
         banTask.setOnSucceeded(e -> {
             Message response = banTask.getValue();
-            // BẮT BUỘC: Chỉ xóa dòng trên bảng UI khi DB thực sự đã bị xóa thành công
             if (response != null && "SUCCESS".equals(response.getStatus())) {
-                adminTable.getItems().remove(user);
+                user.setBanned(true);
                 adminTable.refresh();
                 ViewManager.showAlert(Alert.AlertType.INFORMATION, "Thành công", "Đã cấm tài khoản thành công!");
             } else {
@@ -319,6 +343,31 @@ public class AdminController {
             }
         });
         new Thread(banTask).start();
+    }
+
+    private void handleUnbanUser(User user) {
+        boolean confirm = ViewManager.confirmAlert("Xác nhận mở khóa",
+                "Bạn có chắc chắn muốn MỞ KHÓA lại cho tài khoản [" + user.getUsername() + "] không?");
+        if (!confirm) return;
+
+        Task<Message> unbanTask = new Task<>() {
+            @Override
+            protected Message call() throws Exception {
+                return network.sendRequest(new Message("UNBAN_USER", user.getId()));
+            }
+        };
+
+        unbanTask.setOnSucceeded(e -> {
+            Message response = unbanTask.getValue();
+            if (response != null && "SUCCESS".equals(response.getStatus())) {
+                user.setBanned(false);
+                adminTable.refresh();
+                ViewManager.showAlert(Alert.AlertType.INFORMATION, "Thành công", "Đã mở khóa tài khoản thành công!");
+            } else {
+                ViewManager.showAlert(Alert.AlertType.ERROR, "Thất bại", "Không thể mở khóa người dùng!");
+            }
+        });
+        new Thread(unbanTask).start();
     }
 
     private void setLabelsVisible(boolean visible) {
@@ -474,11 +523,7 @@ public class AdminController {
                         } else {
                             Item currentItem = getTableRow().getItem();
                             // Chỉ hiển thị nút xử lý nếu sản phẩm đang ở trạng thái chờ duyệt (PENDING)
-                            if (currentItem != null && "PENDING".equals(currentItem.getStatus())) {
-                                setGraphic(container);
-                            } else {
-                                setGraphic(null); // Đã duyệt hoặc đóng sàn rồi thì ẩn nút đi
-                            }
+                            setGraphic(container);
                         }
                     }
                 };
@@ -506,7 +551,7 @@ public class AdminController {
                             item.setStatus(targetStatus);
                             adminProductTable.refresh();
 
-                            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Xử lý phê duyệt sản phẩm thành công!");
+                            Alert alert = new Alert(Alert.AlertType.INFORMATION, (String) response.getData());
                             alert.show();
                         } else {
                             Alert alert = new Alert(Alert.AlertType.ERROR, "Lỗi hệ thống: Không thể xử lý phê duyệt.");
@@ -524,7 +569,7 @@ public class AdminController {
     @FXML
     public void handleRefreshProducts() {
         new Thread(() -> {
-            Message request = new Message("GET_ALL_ITEMS", null); // Gọi lệnh lấy hết sản phẩm hệ thống
+            Message request = new Message("GET_UNAPPROVED_ITEMS", null); // Gọi lệnh lấy hết sản phẩm hệ thống
             Message response = ClientNetwork.getInstance().sendRequest(request);
 
             Platform.runLater(() -> {

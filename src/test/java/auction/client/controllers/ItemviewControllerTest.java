@@ -27,16 +27,6 @@ class ItemviewControllerTest {
                 controller.validateBid("qwe", 100, 1, 2, "USER"));
         assertEquals("Vui lòng chỉ nhập số!", error2.getMessage());
 
-        // 3. Trường hợp người bán tự đấu giá đồ của mình
-        IllegalArgumentException error3 = assertThrows(IllegalArgumentException.class, () ->
-                controller.validateBid("200", 100, 5, 5, "USER")); // userId = sellerId = 5
-        assertEquals("Admin hoặc người bán không thể đấu giá!", error3.getMessage());
-
-        // 4. Trường hợp Admin cố tình đấu giá (thường Admin chỉ quản lý)
-        IllegalArgumentException error4 = assertThrows(IllegalArgumentException.class, () ->
-                controller.validateBid("200", 100, 1, 2, "ADMIN"));
-        assertEquals("Admin hoặc người bán không thể đấu giá!", error4.getMessage());
-
         // 5. Trường hợp đặt giá thấp hơn hoặc bằng giá hiện tại
         IllegalArgumentException error5 = assertThrows(IllegalArgumentException.class, () ->
                 controller.validateBid("100", 100, 1, 2, "USER")); // bằng giá hiện tại

@@ -79,6 +79,9 @@ public class ClientHandler implements Runnable {
                         case "DELETE_USER":
                             handleDeleteUser(msg, out);
                             break;
+                        case "UNBAN_USER":
+                            handleUnbanUser(msg,out);
+                            break;
                         case "GET_DASHBOARD_STATS":
                             handleGetDashboardStats(msg,out);
                             break;
@@ -88,6 +91,9 @@ public class ClientHandler implements Runnable {
                             break;
                         case "GET_ALL_ITEMS":
                             handleGetAllItems(msg, out);
+                            break;
+                        case "GET_UNAPPROVED_ITEMS":
+                            handleGetUnapproveItems(msg,out);
                             break;
                         case "GET_ITEM_BY_ID":
                             handleGetItemById(msg, out);
@@ -295,6 +301,26 @@ public class ClientHandler implements Runnable {
         }
     }
 
+    private void handleUnbanUser(Message msg, ObjectOutputStream out) throws IOException{
+        try {
+            int idUser = (int) msg.getData();
+            boolean isSuccess= userDao.unbanUser(idUser);
+
+            if (isSuccess) {
+                msg.setStatus("SUCCESS");
+            } else {
+                msg.setStatus("FAILED");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            msg.setStatus("ERROR");
+        } finally {
+            out.writeObject(msg);
+            out.flush();
+            out.reset();
+        }
+    }
+
     private void handleSignout(Message msg, ObjectOutputStream out) throws IOException {
         msg.setStatus("SUCCESS");
         out.writeObject(msg);
@@ -370,6 +396,21 @@ public class ClientHandler implements Runnable {
             msg.setStatus("SUCCESS");
             msg.setData(items);
         } catch (Exception e) {
+            msg.setStatus("ERROR");
+            e.printStackTrace();
+        }
+        out.writeObject(msg);
+        out.flush();
+        out.reset();
+    }
+
+    private void handleGetUnapproveItems(Message msg, ObjectOutputStream out) throws IOException{
+        try {
+            List<Item> items= itemDao.getUnapprovedItems();
+
+            msg.setStatus("SUCCESS");
+            msg.setData(items);
+        } catch (Exception e){
             msg.setStatus("ERROR");
             e.printStackTrace();
         }
@@ -1011,6 +1052,7 @@ public class ClientHandler implements Runnable {
             int itemId = (int) payload[0];
             boolean isApproved=(boolean) payload[1];
 
+            Item item= itemDao.getById(itemId);
             // 2. Chạy câu lệnh SQL chuyển trạng thái sang 'OPEN'
             boolean isSuccess = itemDao.approveItem(itemId, isApproved);
 
@@ -1018,6 +1060,8 @@ public class ClientHandler implements Runnable {
             if (isSuccess) {
                 msg.setStatus("SUCCESS");
                 msg.setData(isApproved ? " Sản phẩm đã được chấp nhận" : "Đã từ chối sản phẩm");
+                if (isApproved){ NotificationService.handleSendMessageApproveItem(item,LocalDateTime.now());}
+                else NotificationService.handleSendMessageRejectItem(item,null,LocalDateTime.now());
             } else {
                 msg.setStatus("ERROR");
                 msg.setData("Không tìm thấy sản phẩm hoặc sản phẩm không thể cập nhật.");

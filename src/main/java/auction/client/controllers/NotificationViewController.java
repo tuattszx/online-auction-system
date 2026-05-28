@@ -9,6 +9,7 @@ import auction.common.message.Message;
 import auction.common.model.notifications.BidNotification;
 import auction.common.model.notifications.ItemNotification;
 import auction.common.model.notifications.Notification;
+import auction.common.model.notifications.SystemNotification;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
@@ -123,6 +124,8 @@ public class NotificationViewController implements Cleanable {
 
         } else if (note instanceof ItemNotification itemNote) {
             defaultAvatar = getClass().getResource("/auction/img/itemnotif.jpg").toExternalForm();
+        } else if (note instanceof SystemNotification) {
+            defaultAvatar = getClass().getResource("/auction/img/warn.jpg").toExternalForm();
         }
 
         String timeDisplay = formatRelativeTime(note.getCreatedAt());

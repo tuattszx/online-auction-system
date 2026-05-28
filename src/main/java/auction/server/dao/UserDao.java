@@ -12,4 +12,5 @@ public interface UserDao extends GenericDAO<User, Integer> {
     boolean updateProfile(int userId, String newDisName, String newFirstName, String newLastName,
                           String newEmail, String newAddress, String newPhoneNumber, String newCountry, String newshippingPhone,String cardName, String cardNum, String language);
     Object[] getDashboardStats();
+    boolean unbanUser(int userId);
 }

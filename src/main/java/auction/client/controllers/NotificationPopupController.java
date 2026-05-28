@@ -10,6 +10,7 @@ import auction.common.model.items.Item;
 import auction.common.model.notifications.BidNotification;
 import auction.common.model.notifications.ItemNotification;
 import auction.common.model.notifications.Notification;
+import auction.common.model.notifications.SystemNotification;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
@@ -247,6 +248,8 @@ public class NotificationPopupController {
             avatarUrl = getClass().getResource("/auction/img/345629.png").toExternalForm();
         } else if (note instanceof ItemNotification) {
             avatarUrl = getClass().getResource("/auction/img/itemnotif.jpg").toExternalForm();
+        } else if (note instanceof SystemNotification) {
+            avatarUrl = getClass().getResource("/auction/img/warn.jpg").toExternalForm();
         }
 
         ImageView avatar = new ImageView(new Image(avatarUrl));

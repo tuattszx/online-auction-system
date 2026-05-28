@@ -177,6 +177,7 @@ public class UserDaoImpl implements UserDao {
         user.setFrozenBalance(rs.getLong("frozen_balance"));
         user.setActualExpenses(rs.getLong("actual_expenses"));
         user.setTotalExpenses(rs.getLong("total_expenses"));
+        user.setBanned(rs.getBoolean("banned"));
 
 
 
@@ -264,5 +265,13 @@ public class UserDaoImpl implements UserDao {
         }
     }
 
-
+    @Override
+    public boolean unbanUser(int userId){
+        String sql = "update users set banned = false where id = ?";
+        try (Connection conn = DatabaseManager.getInstance().getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, userId);
+            return pstmt.executeUpdate() > 0;
+        } catch (SQLException e) { e.printStackTrace(); return false; }
+    }
 }

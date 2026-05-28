@@ -5,6 +5,7 @@ import auction.common.model.items.Item;
 import auction.common.model.notifications.BidNotification;
 import auction.common.model.notifications.ItemNotification;
 import auction.common.model.notifications.Notification;
+import auction.common.model.notifications.SystemNotification;
 import auction.common.model.users.User;
 import auction.server.ClientHandler;
 import auction.server.ClientManager;
@@ -288,13 +289,11 @@ public class NotificationService {
 
     public static void sendAdminWarningNotification(int userId, String reason, LocalDateTime now) {
         try {
-            BidNotification warnNotif = new BidNotification(
+            SystemNotification warnNotif = new SystemNotification(
                     0,
                     userId,
                     "CẢNH BÁO TỪ BAN QUẢN TRỊ",
                     String.format("Tài khoản của bạn nhận được một cảnh báo với lý do: %s. Vui lòng chú ý quy định đấu giá!", reason),
-                    0,
-                    0,
                     "Admin"
             );
             warnNotif.setCreatedAt(now);
@@ -307,6 +306,54 @@ public class NotificationService {
                     break;
                 }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void handleSendMessageApproveItem(Item item, LocalDateTime now) {
+        try {
+            String title = "Sản phẩm đã được PHÊ DUYỆT!";
+            String messageText = String.format("Chúc mừng! Sản phẩm '%s' của bạn đã vượt qua vòng kiểm duyệt và chính thức được mở trên sàn đấu giá.", item.getName());
+
+            ItemNotification itemNotif = new ItemNotification(
+                    0,
+                    item.getSellerId(),
+                    title,
+                    messageText,
+                    item.getId(),
+                    "ACTIVE",
+                    "Đã phê duyệt thành công"
+            );
+            itemNotif.setCreatedAt(now);
+
+            saveAndSendRealtime(itemNotif);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void handleSendMessageRejectItem(Item item, String adminReason, LocalDateTime now) {
+        try {
+            String title = "Sản phẩm bị TỪ CHỐI phê duyệt!";
+            String reason = (adminReason == null || adminReason.trim().isEmpty()) ? "Không đáp ứng quy chuẩn của sàn." : adminReason;
+
+            String messageText = String.format("Rất tiếc, sản phẩm '%s' của bạn không được phê duyệt. Lý do từ Admin: %s", item.getName(), reason);
+
+            ItemNotification itemNotif = new ItemNotification(
+                    0,
+                    item.getSellerId(),
+                    title,
+                    messageText,
+                    item.getId(),
+                    "REJECTED",
+                    reason
+            );
+            itemNotif.setCreatedAt(now);
+
+            saveAndSendRealtime(itemNotif);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
