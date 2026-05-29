@@ -1,6 +1,8 @@
 package auction.client.controllers;
+
 import auction.client.services.AuctionTimerManager;
 import auction.client.services.Cleanable;
+import auction.client.services.LanguageManager;
 import auction.client.session.DataSession;
 import auction.common.model.items.ItemImage;
 import javafx.animation.Animation;
@@ -30,14 +32,13 @@ import javafx.scene.layout.HBox;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
-
 import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainViewController extends ProfileController implements Cleanable {
-   // public Label lbbalance;
+    // public Label lbbalance;
     @FXML
     private TextField txtsearch;
     @FXML
@@ -60,20 +61,33 @@ public class MainViewController extends ProfileController implements Cleanable {
 
     @FXML
     public void initialize() {
-//        if (UserSession.loggedInUser != null) {
-//            lbusername.setText("Chào: " + UserSession.loggedInUser.getUsername());
-//        }
         DataSession.getInstance().setMainViewController(this);
 
         // Cần ép kiểu String cho ComboBox để tránh lỗi type-safety
-        sortPrice.getItems().addAll("Giá tăng dần", "Giá giảm dần");
-        sortTime.getItems().addAll("Thời gian tăng dần", "Thời gian giảm dần");
-     //   headerMenuController.setBalance(DataSession.getInstance().getLoggedInUser() != null ? DataSession.getInstance().getLoggedInUser().getBalance() + " $" : "0 $");
+        sortPrice.getItems().addAll(LanguageManager.getString("mainview.label.a_z"), LanguageManager.getString("mainview.label.z_a"));
+
+        // Gắn sự kiện lắng nghe khi người dùng chọn sắp xếp theo giá
+        sortPrice.setOnAction(event -> handleSortPrice());
+
         // GỌI HÀM: Để tải dữ liệu ngay khi mở trang
         loadItems();
     }
-    public void handleSearch(String keyword) {
 
+    private void handleSortPrice() {
+        String selected = sortPrice.getValue();
+        if (selected == null || filteredAssets == null || filteredAssets.isEmpty()) return;
+
+        if (selected.equals(LanguageManager.getString("mainview.label.a_z"))) {
+            filteredAssets.sort((o1, o2) -> Double.compare(o1.getCurrentPrice(), o2.getCurrentPrice()));
+        } else if (selected.equals(LanguageManager.getString("mainview.label.z_a"))) {
+            filteredAssets.sort((o1, o2) -> Double.compare(o2.getCurrentPrice(), o1.getCurrentPrice()));
+        }
+
+        // Sau khi sort xong, render lại danh sách đã sắp xếp
+        renderItems(filteredAssets);
+    }
+
+    public void handleSearch(String keyword) {
         if (keyword == null || keyword.trim().isEmpty()) {
             // Nếu ô tìm kiếm trống -> Kho tạm = Toàn bộ kho gốc
             filteredAssets = new ArrayList<>(allAssets);
@@ -86,8 +100,13 @@ public class MainViewController extends ProfileController implements Cleanable {
                     .toList();
         }
 
-        // 👉 ĐƯA THẲNG KẾT QUẢ VÀO HÀM RENDER ĐỂ CẬP NHẬT GIA DIỆN LẬP TỨC
-        renderItems(filteredAssets);
+        // Áp dụng lại bộ lọc sắp xếp nếu người dùng đang chọn sortPrice
+        handleSortPrice();
+
+        // Nếu không có sắp xếp, render thẳng kết quả lọc
+        if (sortPrice.getValue() == null) {
+            renderItems(filteredAssets);
+        }
     }
 
     private void loadItems() {
@@ -106,7 +125,7 @@ public class MainViewController extends ProfileController implements Cleanable {
                 if (response == null || !"SUCCESS".equals(response.getStatus())) {
                     throw new RuntimeException("Server không phản hồi hoặc có lỗi xảy ra");
                 }
-                return  (List<Item>) response.getData();
+                return (List<Item>) response.getData();
             }
         };
 
@@ -120,8 +139,13 @@ public class MainViewController extends ProfileController implements Cleanable {
                 this.filteredAssets = new ArrayList<>(result);  // Nạp đầy kho tạm ban đầu
             }
 
-            // Gọi hàm render của bạn để hiển thị lên UI
-            renderItems(result);
+            // Kiểm tra xem có đang chọn sort không, nếu có thì sort luôn data mới tải
+            if (sortPrice.getValue() != null) {
+                handleSortPrice();
+            } else {
+                renderItems(result);
+            }
+
             if (DataSession.getInstance().getLoggedInUser() != null && result != null) {
                 loadUserFavoritesInBackground(result);
             }
@@ -132,12 +156,11 @@ public class MainViewController extends ProfileController implements Cleanable {
             Throwable exception = loadTask.getException();
             exception.printStackTrace();
             System.err.println("Lỗi khi tải dữ liệu: " + exception.getMessage());
-            // Bạn có thể hiển thị một thông báo Alert lỗi ở đây
         });
 
-        // 4. Thực thi Task trên một Thread riêng để không làm đơ giao diện
+        // 4. Thực thi Task trên một Thread riêng
         Thread thread = new Thread(loadTask);
-        thread.setDaemon(true); // Đảm bảo thread này tắt khi bạn đóng ứng dụng
+        thread.setDaemon(true);
         thread.start();
     }
 
@@ -146,13 +169,11 @@ public class MainViewController extends ProfileController implements Cleanable {
             @Override
             protected Void call() throws Exception {
                 int userId = DataSession.getInstance().getLoggedInUser().getId();
-
                 Message favResponse = network.sendRequest(new Message("GET_FAVOURITES", userId));
 
                 if (favResponse != null && "SUCCESS".equals(favResponse.getStatus())) {
                     List<Integer> favoriteIds = (List<Integer>) favResponse.getData();
 
-                    // Đẩy dữ liệu vào DataSession
                     Platform.runLater(() -> {
                         DataSession.getInstance().getFavoriteItems().clear();
 
@@ -168,20 +189,17 @@ public class MainViewController extends ProfileController implements Cleanable {
         };
 
         Thread favThread = new Thread(favTask);
-        favThread.setDaemon(true); // Đảm bảo luồng ngầm tự tắt khi đóng App
+        favThread.setDaemon(true);
         favThread.start();
     }
 
     private VBox createSkeletonCard() {
         VBox card = new VBox();
-
-        // 1. Cấu hình Kích thước & Căn lề (Y hệt card thật)
         card.setPrefSize(200, 280);
         card.setAlignment(Pos.TOP_CENTER);
         card.setSpacing(10);
         card.setPadding(new Insets(10));
 
-        // 2. Style khung (Y hệt card thật)
         card.setStyle(
                 "-fx-background-color: white; " +
                         "-fx-background-radius: 15; " +
@@ -189,38 +207,30 @@ public class MainViewController extends ProfileController implements Cleanable {
                         "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.15), 10, 0, 0, 4);"
         );
 
-        // Màu xám nhẹ cho các phần tử đang load
         Color skeletonColor = Color.web("#eeeeee");
 
-        // 3. Giả lập Ảnh (ImageView 140x180)
         Rectangle imgSkeleton = new Rectangle(180, 140);
         imgSkeleton.setFill(skeletonColor);
         imgSkeleton.setArcWidth(10);
         imgSkeleton.setArcHeight(10);
 
-        // 4. Giả lập Tên sản phẩm (Label 14px)
         Rectangle nameSkeleton = new Rectangle(150, 16);
         nameSkeleton.setFill(skeletonColor);
         nameSkeleton.setArcWidth(5);
         nameSkeleton.setArcHeight(5);
 
-        // 5. Giả lập Giá tiền (Label 15px)
         Rectangle priceSkeleton = new Rectangle(100, 18);
         priceSkeleton.setFill(skeletonColor);
         priceSkeleton.setArcWidth(5);
         priceSkeleton.setArcHeight(5);
 
-        // 6. Giả lập Nút Đấu giá (Button radius 20)
         Rectangle btnSkeleton = new Rectangle(120, 30);
         btnSkeleton.setFill(skeletonColor);
         btnSkeleton.setArcWidth(20);
         btnSkeleton.setArcHeight(20);
 
-        // 7. Gom tất cả vào Card
         card.getChildren().addAll(imgSkeleton, nameSkeleton, priceSkeleton, btnSkeleton);
 
-        // 8. THÊM HIỆU ỨNG NHẤP NHÁY (Pulse effect)
-        // Tạo cảm giác App đang "thở" để người dùng biết là đang load
         FadeTransition ft = new FadeTransition(Duration.millis(1000), card);
         ft.setFromValue(1.0);
         ft.setToValue(0.4);
@@ -231,9 +241,7 @@ public class MainViewController extends ProfileController implements Cleanable {
         return card;
     }
 
-    // Trong MainViewController.java
     private void renderItems(List<Item> items) {
-        // Rất quan trọng: Xóa sạch các thẻ sản phẩm cũ/mẫu trong FlowPane
         Platform.runLater(() -> {
             flitems.getChildren().clear();
             if (items != null) {
@@ -246,43 +254,35 @@ public class MainViewController extends ProfileController implements Cleanable {
 
     public VBox createItemCard(Item item) {
         VBox card = new VBox();
-
-        // 1. Cấu hình Kích thước & Căn lề
-        card.setPrefSize(200, 280); // Tăng kích thước một chút để cân đối
-        card.setAlignment(Pos.TOP_CENTER); // Chỉnh lên trên để ảnh nằm trên cùng
+        card.setPrefSize(200, 280);
+        card.setAlignment(Pos.TOP_CENTER);
         card.setSpacing(10);
-        card.setPadding(new Insets(10)); // Tạo khoảng cách từ nội dung đến mép khung
-
-        // 2. TẠO CÁI KHUNG (Style trực tiếp để thấy ngay kết quả)
+        card.setPadding(new Insets(10));
         card.setStyle(
                 "-fx-background-color: white; " +
-                        "-fx-background-radius: 15; " + // Bo góc 15px
+                        "-fx-background-radius: 15; " +
                         "-fx-border-radius: 15; " +
-                        "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.15), 10, 0, 0, 4); " + // Đổ bóng nhẹ
+                        "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.15), 10, 0, 0, 4); " +
                         "-fx-cursor: hand;"
         );
 
-        // 3. Xử lý Ảnh
         ImageView imgView = new ImageView();
         imgView.setFitHeight(140);
         imgView.setFitWidth(180);
-        imgView.setPreserveRatio(false); // Để false nếu muốn ảnh lấp đầy khung hình chữ nhật
+        imgView.setPreserveRatio(false);
 
         boolean imageLoaded = false;
         if (item.getImages() != null && !item.getImages().isEmpty()) {
-            // Lấy ảnh mặc định hoặc ảnh đầu tiên trong danh sách
             ItemImage defaultImg = item.getImages().stream()
                     .filter(ItemImage::isDefault)
                     .findFirst()
                     .orElse(item.getImages().get(0));
 
-            // 2. Lấy URL thay vì lấy mảng byte
             String imageUrl = defaultImg.getUrlImage();
             String optimizedUrl = imageUrl.replace("/upload/", "/upload/w_200,c_fill,f_auto,q_auto/");
 
             if (imageUrl != null && !imageUrl.isEmpty()) {
                 try {
-                    // 3. Tạo Image trực tiếp từ URL (để true để load ngầm)
                     Image img = new Image(optimizedUrl, 140, 180, true, true, true);
                     imgView.setImage(img);
                     imageLoaded = true;
@@ -299,23 +299,19 @@ public class MainViewController extends ProfileController implements Cleanable {
             }
         }
 
-        // 4. Tên sản phẩm
         HBox nameAndHeartBox = new HBox();
-        nameAndHeartBox.setAlignment(Pos.CENTER_LEFT); // Căn lề trái để icon và tên thẳng hàng
+        nameAndHeartBox.setAlignment(Pos.CENTER_LEFT);
         nameAndHeartBox.setSpacing(10);
         nameAndHeartBox.setPadding(new Insets(0, 5, 0, 5));
 
         Label nameLabel = new Label(item.getName());
-// Cho nameLabel co giãn để đẩy icon về phía bên phải
         HBox.setHgrow(nameLabel, Priority.ALWAYS);
-        nameLabel.setMaxWidth(140); // Giới hạn chiều rộng để không đè vào icon
+        nameLabel.setMaxWidth(140);
         nameLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: #333;");
-        nameLabel.setWrapText(false); // Thường tên sản phẩm trong Card nên để 1 dòng
-        nameLabel.setEllipsisString("..."); // Nếu dài quá thì hiện dấu ...
+        nameLabel.setWrapText(false);
+        nameLabel.setEllipsisString("...");
 
-// Icon trái tim (Dùng Label kèm mã Unicode hoặc ImageView)
         Label heartIcon = new Label("❤");
-        heartIcon.setStyle("-fx-text-fill: #ccc; -fx-font-size: 18px; -fx-cursor: hand;");
         if (DataSession.getInstance().getFavoriteItems().contains(item)) {
             heartIcon.setStyle("-fx-text-fill: #ff4d4d; -fx-font-size: 18px; -fx-cursor: hand;");
         } else {
@@ -328,16 +324,16 @@ public class MainViewController extends ProfileController implements Cleanable {
                 heartIcon.setStyle("-fx-text-fill: #ccc; -fx-font-size: 18px; -fx-cursor: hand;");
             }
         });
-// 2. Lúc Click:
+
         heartIcon.setOnMouseClicked(e -> {
             int currentUserId = DataSession.getInstance().getLoggedInUser().getId();
             Object[] payload = new Object[]{ currentUserId, item.getId() };
             if (DataSession.getInstance().getFavoriteItems().contains(item)) {
-                DataSession.getInstance().removeFavorite(item); // Xóa nếu đã có
+                DataSession.getInstance().removeFavorite(item);
                 heartIcon.setStyle("-fx-text-fill: #ccc; -fx-font-size: 18px; -fx-cursor: hand;");
                 ClientNetwork.getInstance().sendRequestAsync(new Message("REMOVE_FAVOURITE", payload));
             } else {
-                DataSession.getInstance().addFavorite(item); // Thêm nếu chưa có
+                DataSession.getInstance().addFavorite(item);
                 heartIcon.setStyle("-fx-text-fill: #ff4d4d; -fx-font-size: 18px; -fx-cursor: hand;");
                 ClientNetwork.getInstance().sendRequestAsync(new Message("ADD_FAVOURITE", payload));
             }
@@ -346,11 +342,9 @@ public class MainViewController extends ProfileController implements Cleanable {
 
         nameAndHeartBox.getChildren().addAll(nameLabel, heartIcon);
 
-        // 5. Giá tiền
         Label priceLabel = new Label(String.format("%,d $", item.getCurrentPrice()));
         priceLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 15px; -fx-text-fill: #0052ff;");
 
-        // 6. Nút Đấu giá
         Button bidBtn = new Button("Đấu giá");
         bidBtn.setPrefWidth(120);
         bidBtn.setStyle(
@@ -361,7 +355,6 @@ public class MainViewController extends ProfileController implements Cleanable {
                         "-fx-padding: 5 15 5 15;"
         );
 
-        // Hiệu ứng hover cho nút
         bidBtn.setOnMouseEntered(e -> bidBtn.setStyle(bidBtn.getStyle() + "-fx-background-color: #003db3;"));
         bidBtn.setOnMouseExited(e -> bidBtn.setStyle(bidBtn.getStyle() + "-fx-background-color: #0052ff;"));
         bidBtn.setOnAction(event -> {
@@ -382,33 +375,29 @@ public class MainViewController extends ProfileController implements Cleanable {
         Label lblStatus = new Label();
         lblStatus.getStyleClass().add("badge-text");
 
-        // Logic đổ màu và text dựa trên trạng thái thực tế của item
-        String status = item.getStatus().toLowerCase(); // Giả sử item có thuộc tính status
         statusContainer.getStyleClass().add("badge-container");
 
         AuctionTimerManager cardTimer = new AuctionTimerManager(
                 item, lblStatus, statusContainer, dot);
         cardTimer.tick();
 
-
         statusContainer.getChildren().addAll(dot, lblStatus);
-        // 7. Gom tất cả vào Card
+
         card.getChildren().addAll(imgView, statusContainer, nameAndHeartBox, priceLabel, bidBtn);
 
-        // 8. Sự kiện click vào Card
         card.setOnMouseClicked(event -> {
             DataSession.getInstance().setSelectedItem(item);
-                ViewManager.switchScene(event, "item-view.fxml", "Chi tiết");
+            ViewManager.switchScene(event, "item-view.fxml", "Chi tiết");
         });
 
         return card;
     }
+
     @FXML private HBox categoryBar;
 
     @FXML
     private void handleCategoryClick(MouseEvent event) {
         VBox clickedCategory = (VBox) event.getSource();
-
         String catIdStr = (String) clickedCategory.getUserData();
 
         if (catIdStr == null || catIdStr.isEmpty()) {
@@ -416,7 +405,6 @@ public class MainViewController extends ProfileController implements Cleanable {
         }
         for (Node node : categoryBar.getChildren()) {
             if (node instanceof VBox) {
-                // Xóa bỏ kiểu gạch chân đối với các danh mục không được chọn (trả về trống)
                 node.setStyle("");
             }
         }
@@ -435,7 +423,6 @@ public class MainViewController extends ProfileController implements Cleanable {
                     if (response != null && "SUCCESS".equals(response.getStatus())) {
                         List<Item> filteredItems = (List<Item>) response.getData();
 
-
                         Platform.runLater(() -> {
                             flitems.getChildren().clear();
                             if (filteredItems != null) {
@@ -447,12 +434,16 @@ public class MainViewController extends ProfileController implements Cleanable {
                             }
 
                             if (filteredItems == null || filteredItems.isEmpty()) {
-                                // Hiển thị thông báo nếu danh mục trống
                                 Label lbEmpty = new Label("Hiện tại chưa có sản phẩm nào thuộc danh mục này.");
                                 lbEmpty.setStyle("-fx-text-fill: #888888; -fx-font-size: 14px; -fx-padding: 20;");
                                 flitems.getChildren().add(lbEmpty);
                             } else {
-                                renderItems(this.filteredAssets);
+                                // Nếu đang chọn sortPrice thì sort danh mục luôn
+                                if (sortPrice.getValue() != null) {
+                                    handleSortPrice();
+                                } else {
+                                    renderItems(this.filteredAssets);
+                                }
 
                                 if (DataSession.getInstance().getLoggedInUser() != null) {
                                     loadUserFavoritesInBackground(filteredItems);
@@ -489,15 +480,11 @@ public class MainViewController extends ProfileController implements Cleanable {
     public void scrollRight() {
         if (scrollCategories != null) {
             double currentValue = scrollCategories.getHvalue();
-            // Tính toán vị trí mới
             double newValue = currentValue + 0.2;
 
             if (newValue > 1.0) newValue = 1.0;
 
-            // Đặt giá trị mới cho thanh cuộn
             scrollCategories.setHvalue(newValue);
-
-            // In ra console để kiểm tra xem hàm có chạy không
             System.out.println("Đã bấm nút cuộn phải. Vị trí hiện tại: " + newValue);
         } else {
             System.out.println("Lỗi: scrollCategories đang bị null!");
