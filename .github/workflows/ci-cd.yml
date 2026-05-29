@@ -38,7 +38,8 @@ jobs:
 
       # Bước 2: Đóng gói Client ngay tại job này thành file ZIP
       - name: Build JavaFX App using jlink
-        run: ./mvnw javafx:jlink
+        # Thêm lệnh clean trước lệnh javafx:jlink để dọn dẹp thư mục target cũ
+        run: ./mvnw clean javafx:jlink
 
       # Bước 3: Đẩy file app.zip lên GitHub bằng bản V4 mới nhất
       - name: Upload Client Artifact
