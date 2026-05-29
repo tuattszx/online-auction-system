@@ -12,10 +12,10 @@ jobs:
     
     steps:
       - name: Checkout Source Code
-        uses: actions/checkout@v4 # Nâng cấp từ v3 lên v4
+        uses: actions/checkout@v4
 
       - name: Set up JDK 21
-        uses: actions/setup-java@v4 # Nâng cấp từ v3 lên v4
+        uses: actions/setup-java@v4
         with:
           java-version: '21'
           distribution: 'temurin'
@@ -29,21 +29,20 @@ jobs:
       - name: Install Xvfb (Virtual Framebuffer)
         run: sudo apt-get install xvfb
 
-      # Bước 1: Chạy Test (Bỏ qua thực thi để không bị lỗi module classpath, nhưng vẫn check compile)
+      # Bước 1: Biên dịch code và chạy thử (Bỏ qua thực thi test lỗi classpath)
       - name: Run Maven Tests with Xvfb
         env:
           DB_USER: ${{ secrets.DB_USER }}
           DB_PASS: ${{ secrets.DB_PASS }}
         run: xvfb-run ./mvnw clean test -DskipTests=true
 
-      # Bước 2: Đóng gói Client ngay tại job này thành file ZIP
-      - name: Build JavaFX App using jlink
-        # Thêm lệnh clean trước lệnh javafx:jlink để dọn dẹp thư mục target cũ
-        run: ./mvnw clean javafx:jlink
+      # Bước 2: Đóng gói toàn bộ ứng dụng thành file JAR (Package này sẽ tự gom cả JavaFX và ControlsFX)
+      - name: Build Application Package
+        run: ./mvnw package -DskipTests=true
 
-      # Bước 3: Đẩy file app.zip lên GitHub bằng bản V4 mới nhất
+      # Bước 3: Đẩy file JAR tìm thấy trong thư mục target lên GitHub cho bạn tải về
       - name: Upload Client Artifact
-        uses: actions/upload-artifact@v4 # Nâng cấp từ v3 lên v4 để sửa triệt để lỗi
+        uses: actions/upload-artifact@v4
         with:
-          name: online-auction-client
-          path: target/auction-client.zip
+          name: online-auction-client-jar
+          path: target/*.jar
