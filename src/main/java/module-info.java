@@ -12,6 +12,7 @@ module auction {
     requires com.zaxxer.hikari;
     requires org.slf4j;
     requires cloudinary.core;
+    requires commons.codec;
 
     // Cho phép JavaFX truy cập vào Controller và View
     opens auction.client.controllers to javafx.fxml;

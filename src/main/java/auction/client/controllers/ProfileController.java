@@ -25,6 +25,7 @@ import java.util.Map;
 
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import org.apache.commons.codec.language.bm.Lang;
 import org.controlsfx.control.SearchableComboBox;
 
 public class ProfileController  {
@@ -297,6 +298,8 @@ public class ProfileController  {
                         LanguageManager.getString("profile.label.notification"),
                         LanguageManager.getString("profile.label.saveSuccess")
                 );
+                ViewManager.clearCache();
+                ViewManager.switchScene(event, "profile-view.fxml", LanguageManager.getString("profile.title"));
 
             } else {
                 // Trường hợp Server phản hồi lệnh UPDATE_PROFILE_FAILED hoặc bị TIMEOUT
@@ -382,7 +385,7 @@ public class ProfileController  {
     }
     @FXML
     public void onSignOutClick(MouseEvent event) {
-        if (!ViewManager.confirmAlert("Thông báo", "Bạn có chắc chắn muốn đăng xuất không?")) return;
+        if (!ViewManager.confirmAlert(LanguageManager.getString("alert.signout.title"), LanguageManager.getString("alert.signout.content"))) return;
         Task<Message> logoutTask = new Task<>() {
             @Override
             protected Message call() throws Exception {
