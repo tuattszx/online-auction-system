@@ -12,10 +12,10 @@ jobs:
     
     steps:
       - name: Checkout Source Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up JDK 21
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: '21'
           distribution: 'temurin'
@@ -27,7 +27,7 @@ jobs:
 
       # Tạo màn hình ảo để chạy test giao diện JavaFX
       - name: Install Xvfb (Virtual Framebuffer)
-        run: sudo apt-get install xvfb
+        run: sudo apt-get update && sudo apt-get install -y xvfb
 
       # Bước 1: Chạy Test (Đã truyền đủ Secret Database)
       - name: Run Maven Tests with Xvfb
@@ -40,9 +40,9 @@ jobs:
       - name: Build JavaFX App using jlink
         run: ./mvnw javafx:jlink
 
-      # Bước 3: Đẩy file app.zip lên GitHub để bạn tải về
+      # Bước 3: Đẩy file app.zip lên GitHub để bạn tải về (Đã sửa thành v4)
       - name: Upload Client Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: online-auction-client
           path: target/auction-client.zip
