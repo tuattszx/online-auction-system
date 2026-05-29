@@ -16,12 +16,12 @@
 
         <VBox spacing="4.0">
             <children>
-                <Label text="Thiết lập Tự động đấu giá" textFill="#1A202C">
+                <Label text="%autoview.label.setupauction" textFill="#1A202C">
                     <font>
                         <Font name="System Bold" size="18.0" />
                     </font>
                 </Label>
-                <Label text="Hệ thống sẽ tự động đặt mức giá thấp nhất có thể cho đến khi chạm hạn mức của bạn." textFill="#718096" wrapText="true">
+                <Label text="%autoview.label.thesystemauto" textFill="#718096" wrapText="true">
                     <font>
                         <Font size="13.0" />
                     </font>
@@ -36,7 +36,7 @@
                     <children>
                         <HBox alignment="CENTER_LEFT">
                             <children>
-                                <Label text="Giá tối đa bạn sẵn sàng trả" textFill="#4A5568">
+                                <Label text="%autoview.label.maxprice" textFill="#4A5568">
                                     <font>
                                         <Font name="System Bold" size="13.0" />
                                     </font>
@@ -70,7 +70,7 @@
 
                 <VBox spacing="8.0">
                     <children>
-                        <Label text="Bước nhảy giá tự động (Tùy chọn)" textFill="#4A5568">
+                        <Label text="%autoview.label.auto" textFill="#4A5568">
                             <font>
                                 <Font name="System Bold" size="13.0" />
                             </font>
@@ -100,7 +100,7 @@
 
         <HBox alignment="CENTER_LEFT" style="-fx-background-color: #EFF6FF; -fx-background-radius: 8; -fx-padding: 10 12 10 12;">
             <children>
-                <Label text="Số dư khả dụng của bạn:" textFill="#1E40AF">
+                <Label text="%autoview.label.available" textFill="#1E40AF">
                     <font>
                         <Font size="13.0" />
                     </font>
@@ -113,16 +113,16 @@
                 </Label>
             </children>
         </HBox>
-      <Label fx:id="errorLabel" prefHeight="34.0" prefWidth="346.0" text="Label" />
+      <Label fx:id="errorLabel" prefHeight="34.0" prefWidth="346.0" text="%autoview.label.Label" />
 
         <HBox alignment="CENTER_RIGHT" spacing="12.0">
             <children>
-                <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#handleCancel" style="-fx-background-color: #FFFFFF; -fx-border-color: #CBD5E1; -fx-border-radius: 8; -fx-background-radius: 8; -fx-cursor: hand; -fx-padding: 10 20 10 20;" text="Hủy bỏ" textFill="#475569">
+                <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#handleCancel" style="-fx-background-color: #FFFFFF; -fx-border-color: #CBD5E1; -fx-border-radius: 8; -fx-background-radius: 8; -fx-cursor: hand; -fx-padding: 10 20 10 20;" text="%autoview.label.cancel" textFill="#475569">
                     <font>
                         <Font name="System Bold" size="13.0" />
                     </font>
                 </Button>
-                <Button fx:id="startAutoBidButton" mnemonicParsing="false" onAction="#handleStartAutoBid" style="-fx-background-color: #0052FF; -fx-background-radius: 8; -fx-cursor: hand; -fx-padding: 10 20 10 20;" text="Kích hoạt Auto Bid" textFill="WHITE">
+                <Button fx:id="startAutoBidButton" mnemonicParsing="false" onAction="#handleStartAutoBid" style="-fx-background-color: #0052FF; -fx-background-radius: 8; -fx-cursor: hand; -fx-padding: 10 20 10 20;" text="%autoview.label.activate" textFill="WHITE">
                     <font>
                         <Font name="System Bold" size="13.0" />
                     </font>

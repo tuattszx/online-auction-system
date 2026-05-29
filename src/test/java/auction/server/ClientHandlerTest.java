@@ -27,6 +27,9 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import java.lang.reflect.Method;
+import org.mockito.ArgumentCaptor;
+
 public class ClientHandlerTest {
 
     @Mock
@@ -1731,6 +1734,439 @@ public class ClientHandlerTest {
 
         handlerThread.join(1000);
     }
+    @Test
+    public void testHandleGetItemByCategory_Fast_Success() throws Exception {
+        // 1. Chuẩn bị dữ liệu đầu vào
+        int categoryId = 5;
+        Message msgRequest = new Message("GET_ITEM_BY_CATEGORY", categoryId);
 
+        Item item1 = new Item(1, "Laptop Dell", "Dell Core i7", 10000000, 10500000, null, null, 1, "ACTIVE");
+        when(mockItemDao.getItemsByCategory(categoryId)).thenReturn(List.of(item1));
 
+        // Mock trực tiếp ObjectOutputStream truyền vào hàm
+        ObjectOutputStream mockOut = mock(ObjectOutputStream.class);
+
+        // 2. Dùng Reflection gọi thẳng phương thức private (Bỏ qua cơ chế Socket/Thread)
+        Method method = ClientHandler.class.getDeclaredMethod("handleGetItemByCategory", Message.class, ObjectOutputStream.class);
+        method.setAccessible(true);
+        method.invoke(clientHandler, msgRequest, mockOut); // Chạy trực tiếp trên Main Thread
+
+        // 3. Sử dụng ArgumentCaptor để bắt Message mà Server ghi ra stream out.writeObject()
+        ArgumentCaptor<Message> messageCaptor = ArgumentCaptor.forClass(Message.class);
+        verify(mockOut, times(1)).writeObject(messageCaptor.capture());
+
+        // 4. Assert kết quả ngay lập tức
+        Message msgResponse = messageCaptor.getValue();
+        assertEquals("SUCCESS", msgResponse.getStatus());
+
+        List<Item> actualItems = (List<Item>) msgResponse.getData();
+        assertEquals(1, actualItems.size());
+        assertEquals("Laptop Dell", actualItems.get(0).getName());
+    }
+
+    @Test
+    public void testHandleGetItemByCategory_Fast_Exception() throws Exception {
+        int categoryId = 99;
+        Message msgRequest = new Message("GET_ITEM_BY_CATEGORY", categoryId);
+
+        when(mockItemDao.getItemsByCategory(categoryId)).thenThrow(new RuntimeException("DB Error"));
+        ObjectOutputStream mockOut = mock(ObjectOutputStream.class);
+
+        // Gọi thẳng hàm qua Reflection
+        Method method = ClientHandler.class.getDeclaredMethod("handleGetItemByCategory", Message.class, ObjectOutputStream.class);
+        method.setAccessible(true);
+        method.invoke(clientHandler, msgRequest, mockOut);
+
+        // Bắt và kiểm tra Message lỗi
+        ArgumentCaptor<Message> messageCaptor = ArgumentCaptor.forClass(Message.class);
+        verify(mockOut, times(1)).writeObject(messageCaptor.capture());
+
+        Message msgResponse = messageCaptor.getValue();
+        assertEquals("ERROR", msgResponse.getStatus());
+        assertTrue(((String) msgResponse.getData()).contains("DB Error"));
+    }
+    @Test
+    public void testHandleDepositRequest_NoImport_Success() throws Exception {
+        // 1. Giả lập đối tượng User đã đăng nhập vào hệ thống
+        User mockUser = new User();
+        mockUser.setId(10);
+        mockUser.setBalance(500000L); // Số dư cũ 500k
+
+        // Sử dụng Reflection qua đường dẫn đầy đủ để inject user đăng nhập
+        java.lang.reflect.Field loggedInUserField = ClientHandler.class.getDeclaredField("loggedInUser");
+        loggedInUserField.setAccessible(true);
+        loggedInUserField.set(clientHandler, mockUser);
+
+        // 2. Tạo Map dữ liệu nạp tiền (Dùng đầy đủ đường dẫn java.util)
+        java.util.Map<String, Object> depositData = new java.util.HashMap<>();
+        depositData.put("cardNumber", "1234567890123456");
+        depositData.put("amount", 200000L); // Nạp thêm 200k
+
+        Message msgRequest = new Message("DEPOSIT", depositData);
+        ObjectOutputStream mockOut = mock(ObjectOutputStream.class);
+
+        // Mock hành vi UserDao trả về true khi update balance
+        when(mockUserDao.updateBalance(10, 200000L)).thenReturn(true);
+
+        // Mẹo không dùng ArgumentCaptor: Bắt gói tin ghi ra bằng thenAnswer
+        final Message[] capturedResponse = new Message[1];
+        doAnswer(invocation -> {
+            capturedResponse[0] = invocation.getArgument(0);
+            return null;
+        }).when(mockOut).writeObject(any(Message.class));
+
+        // 3. Gọi hàm xử lý qua Reflection bóc tách hoàn toàn Thread/Socket
+        java.lang.reflect.Method method = ClientHandler.class.getDeclaredMethod(
+                "handleDepositRequest", Message.class, ObjectOutputStream.class
+        );
+        method.setAccessible(true);
+        method.invoke(clientHandler, msgRequest, mockOut);
+
+        // 4. Assert kết quả (Sử dụng các hàm static đã import sẵn đầu file)
+        assertNotNull(capturedResponse[0]);
+        assertEquals("SUCCESS", capturedResponse[0].getStatus());
+
+        User updatedUser = (User) capturedResponse[0].getData();
+        assertEquals(700000L, updatedUser.getBalance()); // 500k + 200k = 700k
+    }
+
+    @Test
+    public void testHandleDepositRequest_NoImport_Failed_4444() throws Exception {
+        User mockUser = new User();
+        java.lang.reflect.Field loggedInUserField = ClientHandler.class.getDeclaredField("loggedInUser");
+        loggedInUserField.setAccessible(true);
+        loggedInUserField.set(clientHandler, mockUser);
+
+        java.util.Map<String, Object> depositData = new java.util.HashMap<>();
+        depositData.put("cardNumber", "1234567890124444"); // Đuôi lỗi 4444
+        depositData.put("amount", 100000L);
+
+        Message msgRequest = new Message("DEPOSIT", depositData);
+        ObjectOutputStream mockOut = mock(ObjectOutputStream.class);
+
+        final Message[] capturedResponse = new Message[1];
+        doAnswer(invocation -> {
+            capturedResponse[0] = invocation.getArgument(0);
+            return null;
+        }).when(mockOut).writeObject(any(Message.class));
+
+        // Thực thi bằng reflection đường dẫn đầy đủ
+        java.lang.reflect.Method method = ClientHandler.class.getDeclaredMethod(
+                "handleDepositRequest", Message.class, ObjectOutputStream.class
+        );
+        method.setAccessible(true);
+        method.invoke(clientHandler, msgRequest, mockOut);
+
+        // Kiểm tra kết quả báo lỗi số dư
+        assertEquals("FAILED", capturedResponse[0].getStatus());
+        assertTrue(((String) capturedResponse[0].getData()).contains("Mã lỗi: 4444"));
+
+        // Đảm bảo không gọi vào DB khi thẻ lỗi
+        verify(mockUserDao, never()).updateBalance(anyInt(), anyLong());
+    }
+
+    @Test
+    public void testHandleGetCustomers_NoImport_Success() throws Exception {
+        // 1. Chuẩn bị dữ liệu: Client gửi lên sellerId dạng String theo đúng logic hàm parse
+        String sellerIdStr = "12";
+        int sellerId = 12;
+        Message msgRequest = new Message("GET_CUSTOMERS", sellerIdStr);
+        ObjectOutputStream mockOut = mock(ObjectOutputStream.class);
+
+        // Giả lập danh sách khách hàng trả về từ DAO
+        User customer1 = new User();
+        customer1.setId(101);
+        customer1.setUsername("customer_alpha");
+
+        java.util.List<User> mockCustomers = java.util.List.of(customer1);
+        when(mockItemDao.getCustomersBySellerId(sellerId)).thenReturn(mockCustomers);
+
+        // Bắt gói tin ghi ra stream bằng doAnswer (thay cho ArgumentCaptor)
+        final Message[] capturedResponse = new Message[1];
+        doAnswer(invocation -> {
+            capturedResponse[0] = invocation.getArgument(0);
+            return null;
+        }).when(mockOut).writeObject(any(Message.class));
+
+        // 2. Thực thi qua Reflection (Đường dẫn đầy đủ, không cần import thêm)
+        java.lang.reflect.Method method = ClientHandler.class.getDeclaredMethod(
+                "handleGetCustomers", Message.class, ObjectOutputStream.class
+        );
+        method.setAccessible(true);
+        method.invoke(clientHandler, msgRequest, mockOut);
+
+        // 3. Assert kết quả nhanh trên bộ nhớ RAM
+        assertNotNull(capturedResponse[0]);
+        assertEquals("SUCCESS", capturedResponse[0].getStatus());
+
+        java.util.List<User> actualCustomers = (java.util.List<User>) capturedResponse[0].getData();
+        assertEquals(1, actualCustomers.size());
+        assertEquals("customer_alpha", actualCustomers.get(0).getUsername());
+        verify(mockItemDao, times(1)).getCustomersBySellerId(sellerId);
+    }
+
+    @Test
+    public void testHandleGetCustomers_NoImport_Exception() throws Exception {
+        // 1. Chuẩn bị dữ liệu lỗi: Ép DAO ném ra Exception
+        String sellerIdStr = "5";
+        int sellerId = 5;
+        Message msgRequest = new Message("GET_CUSTOMERS", sellerIdStr);
+        ObjectOutputStream mockOut = mock(ObjectOutputStream.class);
+
+        when(mockItemDao.getCustomersBySellerId(sellerId))
+                .thenThrow(new RuntimeException("SQL Connection Error"));
+
+        final Message[] capturedResponse = new Message[1];
+        doAnswer(invocation -> {
+            capturedResponse[0] = invocation.getArgument(0);
+            return null;
+        }).when(mockOut).writeObject(any(Message.class));
+
+        // 2. Thực thi
+        java.lang.reflect.Method method = ClientHandler.class.getDeclaredMethod(
+                "handleGetCustomers", Message.class, ObjectOutputStream.class
+        );
+        method.setAccessible(true);
+        method.invoke(clientHandler, msgRequest, mockOut);
+
+        // 3. Kiểm tra khối catch bắt lỗi chính xác
+        assertNotNull(capturedResponse[0]);
+        assertEquals("ERROR", capturedResponse[0].getStatus());
+        assertTrue(((String) capturedResponse[0].getData()).contains("SQL Connection Error"));
+    }
+    @Test
+    public void testHandleGetSellerRevenue_NoImport_Success() throws Exception {
+        // 1. Chuẩn bị dữ liệu: Client gửi lên sellerId dạng String ("15")
+        String sellerIdStr = "15";
+        int sellerId = 15;
+        Message msgRequest = new Message("GET_REVENUE", sellerIdStr);
+        ObjectOutputStream mockOut = mock(ObjectOutputStream.class);
+
+        // Giả lập doanh thu trả về từ DAO là 15,500,000 VND
+        long expectedRevenue = 15500000L;
+        when(mockItemDao.getTotalRevenueBySellerId(sellerId)).thenReturn(expectedRevenue);
+
+        // Bắt gói tin ghi ra stream bằng doAnswer
+        final Message[] capturedResponse = new Message[1];
+        doAnswer(invocation -> {
+            capturedResponse[0] = invocation.getArgument(0);
+            return null;
+        }).when(mockOut).writeObject(any(Message.class));
+
+        // 2. Thực thi qua Reflection (Không dùng Thread/Socket)
+        java.lang.reflect.Method method = ClientHandler.class.getDeclaredMethod(
+                "handleGetSellerRevenue", Message.class, ObjectOutputStream.class
+        );
+        method.setAccessible(true);
+        method.invoke(clientHandler, msgRequest, mockOut);
+
+        // 3. Assert kết quả tức thì trên RAM
+        assertNotNull(capturedResponse[0]);
+        assertEquals("SUCCESS", capturedResponse[0].getStatus());
+        assertEquals(expectedRevenue, capturedResponse[0].getData());
+
+        verify(mockItemDao, times(1)).getTotalRevenueBySellerId(sellerId);
+    }
+
+    @Test
+    public void testHandleGetSellerRevenue_NoImport_Exception() throws Exception {
+        // 1. Chuẩn bị dữ liệu lỗi: Ép DAO ném ra Exception mạng hoặc DB
+        String sellerIdStr = "99";
+        int sellerId = 99;
+        Message msgRequest = new Message("GET_REVENUE", sellerIdStr);
+        ObjectOutputStream mockOut = mock(ObjectOutputStream.class);
+
+        when(mockItemDao.getTotalRevenueBySellerId(sellerId))
+                .thenThrow(new RuntimeException("Cloud DB Timeout"));
+
+        final Message[] capturedResponse = new Message[1];
+        doAnswer(invocation -> {
+            capturedResponse[0] = invocation.getArgument(0);
+            return null;
+        }).when(mockOut).writeObject(any(Message.class));
+
+        // 2. Thực thi
+        java.lang.reflect.Method method = ClientHandler.class.getDeclaredMethod(
+                "handleGetSellerRevenue", Message.class, ObjectOutputStream.class
+        );
+        method.setAccessible(true);
+        method.invoke(clientHandler, msgRequest, mockOut);
+
+        // 3. Kiểm tra khối catch gán trạng thái ERROR và trả về doanh thu bằng 0L theo đúng code gốc
+        assertNotNull(capturedResponse[0]);
+        assertEquals("ERROR", capturedResponse[0].getStatus());
+        assertEquals(0L, capturedResponse[0].getData());
+    }
+    @Test
+    public void testHandleConfirmItem_NoImport_Approved_Success() throws Exception {
+        // 1. Chuẩn bị dữ liệu: payload gồm [itemId, isApproved]
+        int itemId = 42;
+        boolean isApproved = true;
+        Object[] payload = new Object[]{itemId, isApproved};
+
+        Message msgRequest = new Message("CONFIRM_ITEM", payload);
+        ObjectOutputStream mockOut = mock(ObjectOutputStream.class);
+
+        // Mock tầng DAO trả về item và approve thành công
+        Item mockItem = new Item();
+        mockItem.setId(itemId);
+        mockItem.setName("Vòng cổ phong thủy");
+
+        when(mockItemDao.getById(itemId)).thenReturn(mockItem);
+        when(mockItemDao.approveItem(itemId, isApproved)).thenReturn(true);
+
+        // Bắt gói tin ghi ra stream bằng doAnswer
+        final Message[] capturedResponse = new Message[1];
+        doAnswer(invocation -> {
+            capturedResponse[0] = invocation.getArgument(0);
+            return null;
+        }).when(mockOut).writeObject(any(Message.class));
+
+        // 2. Thực thi thông qua Reflection
+        java.lang.reflect.Method method = ClientHandler.class.getDeclaredMethod(
+                "handleConfirmItem", Message.class, ObjectOutputStream.class
+        );
+        method.setAccessible(true);
+        method.invoke(clientHandler, msgRequest, mockOut);
+
+        // 3. Kiểm tra kết quả phản hồi gán trạng thái SUCCESS và chuỗi thông báo duyệt sản phẩm
+        assertNotNull(capturedResponse[0]);
+        assertEquals("SUCCESS", capturedResponse[0].getStatus());
+        assertTrue(((String) capturedResponse[0].getData()).contains("Sản phẩm đã được chấp nhận"));
+
+        verify(mockItemDao, times(1)).approveItem(itemId, isApproved);
+    }
+
+    @Test
+    public void testHandleConfirmItem_NoImport_Rejected_Success() throws Exception {
+        // 1. Chuẩn bị dữ liệu từ chối: [itemId, false]
+        int itemId = 42;
+        boolean isApproved = false;
+        Object[] payload = new Object[]{itemId, isApproved};
+
+        Message msgRequest = new Message("CONFIRM_ITEM", payload);
+        ObjectOutputStream mockOut = mock(ObjectOutputStream.class);
+
+        Item mockItem = new Item();
+        mockItem.setId(itemId);
+
+        when(mockItemDao.getById(itemId)).thenReturn(mockItem);
+        when(mockItemDao.approveItem(itemId, isApproved)).thenReturn(true);
+
+        final Message[] capturedResponse = new Message[1];
+        doAnswer(invocation -> {
+            capturedResponse[0] = invocation.getArgument(0);
+            return null;
+        }).when(mockOut).writeObject(any(Message.class));
+
+        // 2. Thực thi
+        java.lang.reflect.Method method = ClientHandler.class.getDeclaredMethod(
+                "handleConfirmItem", Message.class, ObjectOutputStream.class
+        );
+        method.setAccessible(true);
+        method.invoke(clientHandler, msgRequest, mockOut);
+
+        // 3. Kiểm tra kết quả phản hồi gán chuỗi thông báo từ chối
+        assertNotNull(capturedResponse[0]);
+        assertEquals("SUCCESS", capturedResponse[0].getStatus());
+        assertTrue(((String) capturedResponse[0].getData()).contains("Đã từ chối sản phẩm"));
+    }
+
+    @Test
+    public void testHandleConfirmItem_NoImport_Exception() throws Exception {
+        // 1. Ép tầng DAO ném lỗi hệ thống mạng/DB để test khối catch
+        int itemId = 99;
+        Object[] payload = new Object[]{itemId, true};
+
+        Message msgRequest = new Message("CONFIRM_ITEM", payload);
+        ObjectOutputStream mockOut = mock(ObjectOutputStream.class);
+
+        when(mockItemDao.getById(itemId)).thenThrow(new RuntimeException("Database Timeout"));
+
+        final Message[] capturedResponse = new Message[1];
+        doAnswer(invocation -> {
+            capturedResponse[0] = invocation.getArgument(0);
+            return null;
+        }).when(mockOut).writeObject(any(Message.class));
+
+        // 2. Thực thi
+        java.lang.reflect.Method method = ClientHandler.class.getDeclaredMethod(
+                "handleConfirmItem", Message.class, ObjectOutputStream.class
+        );
+        method.setAccessible(true);
+        method.invoke(clientHandler, msgRequest, mockOut);
+
+        // 3. Kiểm tra khối catch xử lý chuẩn xác
+        assertNotNull(capturedResponse[0]);
+        assertEquals("ERROR", capturedResponse[0].getStatus());
+        assertTrue(((String) capturedResponse[0].getData()).contains("Lỗi hệ thống Server: Database Timeout"));
+    }
+    @Test
+    public void testHandleGetDashboardStats_NoImport_Success() throws Exception {
+        // 1. Chuẩn bị dữ liệu giả lập (Given)
+        Message msgRequest = new Message("GET_DASHBOARD_STATS", null);
+        ObjectOutputStream mockOut = mock(ObjectOutputStream.class);
+
+        // Giả lập mảng Object trả về từ userDao và itemDao đúng kiểu dữ liệu trong code gốc
+        Object[] mockUserStats = new Object[]{ 15000000L, 120 }; // totalRevenue (long), totalUsers (int)
+        Object[] mockItemStats = new Object[]{ 45, 85.5 };     // liveAuctions (int), successRate (double)
+
+        when(mockUserDao.getDashboardStats()).thenReturn(mockUserStats);
+        when(mockItemDao.getDashboardStats()).thenReturn(mockItemStats);
+
+        // Bắt gói tin ghi ra stream bằng doAnswer
+        final Message[] capturedResponse = new Message[1];
+        doAnswer(invocation -> {
+            capturedResponse[0] = invocation.getArgument(0);
+            return null;
+        }).when(mockOut).writeObject(any(Message.class));
+
+        // 2. Thực thi qua Reflection (When)
+        java.lang.reflect.Method method = ClientHandler.class.getDeclaredMethod(
+                "handleGetDashboardStats", Message.class, ObjectOutputStream.class
+        );
+        method.setAccessible(true);
+        method.invoke(clientHandler, msgRequest, mockOut);
+
+        // 3. Assert kiểm tra các trường dữ liệu gom trong Map (Then)
+        assertNotNull(capturedResponse[0]);
+        assertEquals("SUCCESS", capturedResponse[0].getStatus());
+
+        java.util.Map<String, Object> actualStats = (java.util.Map<String, Object>) capturedResponse[0].getData();
+        assertNotNull(actualStats);
+        assertEquals(15000000L, actualStats.get("totalRevenue"));
+        assertEquals(45, actualStats.get("liveAuctions"));
+        assertEquals(120, actualStats.get("totalUsers"));
+        assertEquals(85.5, actualStats.get("successRate"));
+
+        verify(mockUserDao, times(1)).getDashboardStats();
+        verify(mockItemDao, times(1)).getDashboardStats();
+    }
+
+    @Test
+    public void testHandleGetDashboardStats_NoImport_Exception() throws Exception {
+        // 1. Chuẩn bị dữ liệu lỗi: Ép một trong các DAO ném ra lỗi Runtime
+        Message msgRequest = new Message("GET_DASHBOARD_STATS", null);
+        ObjectOutputStream mockOut = mock(ObjectOutputStream.class);
+
+        when(mockUserDao.getDashboardStats()).thenThrow(new RuntimeException("Database error"));
+
+        final Message[] capturedResponse = new Message[1];
+        doAnswer(invocation -> {
+            capturedResponse[0] = invocation.getArgument(0);
+            return null;
+        }).when(mockOut).writeObject(any(Message.class));
+
+        // 2. Thực thi
+        java.lang.reflect.Method method = ClientHandler.class.getDeclaredMethod(
+                "handleGetDashboardStats", Message.class, ObjectOutputStream.class
+        );
+        method.setAccessible(true);
+        method.invoke(clientHandler, msgRequest, mockOut);
+
+        // 3. Kiểm tra khối catch bắt lỗi và gán trạng thái ERROR thành công
+        assertNotNull(capturedResponse[0]);
+        assertEquals("ERROR", capturedResponse[0].getStatus());
+        assertNull(capturedResponse[0].getData()); // Theo code gốc, khi lỗi data không được gán gì mới (vẫn giữ nguyên giá trị cũ hoặc null)
+    }
 }

@@ -12,7 +12,7 @@
 
 <VBox prefWidth="420.0" spacing="15.0" style="-fx-background-color: #ffffff; -fx-background-radius: 10; -fx-border-color: #e2e8f0; -fx-border-radius: 10; -fx-border-width: 1;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auction.client.controllers.CustomerDetailPopupController">
     <children>
-        <Label text="Hồ Sơ Chi Tiết Khách Hàng" textFill="#1e293b">
+        <Label text="%customerview.label.custom" textFill="#1e293b">
             <font>
                 <Font name="System Bold" size="16.0" />
             </font>
@@ -32,24 +32,24 @@
                 <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
             </rowConstraints>
             <children>
-                <Label text="Username:" textFill="#64748b" />
+                <Label text="%customerview.label.Username" textFill="#64748b" />
                 <Label fx:id="lblUsername" text="-" textFill="#334155" GridPane.columnIndex="1">
                     <font><Font name="System Bold" size="13.0" /></font>
                 </Label>
 
-                <Label text="Họ và tên:" textFill="#64748b" GridPane.rowIndex="1" />
+                <Label text="%customerview.label.fullname" textFill="#64748b" GridPane.rowIndex="1" />
                 <Label fx:id="lblFullName" text="-" textFill="#334155" GridPane.columnIndex="1" GridPane.rowIndex="1" />
 
-                <Label text="Số điện thoại:" textFill="#64748b" GridPane.rowIndex="2" />
+                <Label text="%customerview.label.phone" textFill="#64748b" GridPane.rowIndex="2" />
                 <Label fx:id="lblPhone" text="-" textFill="#334155" GridPane.columnIndex="1" GridPane.rowIndex="2" />
 
-                <Label text="Email tài khoản:" textFill="#64748b" GridPane.rowIndex="3" />
+                <Label text="%customerview.label.emailaccount" textFill="#64748b" GridPane.rowIndex="3" />
                 <Label fx:id="lblEmail" text="-" textFill="#334155" GridPane.columnIndex="1" GridPane.rowIndex="3" />
 
-                <Label text="Địa chỉ:" textFill="#64748b" GridPane.rowIndex="4" />
+                <Label text="%customerview.label.address" textFill="#64748b" GridPane.rowIndex="4" />
                 <Label fx:id="lblAddress" text="-" textFill="#334155" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="4" />
 
-                <Label text="Số dư hiện tại:" textFill="#64748b" GridPane.rowIndex="5" />
+                <Label text="%customerview.label.currentbalance" textFill="#64748b" GridPane.rowIndex="5" />
                 <Label fx:id="lblBalance" text="0 VND" textFill="#10b981" GridPane.columnIndex="1" GridPane.rowIndex="5">
                     <font><Font name="System Bold" size="13.0" /></font>
                 </Label>
@@ -58,7 +58,7 @@
 
         <HBox alignment="CENTER_RIGHT" prefHeight="35.0">
             <children>
-                <Button fx:id="btnClose" mnemonicParsing="false" onAction="#handleClose" prefWidth="80.0" style="-fx-background-color: #64748b; -fx-text-fill: white; -fx-background-radius: 6; -fx-cursor: hand;" text="Đóng">
+                <Button fx:id="btnClose" mnemonicParsing="false" onAction="#handleClose" prefWidth="80.0" style="-fx-background-color: #64748b; -fx-text-fill: white; -fx-background-radius: 6; -fx-cursor: hand;" text="%customerview.label.close">
                     <font><Font name="System Bold" size="12.0" /></font>
                 </Button>
             </children>

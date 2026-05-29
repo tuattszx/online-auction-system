@@ -265,7 +265,7 @@
                               <HBox fx:id="statusContainer" alignment="CENTER" fillHeight="false" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="38.0" prefWidth="141.0" spacing="6" stylesheets="@../css/labelstatus.css">
                                  <children>
                                     <Circle fx:id="dot" radius="4" styleClass="badge-dot" />
-                                    <Label fx:id="lblStatus" styleClass="badge-text" text="UPCOMING" />
+                                    <Label fx:id="lblStatus" styleClass="badge-text" text="%itemview.label.upcoming" />
                                  </children>
                                  <styleClass>
                                     <String fx:value="badge-container" />
@@ -307,7 +307,7 @@
                                              <cursor>
                                                 <Cursor fx:constant="HAND" />
                                              </cursor></Button>
-                                          <Button fx:id="btnSetAutoBid" maxWidth="Infinity" onAction="#toggleAutoBidPopup" prefHeight="45.0" style="-fx-background-color: #0052ff; -fx-text-fill: white; -fx-font-weight: bold;" text="SET AUTO BID" HBox.hgrow="ALWAYS">
+                                          <Button fx:id="btnSetAutoBid" maxWidth="Infinity" onAction="#toggleAutoBidPopup" prefHeight="45.0" style="-fx-background-color: #0052ff; -fx-text-fill: white; -fx-font-weight: bold;" text="%itemview.label.setauto" HBox.hgrow="ALWAYS">
                                              <cursor>
                                                 <Cursor fx:constant="HAND" />
                                              </cursor></Button>
@@ -336,7 +336,7 @@
                                           <Font name="System Bold Italic" size="13.0" />
                                        </font>
                                     </Label>
-                                    <Label fx:id="lbendtime" prefHeight="18.0" prefWidth="174.0" text="Label">
+                                    <Label fx:id="lbendtime" prefHeight="18.0" prefWidth="174.0" text="%itemview.label.Label">
                                        <font>
                                           <Font name="System Bold Italic" size="13.0" />
                                        </font>

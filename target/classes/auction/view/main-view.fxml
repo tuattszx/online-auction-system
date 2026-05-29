@@ -99,7 +99,8 @@
                <padding><Insets left="25.0" right="25.0" /></padding>
                <children>
                   <Label style="-fx-font-weight: bold;" text="%mainview.label.sortby" textFill="#555" />
-                  <ComboBox fx:id="sortPrice" prefHeight="35.0" prefWidth="150.0" promptText="%mainview.combobox.price" style="-fx-background-color: white; -fx-border-color: #ddd; -fx-border-radius: 5;" />
+                  <ComboBox fx:id="sortPrice" prefHeight="35.0" prefWidth="150.0" promptText="%mainview.label.price" style="-fx-background-color: white; -fx-border-color: #ddd; -fx-border-radius: 5;" />
+                  <ComboBox fx:id="sortTime" prefHeight="35.0" prefWidth="150.0" promptText="%mainview.label.time" style="-fx-background-color: white; -fx-border-color: #ddd; -fx-border-radius: 5;" />
                   <Region HBox.hgrow="ALWAYS" />
                   <Label text="All products" textFill="#999" />
                </children>

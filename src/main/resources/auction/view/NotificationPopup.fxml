@@ -24,8 +24,8 @@
     </HBox>
     <HBox spacing="29.0">
         <children>
-            <Button fx:id="btnAll" onAction="#handleAllClick" prefHeight="26.0" prefWidth="54.0" text="Tất cả" />
-            <Button fx:id="btnUnread" onAction="#handleUnreadClick" text="Chưa đọc" />
+            <Button fx:id="btnAll" onAction="#handleAllClick" prefHeight="26.0" prefWidth="54.0" text="%notiview.label.all" />
+            <Button fx:id="btnUnread" onAction="#handleUnreadClick" text="%notiview.label.haven't" />
         </children>
     </HBox>
     <ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefHeight="525.0" prefWidth="354.0" style="-fx-background: transparent; -fx-background-color: white;" vbarPolicy="NEVER">

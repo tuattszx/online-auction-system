@@ -34,7 +34,7 @@
                                         <Insets left="16.0" right="16.0" top="10.0" />
                                     </padding>
                                     <children>
-                                        <Label style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #050505;" text="Thông báo" />
+                                        <Label style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #050505;" text="%notiview.label.notifi" />
                                         <Region HBox.hgrow="ALWAYS" />
                                         <Label style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #65676b; -fx-cursor: hand;" text="..." />
                                     </children>
@@ -45,8 +45,8 @@
                                         <Insets bottom="10.0" left="16.0" right="16.0" top="10.0" />
                                     </padding>
                                     <children>
-                                        <Button mnemonicParsing="false" style="-fx-background-color: #e7f3ff; -fx-background-radius: 18; -fx-text-fill: #1877f2; -fx-font-weight: bold; -fx-padding: 6 12 6 12; -fx-cursor: hand;" text="Tất cả" />
-                                        <Button mnemonicParsing="false" style="-fx-background-color: transparent; -fx-background-radius: 18; -fx-text-fill: #050505; -fx-font-weight: bold; -fx-padding: 6 12 6 12; -fx-cursor: hand;" text="Chưa đọc" />
+                                        <Button mnemonicParsing="false" style="-fx-background-color: #e7f3ff; -fx-background-radius: 18; -fx-text-fill: #1877f2; -fx-font-weight: bold; -fx-padding: 6 12 6 12; -fx-cursor: hand;" text="%notiview.label.all" />
+                                        <Button mnemonicParsing="false" style="-fx-background-color: transparent; -fx-background-radius: 18; -fx-text-fill: #050505; -fx-font-weight: bold; -fx-padding: 6 12 6 12; -fx-cursor: hand;" text="%notiview.label.haven't" />
                                     </children>
                                 </HBox>
 
@@ -57,7 +57,7 @@
                                                 <Insets bottom="10.0" />
                                             </padding>
                                             <children>
-                                                <Label style="-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #050505;" text="Mới">
+                                                <Label style="-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #050505;" text="%notiview.label.new">
                                                     <VBox.margin>
                                                         <Insets left="16.0" top="10.0" bottom="5.0"/>
                                                     </VBox.margin>
