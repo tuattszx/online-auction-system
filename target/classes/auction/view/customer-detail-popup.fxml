@@ -49,10 +49,6 @@
                 <Label text="%customerview.label.address" textFill="#64748b" GridPane.rowIndex="4" />
                 <Label fx:id="lblAddress" text="-" textFill="#334155" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="4" />
 
-                <Label text="%customerview.label.currentbalance" textFill="#64748b" GridPane.rowIndex="5" />
-                <Label fx:id="lblBalance" text="0 VND" textFill="#10b981" GridPane.columnIndex="1" GridPane.rowIndex="5">
-                    <font><Font name="System Bold" size="13.0" /></font>
-                </Label>
             </children>
         </GridPane>
 

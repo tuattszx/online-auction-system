@@ -13,9 +13,13 @@ import auction.server.dao.ItemDao;
 import auction.server.utils.NotificationService;
 
 import java.sql.*;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class ItemDaoImpl implements ItemDao {
@@ -348,7 +352,46 @@ public class ItemDaoImpl implements ItemDao {
                 }
             }
 
-            return new Object[]{liveAuctions,successRate};
+            Map<Integer, Integer> categoryDistribution = new HashMap<>();
+            String sqlChart = "SELECT id_category, COUNT(*) AS total_items FROM item_category GROUP BY id_category";
+            try (PreparedStatement stmt = conn.prepareStatement(sqlChart);
+                 ResultSet rs = stmt.executeQuery()) {
+
+                while (rs.next()) {
+                    int catId = rs.getInt("id_category");
+                    int count = rs.getInt("total_items");
+                    categoryDistribution.put(catId, count);
+                }
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            List<Object[]> trendData = new ArrayList<>();
+            String sqlRevenueChart = "SELECT DATE(end_time) AS close_date, SUM(current_price) AS daily_revenue " +
+                    "FROM ITEMS " +
+                    "WHERE (status = 'CLOSED' OR status = 'DELETED') " +
+                    "  AND id_current_bidder IS NOT NULL " +
+                    "  AND end_time >= NOW() - INTERVAL 7 DAY " +
+                    "GROUP BY DATE(end_time) " +
+                    "ORDER BY close_date ASC";
+            SimpleDateFormat chartDateFormat = new SimpleDateFormat("dd/MM");
+            try (PreparedStatement stmt = conn.prepareStatement(sqlRevenueChart);
+                 ResultSet rs = stmt.executeQuery()) {
+
+                while (rs.next()) {
+                    java.sql.Date dbDate = rs.getDate("close_date");
+                    long dailyRevenue = rs.getLong("daily_revenue");
+
+                    String labelDate = chartDateFormat.format(dbDate);
+                    trendData.add(new Object[]{ labelDate, dailyRevenue });
+                }
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            return new Object[]{liveAuctions,successRate,categoryDistribution,trendData};
         } catch (SQLException e){
             e.printStackTrace();
         }
@@ -631,7 +674,7 @@ public class ItemDaoImpl implements ItemDao {
 
     // Hàm phụ trợ để tính thời gian còn lại
     private String calculateRemainingTime(LocalDateTime endTime) {
-        java.time.Duration duration = java.time.Duration.between(LocalDateTime.now(), endTime);
+        java.time.Duration duration = java.time.Duration.between(LocalDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh")), endTime);
         if (duration.isNegative() || duration.isZero()) {
             return "Closed";
         }
@@ -655,7 +698,7 @@ public class ItemDaoImpl implements ItemDao {
                 Item closedItem = finalizeAuctionAndGetItem(itemId);
 
                 if (closedItem != null) {
-                    auction.server.utils.NotificationService.sendClosedNotifications(closedItem, java.time.LocalDateTime.now());
+                    auction.server.utils.NotificationService.sendClosedNotifications(closedItem, java.time.LocalDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh")));
                 }
             }
         } catch (SQLException e) {
@@ -691,7 +734,7 @@ public class ItemDaoImpl implements ItemDao {
                     item.setSellerId(sellerId);
                     item.setCurrentPrice(currentPrice);
 
-                    auction.server.utils.NotificationService.sendOpenNotifications(item, java.time.LocalDateTime.now());
+                    auction.server.utils.NotificationService.sendOpenNotifications(item, java.time.LocalDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh")));
                 }
             }
         } catch (SQLException e) {
@@ -861,7 +904,7 @@ public class ItemDaoImpl implements ItemDao {
                                 itemId,
                                 initialBidAmount,
                                 username,
-                                LocalDateTime.now(),
+                                LocalDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh")),
                                 updateItem.getEndTime()
                         ));
 
@@ -870,7 +913,7 @@ public class ItemDaoImpl implements ItemDao {
                         bidRequest.setIdUser(userId);
                         bidRequest.setBidderName(username);
                         bidRequest.setBidAmount(initialBidAmount);
-                        NotificationService.handleSendMessageBid(updateItem, bidRequest, LocalDateTime.now());
+                        NotificationService.handleSendMessageBid(updateItem, bidRequest, LocalDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh")));
                     }
                     return true;
                 }
@@ -962,7 +1005,7 @@ public class ItemDaoImpl implements ItemDao {
                                 itemId,
                                 nextBidAmount,
                                 nextUsername,
-                                LocalDateTime.now(),
+                                LocalDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh")),
                                 updateItem.getEndTime()
                         ));
 
@@ -971,7 +1014,7 @@ public class ItemDaoImpl implements ItemDao {
                         bidRequest.setIdUser(nextUserId);
                         bidRequest.setBidderName(nextUsername);
                         bidRequest.setBidAmount(nextBidAmount);
-                        NotificationService.handleSendMessageBid(updateItem,bidRequest,LocalDateTime.now());
+                        NotificationService.handleSendMessageBid(updateItem,bidRequest,LocalDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh")));
                     }
 
                     String sqlCheckTime = "SELECT end_time FROM ITEMS WHERE id = ?";
@@ -983,7 +1026,7 @@ public class ItemDaoImpl implements ItemDao {
                                 Timestamp endTs = rsTime.getTimestamp("end_time");
                                 if (endTs != null) {
                                     LocalDateTime endTime = endTs.toLocalDateTime();
-                                    if (java.time.Duration.between(LocalDateTime.now(), endTime).getSeconds() < 30) {
+                                    if (java.time.Duration.between(LocalDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh")), endTime).getSeconds() < 30) {
                                         LocalDateTime newEndTime = endTime.plusMinutes(2);
                                         String sqlUpdateBox = "UPDATE ITEMS SET end_time = ? WHERE id = ?";
                                         try (PreparedStatement psUp = conn.prepareStatement(sqlUpdateBox)) {
@@ -1034,7 +1077,7 @@ public class ItemDaoImpl implements ItemDao {
             if (isDeleted) {
                 System.out.println("[AUTO-BID CANCELLED] Gỡ cấu hình của User ID: " + userId);
                 // Đẩy thông báo thời gian thực về Client
-                auction.server.utils.NotificationService.sendAutoBidCancelledNotification(itemId, userId, reason, LocalDateTime.now());
+                auction.server.utils.NotificationService.sendAutoBidCancelledNotification(itemId, userId, reason, LocalDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh")));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -1077,13 +1120,14 @@ public class ItemDaoImpl implements ItemDao {
         }
     }
     @Override
-    public List<User> getCustomersBySellerId(int sellerId) {
-        List<User> customers = new ArrayList<>();
+    public List<Object[]> getCustomersBySellerId(int sellerId) {
+        List<Object[]> customers = new ArrayList<>();
 
-        // Câu lệnh SQL dựa trên cấu trúc bảng ITEMS thực tế của bạn
-        String sql = "SELECT DISTINCT u.* FROM users u " +
-                "JOIN ITEMS i ON u.ID = i.id_current_bidder " +
-                "WHERE i.id_seller = ? AND i.status = 'CLOSED'";
+        String sql = "SELECT i.id AS item_id, i.name AS item_name, " +
+                "u.ID AS user_id, u.* " +
+                "FROM ITEMS i " +
+                "JOIN users u ON i.id_current_bidder = u.ID " +
+                "WHERE i.id_seller = ? AND (i.status = 'CLOSED' OR i.status = 'DELETED')";
 
         try (Connection conn = DatabaseManager.getInstance().getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -1092,25 +1136,18 @@ public class ItemDaoImpl implements ItemDao {
 
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    // Khởi tạo đối tượng User (Lưu ý: Tên cột 'ID', 'username'.. phải khớp với bảng users của bạn)
-                    User user = new User(
-                            rs.getInt("ID"),             // id lấy từ class cha Account hoặc users
-                            rs.getString("username"),
-                            rs.getString("password"),
-                            rs.getString("email"),
-                            rs.getString("address"),
-                            rs.getLong("balance"),
-                            rs.getString("shippingPhone")
-                    );
+                    User user = new User();
 
-                    // Gán các thuộc tính mở rộng của class User như trong ảnh code của bạn
-                    user.setFirstName(rs.getString("firstName"));
-                    user.setLastName(rs.getString("lastName"));
-                    user.setPhoneNumber(rs.getString("phoneNumber"));
-                    user.setCountry(rs.getString("country"));
-                    user.setLanguage(rs.getString("language"));
+                    user.setId(rs.getInt("user_id"));
+                    user.setUsername(rs.getString("username"));
+                    user.setEmail( rs.getString("email"));
+                    user.setAddress( rs.getString("address"));
+                    user.setFirstName(rs.getString("first_name"));
+                    user.setLastName(rs.getString("last_name"));
+                    user.setPhoneNumber(rs.getString("phone_number"));
 
-                    customers.add(user);
+                    String itemName = rs.getString("item_name");
+                    customers.add(new Object[]{user,itemName});
                 }
             }
         } catch (SQLException e) {

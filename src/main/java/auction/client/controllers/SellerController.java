@@ -149,21 +149,23 @@ public class SellerController {
 
 
     @FXML
-    private TableView<User> customerTable;
+    private TableView<Object[]> customerTable;
     @FXML
-    private TableColumn<User, Integer> colId;
+    private TableColumn<Object[], Integer> colId;
     @FXML
-    private TableColumn<User, String> collName;
+    private TableColumn<Object[], String> collName;
     @FXML
-    private TableColumn<User, String> colPhone;
+    private TableColumn<Object[], String> colPhone;
     @FXML
-    private TableColumn<User, Void> collAction;
+    private TableColumn<Object[], Void> collAction;
+    @FXML
+    private TableColumn<Object[], String> colProductName;
     @FXML
     private TextField searchField;
     @FXML
     private Button addCustomerBtn;
 
-    private ObservableList<User> masterData = FXCollections.observableArrayList();
+    private ObservableList<Object[]> masterData = FXCollections.observableArrayList();
 
     private List<File> selectedFiles;
     @FXML
@@ -197,26 +199,27 @@ public class SellerController {
         endSec.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, 0));
 
         // 1. Cấu hình Binding dữ liệu dựa trên các thuộc tính của class User của bạn
-        colId.setCellFactory(column -> new TableCell<User, Integer>() {
+        colId.setCellFactory(column -> new TableCell<Object[], Integer>() {
             @Override
             protected void updateItem(Integer item, boolean empty) {
                 super.updateItem(item, empty);
                 if (empty) {
                     setText(null);
                 } else {
-                    // Lấy vị trí hàng hiện tại (bắt đầu từ 0) và cộng thêm 1
                     setText(String.valueOf(getIndex() + 1));
                 }
             }
         });
         // Gộp FirstName và LastName lại để hiển thị ở cột Name cho đẹp
         collName.setCellValueFactory(cellData -> {
-            User user = cellData.getValue();
-            String fullName = user.getUsername();
+            Object[] user = cellData.getValue();
+            String fullName =((User) user[0]).getUsername();
             return new SimpleStringProperty(fullName.trim());
         });
 
-        colPhone.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getPhoneNumber()));
+        colPhone.setCellValueFactory(cellData -> new SimpleStringProperty(((User) cellData.getValue()[0]).getPhoneNumber()));
+
+        colProductName.setCellValueFactory( cellData -> new SimpleStringProperty((String) cellData.getValue()[1]));
 
         // 2. Cấu hình cột Action sinh tự động 2 nút bấm MO... và DE... đồng bộ như bên Product View
         setupActionColumn();
@@ -465,6 +468,8 @@ public class SellerController {
             btnNavCustomers.setStyle("-fx-background-color: #e8f0fe; -fx-background-radius: 8;");
             customersIndicator.setVisible(true);
             lblCustomers.setStyle("-fx-text-fill: #1a73e8; -fx-font-weight: bold;");
+            isEditMode=false;
+            editingItemId=-1;
 
             handleShowCustomers(null);
 
@@ -708,11 +713,11 @@ public class SellerController {
                 progressbar.progressProperty().unbind();
 
                 Message response = task.getValue();
+                showMyProducts();
                 if (response != null && "SUCCESS".equals(response.getStatus())) {
                     // Không dùng Alert gây gián đoạn màn hình, nạp lại dữ liệu và chuyển tab nhẹ nhàng
                     loadSellerProducts();
                     clearFields();
-                    showMyProducts();
                 } else {
                     ViewManager.showAlert(Alert.AlertType.ERROR, "Thất bại",
                             response != null ? (String) response.getData() : "Lỗi kết nối Server!");
@@ -767,7 +772,7 @@ public class SellerController {
     }
 
     private void setupActionColumn() {
-        collAction.setCellFactory(param -> new TableCell<User, Void>() {
+        collAction.setCellFactory(param -> new TableCell<Object[], Void>() {
             private final Button btnMore = new Button("MO...");
             private final javafx.scene.layout.HBox container = new javafx.scene.layout.HBox(btnMore);
 
@@ -784,7 +789,7 @@ public class SellerController {
                 if (empty) {
                     setGraphic(null);
                 } else {
-                    User currentUser = getTableRow().getItem();
+                    User currentUser = (User) getTableRow().getItem()[0];
 
                     btnMore.setOnAction(e -> {
                         if (currentUser != null) {
@@ -852,7 +857,7 @@ public class SellerController {
         // 2. Chạy Thread riêng để gửi request qua Socket (Tránh đơ giao diện UI chính)
         new Thread(() -> {
             // Đóng gói request gửi đi (Lệnh lệnh xử lý lấy khách hàng của Seller)
-            Message request = new Message("GET_CUSTOMERS", String.valueOf(sellerId));
+            Message request = new Message("GET_CUSTOMERS", sellerId);
 
             // Gửi và nhận phản hồi trực tiếp từ Server qua hàm sendRequest() của bạn
             Message response = ClientNetwork.getInstance().sendRequest(request);
@@ -862,7 +867,7 @@ public class SellerController {
                 if (response != null && "SUCCESS".equals(response.getStatus())) {
 
                     // Nhận danh sách khách hàng ép kiểu List<User> trả về từ gói tin response
-                    List<User> realCustomers = (List<User>) response.getData();
+                    List<Object[]> realCustomers = (List<Object[]>) response.getData();
 
                     masterData.clear();
                     if (realCustomers != null && !realCustomers.isEmpty()) {

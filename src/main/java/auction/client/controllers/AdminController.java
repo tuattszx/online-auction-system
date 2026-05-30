@@ -1,7 +1,9 @@
 package auction.client.controllers;
 
 import auction.client.ClientNetwork;
+import auction.client.services.AdminManager;
 import auction.client.session.DataSession;
+import auction.client.utils.ToastManager;
 import auction.common.message.Message;
 import auction.common.model.items.Item;
 import auction.common.model.users.User;
@@ -11,6 +13,7 @@ import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
@@ -19,6 +22,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
+import javafx.scene.chart.LineChart;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -26,6 +30,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
+import javafx.stage.Stage;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Modality;
@@ -40,6 +45,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class AdminController {
+    @FXML private LineChart revenueChart;
     @FXML Label lblTotalRevenue;
     @FXML Label lblLiveAuctions;
     @FXML Label lblUsers;
@@ -66,6 +72,8 @@ public class AdminController {
     @FXML
     private VBox vboxAdminProducts;
     private ObservableList<Item> masterData = FXCollections.observableArrayList();
+    private final ObservableList<User> userMasterList = FXCollections.observableArrayList();
+    private FilteredList<User> filteredUserList;
 
     @FXML private TableView<User> adminTable;
     @FXML private TableColumn<User, Number> colId; // Đổi sang Number để làm STT
@@ -114,8 +122,6 @@ public class AdminController {
         setActiveButton(btnDashboard);
         // Tạo dữ liệu PieChart mới bao gồm tất cả các thành phần bạn muốn
 
-        setupPieChart();
-
         colFullName.setCellValueFactory(cellData -> {
             User u = cellData.getValue();
             String fullName = u.getDisplayName() != null ? u.getDisplayName() : (u.getFirstName() + " " + u.getLastName());
@@ -128,9 +134,12 @@ public class AdminController {
         colBalance.setCellValueFactory(cellData -> new javafx.beans.property.SimpleObjectProperty<>(cellData.getValue().getBalance()));
         colFrozen.setCellValueFactory(cellData -> new javafx.beans.property.SimpleObjectProperty<>(cellData.getValue().getFrozenBalance()));
 
+        search();
         setupIdColumn();
         setupCurrencyColumns();
         setupActionsColumn();
+
+        loadDashboardStatistics();
     }
 
     // --- CÁC THÀNH PHẦN MỚI CHO SIDEBAR ---
@@ -272,15 +281,53 @@ public class AdminController {
         });
     }
 
-    private void setupPieChart() {
-        ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList(
-                new PieChart.Data("Hàng điện tử", 35),
-                new PieChart.Data("Đồ cổ", 25),
-                new PieChart.Data("Thời trang", 20),
-                new PieChart.Data("Sách", 10),
-                new PieChart.Data("Trang sức", 10),
-                new PieChart.Data("Khác", 6)
-        );
+    private void search(){
+        filteredUserList = new FilteredList<>(userMasterList, p -> true);
+
+        txtSearch.textProperty().addListener((observable, oldValue, newValue) -> {
+            filteredUserList.setPredicate(user -> {
+                // Nếu thanh tìm kiếm trống -> Hiển thị toàn bộ bản ghi người dùng
+                if (newValue == null || newValue.trim().isEmpty()) {
+                    return true;
+                }
+
+                String lowerCaseFilter = newValue.toLowerCase().trim();
+
+                // Lấy các trường thông tin phục vụ việc so khớp chuỗi ký tự
+                String username = user.getUsername() != null ? user.getUsername().toLowerCase() : "";
+                String email = user.getEmail() != null ? user.getEmail().toLowerCase() : "";
+                String role = user.getRole() != null ? user.getRole().toLowerCase() : "";
+                String displayName = user.getDisplayName() != null ? user.getDisplayName().toLowerCase() : "";
+                String fullName = (user.getFirstName() + " " + user.getLastName()).toLowerCase();
+
+                // Kiểm tra ký tự trùng khớp đa tiêu chí: Username, Tên đầy đủ, Email hoặc Quyền hạn
+                if (username.contains(lowerCaseFilter)) {
+                    return true;
+                } else if (displayName.contains(lowerCaseFilter)) {
+                    return true;
+                } else if (fullName.contains(lowerCaseFilter)) {
+                    return true;
+                } else if (email.contains(lowerCaseFilter)) {
+                    return true;
+                } else if (role.contains(lowerCaseFilter)) {
+                    return true;
+                }
+
+                return false; // Không khớp trường nào -> Ẩn bản ghi này khỏi bảng
+            });
+        });
+
+        adminTable.setItems(filteredUserList);
+    }
+
+    private void setupPieChart(Map<Integer,Integer> categoryDistribution) {
+        ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
+        categoryDistribution.forEach((catIdKey, countVal) -> {
+            int catId = Integer.parseInt(catIdKey.toString());
+            int count = countVal.intValue();
+            String catLabel = getCategoryLabelById(catId);
+            pieChartData.add(new PieChart.Data(catLabel, count));
+        });
         categoryChart.setData(pieChartData);
 
         for (PieChart.Data data : pieChartData) {
@@ -292,24 +339,32 @@ public class AdminController {
         }
     }
 
+    private String getCategoryLabelById(int catId) {
+        switch (catId) {
+            case 30003: return "Nghệ thuật (🖼)";
+            case 30001: return "Nội thất (🛋)";
+            case 30004: return "Trang sức (💎)";
+            case 60001: return "Đồng hồ (⌚)";
+            case 60002: return "Thời trang (👜)";
+            case 60003: return "Tiền cổ (✪)";
+            case 30002: return "Xe cộ (🚗)";
+            case 60004: return "Rượu vang (🍷)";
+            case 60005: return "Sách báo (📚)";
+            default: return "Khác (📦)";
+        }
+    }
+
     private void loadUsersData() {
-        Task<List<User>> loadTask = new Task<>() {
-            @Override
-            protected List<User> call() throws Exception {
-                // Giả sử server của bạn trả về Message chứa danh sách toàn bộ User
-                Message response = network.sendRequest(new Message("GET_ALL_USERS", null));
-                if (response != null && "SUCCESS".equals(response.getStatus())) {
-                    return (List<User>) response.getData();
-                }
-                return new ArrayList<>();
-            }
-        };
-
-        loadTask.setOnSucceeded(e -> {
-            adminTable.setItems(FXCollections.observableArrayList(loadTask.getValue()));
-        });
-
-        new Thread(loadTask).start();
+        AdminManager.getInstance().getAllUsersAsync()
+                .thenAcceptAsync(users -> {
+                    userMasterList.setAll(users);
+                    handleRefreshProducts();
+                }, Platform::runLater)
+                .exceptionally(ex -> {
+                    System.err.println("Lỗi nạp users: " + ex.getMessage());
+                    Platform.runLater(this::handleRefreshProducts);
+                    return null;
+                });
     }
 
     // Xử lý nút bấm phát thông báo Cảnh báo người dùng
@@ -317,24 +372,19 @@ public class AdminController {
         String reason = ViewManager.showInputDialog("Cảnh báo", "Nhập nội dung cảnh báo gửi tới " + user.getUsername() + ":");
         if (reason == null || reason.trim().isEmpty()) return;
 
-        Task<Message> warnTask = new Task<>() {
-            @Override
-            protected Message call() throws Exception {
-                Object[] payload = new Object[]{user.getId(), reason};
-                return network.sendRequest(new Message("WARN_USER", payload));
-            }
-        };
-
-        warnTask.setOnSucceeded(e -> {
-            Message response = warnTask.getValue();
-            // BẮT BUỘC: Check trạng thái phản hồi từ Server
-            if (response != null && "SUCCESS".equals(response.getStatus())) {
-                ViewManager.showAlert(Alert.AlertType.INFORMATION, "Thành công", "Đã gửi tin nhắn cảnh báo tới người dùng!");
-            } else {
-                ViewManager.showAlert(Alert.AlertType.ERROR, "Thất bại", "Server không thể xử lý yêu cầu cảnh báo!");
-            }
-        });
-        new Thread(warnTask).start();
+        AdminManager.getInstance().warnUserAsync(user.getId(), reason)
+                .thenAcceptAsync(response -> {
+                    Stage currentStage= (Stage) btnManageUsers.getScene().getWindow();
+                    if (response != null && "SUCCESS".equals(response.getStatus())) {
+                        ToastManager.showToast(currentStage, ToastManager.ToastType.SUCCESS,"Đã gửi tin nhắn cảnh báo tới người dùng!");
+                    } else {
+                        ToastManager.showToast(currentStage, ToastManager.ToastType.WARNING,"Server không thể xử lý yêu cầu cảnh báo!");
+                    }
+                }, Platform::runLater)
+                .exceptionally(ex -> {
+                    Platform.runLater(() -> ViewManager.showAlert(Alert.AlertType.ERROR, "Lỗi", "Lỗi kết nối mạng: " + ex.getMessage()));
+                    return null;
+                });
     }
 
     private void handleBanUser(User user) {
@@ -342,24 +392,21 @@ public class AdminController {
                 "Hành động này sẽ cấm [" + user.getUsername() + "] Bạn có chắc không?");
         if (!confirm) return;
 
-        Task<Message> banTask = new Task<>() {
-            @Override
-            protected Message call() throws Exception {
-                return network.sendRequest(new Message("DELETE_USER", user.getId()));
-            }
-        };
-
-        banTask.setOnSucceeded(e -> {
-            Message response = banTask.getValue();
-            if (response != null && "SUCCESS".equals(response.getStatus())) {
-                user.setBanned(true);
-                adminTable.refresh();
-                ViewManager.showAlert(Alert.AlertType.INFORMATION, "Thành công", "Đã cấm tài khoản thành công!");
-            } else {
-                ViewManager.showAlert(Alert.AlertType.ERROR, "Thất bại", "Không thể cấm người dùng. Vui lòng thử lại!");
-            }
-        });
-        new Thread(banTask).start();
+        AdminManager.getInstance().banUserAsync(user.getId())
+                .thenAcceptAsync(response -> {
+                    Stage currentStage= (Stage) btnManageUsers.getScene().getWindow();
+                    if (response != null && "SUCCESS".equals(response.getStatus())) {
+                        user.setBanned(true);
+                        adminTable.refresh();
+                        ToastManager.showToast(currentStage, ToastManager.ToastType.SUCCESS,"Đã cấm tài khoản thành công!");
+                    } else {
+                        ToastManager.showToast(currentStage, ToastManager.ToastType.WARNING,"Không thể cấm người dùng. Vui lòng thử lại!");
+                    }
+                }, Platform::runLater)
+                .exceptionally(ex -> {
+                    Platform.runLater(() -> ViewManager.showAlert(Alert.AlertType.ERROR, "Lỗi", "Lỗi hệ thống: " + ex.getMessage()));
+                    return null;
+                });
     }
 
     private void handleUnbanUser(User user) {
@@ -367,24 +414,21 @@ public class AdminController {
                 "Bạn có chắc chắn muốn MỞ KHÓA lại cho tài khoản [" + user.getUsername() + "] không?");
         if (!confirm) return;
 
-        Task<Message> unbanTask = new Task<>() {
-            @Override
-            protected Message call() throws Exception {
-                return network.sendRequest(new Message("UNBAN_USER", user.getId()));
-            }
-        };
-
-        unbanTask.setOnSucceeded(e -> {
-            Message response = unbanTask.getValue();
-            if (response != null && "SUCCESS".equals(response.getStatus())) {
-                user.setBanned(false);
-                adminTable.refresh();
-                ViewManager.showAlert(Alert.AlertType.INFORMATION, "Thành công", "Đã mở khóa tài khoản thành công!");
-            } else {
-                ViewManager.showAlert(Alert.AlertType.ERROR, "Thất bại", "Không thể mở khóa người dùng!");
-            }
-        });
-        new Thread(unbanTask).start();
+        AdminManager.getInstance().unbanUserAsync(user.getId())
+                .thenAcceptAsync(response -> {
+                    Stage currentStage= (Stage) btnManageUsers.getScene().getWindow();
+                    if (response != null && "SUCCESS".equals(response.getStatus())) {
+                        user.setBanned(false);
+                        adminTable.refresh();
+                        ToastManager.showToast(currentStage, ToastManager.ToastType.SUCCESS,"Đã mở khóa tài khoản thành công!");
+                    } else {
+                        ToastManager.showToast(currentStage, ToastManager.ToastType.WARNING,"Không thể mở khóa người dùng!");
+                    }
+                }, Platform::runLater)
+                .exceptionally(ex -> {
+                    Platform.runLater(() -> ViewManager.showAlert(Alert.AlertType.ERROR, "Lỗi", "Lỗi hệ thống: " + ex.getMessage()));
+                    return null;
+                });
     }
 
     private void setLabelsVisible(boolean visible) {
@@ -559,25 +603,21 @@ public class AdminController {
         confirm.setHeaderText(null);
         confirm.showAndWait().ifPresent(res -> {
             if (res == ButtonType.YES) {
-                new Thread(() -> {
-                    // Gửi mã lệnh xử lý kèm theo ID của sản phẩm lên Server
-                    Message request = new Message(command, new Object[]{item.getId(),isapproved});
-                    Message response = ClientNetwork.getInstance().sendRequest(request);
-
-                    Platform.runLater(() -> {
-                        if (response != null && "SUCCESS".equals(response.getStatus())) {
-                            // Cập nhật trạng thái nóng ngay trên giao diện mà không cần reload toàn bộ bảng
-                            item.setStatus(targetStatus);
-                            adminProductTable.refresh();
-
-                            Alert alert = new Alert(Alert.AlertType.INFORMATION, (String) response.getData());
-                            alert.show();
-                        } else {
-                            Alert alert = new Alert(Alert.AlertType.ERROR, "Lỗi hệ thống: Không thể xử lý phê duyệt.");
-                            alert.show();
-                        }
-                    });
-                }).start();
+                AdminManager.getInstance().confirmItemAsync(item.getId(), isapproved)
+                        .thenAcceptAsync(response -> {
+                            Stage currentStage= (Stage) btnApproveItems.getScene().getWindow();
+                            if (response != null && "SUCCESS".equals(response.getStatus())) {
+                                item.setStatus(targetStatus);
+                                adminProductTable.refresh();
+                                ToastManager.showToast(currentStage, ToastManager.ToastType.SUCCESS,(String) response.getData());
+                            } else {
+                                ToastManager.showToast(currentStage, ToastManager.ToastType.WARNING,"Lỗi hệ thống: Không thể xử lý phê duyệt.");
+                            }
+                        }, Platform::runLater)
+                        .exceptionally(ex -> {
+                            Platform.runLater(() -> ViewManager.showAlert(Alert.AlertType.ERROR, "Lỗi", "Lỗi kết nối: " + ex.getMessage()));
+                            return null;
+                        });
             }
         });
     }
@@ -587,57 +627,52 @@ public class AdminController {
      */
     @FXML
     public void handleRefreshProducts() {
-        new Thread(() -> {
-            Message request = new Message("GET_UNAPPROVED_ITEMS", null); // Gọi lệnh lấy hết sản phẩm hệ thống
-            Message response = ClientNetwork.getInstance().sendRequest(request);
-
-            Platform.runLater(() -> {
-                if (response != null && "SUCCESS".equals(response.getStatus())) {
-                    java.util.List<Item> items = (java.util.List<Item>) response.getData();
+        AdminManager.getInstance().getUnapprovedItemsAsync()
+                .thenAcceptAsync(items -> {
                     masterData.clear();
                     if (items != null) {
                         masterData.addAll(items);
                     }
                     adminProductTable.setItems(masterData);
-                }
-            });
-        }).start();
+                }, Platform::runLater)
+                .exceptionally(ex -> {
+                    System.err.println("Lỗi nạp sản phẩm chưa duyệt: " + ex.getMessage());
+                    return null;
+                });
     }
 
     private void loadDashboardStatistics() {
-        Task<Map<String, Object>> statsTask = new Task<>() {
-            @Override
-            protected Map<String, Object> call() throws Exception {
-                Message response = network.sendRequest(new Message("GET_DASHBOARD_STATS", null));
-                if (response != null && "SUCCESS".equals(response.getStatus())) {
-                    return (Map<String, Object>) response.getData();
-                }
-                return null;
-            }
-        };
+        AdminManager.getInstance().getDashboardStatsAsync()
+                .thenAcceptAsync(stats -> {
+                    if (stats != null) {
+                        lblTotalRevenue.setText(String.format("$%,d", ((Number) stats.get("totalRevenue")).longValue()));
+                        lblLiveAuctions.setText(String.valueOf(((Number) stats.get("liveAuctions")).intValue()));
+                        lblUsers.setText(String.format("%,d", ((Number) stats.get("totalUsers")).intValue()));
+                        lblSuccessRate.setText(String.format("%.1f%%", ((Number) stats.get("successRate")).doubleValue()));
+                        setupPieChart((Map<Integer, Integer>) stats.get("categoryDistribution"));
+                        if (stats.containsKey("revenueTrend")) {
+                            revenueChart.getData().clear();
 
-        statsTask.setOnSucceeded(e -> {
-            Map<String, Object> stats = statsTask.getValue();
-            if (stats != null) {
-                // 1. Đổ dữ liệu Total Revenue (Định dạng kiểu tiền tệ: $125,430)
-                long revenue = ((Number) stats.get("totalRevenue")).longValue();
-                lblTotalRevenue.setText(String.format("$%,d", revenue));
+                            javafx.scene.chart.XYChart.Series<String, Number> series = new javafx.scene.chart.XYChart.Series<>();
 
-                // 2. Đổ dữ liệu Live Auctions
-                int live = ((Number) stats.get("liveAuctions")).intValue();
-                lblLiveAuctions.setText(String.valueOf(live));
+                            List<ArrayList<Object>> trendList = (List<ArrayList<Object>>) stats.get("revenueTrend");
 
-                // 3. Đổ dữ liệu Tổng số Users (Lưu ý sửa fx:id trong FXML từ lblUsers thành lblNewUsers hoặc ngược lại cho khớp)
-                int users = ((Number) stats.get("totalUsers")).intValue();
-                lblUsers.setText(String.format("%,d", users));
-
-                // 4. Đổ dữ liệu Tỷ lệ thành công Success Rate (Định dạng 1 chữ số thập phân: 89.5%)
-                double rate = ((Number) stats.get("successRate")).doubleValue();
-                lblSuccessRate.setText(String.format("%.1f%%", rate));
-            }
-        });
-
-        new Thread(statsTask).start();
+                            for (Object itemObj : trendList) {
+                                List<Object> dataPoint = (List<Object>) itemObj;
+                                String dayLabel = (String) dataPoint.get(0);
+                                Number dailyAmount = (Number) dataPoint.get(1);
+                                series.getData().add(new javafx.scene.chart.XYChart.Data<>(dayLabel, dailyAmount));
+                            }
+                            revenueChart.setData(FXCollections.observableArrayList(series));
+                        }
+                    }
+                    loadUsersData();
+                }, Platform::runLater)
+                .exceptionally(ex -> {
+                    System.err.println("Lỗi nạp stats: " + ex.getMessage());
+                    Platform.runLater(this::loadUsersData);
+                    return null;
+                });
     }
 
     public void showProductDetailPopup(Item product) { // Thay 'Object' bằng Model của bạn, ví dụ: 'ProductModel product'

@@ -18,6 +18,7 @@ import org.mindrot.jbcrypt.BCrypt;
 import java.io.*;
 import java.net.Socket;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
@@ -279,7 +280,7 @@ public class ClientHandler implements Runnable {
             int userId= (int) payload[0];
             String reason= (String) payload[1];
 
-            NotificationService.sendAdminWarningNotification(userId, reason,LocalDateTime.now());
+            NotificationService.sendAdminWarningNotification(userId, reason,LocalDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh")));
             msg.setStatus("SUCCESS");
         } catch (Exception e) {
             msg.setStatus("ERROR");
@@ -376,7 +377,7 @@ public class ClientHandler implements Runnable {
             if (isSuccess) {
                 msg.setStatus("SUCCESS");
                 System.out.println("Đã thêm sản phẩm mới: " + item.getName());
-                LocalDateTime now = LocalDateTime.now();
+                LocalDateTime now = LocalDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh"));
                 NotificationService.handleSendMessageAddItem(item, now);
 
             } else {
@@ -461,7 +462,7 @@ public class ClientHandler implements Runnable {
                 responseData= "Phiên đấu giá đang đóng, không thể đặt giá!";
             }
             else if (bidRequest.getBidAmount() <= currentItem.getCurrentPrice()) {
-                responseData = "Giá đã bị đẩy lên € " + currentItem.getCurrentPrice() + ". Vui lòng trả cao hơn!";
+                responseData = "Giá đã bị đẩy lên $ " + currentItem.getCurrentPrice() + ". Vui lòng trả cao hơn!";
             } else {
                 boolean isUpdated = itemDao.placeBid(bidRequest.getIdItem(), bidRequest.getBidAmount(), bidRequest.getIdUser());
                 if (isUpdated) {
@@ -472,7 +473,7 @@ public class ClientHandler implements Runnable {
                         status = "SUCCESS";
                         responseData = "Da dat thanh cong: " + bidRequest.getBidAmount();
 
-                        LocalDateTime now = LocalDateTime.now();
+                        LocalDateTime now = LocalDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh"));
                         LocalDateTime newEndTime = null;
 
                         if (java.time.Duration.between(now, currentItem.getEndTime()).getSeconds() < 30) {
@@ -805,7 +806,7 @@ public class ClientHandler implements Runnable {
                 msg.setStatus("SUCCESS");
                 msg.setData("Cập nhật thành công!");
 
-                LocalDateTime now = LocalDateTime.now();
+                LocalDateTime now = LocalDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh"));
                 NotificationService.handleSendMessageUpdateItem(item, now);
             } else {
                 msg.setStatus("FAILED");
@@ -1006,10 +1007,10 @@ public class ClientHandler implements Runnable {
         try {
             // 1. Bóc tách dữ liệu gửi lên từ Client (id của Seller)
             // Vì Client gửi dạng String.valueOf(sellerId), ta parse về kiểu int
-            int sellerId = Integer.parseInt((String) msg.getData());
+            int sellerId = (int) msg.getData();
 
             // 2. Gọi xuống tầng DAO thực thi câu lệnh SQL kết nối bảng ITEMS để lấy danh sách User
-            List<User> customers = itemDao.getCustomersBySellerId(sellerId);
+            List<Object[]> customers = itemDao.getCustomersBySellerId(sellerId);
 
             // 3. Đóng gói dữ liệu kết quả trả về khi thành công
             msg.setStatus("SUCCESS");
@@ -1069,8 +1070,8 @@ public class ClientHandler implements Runnable {
             if (isSuccess) {
                 msg.setStatus("SUCCESS");
                 msg.setData(isApproved ? " Sản phẩm đã được chấp nhận" : "Đã từ chối sản phẩm");
-                if (isApproved){ NotificationService.handleSendMessageApproveItem(item,LocalDateTime.now());}
-                else NotificationService.handleSendMessageRejectItem(item,null,LocalDateTime.now());
+                if (isApproved){ NotificationService.handleSendMessageApproveItem(item,LocalDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh")));}
+                else NotificationService.handleSendMessageRejectItem(item,null,LocalDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh")));
             } else {
                 msg.setStatus("ERROR");
                 msg.setData("Không tìm thấy sản phẩm hoặc sản phẩm không thể cập nhật.");
@@ -1097,11 +1098,15 @@ public class ClientHandler implements Runnable {
             int liveAuctions = (int) fromItem[0];
             int totalUsers =(int) fromUser[1];
             double successRate = (double) fromItem[1];
+            Map<Integer,Integer> categoryDistribution= (Map<Integer, Integer>) fromItem[2];
+            List<Object[]> revenueTrend= (List<Object[]>) fromItem[3];
 
             stats.put("totalRevenue", totalRevenue);
             stats.put("liveAuctions", liveAuctions);
             stats.put("totalUsers", totalUsers);
             stats.put("successRate", successRate);
+            stats.put("categoryDistribution",categoryDistribution);
+            stats.put("revenueTrend", revenueTrend);
 
             msg.setStatus("SUCCESS");
             msg.setData(stats);

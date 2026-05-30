@@ -14,6 +14,7 @@ module auction {
     requires cloudinary.core;
     requires commons.codec;
     requires jbcrypt;
+    requires io.github.cdimascio.dotenv.java;
 
     // Cho phép JavaFX truy cập vào Controller và View
     opens auction.client.controllers to javafx.fxml;

@@ -132,23 +132,29 @@ public class ClientHandlerTest {
 
     @Test
     public void testHandleLogin_Success() throws Exception {
-        System.out.println("danng chay test 1");
+        System.out.println("Dang chay test: Login Success");
+
         // 1. Chuẩn bị dữ liệu giả lập (Given)
-        Account loginAcc = new Account("admin", "password123");
-        Message msgRequest = new Message("LOGIN",loginAcc);
+        String rawPassword = "password123";
+        // Băm mật khẩu bằng BCrypt giống y hệt như mật khẩu được lưu trong DB thật
+        String hashedPassword = org.mindrot.jbcrypt.BCrypt.hashpw(rawPassword, org.mindrot.jbcrypt.BCrypt.gensalt());
+
+        Account loginAcc = new Account("admin", rawPassword); // Client gửi mật khẩu thô
+        Message msgRequest = new Message("LOGIN", loginAcc);
 
         User expectedUser = new User();
         expectedUser.setUsername("admin");
         expectedUser.setEmail("admin@auction.com");
+        expectedUser.setPassword(hashedPassword); // Thiết lập mật khẩu đã băm cho User trả về từ DB
 
-        // Mock hành vi của DAO: khi truyền đúng u/p thì trả về User
-        when(mockUserDao.CheckLogin("admin", "password123")).thenReturn(expectedUser);
+        // MOCK: Khi tìm kiếm bằng username "admin", trả về đối tượng user có pass đã băm
+        when(mockUserDao.findUserByUsername("admin")).thenReturn(expectedUser);
 
         // 2. Client gửi message tới Server (When)
         testClientOut.writeObject(msgRequest);
         testClientOut.flush();
 
-        // Chạy ClientHandler trong 1 Thread riêng vì vòng lặp `while(true)` sẽ block main thread
+        // Chạy ClientHandler trong một Thread riêng
         Thread handlerThread = new Thread(clientHandler);
         handlerThread.start();
         testClientIn = new ObjectInputStream(pipeFromServer);
@@ -163,16 +169,19 @@ public class ClientHandlerTest {
 
         User loggedInUser = (User) msgResponse.getData();
         assertEquals("admin", loggedInUser.getUsername());
-        assertEquals("admin", clientHandler.getLoggedInUser().getUsername()); // Kiểm tra state được lưu
+        assertEquals("admin", clientHandler.getLoggedInUser().getUsername()); // Kiểm tra state của Handler đã cập nhật
     }
 
     @Test
-    public void testHandleLogin_Failed() throws Exception {
-        // 1. Chuẩn bị dữ liệu sai
-        Account loginAcc = new Account("wrong_user", "wrong_pass");
-        Message msgRequest = new Message("LOGIN",loginAcc);
-        // Mock hành vi DAO: Trả về null khi sai tài khoản
-        when(mockUserDao.CheckLogin("wrong_user", "wrong_pass")).thenReturn(null);
+    public void testHandleLogin_Failed_UserNotFound() throws Exception {
+        System.out.println("Dang chay test: Login Failed (User Not Found)");
+
+        // 1. Chuẩn bị dữ liệu: Tài khoản không tồn tại
+        Account loginAcc = new Account("wrong_user", "any_password");
+        Message msgRequest = new Message("LOGIN", loginAcc);
+
+        // MOCK: Trả về null khi tìm kiếm username này
+        when(mockUserDao.findUserByUsername("wrong_user")).thenReturn(null);
 
         // 2. Gửi request
         testClientOut.writeObject(msgRequest);
@@ -1879,7 +1888,7 @@ public class ClientHandlerTest {
         customer1.setUsername("customer_alpha");
 
         java.util.List<User> mockCustomers = java.util.List.of(customer1);
-        when(mockItemDao.getCustomersBySellerId(sellerId)).thenReturn(mockCustomers);
+        //when(mockItemDao.getCustomersBySellerId(sellerId)).thenReturn(mockCustomers);
 
         // Bắt gói tin ghi ra stream bằng doAnswer (thay cho ArgumentCaptor)
         final Message[] capturedResponse = new Message[1];

@@ -13,7 +13,6 @@ public class CustomerDetailPopupController {
     @FXML private Label lblPhone;
     @FXML private Label lblEmail;
     @FXML private Label lblAddress;
-    @FXML private Label lblBalance;
     @FXML private Button btnClose;
 
     /**
@@ -32,8 +31,6 @@ public class CustomerDetailPopupController {
         lblEmail.setText(user.getEmail() != null ? user.getEmail() : "Không có");
         lblAddress.setText(user.getAddress() != null ? user.getAddress() : "Chưa cập nhật");
 
-        // Định dạng hiển thị tiền tệ số dư ví khách hàng
-        lblBalance.setText(String.format("%,d VND", user.getBalance()));
     }
 
     @FXML

@@ -50,7 +50,7 @@
                         </HBox>
                         <HBox alignment="CENTER_LEFT" style="-fx-background-color: #F8FAFC; -fx-border-color: #CBD5E1; -fx-border-radius: 8; -fx-background-radius: 8; -fx-padding: 8 12 8 12;">
                             <children>
-                                <Label text="€" textFill="#64748B">
+                                <Label text="/$" textFill="#64748B">
                                     <font>
                                         <Font name="System Bold" size="14.0" />
                                     </font>
@@ -77,7 +77,7 @@
                         </Label>
                         <HBox alignment="CENTER_LEFT" style="-fx-background-color: #F8FAFC; -fx-border-color: #CBD5E1; -fx-border-radius: 8; -fx-background-radius: 8; -fx-padding: 8 12 8 12;">
                             <children>
-                                <Label text="€" textFill="#64748B">
+                                <Label text="/$" textFill="#64748B">
                                     <font>
                                         <Font name="System Bold" size="14.0" />
                                     </font>

@@ -2,6 +2,7 @@ package auction.server;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import io.github.cdimascio.dotenv.Dotenv;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -9,23 +10,24 @@ import java.sql.SQLException;
 
 
 public class DatabaseManager {
-    private static final String HOST = "gateway01.ap-southeast-1.prod.aws.tidbcloud.com";
-    private static final String PORT = "4000";
-    private static final String USER = "GRmFoHTy82Wuncw.root";
-    private static final String PASS = "5lthvbCLcBtIfZ2C";
-    private static final String DB_NAME = "test";
-
-    private static final String URL = "jdbc:mysql://" + HOST + ":" + PORT + "/" + DB_NAME + "?useSSL=true&trustServerCertificate=true";
-
     private static DatabaseManager instance;
     private static HikariDataSource dataSource;
     private DatabaseManager() {
         try {
+            Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
+
+            String host = dotenv.get("DB_HOST", System.getenv("DB_HOST"));
+            String port = dotenv.get("DB_PORT", System.getenv("DB_PORT"));
+            String user = dotenv.get("DB_USER", System.getenv("DB_USER"));
+            String pass = dotenv.get("DB_PASS", System.getenv("DB_PASS"));
+            String dbName = dotenv.get("DB_NAME", System.getenv("DB_NAME"));
+
+            String url = "jdbc:mysql://" + host + ":" + port + "/" + dbName + "?useSSL=true&trustServerCertificate=true";
             HikariConfig config = new HikariConfig();
 
-            config.setJdbcUrl(URL);
-            config.setUsername(USER);
-            config.setPassword(PASS);
+            config.setJdbcUrl(url);
+            config.setUsername(user);
+            config.setPassword(pass);
             config.setDriverClassName("com.mysql.cj.jdbc.Driver");
 
             config.setMaximumPoolSize(20);

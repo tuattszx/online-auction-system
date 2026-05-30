@@ -127,7 +127,7 @@ public class ItemviewController implements Cleanable {
                 }
             }
 
-            lbCurrentBid.setText(String.format("€ %,d", selectedItem.getCurrentPrice(),"Updating...."));
+            lbCurrentBid.setText(String.format("$ %,d", selectedItem.getCurrentPrice(),"Updating...."));
 
             loadExtraImages(selectedItem.getId());
             updateAllData(selectedItem.getId());
@@ -181,7 +181,7 @@ public class ItemviewController implements Cleanable {
         this.bidUpdateCallback = notification -> {
             Platform.runLater(() -> {
                 // 1. Cập nhật giá cao nhất hiện tại
-                lbCurrentBid.setText(String.format("€ %,d", notification.getNewPrice()));
+                lbCurrentBid.setText(String.format("$ %,d", notification.getNewPrice()));
 
                 // 2. Thêm dòng mới vào bảng lịch sử (Bid Table)
                 Bid newBid = new Bid();
@@ -207,10 +207,14 @@ public class ItemviewController implements Cleanable {
 
     private void setupGlobalNotificationListener() {
         this.globalNotificationCallback = notification -> {
-            if (currentItem != null && notification instanceof auction.common.model.notifications.BidNotification) {
-                auction.common.model.notifications.BidNotification bidNotif = (auction.common.model.notifications.BidNotification) notification;
+            if (currentItem != null && notification != null) {
+                String title = notification.getTitle();
+                int notifItemId = 0;
+                if (notification instanceof auction.common.model.notifications.BidNotification) {
+                    notifItemId = ((auction.common.model.notifications.BidNotification) notification).getItemId();
+                }
 
-                if (bidNotif.getItemId() == currentItem.getId() && "AUTOBID_CANCELLED".equals(bidNotif.getTitle())) {
+                if ("AUTOBID_CANCELLED".equals(title) && notifItemId == currentItem.getId()) {
 
                     Platform.runLater(() -> {
                         if (isAutoBidActive) {
@@ -220,7 +224,7 @@ public class ItemviewController implements Cleanable {
                             btnSetAutoBid.setStyle("-fx-background-color: #0052FF; -fx-cursor: hand; -fx-font-weight: bold; -fx-text-fill: white");
 
                             Stage currentStage = (Stage) btnSetAutoBid.getScene().getWindow();
-                            ToastManager.showToast(currentStage, ToastManager.ToastType.WARNING, bidNotif.getMessage());
+                            ToastManager.showToast(currentStage, ToastManager.ToastType.WARNING, notification.getMessage());
                         }
                     });
                 }
@@ -236,7 +240,7 @@ public class ItemviewController implements Cleanable {
         AuctionManager.getInstance().getLatestItemAsync(itemId).thenAccept(item -> {
             if (item != null) {
                 Platform.runLater(() -> {
-                    lbCurrentBid.setText(String.format("€ %,d", item.getCurrentPrice()));
+                    lbCurrentBid.setText(String.format("$ %,d", item.getCurrentPrice()));
                     this.currentItem = item; // Cập nhật để countdown chạy đúng
                 });
             }
@@ -600,7 +604,7 @@ public class ItemviewController implements Cleanable {
         isAutoBidActive = true;
 
         // Đổi chữ và chuyển sang tone màu xám/vàng hoặc đỏ dịu để báo hiệu "Hủy"
-        btnSetAutoBid.setText("CANCEL AUTO BID (" + maxPrice + " €)");
+        btnSetAutoBid.setText("CANCEL AUTO BID (" + maxPrice + " $)");
         btnSetAutoBid.setStyle("-fx-background-color: #EF4444;-fx-cursor: hand; -fx-font-weight: bold; -fx-text-fill: white");
         // Bạn có thể đổi màu #64748B thành màu đỏ cam #EF4444 nếu muốn nhấn mạnh hành động bấm vào là HỦY.
     }

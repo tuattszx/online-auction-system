@@ -246,9 +246,6 @@ public class NotificationService {
 
             itemNotif.setCreatedAt(now);
 
-            // 2. Ghi nhận lịch sử thông báo xuống Database bảng notifications
-            notificationDao.add(itemNotif);
-
             // 3. Bắn tin nhắn trực tiếp xuống luồng Socket của chính Client này
             saveAndSendRealtime(itemNotif);
             System.out.println("DEBUG: Đã phát thông báo đăng sản phẩm real-time thành công cho User ID: " + item.getSellerId());
