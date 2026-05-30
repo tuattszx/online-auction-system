@@ -90,7 +90,7 @@ public class UserDaoImpl implements UserDao {
                 user.getShippingPhone(),
                 user.getCardHolderName(), // Lấy từ object user
                 user.getCardNumber()      // Lấy từ object user
-                , user.getLanguage()
+                , user.getLanguage(),user.getPassword()
         );
     }
 
@@ -286,12 +286,12 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public boolean updateProfile(int userId, String newDisName, String newFirstName, String newLastName,
-                                 String newEmail, String newAddress, String newPhoneNumber, String newCountry, String newshippingPhone,String cardName, String cardNum, String language) {
+                                 String newEmail, String newAddress, String newPhoneNumber, String newCountry, String newshippingPhone,String cardName, String cardNum, String language, String Password) {
 
         // Câu lệnh UPDATE map chuẩn xác 7 trường thông tin thông qua ID
         String sql = "UPDATE users SET dis_name = ?, first_name = ?, last_name = ?, EMAIL = ?, "
                 + "ADDRESS = ?, phone_number = ?, country = ?, shipping_phone = ?, "
-                + "card_holder_name = ?, card_number = ?, language= ? WHERE ID = ?";
+                + "card_holder_name = ?, card_number = ?, language= ? ,password=? WHERE ID = ?";
 
         try (Connection conn = DatabaseManager.getInstance().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -307,7 +307,8 @@ public class UserDaoImpl implements UserDao {
             pstmt.setString(9, cardName);  // Cột card_holder_name
             pstmt.setString(10, cardNum);
             pstmt.setString(11,language);
-            pstmt.setInt(12, userId);
+            pstmt.setString(12,Password);
+            pstmt.setInt(13, userId);
 
             return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {

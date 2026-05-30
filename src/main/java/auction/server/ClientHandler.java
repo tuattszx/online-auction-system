@@ -210,7 +210,6 @@ public class ClientHandler implements Runnable {
 
         // 1. Thay vì gọi CheckLogin, ta gọi hàm tìm User chỉ bằng Username
         User user = userDao.findUserByUsername(accReq.getUsername());
-
         // 2. Tiến hành kiểm tra: User có tồn tại VÀ mật khẩu thô khớp với mật khẩu băm trong DB không
         if (user != null && BCrypt.checkpw(accReq.getPassword(), user.getPassword())) {
 

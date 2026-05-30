@@ -269,11 +269,11 @@ public class LoginController {
         String confirmPass = txtConfirmNewPassword.getText().trim();
 
         // 1. Kiểm tra dữ liệu thô tại chỗ (Client-side validation) giống đăng ký
-        if (newPass.length() < 6) {
-            Alert alert = new Alert(Alert.AlertType.WARNING, "Mật khẩu mới phải từ 6 ký tự trở lên!");
-            alert.show();
-            return;
-        }
+//        if (newPass.length() < 6) {
+//            Alert alert = new Alert(Alert.AlertType.WARNING, "Mật khẩu mới phải từ 6 ký tự trở lên!");
+//            alert.show();
+//            return;
+//        }
 
         if (!newPass.equals(confirmPass)) {
             Alert alert = new Alert(Alert.AlertType.WARNING, "Mật khẩu xác nhận không trùng khớp!");

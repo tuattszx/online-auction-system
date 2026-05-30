@@ -98,7 +98,7 @@ public class ClientNetwork {
 
     public Message sendRequest(Message request) {
         try {
-            return sendRequestAsync(request).get(5, TimeUnit.SECONDS);
+            return sendRequestAsync(request).get(20, TimeUnit.SECONDS);
         } catch (Exception e) {
             System.err.println("Lỗi hoặc Timeout: " + e.getMessage());
             return new Message("TIMEOUT_OR_ERROR");

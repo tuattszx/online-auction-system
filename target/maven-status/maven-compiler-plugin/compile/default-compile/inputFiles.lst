@@ -2,6 +2,7 @@ D:\online-auction-system\src\main\java\auction\client\ClientNetwork.java
 D:\online-auction-system\src\main\java\auction\client\controllers\AdminController.java
 D:\online-auction-system\src\main\java\auction\client\controllers\AuctionDashboardController.java
 D:\online-auction-system\src\main\java\auction\client\controllers\AutoBidController.java
+D:\online-auction-system\src\main\java\auction\client\controllers\CustomerDetailPopupController.java
 D:\online-auction-system\src\main\java\auction\client\controllers\FavoriteViewController.java
 D:\online-auction-system\src\main\java\auction\client\controllers\HeaderMenuController.java
 D:\online-auction-system\src\main\java\auction\client\controllers\ItemviewController.java
@@ -37,6 +38,7 @@ D:\online-auction-system\src\main\java\auction\common\model\items\ItemImage.java
 D:\online-auction-system\src\main\java\auction\common\model\notifications\BidNotification.java
 D:\online-auction-system\src\main\java\auction\common\model\notifications\ItemNotification.java
 D:\online-auction-system\src\main\java\auction\common\model\notifications\Notification.java
+D:\online-auction-system\src\main\java\auction\common\model\notifications\SystemNotification.java
 D:\online-auction-system\src\main\java\auction\common\model\users\Account.java
 D:\online-auction-system\src\main\java\auction\common\model\users\Admin.java
 D:\online-auction-system\src\main\java\auction\common\model\users\User.java

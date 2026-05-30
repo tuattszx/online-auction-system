@@ -17,6 +17,7 @@ import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.*;
@@ -36,6 +37,7 @@ import javafx.util.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class AdminController {
     @FXML Label lblTotalRevenue;
@@ -682,25 +684,41 @@ public class AdminController {
         imgProduct.setFitWidth(130);
         imgProduct.setFitHeight(130);
         imgProduct.setPreserveRatio(true);
-        if(product.getImages()!=null && !product.getImages().isEmpty()){
-            String imgUrl=product.getImages().get(0).getUrlImage();
-            if (imgUrl!=null && !imgUrl.isEmpty()){
-                Image img=new Image(imgUrl,true);
-                imgProduct.setImage(img);
-            }
+        if (product.getImages() != null && !product.getImages().isEmpty()) { //
+
+            // 1. Dùng mảng 1 phần tử hoặc biến lớp để lưu vị trí ảnh hiện tại (bắt đầu từ 0)
+            AtomicInteger count= new AtomicInteger();
+
+            // 2. Tạo hàm cập nhật ảnh để tái sử dụng khi click
+            Runnable updateImageDisplay = () -> {
+                String imgUrl = product.getImages().get(count.get()).getUrlImage();
+                if (imgUrl != null && !imgUrl.isEmpty()) { //
+                    // Bật backgroundLoading để không làm đơ giao diện khi load ảnh mới từ mạng
+                    Image img = new Image(imgUrl, true); //
+                    imgProduct.setImage(img); //
+                }
+            };
+
+            // Hiển thị ảnh đầu tiên khi vừa mở giao diện lên
+            updateImageDisplay.run();
+
+            // 3. Thiết lập hiệu ứng và sự kiện Click cho khung hiển thị ảnh
+            imgProduct.setCursor(Cursor.HAND); // Đổi chuột thành hình bàn tay khi di chuyển vào ảnh để báo hiệu click được
+
+            imgProduct.setOnMouseClicked(event -> {
+                // Tăng index lên 1, nếu vượt quá số lượng ảnh thì quay về 0 (Vòng lặp ảnh)
+                count.set((count.get() + 1) % product.getImages().size());
+
+                // Gọi hàm cập nhật hiển thị ảnh mới
+                updateImageDisplay.run();
+            });
+        } else {
+            // Trường hợp sản phẩm không có ảnh nào, hiển thị ảnh lỗi/mặc định hệ thống
+            Image defaultImg = new Image(getClass().getResourceAsStream("/images/default-bell.png"));
+            imgProduct.setImage(defaultImg);
         }
+
         imageContainer.getChildren().add(imgProduct);
-
-
-//        if (selectedItem.getImages() != null && !selectedItem.getImages().isEmpty()) {
-//            String imageUrl = selectedItem.getImages().get(0).getUrlImage();
-//
-//            if (imageUrl != null && !imageUrl.isEmpty()) {
-//                // Load ảnh trực tiếp từ link Cloudinary
-//                Image img = new Image(imageUrl, true);
-//                mainImage.setImage(img);
-//            }
-//        }
 
         // Grid chứa thông tin dạng Label: Value
         GridPane grid = new GridPane();
@@ -729,7 +747,8 @@ public class AdminController {
         Label lblStartTitle = new Label("Thời gian bắt đầu:");
         lblStartTitle.setPrefWidth(110);
         lblStartTitle.setTextFill(Color.web("#64748b"));
-        Label lblStartVal = new Label("2026-05-29 08:00"); // product.getStartTime()
+        Label lblStartVal = new Label(); // product.getStartTime()
+        lblStartVal.setText(String.valueOf(product.getStartTime()));
         lblStartVal.setTextFill(Color.web("#334155"));
         startRow.getChildren().addAll(lblStartTitle, lblStartVal);
 
@@ -737,7 +756,8 @@ public class AdminController {
         Label lblEndTitle = new Label("Thời gian kết thúc:");
         lblEndTitle.setPrefWidth(110);
         lblEndTitle.setTextFill(Color.web("#64748b"));
-        Label lblEndVal = new Label("2026-06-05 18:00"); // product.getEndTime()
+        Label lblEndVal = new Label(); // product.getEndTime()
+        lblEndVal.setText(String.valueOf(product.getEndTime()));
         lblEndVal.setTextFill(Color.web("#334155"));
         endRow.getChildren().addAll(lblEndTitle, lblEndVal);
 
@@ -769,9 +789,9 @@ public class AdminController {
         btnApprove.setPrefSize(90, 36);
         btnApprove.setStyle("-fx-background-color: #10b981; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-cursor: hand;");
         btnApprove.setOnAction(e -> {
-            // Xử lý logic duyệt sản phẩm của bạn ở đây...
-            System.out.println("Đã duyệt sản phẩm!");
-            popupStage.close();
+            if (product != null) {
+                processProductApproval(product, "CONFIRM_ITEM", "PENDING",true);
+            }
         });
 
         footer.getChildren().addAll(btnClose, btnApprove);

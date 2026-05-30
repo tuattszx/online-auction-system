@@ -10,7 +10,7 @@ public interface UserDao extends GenericDAO<User, Integer> {
     boolean updatePassword(int userId, String newPassword);
     boolean updateBalance(int id, long amount);
     boolean updateProfile(int userId, String newDisName, String newFirstName, String newLastName,
-                          String newEmail, String newAddress, String newPhoneNumber, String newCountry, String newshippingPhone,String cardName, String cardNum, String language);
+                          String newEmail, String newAddress, String newPhoneNumber, String newCountry, String newshippingPhone,String cardName, String cardNum, String language, String PassWord);
     Object[] getDashboardStats();
     boolean unbanUser(int userId);
     User findUserByUsername(String username);

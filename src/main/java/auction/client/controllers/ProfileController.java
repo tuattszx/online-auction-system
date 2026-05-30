@@ -11,6 +11,9 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
@@ -25,8 +28,14 @@ import java.util.Map;
 
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import org.apache.commons.codec.language.bm.Lang;
 import org.controlsfx.control.SearchableComboBox;
+import org.mindrot.jbcrypt.BCrypt;
 
 public class ProfileController  {
     @FXML private SearchableComboBox<String> countryPicker;
@@ -203,8 +212,42 @@ public class ProfileController  {
         String finalName = editNameBox.isVisible() ? txtNameInput.getText().trim() : lbname.getText();
         String finalEmail = editEmailBox.isVisible() ? txtEmailInput.getText().trim() : lbemail.getText();
         String finalPhone = editPhoneBox.isVisible() ? txtPhoneInput.getText().trim() : lbphonenumber.getText();
-        String finalPassword = editPasswordBox.isVisible() ? txtPasswordInput.getText() : user.getPassword();
+        String finalPassword = user.getPassword();
 
+        if (editPasswordBox.isVisible()) {
+            String inputPassword = txtPasswordInput.getText();
+
+            // Nếu người dùng có gõ gì đó vào ô mật khẩu
+            if (inputPassword != null && !inputPassword.isEmpty()) {
+
+                try {
+                    // SỬA TẠI ĐÂY: Dùng BCrypt.checkpw để kiểm tra xem mật khẩu nhập vào có KHÁC mật khẩu cũ không.
+                    // Nếu checkpw trả về true nghĩa là nhập trùng mật khẩu cũ -> Ta không cần hiện popup bắt xác thực lại nữa.
+                    boolean isSameAsOld = org.mindrot.jbcrypt.BCrypt.checkpw(inputPassword, user.getPassword());
+
+                    if (!isSameAsOld) {
+                        // Tạo một mảng lưu kết quả từ popup (dùng mảng vì biến trong lambda phải là hiệu dụng final)
+                        final String[] verifiedPassword = {null};
+
+                        // Gọi hàm mở Popup kiểm tra mật khẩu cũ và xác nhận mật khẩu mới
+                        showChangePasswordConfirmPopup(user.getPassword(), inputPassword, verifiedPassword);
+
+                        // Nếu người dùng hủy popup hoặc nhập sai mật khẩu cũ -> Dừng hàm Save luôn, không lưu gì cả
+                        if (verifiedPassword[0] == null) {
+                            return;
+                        }
+
+                        // Nếu xác thực thành công qua popup, lấy mật khẩu mới (đã được mã hóa BCrypt bên trong popup) chuẩn bị gửi lên server
+                        user.setPassword(verifiedPassword[0]);
+                    String a=user.getPassword();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    // Phòng trường hợp chuỗi trong user.getPassword() chưa kịp hash hoặc sai định dạng BCrypt
+                    System.out.println("Lỗi kiểm tra định dạng BCrypt mật khẩu cũ.");
+                }
+            }
+        }
         // 2. Dữ liệu từ tab Address (Lấy từ các Input mới)
         String finalFirstName = txtFirstNameInput.getText()!=null ? txtFirstNameInput.getText().trim() : "";
         String finalLastName = txtLastNameInput.getText() !=null ? txtLastNameInput.getText().trim():"";
@@ -224,9 +267,6 @@ public class ProfileController  {
         user.setCardHolderName(finalCardName);
         user.setCardNumber(finalCardNumber);
         user.setLanguage(finalLanguage);
-        if (editPasswordBox.isVisible() && !finalPassword.isEmpty()) {
-            user.setPassword(finalPassword);
-        }
 
 
         // 5. Gọi hàm update database của bạn
@@ -318,6 +358,102 @@ public class ProfileController  {
                     "Có lỗi xảy ra trong quá trình truyền tải: " + e.getMessage()
             );
         }
+    }
+    private void showChangePasswordConfirmPopup(String hashedOldPassword, String newPasswordInput, String[] resultContainer) {
+        Stage popupStage = new Stage();
+        popupStage.initModality(Modality.APPLICATION_MODAL);
+        popupStage.initStyle(StageStyle.TRANSPARENT);
+
+        VBox root = new VBox(16);
+        root.setPadding(new Insets(24));
+        root.setPrefWidth(380);
+        root.setStyle(
+                "-fx-background-color: #ffffff; -fx-background-radius: 12; " +
+                        "-fx-effect: dropshadow(three-pass-box, rgba(15, 23, 42, 0.1), 15, 0, 0, 4);"
+        );
+
+        // Header
+        VBox header = new VBox(4);
+        Label titleLabel = new Label("Xác thực đổi mật khẩu");
+        titleLabel.setFont(Font.font("System", FontWeight.BOLD, 16));
+        titleLabel.setTextFill(Color.web("#0f172a"));
+        Label subTitleLabel = new Label("Vui lòng nhập mật khẩu hiện tại để xác nhận thay đổi.");
+        subTitleLabel.setFont(Font.font("System", 12));
+        subTitleLabel.setTextFill(Color.web("#64748b"));
+        header.getChildren().addAll(titleLabel, subTitleLabel);
+
+        // Input ô nhập mật khẩu hiện tại
+        VBox inputFieldBox = new VBox(6);
+        Label lblOld = new Label("Mật khẩu hiện tại của bạn");
+        lblOld.setFont(Font.font("System", FontWeight.SEMI_BOLD, 12));
+        lblOld.setTextFill(Color.web("#475569"));
+
+        PasswordField txtConfirmOld = new PasswordField();
+        txtConfirmOld.setPromptText("Nhập mật khẩu hiện tại");
+        txtConfirmOld.setStyle(
+                "-fx-background-color: #ffffff; -fx-border-color: #cbd5e1; " +
+                        "-fx-border-radius: 6; -fx-background-radius: 6; -fx-padding: 8 12;"
+        );
+        inputFieldBox.getChildren().addAll(lblOld, txtConfirmOld);
+
+        // Label báo lỗi
+        Label lblError = new Label();
+        lblError.setTextFill(Color.web("#ef4444"));
+        lblError.setFont(Font.font("System", 12));
+        lblError.setVisible(false);
+
+        // Footer Buttons
+        HBox footer = new HBox(12);
+        footer.setAlignment(Pos.CENTER_RIGHT);
+
+        Button btnCancel = new Button("Hủy");
+        btnCancel.setStyle("-fx-background-color: #f1f5f9; -fx-text-fill: #475569; -fx-background-radius: 6; -fx-cursor: hand;");
+        btnCancel.setPrefSize(70, 32);
+        btnCancel.setOnAction(e -> popupStage.close());
+
+        Button btnConfirm = new Button("Xác nhận");
+        btnConfirm.setStyle("-fx-background-color: #3b82f6; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-cursor: hand;");
+        btnConfirm.setPrefSize(90, 32);
+
+        btnConfirm.setOnAction(e -> {
+            String enteredOldPassword = txtConfirmOld.getText();
+
+            if (enteredOldPassword == null || enteredOldPassword.isEmpty()) {
+                lblError.setText("Vui lòng không để trống!");
+                lblError.setVisible(true);
+                return;
+            }
+
+            try {
+                // THAY ĐỔI QUAN TRỌNG: Sử dụng BCrypt.checkpw để so sánh chuỗi thô nhập vào và chuỗi đã hash trong DB
+                // Tham số 1: Mật khẩu thô (user gõ vào ô text)
+                // Tham số 2: Mật khẩu đã mã hóa (lấy từ user.getPassword() truyền vào)
+                if (BCrypt.checkpw(enteredOldPassword, hashedOldPassword)) {
+
+                    // Khớp thành công -> Tiến hành mã hóa luôn mật khẩu mới trước khi gửi lên Server (Rất khuyến khích làm ở Client)
+                    // Nếu bạn muốn Server tự mã hóa thì chỉ cần gán: resultContainer[0] = newPasswordInput;
+                    String hashedNewPassword = BCrypt.hashpw(newPasswordInput, BCrypt.gensalt());
+                    resultContainer[0] = hashedNewPassword;
+
+                    popupStage.close();
+                } else {
+                    lblError.setText("Mật khẩu hiện tại không chính xác!");
+                    lblError.setVisible(true);
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                lblError.setText("Lỗi hệ thống khi kiểm tra mật khẩu!");
+                lblError.setVisible(true);
+            }
+        });
+
+        footer.getChildren().addAll(btnCancel, btnConfirm);
+        root.getChildren().addAll(header, inputFieldBox, lblError, footer);
+
+        Scene scene = new Scene(root);
+        scene.setFill(Color.TRANSPARENT);
+        popupStage.setScene(scene);
+        popupStage.showAndWait();
     }
 
     private void updateSidebarUI(HBox selectedBtn, Region selectedIndicator) {

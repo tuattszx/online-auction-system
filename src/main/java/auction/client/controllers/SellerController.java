@@ -196,7 +196,6 @@ public class SellerController {
         startSec.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, 0));
         endSec.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, 0));
 
-        loadSellerRevenue();
         // 1. Cấu hình Binding dữ liệu dựa trên các thuộc tính của class User của bạn
         colId.setCellFactory(column -> new TableCell<User, Integer>() {
             @Override
@@ -532,6 +531,7 @@ public class SellerController {
 
     @FXML
     private void handleShowMyProducts(ActionEvent event) {
+        loadSellerRevenue();
         showMyProducts();
     }
 
@@ -580,6 +580,7 @@ public class SellerController {
         vboxCustomers.setManaged(false);
 
         setActiveButton(btnNavMyProducts);
+
     }
 
     private void setActiveButton(HBox activeBtn) {
@@ -681,10 +682,10 @@ public class SellerController {
             }
 
             if (newItem.getStartTime() != null && newItem.getEndTime() != null) {
-                if (newItem.getStartTime().isBefore(LocalDateTime.now().plusDays(1))) {
-                    ViewManager.showAlert(Alert.AlertType.WARNING, "Lỗi thời gian", "Thời gian bắt đầu phải sau hiện tại ít nhất 1 ngày!");
-                    return;
-                }
+//                if (newItem.getStartTime().isBefore(LocalDateTime.now().plusDays(1))) {
+//                    ViewManager.showAlert(Alert.AlertType.WARNING, "Lỗi thời gian", "Thời gian bắt đầu phải sau hiện tại ít nhất 1 ngày!");
+//                    return;
+//                }
                 if (newItem.getEndTime().isBefore(newItem.getStartTime())) {
                     ViewManager.showAlert(Alert.AlertType.WARNING, "Lỗi thời gian", "Thời gian kết thúc phải sau thời gian bắt đầu!");
                     return;
