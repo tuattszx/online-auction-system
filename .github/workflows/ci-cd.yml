@@ -34,7 +34,7 @@ jobs:
         env:
           DB_USER: ${{ secrets.DB_USER }}
           DB_PASS: ${{ secrets.DB_PASS }}
-        run: xvfb-run ./mvnw clean test -DskipTests=true
+        run: xvfb-run ./mvnw clean test 
 
       # Bước 2: Đóng gói toàn bộ ứng dụng thành file JAR (Package này sẽ tự gom cả JavaFX và ControlsFX)
       - name: Build Application Package
