@@ -13,6 +13,7 @@ module auction {
     requires org.slf4j;
     requires cloudinary.core;
     requires commons.codec;
+    requires jbcrypt;
 
     // Cho phép JavaFX truy cập vào Controller và View
     opens auction.client.controllers to javafx.fxml;

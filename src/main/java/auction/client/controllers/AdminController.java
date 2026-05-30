@@ -15,12 +15,21 @@ import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.*;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.util.Callback;
 import javafx.util.Duration;
 
@@ -83,7 +92,16 @@ public class AdminController {
         setupActionColumn();
 
         // 4. Tải dữ liệu từ Server lên bảng khi mở màn hình
-        handleRefreshProducts();
+//        handleRefreshProducts();
+        adminProductTable.setOnMouseClicked(event -> {
+            // Kiểm tra xem có click đúp (2 click) vào dòng hợp lệ không
+            if (event.getClickCount() == 2 && adminProductTable.getSelectionModel().getSelectedItem() != null) {
+                Item selectedProduct = adminProductTable.getSelectionModel().getSelectedItem();
+
+                // Gọi hàm hiển thị popup truyền data vào
+                showProductDetailPopup(selectedProduct);
+            }
+        });
         btnApproveItems.getStyleClass().add("admin-menu-btn");
         btnApproveSeller.getStyleClass().add("admin-menu-btn");
         btnSettings.getStyleClass().add("admin-menu-btn");
@@ -111,9 +129,6 @@ public class AdminController {
         setupIdColumn();
         setupCurrencyColumns();
         setupActionsColumn();
-
-        loadUsersData();
-        loadDashboardStatistics();
     }
 
     // --- CÁC THÀNH PHẦN MỚI CHO SIDEBAR ---
@@ -406,6 +421,7 @@ public class AdminController {
     private void handleManageUsers(ActionEvent event) {
         setActiveButton(btnManageUsers);
         handleSwitchHbox(VBoxUserManagement);
+        loadUsersData();
     }
 
 
@@ -413,6 +429,7 @@ public class AdminController {
     private void handleApproveItems(ActionEvent event) {
         setActiveButton(btnApproveItems);
         handleSwitchHbox(vboxAdminProducts);
+        loadDashboardStatistics();
     }
 
     @FXML
@@ -619,5 +636,170 @@ public class AdminController {
         });
 
         new Thread(statsTask).start();
+    }
+
+    public void showProductDetailPopup(Item product) { // Thay 'Object' bằng Model của bạn, ví dụ: 'ProductModel product'
+        // 1. Tạo Stage cho Popup
+        Stage popupStage = new Stage();
+        popupStage.initModality(Modality.APPLICATION_MODAL);
+        popupStage.initStyle(StageStyle.TRANSPARENT); // Giúp bo góc không bị viền trắng Windows
+
+        // --- CONTAINER CHÍNH ---
+        VBox root = new VBox(20);
+        root.setPadding(new Insets(24));
+        // Bo góc 12px, nền trắng, đổ bóng mờ hiện đại
+        root.setStyle(
+                "-fx-background-color: #ffffff; " +
+                        "-fx-background-radius: 12; " +
+                        "-fx-border-radius: 12; " +
+                        "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.15), 15, 0, 0, 0);"
+        );
+        root.setPrefWidth(520);
+
+        // --- 1. HEADER ---
+        VBox header = new VBox(4);
+        Label titleLabel = new Label("Thông Tin Chi Tiết Sản Phẩm");
+        titleLabel.setFont(Font.font("System", FontWeight.BOLD, 18));
+        titleLabel.setTextFill(Color.web("#1e293b"));
+
+        Label subTitleLabel = new Label("Xem thông tin và kiểm duyệt sản phẩm trên hệ thống");
+        subTitleLabel.setFont(Font.font("System", 13));
+        subTitleLabel.setTextFill(Color.web("#64748b"));
+        header.getChildren().addAll(titleLabel, subTitleLabel);
+
+        // --- 2. THÔNG TIN CHÍNH (ẢNH & THÔNG SỐ) ---
+        HBox bodyBox = new HBox(20);
+        bodyBox.setAlignment(Pos.TOP_LEFT);
+
+        // Khung chứa ảnh sản phẩm
+        VBox imageContainer = new VBox();
+        imageContainer.setPrefSize(140, 140);
+        imageContainer.setMinSize(140, 140);
+        imageContainer.setAlignment(Pos.CENTER);
+        imageContainer.setStyle("-fx-background-color: #f8fafc; -fx-border-color: #e2e8f0; -fx-border-radius: 8; -fx-background-radius: 8;");
+
+        ImageView imgProduct = new ImageView();
+        imgProduct.setFitWidth(130);
+        imgProduct.setFitHeight(130);
+        imgProduct.setPreserveRatio(true);
+        if(product.getImages()!=null && !product.getImages().isEmpty()){
+            String imgUrl=product.getImages().get(0).getUrlImage();
+            if (imgUrl!=null && !imgUrl.isEmpty()){
+                Image img=new Image(imgUrl,true);
+                imgProduct.setImage(img);
+            }
+        }
+        imageContainer.getChildren().add(imgProduct);
+
+
+//        if (selectedItem.getImages() != null && !selectedItem.getImages().isEmpty()) {
+//            String imageUrl = selectedItem.getImages().get(0).getUrlImage();
+//
+//            if (imageUrl != null && !imageUrl.isEmpty()) {
+//                // Load ảnh trực tiếp từ link Cloudinary
+//                Image img = new Image(imageUrl, true);
+//                mainImage.setImage(img);
+//            }
+//        }
+
+        // Grid chứa thông tin dạng Label: Value
+        GridPane grid = new GridPane();
+        grid.setHgap(12);
+        grid.setVgap(12);
+        HBox.setHgrow(grid, Priority.ALWAYS);
+
+        // Định nghĩa độ rộng cột danh mục (cột 0)
+        ColumnConstraints col1 = new ColumnConstraints(100);
+        grid.getColumnConstraints().add(col1);
+
+        // Tạo các nhãn thông tin (Dữ liệu cứng mẫu, bạn thay bằng product.get...() nhé)
+        addInfoRow(grid, 0, "Tên sản phẩm:", "caa", true, "#0f172a");
+        addInfoRow(grid, 1, "Người bán ID:", "420001", false, "#334155");
+        addInfoRow(grid, 2, "Giá khởi điểm:", "1 USD", true, "#0284c7"); // Chữ đậm màu xanh dương
+        addInfoRow(grid, 3, "Kích thước:", "10 x 10 x 10 cm", false, "#334155");
+
+        bodyBox.getChildren().addAll(imageContainer, grid);
+
+        // --- 3. KHUNG THỜI GIAN ĐẤU GIÁ (Nền xám nhạt) ---
+        VBox timeBox = new VBox(8);
+        timeBox.setPadding(new Insets(12));
+        timeBox.setStyle("-fx-background-color: #f1f5f9; -fx-background-radius: 8;");
+
+        HBox startRow = new HBox(10);
+        Label lblStartTitle = new Label("Thời gian bắt đầu:");
+        lblStartTitle.setPrefWidth(110);
+        lblStartTitle.setTextFill(Color.web("#64748b"));
+        Label lblStartVal = new Label("2026-05-29 08:00"); // product.getStartTime()
+        lblStartVal.setTextFill(Color.web("#334155"));
+        startRow.getChildren().addAll(lblStartTitle, lblStartVal);
+
+        HBox endRow = new HBox(10);
+        Label lblEndTitle = new Label("Thời gian kết thúc:");
+        lblEndTitle.setPrefWidth(110);
+        lblEndTitle.setTextFill(Color.web("#64748b"));
+        Label lblEndVal = new Label("2026-06-05 18:00"); // product.getEndTime()
+        lblEndVal.setTextFill(Color.web("#334155"));
+        endRow.getChildren().addAll(lblEndTitle, lblEndVal);
+
+        timeBox.getChildren().addAll(startRow, endRow);
+
+        // --- 4. PHẦN MÔ TẢ ---
+        VBox descBox = new VBox(6);
+        Label descTitle = new Label("Mô tả sản phẩm:");
+        descTitle.setFont(Font.font("System", FontWeight.BOLD, 12));
+        descTitle.setTextFill(Color.web("#64748b"));
+
+        Label descValue = new Label();
+        descValue.setText(product.getDescription());
+        descValue.setTextFill(Color.web("#475569"));
+        descValue.setWrapText(true); // Tự động xuống dòng cực kỳ quan trọng
+        descBox.getChildren().addAll(descTitle, descValue);
+
+        // --- 5. HÀNG NÚT BẤM (FOOTER) ---
+        HBox footer = new HBox(12);
+        footer.setAlignment(Pos.CENTER_RIGHT);
+        VBox.setMargin(footer, new Insets(10, 0, 0, 0));
+
+        Button btnClose = new Button("Đóng");
+        btnClose.setPrefSize(90, 36);
+        btnClose.setStyle("-fx-background-color: #e2e8f0; -fx-text-fill: #475569; -fx-background-radius: 6; -fx-cursor: hand;");
+        btnClose.setOnAction(e -> popupStage.close()); // Đóng popup khi nhấn
+
+        Button btnApprove = new Button("Duyệt");
+        btnApprove.setPrefSize(90, 36);
+        btnApprove.setStyle("-fx-background-color: #10b981; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-cursor: hand;");
+        btnApprove.setOnAction(e -> {
+            // Xử lý logic duyệt sản phẩm của bạn ở đây...
+            System.out.println("Đã duyệt sản phẩm!");
+            popupStage.close();
+        });
+
+        footer.getChildren().addAll(btnClose, btnApprove);
+
+        // --- THÊM TẤT CẢ VÀO ROOT VÀ HIỂN THỊ ---
+        root.getChildren().addAll(header, bodyBox, timeBox, descBox, footer);
+
+        Scene scene = new Scene(root);
+        scene.setFill(Color.TRANSPARENT); // Đảm bảo bo góc mượt mà
+        popupStage.setScene(scene);
+        popupStage.showAndWait();
+    }
+
+    /**
+     * Hàm hỗ trợ tạo nhanh các dòng thông tin trong GridPane đỡ phải lặp lại code
+     */
+    private void addInfoRow(GridPane grid, int row, String labelText, String valueText, boolean isBold, String hexColor) {
+        Label lblTitle = new Label(labelText);
+        lblTitle.setTextFill(Color.web("#64748b"));
+
+        Label lblValue = new Label(valueText);
+        lblValue.setWrapText(true);
+        lblValue.setTextFill(Color.web(hexColor));
+        if (isBold) {
+            lblValue.setFont(Font.font("System", FontWeight.BOLD, 14));
+        }
+
+        grid.add(lblTitle, 0, row);
+        grid.add(lblValue, 1, row);
     }
 }

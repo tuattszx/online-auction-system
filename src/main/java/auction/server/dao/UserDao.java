@@ -13,4 +13,6 @@ public interface UserDao extends GenericDAO<User, Integer> {
                           String newEmail, String newAddress, String newPhoneNumber, String newCountry, String newshippingPhone,String cardName, String cardNum, String language);
     Object[] getDashboardStats();
     boolean unbanUser(int userId);
+    User findUserByUsername(String username);
+    User findUserByEmail(String email);
 }

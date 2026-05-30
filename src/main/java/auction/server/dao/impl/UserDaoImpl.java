@@ -49,6 +49,32 @@ public class UserDaoImpl implements UserDao {
         }
         return null;
     }
+    @Override
+    public User findUserByUsername(String username) {
+        // 1. Câu lệnh SQL để lọc user theo username
+        String sql = "SELECT * FROM users WHERE username = ?";
+
+        // 2. Mở kết nối và chuẩn bị câu lệnh (Dựa theo cách viết DatabaseManager của bạn)
+        try (Connection conn = DatabaseManager.getInstance().getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            // 3. Truyền tham số username vào dấu hỏi chấm (?)
+            pstmt.setString(1, username);
+
+            // 4. Thực thi câu lệnh và kiểm tra kết quả
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    // Tận dụng lại hàm mapResultSetToUser có sẵn trong class của bạn
+                    return mapResultSetToUser(rs);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        // Trả về null nếu xảy ra lỗi hoặc không tìm thấy username này trong DB
+        return null;
+    }
 
     @Override
     public boolean update(User user) {
@@ -231,6 +257,31 @@ public class UserDaoImpl implements UserDao {
             System.err.println("Lỗi updatePassword: " + e.getMessage());
             return false;
         }
+    }
+    public User findUserByEmail(String email) {
+        // 1. Câu lệnh SQL để lọc user theo email
+        String sql = "SELECT * FROM users WHERE email = ?";
+
+        // 2. Mở kết nối và chuẩn bị câu lệnh (Dựa theo cách viết DatabaseManager của bạn)
+        try (Connection conn = DatabaseManager.getInstance().getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            // 3. Truyền tham số email vào dấu hỏi chấm (?)
+            pstmt.setString(1, email);
+
+            // 4. Thực thi câu lệnh và kiểm tra kết quả
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    // Tận dụng lại hàm mapResultSetToUser có sẵn trong class của bạn
+                    return mapResultSetToUser(rs);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        // Trả về null nếu xảy ra lỗi hoặc không tìm thấy email này trong hệ thống
+        return null;
     }
 
     @Override

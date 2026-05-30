@@ -13,6 +13,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import javafx.event.ActionEvent;
+import org.mindrot.jbcrypt.BCrypt;
 
 public class RegisterController {
     @FXML
@@ -52,6 +53,13 @@ public class RegisterController {
             lberror.setText(errorMsg);
             return; // Thoát sớm nếu dữ liệu nhập sai
         }
+        String rawPassword = txtPassword.getText().trim();
+
+        // 2. Tiến hành băm mật khẩu bằng BCrypt (tự động trộn muối ngẫu nhiên luôn)
+        String hashedPassword = BCrypt.hashpw(rawPassword, BCrypt.gensalt());
+
+        // 3. Lưu mật khẩu ĐÃ MÃ HÓA vào đối tượng User thay vì mật khẩu thô
+        newUser.setPassword(hashedPassword);
 
         loadingIndicator.setVisible(true);
         registerVbox.setDisable(true);

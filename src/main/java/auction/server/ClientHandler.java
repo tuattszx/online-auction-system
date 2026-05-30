@@ -13,6 +13,7 @@ import auction.common.model.users.User;
 import auction.server.dao.*;
 import auction.server.dao.impl.*;
 import auction.server.utils.NotificationService;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.io.*;
 import java.net.Socket;
@@ -167,6 +168,12 @@ public class ClientHandler implements Runnable {
                         case "CONFIRM_ITEM":
                             handleConfirmItem(msg, out);
                             break;
+                        case "FORGOT_PASSWORD":
+                            handleForgotPassword(msg, out);
+                            break;
+                        case "UPDATE_PASSWORD":
+                            handleUpdatePassword(msg,out);
+                            break;
 
                             // Thêm các case khác như BID, VIEW_PRODUCT...
                     }
@@ -201,20 +208,23 @@ public class ClientHandler implements Runnable {
         // Lấy thông tin đăng nhập từ dữ liệu trong Message
         Account accReq = (Account) msg.getData();
 
-        // Gọi UserDao (nằm trong package auction.server.dao của bạn)
-        User user = userDao.CheckLogin(accReq.getUsername(), accReq.getPassword());
+        // 1. Thay vì gọi CheckLogin, ta gọi hàm tìm User chỉ bằng Username
+        User user = userDao.findUserByUsername(accReq.getUsername());
 
-        if (user != null) {
+        // 2. Tiến hành kiểm tra: User có tồn tại VÀ mật khẩu thô khớp với mật khẩu băm trong DB không
+        if (user != null && BCrypt.checkpw(accReq.getPassword(), user.getPassword())) {
+
             msg.setStatus("SUCCESS");
-            this.loggedInUser=user;
+            this.loggedInUser = user;
             msg.setData(user);
+
         } else {
+            // Trường hợp không tìm thấy user hoặc sai mật khẩu đều nhảy vào đây
             msg.setStatus("FAILED");
         }
 
         out.writeObject(msg);
-        out.flush();
-    }
+        out.flush();}
 
     private void handleRegister(Message msg, ObjectOutputStream out) throws IOException {
         // Ép kiểu về User vì Client sẽ gửi đối tượng User sang
@@ -1104,5 +1114,55 @@ public class ClientHandler implements Runnable {
             out.flush();
             out.reset();
         }
+    }
+    private void handleForgotPassword(Message msg, ObjectOutputStream out) throws IOException {
+        String emailReq = (String) msg.getData();
+
+        // 1. Kiểm tra xem email có trong DB không
+        if (userDao.isEmailExists(emailReq)) {
+            // CÓ TỒN TẠI -> Tiến hành cấp mã OTP cố định
+            String fixedOtpCode = "123456";
+
+            msg.setStatus("SUCCESS");
+            msg.setData(fixedOtpCode);
+            System.out.println("[SERVER] Email hợp lệ. Đã cấp OTP: " + fixedOtpCode);
+        } else {
+            // KHÔNG TỒN TẠI -> Trả về lỗi FAILED cho Client
+            msg.setStatus("FAILED");
+            msg.setData("Email không tồn tại trên hệ thống!");
+            System.out.println("[SERVER] Từ chối cấp OTP vì Email không tồn tại: " + emailReq);
+        }
+
+        out.writeObject(msg);
+        out.flush();
+    }
+    private void handleUpdatePassword(Message msg, ObjectOutputStream out) throws IOException {
+        // Bóc tách mảng Object dữ liệu gửi từ Client
+        Object[] data = (Object[]) msg.getData();
+        String email = (String) data[0];
+        String newHashedPassword = (String) data[1];
+
+        System.out.println("[SERVER] Đang xử lý đổi mật khẩu cho email: " + email);
+
+        // 1. Tìm thông tin User thông qua Email để bốc ra ID
+        User user = userDao.findUserByEmail(email);
+
+        boolean success = false;
+        if (user != null) {
+            // 2. Gọi CHÍNH XÁC hàm updatePassword bằng ID của bạn
+            success = userDao.updatePassword(user.getId(), newHashedPassword);
+        }
+
+        // 3. Phản hồi kết quả về cho Client
+        if (success) {
+            msg.setStatus("SUCCESS");
+            msg.setData("Cập nhật mật khẩu thành công.");
+        } else {
+            msg.setStatus("FAILED");
+            msg.setData("Tài khoản không tồn tại hoặc lỗi kết nối cơ sở dữ liệu!");
+        }
+
+        out.writeObject(msg);
+        out.flush();
     }
 }
