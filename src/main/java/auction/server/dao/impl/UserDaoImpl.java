@@ -3,6 +3,7 @@ package auction.server.dao.impl;
 import auction.common.model.users.User;
 import auction.server.DatabaseManager;
 import auction.server.dao.UserDao;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -106,11 +107,12 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public User CheckLogin(String userName, String password){
+        String hashPassword = BCrypt.hashpw(password, BCrypt.gensalt());
         String sql="SELECT * FROM users WHERE username=? AND password=?";
         try(Connection conn=DatabaseManager.getInstance().getConnection();
             PreparedStatement pstmt= conn.prepareStatement(sql)) {
             pstmt.setString(1, userName);
-            pstmt.setString(2, password);
+            pstmt.setString(2, hashPassword);
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) return mapResultSetToUser(rs);
             }
