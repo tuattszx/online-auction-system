@@ -38,7 +38,7 @@ jobs:
 
       # Bước 2: Đóng gói toàn bộ ứng dụng thành file JAR (Package này sẽ tự gom cả JavaFX và ControlsFX)
       - name: Build Application Package
-        run: ./mvnw package -DskipTests=true
+        run: ./mvnw package 
 
       # Bước 3: Đẩy file JAR tìm thấy trong thư mục target lên GitHub cho bạn tải về
       - name: Upload Client Artifact
