@@ -3,6 +3,7 @@ package auction.client.services;
 import auction.client.ClientNetwork;
 import auction.common.message.Message;
 import auction.common.model.items.Item;
+import auction.common.model.items.Transaction;
 import auction.common.model.users.User;
 
 import java.util.ArrayList;
@@ -50,8 +51,18 @@ public class AdminManager {
         return ClientNetwork.getInstance().sendRequestAsync(new Message("UNBAN_USER", userId));
     }
 
-    public CompletableFuture<Message> confirmItemAsync(int itemId, boolean isApproved) {
-        Object[] payload = new Object[]{itemId, isApproved};
+    public CompletableFuture<Message> confirmItemAsync(int itemId, boolean isApproved,String reason) {
+        Object[] payload = new Object[]{itemId, isApproved,reason};
         return ClientNetwork.getInstance().sendRequestAsync(new Message("CONFIRM_ITEM", payload));
+    }
+
+    public CompletableFuture<List<Item>> getAllItemsAsync(){
+        return ClientNetwork.getInstance().sendRequestAsync(new Message("GET_ALL_ITEMS",null))
+                .thenApply(res -> (res != null && "SUCCESS".equals(res.getStatus()) ? (List<Item>) res.getData() : new ArrayList<>()));
+    }
+
+    public CompletableFuture<List<Transaction>> getAllTransactionsAsync(){
+        return ClientNetwork.getInstance().sendRequestAsync(new Message("GET_ALL_TRANSACTIONS",null))
+                .thenApply(rs -> (rs != null && "SUCCESS".equals(rs.getStatus()) ? (List<Transaction>) rs.getData() : new ArrayList<>()));
     }
 }

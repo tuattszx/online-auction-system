@@ -200,6 +200,10 @@ public class ItemviewController implements Cleanable {
                 if (notification.getNewEndTime() != null) {
                     this.currentItem.setEndTime(notification.getNewEndTime());
                     lbendtime.setText(toString(notification.getNewEndTime()));
+                    if (timer != null) {
+                        timer.stop();
+                    }
+                    startCountdown();
                 }
             });
         };

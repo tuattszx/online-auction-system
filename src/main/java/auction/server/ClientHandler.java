@@ -7,6 +7,7 @@ import auction.common.model.categories.Category;
 import auction.common.model.items.AuctionItem;
 import auction.common.model.items.Item;
 import auction.common.model.items.ItemImage;
+import auction.common.model.items.Transaction;
 import auction.common.model.notifications.Notification;
 import auction.common.model.users.Account;
 import auction.common.model.users.User;
@@ -32,6 +33,7 @@ public class ClientHandler implements Runnable {
     private final BidDao bidDao = new BidDaoImpl();
     private final NotificationDAO notificationDao=new NotificationDaoImpl();
     private final FavouriteDao favouriteDao= new FavouriteDaoImpl();
+    private final TransactionDao transactionDao = new TransactionDaoImpl();
     private ObjectOutputStream out;
     private User loggedInUser;
 
@@ -93,6 +95,9 @@ public class ClientHandler implements Runnable {
                             break;
                         case "GET_ALL_ITEMS":
                             handleGetAllItems(msg, out);
+                            break;
+                        case "GET_ALL_TRANSACTIONS":
+                            handleGetAllTransaction(msg,out);
                             break;
                         case "GET_UNAPPROVED_ITEMS":
                             handleGetUnapproveItems(msg,out);
@@ -1059,6 +1064,7 @@ public class ClientHandler implements Runnable {
             Object [] payload=(Object[]) msg.getData();
             int itemId = (int) payload[0];
             boolean isApproved=(boolean) payload[1];
+            String reason= (String) payload[2];
 
             Item item= itemDao.getById(itemId);
             // 2. Chạy câu lệnh SQL chuyển trạng thái sang 'OPEN'
@@ -1069,7 +1075,7 @@ public class ClientHandler implements Runnable {
                 msg.setStatus("SUCCESS");
                 msg.setData(isApproved ? " Sản phẩm đã được chấp nhận" : "Đã từ chối sản phẩm");
                 if (isApproved){ NotificationService.handleSendMessageApproveItem(item,LocalDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh")));}
-                else NotificationService.handleSendMessageRejectItem(item,null,LocalDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh")));
+                else NotificationService.handleSendMessageRejectItem(item,reason,LocalDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh")));
             } else {
                 msg.setStatus("ERROR");
                 msg.setData("Không tìm thấy sản phẩm hoặc sản phẩm không thể cập nhật.");
@@ -1096,7 +1102,7 @@ public class ClientHandler implements Runnable {
             int liveAuctions = (int) fromItem[0];
             int totalUsers =(int) fromUser[1];
             double successRate = (double) fromItem[1];
-            Map<Integer,Integer> categoryDistribution= (Map<Integer, Integer>) fromItem[2];
+            Map<String,Integer> categoryDistribution= (Map<String, Integer>) fromItem[2];
             List<Object[]> revenueTrend= (List<Object[]>) fromItem[3];
 
             stats.put("totalRevenue", totalRevenue);
@@ -1138,6 +1144,7 @@ public class ClientHandler implements Runnable {
         out.writeObject(msg);
         out.flush();
     }
+
     private void handleUpdatePassword(Message msg, ObjectOutputStream out) throws IOException {
         // Bóc tách mảng Object dữ liệu gửi từ Client
         Object[] data = (Object[]) msg.getData();
@@ -1166,5 +1173,24 @@ public class ClientHandler implements Runnable {
 
         out.writeObject(msg);
         out.flush();
+    }
+
+    private void handleGetAllTransaction(Message msg, ObjectOutputStream out) throws IOException{
+        try {
+            List<Transaction> transactions = transactionDao.getAll();
+
+            if (transactions != null) {
+                msg.setStatus("SUCCESS");
+                msg.setData(transactions);
+            } else {
+                msg.setStatus("FAILED");
+            }
+        } catch (Exception e){
+            msg.setStatus("ERROR");
+            e.printStackTrace();
+        }
+        out.writeObject(msg);
+        out.flush();
+        out.reset();
     }
 }

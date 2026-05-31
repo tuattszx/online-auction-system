@@ -23,6 +23,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -712,8 +713,8 @@ public class SellerController {
                 progressbar.setVisible(false);
                 progressbar.progressProperty().unbind();
 
-                Message response = task.getValue();
                 showMyProducts();
+                Message response = task.getValue();
                 if (response != null && "SUCCESS".equals(response.getStatus())) {
                     // Không dùng Alert gây gián đoạn màn hình, nạp lại dữ liệu và chuyển tab nhẹ nhàng
                     loadSellerProducts();
@@ -804,14 +805,15 @@ public class SellerController {
             // Hàm xử lý load luồng giao diện tùy biến (Custom Popup View)
             private void openCustomerDetailPopup(User selectedUser) {
                 try {
+                    ViewManager.removeView("customer-detail-popup.fxml");
                     // Khởi tạo luồng nạp giao diện FXML popup tùy chỉnh
                     // Hãy thay đổi đường dẫn "/auction/client/views/customer-detail-popup.fxml"
                     // sao cho khớp chính xác với cấu trúc thư mục tài nguyên của bạn
-                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/auction/client/views/customer-detail-popup.fxml"));
-                    VBox popupRoot = loader.load();
+                    Parent popupRoot = ViewManager.getView("customer-detail-popup.fxml");
+
 
                     // Lấy instance Controller của popup vừa được khởi tạo ra để truyền đối tượng User sang
-                    CustomerDetailPopupController controller = loader.getController();
+                    CustomerDetailPopupController controller = (CustomerDetailPopupController) popupRoot.getUserData();
                     controller.setCustomerData(selectedUser);
 
                     // Tạo một Stage mới (Cửa sổ độc lập nhỏ)

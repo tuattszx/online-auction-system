@@ -320,12 +320,12 @@
                         <VBox fx:id="vboxAdminAuctions" maxHeight="1.7976931348623157E308" prefHeight="2000" spacing="16" style="-fx-background-color: #ffffff; -fx-background-radius: 12; -fx-padding: 24;" visible="false" VBox.vgrow="ALWAYS">
                             <HBox alignment="CENTER_LEFT" spacing="12">
                                 <TextField fx:id="txtSearchAuction" promptText="Tìm theo tên sản phẩm hoặc ID..." style="-fx-background-color: #ffffff; -fx-border-color: #cbd5e1; -fx-border-radius: 6; -fx-background-radius: 6; -fx-padding: 8 12; -fx-pref-width: 300;" />
-                                <ComboBox fx:id="cbStatusFilter" promptText="Lọc trạng thái" style="-fx-background-color: #ffffff; -fx-border-color: #cbd5e1; -fx-border-radius: 6; -fx-padding: 4 8;" />
+                                <ComboBox fx:id="cbStatusAuctionFilter" promptText="Lọc trạng thái" style="-fx-background-color: #ffffff; -fx-border-color: #cbd5e1; -fx-border-radius: 6; -fx-padding: 4 8;" />
                                 <Region HBox.hgrow="ALWAYS" />
                                 <Button fx:id="btnRefreshTable" style="-fx-background-color: #64748b; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-cursor: hand; -fx-padding: 8 16;" text="Làm mới bảng" />
                             </HBox>
 
-                            <TableView fx:id="tblAuctions" style="-fx-background-color: transparent; -fx-border-color: #e2e8f0; -fx-border-radius: 8;" stylesheets="@../css/historytable.css" VBox.vgrow="ALWAYS">
+                            <TableView fx:id="adminAuctionTable" style="-fx-background-color: transparent; -fx-border-color: #e2e8f0; -fx-border-radius: 8;" stylesheets="@../css/historytable.css" VBox.vgrow="ALWAYS">
                                 <columns>
                                     <TableColumn fx:id="colAuctionSn" prefWidth="50" style="-fx-alignment: CENTER;" text="#" />
                                     <TableColumn fx:id="colAuctionName" prefWidth="180" text="Tên Sản Phẩm" />

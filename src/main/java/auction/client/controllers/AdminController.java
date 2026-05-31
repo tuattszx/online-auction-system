@@ -13,6 +13,10 @@ import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.SimpleLongProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -26,6 +30,7 @@ import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.PieChart;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -41,6 +46,7 @@ import javafx.stage.StageStyle;
 import javafx.util.Callback;
 import javafx.util.Duration;
 
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -95,21 +101,21 @@ public class AdminController {
     @FXML private TextField txtSearchAuction; // Thanh tìm kiếm cuộc đấu giá
     @FXML private ComboBox<String> cbStatusAuctionFilter; // Bộ lọc trạng thái đấu giá
 
-    @FXML private TableView<AuctionItem> adminAuctionTable; // Bảng quản lý đấu giá riêng biệt
-    @FXML private TableColumn<AuctionItem, Void> colAuctionSn; // Số thứ tự
-    @FXML private TableColumn<AuctionItem, String> colAuctionName; // Tên sản phẩm đấu giá
-    @FXML private TableColumn<AuctionItem, String> colAuctionSeller; // Người bán
-    @FXML private TableColumn<AuctionItem, Long> colAuctionStartingPrice; // Giá khởi điểm
-    @FXML private TableColumn<AuctionItem, Long> colAuctionCurrentPrice; // Giá hiện tại
-    @FXML private TableColumn<AuctionItem, String> colAuctionCurrentBidder; // Người giữ giá cao nhất
-    @FXML private TableColumn<AuctionItem, String> colAuctionStartTime; // Thời gian bắt đầu
-    @FXML private TableColumn<AuctionItem, String> colAuctionEndTime; // Thời gian kết thúc
-    @FXML private TableColumn<AuctionItem, String> colAuctionStatus; // Trạng thái (PENDING, OPEN, CLOSED, DELETED)
-    @FXML private TableColumn<AuctionItem, Void> colAuctionAction; // Cột chứa các nút hành động điều khiển
+    @FXML private TableView<Item> adminAuctionTable; // Bảng quản lý đấu giá riêng biệt
+    @FXML private TableColumn<Item, Void> colAuctionSn; // Số thứ tự
+    @FXML private TableColumn<Item, String> colAuctionName; // Tên sản phẩm đấu giá
+    @FXML private TableColumn<Item, String> colAuctionSeller; // Người bán
+    @FXML private TableColumn<Item, Long> colAuctionStartingPrice; // Giá khởi điểm
+    @FXML private TableColumn<Item, Long> colAuctionCurrentPrice; // Giá hiện tại
+    @FXML private TableColumn<Item, String> colAuctionCurrentBidder; // Người giữ giá cao nhất
+    @FXML private TableColumn<Item, String> colAuctionStartTime; // Thời gian bắt đầu
+    @FXML private TableColumn<Item, String> colAuctionEndTime; // Thời gian kết thúc
+    @FXML private TableColumn<Item, String> colAuctionStatus; // Trạng thái (PENDING, OPEN, CLOSED)
+    @FXML private TableColumn<Item, Void> colAuctionAction; // Cột chứa các nút hành động điều khiển
 
     // Danh sách dữ liệu động cho cuộc đấu giá
-    private final ObservableList<AuctionItem> auctionMasterData = FXCollections.observableArrayList();
-    private FilteredList<AuctionItem> filteredAuctionList;
+    private final ObservableList<Item> auctionMasterData = FXCollections.observableArrayList();
+    private FilteredList<Item> filteredAuctionList;
     private final List<VBox> allScreenViews = new ArrayList<>();
 
     // THÀNH PHẦN QUẢN LÝ GIAO DỊCH (TRANSACTION MANAGEMENT) - ĐÃ CẬP NHẬT
@@ -139,15 +145,23 @@ public class AdminController {
                 vboxAdminTransactions
         ));
         // 1. Cấu hình các cột hiển thị dữ liệu text/số cơ bản
-        colName.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getName()));
-        colSeller.setCellValueFactory(cellData ->new javafx.beans.property.SimpleStringProperty( String.valueOf(cellData.getValue().getSellerId()))); // Hoặc sellerName nếu có
-        colStartingPrice.setCellValueFactory(cellData -> new javafx.beans.property.SimpleObjectProperty<>(cellData.getValue().getStartingPrice()));
-        colCurrentPrice.setCellValueFactory(cellData ->  new javafx.beans.property.SimpleObjectProperty<>(cellData.getValue().getCurrentPrice()));
-        colCurrentBidder.setCellValueFactory(cellData ->new javafx.beans.property.SimpleStringProperty( String.valueOf(cellData.getValue().getCurrentBidderId())));
-        colStatus.setCellValueFactory(cellData ->new javafx.beans.property.SimpleStringProperty( String.valueOf(cellData.getValue().getStatus())));
+        colName.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getName()));
+        colSeller.setCellValueFactory(cellData ->new SimpleStringProperty( String.valueOf(cellData.getValue().getSellerId()))); // Hoặc sellerName nếu có
+        colStartingPrice.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getStartingPrice()));
+        colCurrentPrice.setCellValueFactory(cellData ->  new SimpleObjectProperty<>(cellData.getValue().getCurrentPrice()));
+        colCurrentBidder.setCellValueFactory(cellData ->new SimpleStringProperty( String.valueOf(cellData.getValue().getCurrentBidderId())));
+        colStatus.setCellValueFactory(cellData ->new SimpleStringProperty( String.valueOf(cellData.getValue().getStatus())));
 
+        cbStatusAuctionFilter.getItems().addAll("ALL", "PENDING", "OPEN", "CLOSED");
+        cbStatusAuctionFilter.setValue("ALL"); // Trạng thái mặc định
+
+        setupAuctionTableColumns();
+
+        setupAuctionFilters();
         // 2. Tự động tăng số thứ tự cho cột colSn (#)
         setupSerialColumn();
+        setupTransactionTableColumns();
+        setupTransactionFilters();
 
         // 3. Khởi tạo 2 nút Approve và Reject sinh động cho cột Hành động
         setupActionColumn();
@@ -176,14 +190,14 @@ public class AdminController {
         colFullName.setCellValueFactory(cellData -> {
             User u = cellData.getValue();
             String fullName = u.getDisplayName() != null ? u.getDisplayName() : (u.getFirstName() + " " + u.getLastName());
-            return new javafx.beans.property.SimpleStringProperty(fullName.trim());
+            return new SimpleStringProperty(fullName.trim());
         });
 
-        colUsername.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getUsername()));
-        colEmail.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getEmail()));
-        colRole.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getRole()));
-        colBalance.setCellValueFactory(cellData -> new javafx.beans.property.SimpleObjectProperty<>(cellData.getValue().getBalance()));
-        colFrozen.setCellValueFactory(cellData -> new javafx.beans.property.SimpleObjectProperty<>(cellData.getValue().getFrozenBalance()));
+        colUsername.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getUsername()));
+        colEmail.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getEmail()));
+        colRole.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getRole()));
+        colBalance.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getBalance()));
+        colFrozen.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getFrozenBalance()));
 
         search();
         setupIdColumn();
@@ -191,6 +205,8 @@ public class AdminController {
         setupActionsColumn();
 
         loadDashboardStatistics();
+        loadAllAuctionsFromServer();
+        loadAllTransactionsFromServer();
     }
 
     // --- CÁC THÀNH PHẦN MỚI CHO SIDEBAR ---
@@ -209,8 +225,6 @@ public class AdminController {
     @FXML private Button btnManageAuctions;
     @FXML private Button btnTransactionHistory;
     @FXML private Button btnSettings;
-    @FXML private Button btnApproveSeller;
-    @FXML private Button btnLockAccount;
     @FXML private TextField txtSearch;
 
     // ___ CÁC VBOX ___
@@ -290,7 +304,7 @@ public class AdminController {
 
             {
                 pane.setSpacing(10);
-                pane.setAlignment(javafx.geometry.Pos.CENTER);
+                pane.setAlignment(Pos.CENTER);
                 btnWarn.setStyle("-fx-background-color: #ff9800; -fx-text-fill: white; -fx-cursor: hand; -fx-background-radius: 4; -fx-padding: 4 8;");
                 btnToggleBan.setOnAction(e -> {
                     User user = (User) getTableRow().getItem();
@@ -375,7 +389,7 @@ public class AdminController {
         ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
         categoryDistribution.forEach((catIdKey, countVal) -> {
             int catId = Integer.parseInt(catIdKey.toString());
-            int count = countVal.intValue();
+            int count = countVal;
             String catLabel = getCategoryLabelById(catId);
             pieChartData.add(new PieChart.Data(catLabel, count));
         });
@@ -383,7 +397,7 @@ public class AdminController {
 
         for (PieChart.Data data : pieChartData) {
             data.nameProperty().bind(
-                    javafx.beans.binding.Bindings.concat(
+                    Bindings.concat(
                             data.getName(), " ", String.format("%.1f%%", data.getPieValue())
                     )
             );
@@ -662,7 +676,10 @@ public class AdminController {
         confirm.setHeaderText(null);
         confirm.showAndWait().ifPresent(res -> {
             if (res == ButtonType.YES) {
-                AdminManager.getInstance().confirmItemAsync(item.getId(), isapproved)
+                String reason = null;
+                if (!isapproved) reason = ViewManager.showInputDialog("Cảnh báo", "Nhập nội dung gửi tới :");
+
+                AdminManager.getInstance().confirmItemAsync(item.getId(), isapproved, reason)
                         .thenAcceptAsync(response -> {
                             Stage currentStage= (Stage) btnApproveItems.getScene().getWindow();
                             if (response != null && "SUCCESS".equals(response.getStatus())) {
@@ -712,7 +729,7 @@ public class AdminController {
                         if (stats.containsKey("revenueTrend")) {
                             revenueChart.getData().clear();
 
-                            javafx.scene.chart.XYChart.Series<String, Number> series = new javafx.scene.chart.XYChart.Series<>();
+                            XYChart.Series<String, Number> series = new XYChart.Series<>();
 
                             List<?> trendList = (List<?>) stats.get("revenueTrend");
 
@@ -724,7 +741,7 @@ public class AdminController {
                                         String dayLabel = String.valueOf(dataPoint.get(0));
 
                                         Number dailyAmount = (Number) dataPoint.get(1);
-                                        series.getData().add(new javafx.scene.chart.XYChart.Data<>(dayLabel, dailyAmount));
+                                        series.getData().add(new XYChart.Data<>(dayLabel, dailyAmount));
                                     }
                                 }
                             }
@@ -831,10 +848,10 @@ public class AdminController {
         grid.getColumnConstraints().add(col1);
 
         // Tạo các nhãn thông tin (Dữ liệu cứng mẫu, bạn thay bằng product.get...() nhé)
-        addInfoRow(grid, 0, "Tên sản phẩm:", "caa", true, "#0f172a");
-        addInfoRow(grid, 1, "Người bán ID:", "420001", false, "#334155");
-        addInfoRow(grid, 2, "Giá khởi điểm:", "1 USD", true, "#0284c7"); // Chữ đậm màu xanh dương
-        addInfoRow(grid, 3, "Kích thước:", "10 x 10 x 10 cm", false, "#334155");
+        addInfoRow(grid, 0, "Tên sản phẩm:", product.getName(), true, "#0f172a");
+        addInfoRow(grid, 1, "Người bán ID:", String.valueOf(product.getSellerId()), false, "#334155");
+        addInfoRow(grid, 2, "Giá khởi điểm:", String.valueOf(product.getStartingPrice()), true, "#0284c7"); // Chữ đậm màu xanh dương
+        addInfoRow(grid, 3, "Kích thước:", product.getLength()+" x " +product.getWidth()+" x "+product.getHeight()+ " cm", false, "#334155");
 
         bodyBox.getChildren().addAll(imageContainer, grid);
 
@@ -891,6 +908,7 @@ public class AdminController {
         btnApprove.setOnAction(e -> {
             if (product != null) {
                 processProductApproval(product, "CONFIRM_ITEM", "PENDING",true);
+                popupStage.close();
             }
         });
 
@@ -921,5 +939,240 @@ public class AdminController {
 
         grid.add(lblTitle, 0, row);
         grid.add(lblValue, 1, row);
+    }
+
+    private void setupAuctionTableColumns() {
+        // A. Cột Số thứ tự (Tự động tăng theo hàng)
+        colAuctionSn.setCellFactory(column -> new TableCell<>() {
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setText(null);
+                } else {
+                    setText(String.valueOf(getIndex() + 1));
+                }
+            }
+        });
+
+        // B. Ánh xạ các trường dữ liệu cơ bản từ Model Item
+        colAuctionName.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getName()));
+
+        // Nếu trong Item có chứa trực tiếp tên String, dùng PropertyValueFactory.
+        // Nếu chỉ có id_seller/id_bidder, bạn hãy truyền tên kèm theo từ Server (hoặc dùng hàm phụ trợ)
+        colAuctionSeller.setCellValueFactory(cellData -> new SimpleStringProperty(String.valueOf(cellData.getValue().getSellerId())));
+        colAuctionStartingPrice.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getStartingPrice()));
+        colAuctionCurrentPrice.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getCurrentPrice()));
+        colAuctionCurrentBidder.setCellValueFactory(cellData -> new SimpleStringProperty(String.valueOf(cellData.getValue().getCurrentBidderId())));
+
+        // Định dạng thời gian hiển thị dạng chuỗi ngắn gọn
+        colAuctionStartTime.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getStartTime().toString()));
+        colAuctionEndTime.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getEndTime().toString()));
+
+        // Cột Trạng thái
+        colAuctionStatus.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getStatus()));
+        colAuctionStatus.setCellFactory(column -> new TableCell<>() {
+            @Override
+            protected void updateItem(String status, boolean empty) {
+                super.updateItem(status, empty);
+                if (empty || status == null) {
+                    setText(null);
+                    setStyle("");
+                } else {
+                    setText(status);
+                    // Tạo màu chữ nổi bật cho từng trạng thái Admin dễ nhìn
+                    if ("OPEN".equals(status)) setStyle("-fx-text-fill: #22c55e; -fx-font-weight: bold;"); // Xanh lá
+                    else if ("PENDING".equals(status)) setStyle("-fx-text-fill: #eab308; -fx-font-weight: bold;"); // Vàng
+                    else setStyle("-fx-text-fill: #64748b; -fx-font-weight: bold;"); // Xám
+                }
+            }
+        });
+
+        // C. Cột Nút Hành Động (Ví dụ: Nút Duyệt, Nút Hủy cuộc đấu giá)
+        colAuctionAction.setCellFactory(param -> new TableCell<>() {
+            private final Button btnView = new Button("View");
+            private final Button btnCancel = new Button("Stop");
+            private final HBox container = new HBox(btnView, btnCancel);
+
+            {
+                container.setSpacing(8);
+                container.setAlignment(Pos.CENTER);
+                btnView.setStyle("-fx-background-color: #3b82f6; -fx-text-fill: white; -fx-cursor: hand; -fx-background-radius: 4;");
+                btnCancel.setStyle("-fx-background-color: #ef4444; -fx-text-fill: white; -fx-cursor: hand; -fx-background-radius: 4;");
+            }
+
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    Item currentItem = getTableRow().getItem();
+
+                    btnView.setOnAction(e -> {
+                        if (currentItem != null) handleAdminViewItemDetails(e,currentItem);
+                    });
+
+                    btnCancel.setOnAction(e -> {
+                        if (currentItem != null) handleAdminCancelAuction(currentItem);
+                    });
+
+                    setGraphic(container);
+                }
+            }
+        });
+    }
+
+    // Hàm phụ xử lý khi click nút trên dòng (Bạn tùy biến logic theo nhu cầu)
+    private void handleAdminViewItemDetails(ActionEvent e,Item item) {
+        DataSession.getInstance().setSelectedItem(item);
+        ViewManager.switchScene(e, "item-view.fxml", "Chi tiết");
+    }
+
+    private void handleAdminCancelAuction(Item item) {
+        //
+    }
+
+    private void loadAllAuctionsFromServer() {
+        AdminManager.getInstance().getAllItemsAsync()
+                .thenAcceptAsync(items ->{
+                    auctionMasterData.clear();
+                    if (items != null) {
+                        auctionMasterData.addAll(items);
+                    }
+                }, Platform::runLater)
+                .exceptionally(ex -> {
+                    System.err.println("Lỗi nạp sản phẩm chưa duyệt: " + ex.getMessage());
+                    return null;
+                });
+    }
+
+    private void setupAuctionFilters() {
+        filteredAuctionList = new FilteredList<>(auctionMasterData, p -> true);
+
+        txtSearchAuction.textProperty().addListener((observable, oldValue, newValue) -> {
+            applyCombinedFilter();
+        });
+
+        cbStatusAuctionFilter.valueProperty().addListener((observable, oldValue, newValue) -> {
+            applyCombinedFilter();
+        });
+
+        adminAuctionTable.setItems(filteredAuctionList);
+    }
+
+
+    private void applyCombinedFilter() {
+        String keyword = txtSearchAuction.getText() != null ? txtSearchAuction.getText().toLowerCase().trim() : "";
+        String selectedStatus = cbStatusAuctionFilter.getValue();
+
+        filteredAuctionList.setPredicate(item -> {
+            // Điều kiện 1: Kiểm tra bộ lọc trạng thái ComboBox
+            if (selectedStatus != null && !"ALL".equals(selectedStatus)) {
+                if (item.getStatus() == null) return false;
+
+                // Nếu trạng thái của item KHÔNG KHỚP với trạng thái đang chọn -> Loại bỏ (return false)
+                if (!selectedStatus.equalsIgnoreCase(item.getStatus().trim())) {
+                    return false;
+                }
+            }
+
+            // Điều kiện 2: Kiểm tra từ khóa tìm kiếm (Tìm theo Tên SP hoặc Tên Người Bán)
+            if (!keyword.isEmpty()) {
+                boolean matchesName = item.getName() != null && item.getName().toLowerCase().contains(keyword);
+
+                return matchesName;
+            }
+
+            return true;
+        });
+    }
+
+    private void setupTransactionTableColumns() {
+        colTxSn.setCellFactory(column -> new TableCell<>() {
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setText(null);
+                } else {
+                    setText(String.valueOf(getIndex() + 1));
+                }
+            }
+        });
+
+        // B. Ánh xạ dữ liệu từ Model Transaction lên từng cột tương ứng
+        colTxId.setCellValueFactory(cellData -> new SimpleStringProperty(String.valueOf(cellData.getValue().getId())));
+
+        colTxUserId.setCellValueFactory(cellData -> {
+            String name = cellData.getValue().getUserName();
+            return new SimpleStringProperty((name != null && !name.isEmpty()) ? name : "ID: " + cellData.getValue().getUserId());
+        });
+
+        colTxReceiverId.setCellValueFactory(cellData -> {
+            String name = cellData.getValue().getReceiverName();
+            return new SimpleStringProperty((name != null && !name.isEmpty()) ? name : "ID: " + cellData.getValue().getReceiverId());
+        });
+
+        colTxItemName.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getItemName()));
+
+        colTxAmount.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getAmount()));
+        colTxAmount.setCellFactory(column -> new TableCell<>() {
+            @Override
+            protected void updateItem(Long amount, boolean empty) {
+                super.updateItem(amount, empty);
+                if (empty || amount == null) {
+                    setText(null);
+                } else {
+                    setText(String.format("%,d", amount));
+                    setStyle("-fx-text-fill: #16a34a; -fx-font-weight: bold;"); // Màu xanh lá cho số tiền thanh toán
+                }
+            }
+        });
+
+        colTxTime.setCellValueFactory(cellData -> {
+            if (cellData.getValue().getTime() != null) {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+                return new SimpleStringProperty(cellData.getValue().getTime().format(formatter));
+            }
+            return new SimpleStringProperty("-");
+        });
+    }
+
+    private void setupTransactionFilters() {
+        filteredTransactionList = new FilteredList<>(transactionMasterData, p -> true);
+
+        txtSearchTransaction.textProperty().addListener((observable, oldValue, newValue) -> {
+            String keyword = (newValue != null) ? newValue.toLowerCase().trim() : "";
+
+            filteredTransactionList.setPredicate(tx -> {
+                if (keyword.isEmpty()) return true;
+
+                boolean matchesItem = tx.getItemName() != null && tx.getItemName().toLowerCase().contains(keyword);
+                boolean matchesSender = tx.getUserName() != null && tx.getUserName().toLowerCase().contains(keyword);
+                boolean matchesReceiver = tx.getReceiverName() != null && tx.getReceiverName().toLowerCase().contains(keyword);
+                boolean matchesTxId = String.valueOf(tx.getId()).contains(keyword);
+
+                return matchesItem || matchesSender || matchesReceiver || matchesTxId;
+            });
+        });
+
+        adminTransactionTable.setItems(filteredTransactionList);
+    }
+
+    private void loadAllTransactionsFromServer() {
+        AdminManager.getInstance().getAllTransactionsAsync()
+                .thenAcceptAsync(transactions -> {
+
+                    transactionMasterData.clear();
+                    if (transactions != null) {
+                        transactionMasterData.addAll(transactions);
+                    }
+
+                }, Platform::runLater)
+                .exceptionally(ex -> {
+                    ex.printStackTrace();
+                    return null;
+                });
     }
 }

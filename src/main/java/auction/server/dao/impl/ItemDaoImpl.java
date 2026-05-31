@@ -797,6 +797,15 @@ public class ItemDaoImpl implements ItemDao {
                     ps.setInt(3, sellerId);
                     ps.executeUpdate();
                 }
+
+                String sqlAddTransaction= "INSERT INTO bid_transaction (id_item,id_seller,id_bidder,amount) value (?,?,?,?)";
+                try (PreparedStatement ps = conn.prepareStatement(sqlAddTransaction)){
+                    ps.setInt(1,itemId);
+                    ps.setInt(2,sellerId);
+                    ps.setInt(3,winnerId);
+                    ps.setLong(4,finalPrice);
+                    ps.executeUpdate();
+                }
             }
 
             conn.commit();
