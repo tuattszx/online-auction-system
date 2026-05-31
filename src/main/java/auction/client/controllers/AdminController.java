@@ -5,7 +5,9 @@ import auction.client.services.AdminManager;
 import auction.client.session.DataSession;
 import auction.client.utils.ToastManager;
 import auction.common.message.Message;
+import auction.common.model.items.AuctionItem;
 import auction.common.model.items.Item;
+import auction.common.model.items.Transaction;
 import auction.common.model.users.User;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -40,6 +42,7 @@ import javafx.util.Callback;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -85,8 +88,56 @@ public class AdminController {
     @FXML private TableColumn<User, String> colRole;
     @FXML private TableColumn<User, Void> colActions;
 
+    // ==========================================
+// THÀNH PHẦN QUẢN LÝ CUỘC ĐẤU GIÁ (AUCTION MANAGEMENT) - KHÔNG TRÙNG LẶP
+// ==========================================
+    @FXML private VBox vboxAdminAuctions; // Khối layout tổng bao ngoài màn hình đấu giá
+    @FXML private TextField txtSearchAuction; // Thanh tìm kiếm cuộc đấu giá
+    @FXML private ComboBox<String> cbStatusAuctionFilter; // Bộ lọc trạng thái đấu giá
+
+    @FXML private TableView<AuctionItem> adminAuctionTable; // Bảng quản lý đấu giá riêng biệt
+    @FXML private TableColumn<AuctionItem, Void> colAuctionSn; // Số thứ tự
+    @FXML private TableColumn<AuctionItem, String> colAuctionName; // Tên sản phẩm đấu giá
+    @FXML private TableColumn<AuctionItem, String> colAuctionSeller; // Người bán
+    @FXML private TableColumn<AuctionItem, Long> colAuctionStartingPrice; // Giá khởi điểm
+    @FXML private TableColumn<AuctionItem, Long> colAuctionCurrentPrice; // Giá hiện tại
+    @FXML private TableColumn<AuctionItem, String> colAuctionCurrentBidder; // Người giữ giá cao nhất
+    @FXML private TableColumn<AuctionItem, String> colAuctionStartTime; // Thời gian bắt đầu
+    @FXML private TableColumn<AuctionItem, String> colAuctionEndTime; // Thời gian kết thúc
+    @FXML private TableColumn<AuctionItem, String> colAuctionStatus; // Trạng thái (PENDING, OPEN, CLOSED, DELETED)
+    @FXML private TableColumn<AuctionItem, Void> colAuctionAction; // Cột chứa các nút hành động điều khiển
+
+    // Danh sách dữ liệu động cho cuộc đấu giá
+    private final ObservableList<AuctionItem> auctionMasterData = FXCollections.observableArrayList();
+    private FilteredList<AuctionItem> filteredAuctionList;
+    private final List<VBox> allScreenViews = new ArrayList<>();
+
+    // THÀNH PHẦN QUẢN LÝ GIAO DỊCH (TRANSACTION MANAGEMENT) - ĐÃ CẬP NHẬT
+// ==========================================
+    @FXML private VBox vboxAdminTransactions;
+    @FXML private TextField txtSearchTransaction;
+
+    @FXML private TableView<Transaction> adminTransactionTable;
+    @FXML private TableColumn<Transaction, Void> colTxSn;           // Số thứ tự
+    @FXML private TableColumn<Transaction, String> colTxId;         // Mã giao dịch
+    @FXML private TableColumn<Transaction, String> colTxUserId;     // Người thực hiện (Người gửi)
+    @FXML private TableColumn<Transaction, String> colTxReceiverId; // Người nhận (MỚI)
+    @FXML private TableColumn<Transaction, String> colTxItemName;   // Mặt hàng giao dịch (MỚI)
+    @FXML private TableColumn<Transaction, Long> colTxAmount;       // Số tiền
+    @FXML private TableColumn<Transaction, String> colTxTime;       // Thời gian
+
+    private final ObservableList<Transaction> transactionMasterData = FXCollections.observableArrayList();
+    private FilteredList<Transaction> filteredTransactionList;
+
     @FXML
     public void initialize() {
+        allScreenViews.addAll(Arrays.asList(
+                VBoxOverview,
+                VBoxUserManagement,
+                vboxAdminProducts,
+                vboxAdminAuctions,
+                vboxAdminTransactions
+        ));
         // 1. Cấu hình các cột hiển thị dữ liệu text/số cơ bản
         colName.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getName()));
         colSeller.setCellValueFactory(cellData ->new javafx.beans.property.SimpleStringProperty( String.valueOf(cellData.getValue().getSellerId()))); // Hoặc sellerName nếu có
@@ -113,12 +164,12 @@ public class AdminController {
             }
         });
         btnApproveItems.getStyleClass().add("admin-menu-btn");
-        btnApproveSeller.getStyleClass().add("admin-menu-btn");
+       // btnApproveSeller.getStyleClass().add("admin-menu-btn");
         btnSettings.getStyleClass().add("admin-menu-btn");
         btnManageAuctions.getStyleClass().add("admin-menu-btn");
         btnManageUsers.getStyleClass().add("admin-menu-btn");
         btnTransactionHistory.getStyleClass().add("admin-menu-btn");
-        btnLockAccount.getStyleClass().add("admin-menu-btn");
+        //btnLockAccount.getStyleClass().add("admin-menu-btn");
         setActiveButton(btnDashboard);
         // Tạo dữ liệu PieChart mới bao gồm tất cả các thành phần bạn muốn
 
@@ -451,10 +502,12 @@ public class AdminController {
 
     @FXML
     private void handleSwitchHbox(VBox vBox){
-        VBoxUserManagement.setVisible(false);
-        VBoxOverview.setVisible(false);
-        vboxAdminProducts.setVisible(false);
+        for(VBox x:allScreenViews){
+            x.setVisible(false);
+            x.setManaged(false);
+        }
         vBox.setVisible(true);
+        vBox.setManaged(true);
     }
 
     @FXML
@@ -481,11 +534,17 @@ public class AdminController {
     @FXML
     private void handleManageAuctions(ActionEvent event) {
         setActiveButton(btnManageAuctions);
+        handleSwitchHbox(vboxAdminAuctions);
     }
 
     @FXML
     private void handleTransactionHistory(ActionEvent event) {
         setActiveButton(btnTransactionHistory);
+        handleSwitchHbox(vboxAdminTransactions);
+    }
+    @FXML
+    private void handleRefreshTransactionTable(ActionEvent event) {
+        // Gửi Message yêu cầu cập nhật lịch sử giao dịch toàn sàn từ Server về đây...
     }
 
     @FXML

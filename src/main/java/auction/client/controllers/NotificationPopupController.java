@@ -247,7 +247,7 @@ public class NotificationPopupController {
         if (note instanceof BidNotification) {
             avatarUrl = getClass().getResource("/auction/img/345629.png").toExternalForm();
         } else if (note instanceof ItemNotification) {
-            avatarUrl = getClass().getResource("/auction/img/itemnotif.jpg").toExternalForm();
+            avatarUrl = getClass().getResource("/auction/img/box.png").toExternalForm();
         } else if (note instanceof SystemNotification) {
             avatarUrl = getClass().getResource("/auction/img/warn.jpg").toExternalForm();
         }
