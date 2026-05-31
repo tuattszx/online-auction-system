@@ -32,6 +32,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -42,6 +43,7 @@ import javafx.stage.Window;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -97,11 +99,12 @@ public class ItemviewController implements Cleanable {
     private PauseTransition errorTimeout = new PauseTransition(javafx.util.Duration.seconds(3));
     private Consumer<BidUpdateNotification> bidUpdateCallback;
     private Consumer<Notification> globalNotificationCallback;
-
+    private int currentImageIndex = 0;
+    List<ItemImage> currentImageList=DataSession.getInstance().getSelectedItem().getImages();
+    Item selectedItem = DataSession.getInstance().getSelectedItem();
     @FXML
     public void initialize() {
         //Lấy dữ liệu "Tĩnh" từ Session
-        Item selectedItem = DataSession.getInstance().getSelectedItem();
 
         if (selectedItem != null) {
             this.currentItem=selectedItem;
@@ -484,8 +487,8 @@ public class ItemviewController implements Cleanable {
                 Image img = new Image(url, true);
                 ImageView thumb = new ImageView(img);
 
-                thumb.setFitHeight(80.0);
-                thumb.setFitWidth(80.0);
+                thumb.setFitHeight(60.0);
+                thumb.setFitWidth(60.0);
                 thumb.setPickOnBounds(true);
                 thumb.setPreserveRatio(true);
                 thumb.setCursor(Cursor.HAND);
@@ -515,12 +518,22 @@ public class ItemviewController implements Cleanable {
     private void loadExtraImages(int itemId) {
         AuctionManager.getInstance().getItemImagesAsync(itemId).thenAccept(response -> {
             if (response != null && "SUCCESS".equals(response.getStatus())) {
+                // 1. Ép kiểu dữ liệu nhận về thành List các đối tượng ảnh
                 List<ItemImage> allImages = (List<ItemImage>) response.getData();
-                Platform.runLater(() -> {
-                    Item tempItem = new Item();
-                    tempItem.setImages(allImages);
-                    displayThumbnails(tempItem);
-                });
+
+                if (allImages != null && !allImages.isEmpty()) {
+                    // 2. Chuyển các thao tác cập nhật giao diện vào luồng xử lý UI chính
+                    Platform.runLater(() -> {
+                        // Cập nhật danh sách ảnh toàn cục phục vụ cho việc bấm nút Trái/Phải
+                        this.currentImageList = new ArrayList<>(allImages);
+
+                        // Reset chỉ mục về tấm ảnh đầu tiên của mặt hàng này
+                        this.currentImageIndex = 0;
+
+                        // Kích hoạt hàm hiển thị tấm ảnh hiện tại lên màn hình ImageView chính
+                        displayThumbnails(selectedItem);
+                    });
+                }
             }
         }).exceptionally(ex -> {
             System.err.println("Lỗi tải ảnh: " + ex.getMessage());
@@ -608,4 +621,103 @@ public class ItemviewController implements Cleanable {
         btnSetAutoBid.setStyle("-fx-background-color: #EF4444;-fx-cursor: hand; -fx-font-weight: bold; -fx-text-fill: white");
         // Bạn có thể đổi màu #64748B thành màu đỏ cam #EF4444 nếu muốn nhấn mạnh hành động bấm vào là HỦY.
     }
+    private void displayImageAtIndex(int index) {
+        // Kiểm tra an toàn xem danh sách ảnh có hợp lệ không
+        if (currentImageList == null || currentImageList.isEmpty()) {
+            mainImage.setImage(null); // Không có ảnh thì xóa trống
+            return;
+        }
+
+        // Bảo vệ chặn index không vượt quá phạm vi mảng
+        if (index < 0 || index >= currentImageList.size()) return;
+
+        // 1. Lấy URL từ Cloudinary giống hệt logic cũ của bạn
+        ItemImage imgModel = currentImageList.get(index);
+        String url = imgModel.getUrlImage();
+
+        if (url != null && !url.isEmpty()) {
+            // 2. Tạo đối tượng Image chạy ngầm mượt mà
+            Image img = new Image(url, true);
+            mainImage.setImage(img);
+
+            // Cập nhật lại vị trí index hiện tại của hệ thống
+            currentImageIndex = index;
+        }
+    }
+    @FXML
+    public void handlePrevImage(ActionEvent event) {
+        if (currentImageList.isEmpty()) return;
+
+        int newIndex = currentImageIndex - 1;
+
+        // Logic xoay vòng: Nếu đang ở ảnh đầu tiên mà bấm Trái -> tự động nhảy xuống ảnh cuối cùng
+        if (newIndex < 0) {
+            newIndex = currentImageList.size() - 1;
+        };
+
+        displayImageAtIndex(newIndex);
+    }
+
+    @FXML
+    public void handleNextImage(ActionEvent event) {
+        if (currentImageList.isEmpty()) return;
+        System.out.println("1");
+        int newIndex = currentImageIndex + 1;
+
+        // Logic xoay vòng: Nếu đang ở ảnh cuối cùng mà bấm Phải -> tự động quay về ảnh đầu tiên (0)
+        if (newIndex >= currentImageList.size()) {
+            newIndex = 0;
+        }
+
+        displayImageAtIndex(newIndex);
+    }
+    @FXML
+    public void handleMainImageDoubleClick(MouseEvent event) {
+        // 1. Chỉ kích hoạt khi người dùng nhấn ĐÚP (2 lần click chuột trái)
+        if (event.getClickCount() == 2 && event.getButton() == javafx.scene.input.MouseButton.PRIMARY) {
+
+            // Chặn an toàn nếu sản phẩm hiện tại không có ảnh nào
+            if (currentImageList == null || currentImageList.isEmpty()) {
+                return;
+            }
+
+            try {
+                // 2. Tận dụng hàm tiện ích getView của bạn để lấy Root Node (Parent)
+                // Hãy sửa lại đường dẫn "gallery-overlay.fxml" cho đúng với cấu trúc thư mục của bạn
+                Parent overlayView = ViewManager.getView("gallery-overlay.fxml");
+
+                // 3. Rút Controller đã được ép sẵn vào UserData ở hàm getView của bạn
+                Object storedController = overlayView.getUserData();
+
+                if (storedController instanceof GalleryOverlayController) {
+                    GalleryOverlayController overlayController = (GalleryOverlayController) storedController;
+                    // Nạp danh sách ảnh + vị trí ảnh to hiện tại sang cho màn hình phóng to
+                    overlayController.setData(currentImageList, currentImageIndex);
+                }
+
+                javafx.stage.Stage galleryStage = new javafx.stage.Stage();
+                galleryStage.setTitle("Gallery - View Images");
+
+                // Thiết lập Scene cho Stage phụ
+                javafx.scene.Scene scene = new javafx.scene.Scene(overlayView);
+                galleryStage.setScene(scene);
+
+                // Cấu hình hiển thị: Cho phép phóng to tối đa hoặc mở rộng theo màn hình máy tính
+                galleryStage.setMinWidth(1024);
+                galleryStage.setMinHeight(700);
+
+                // Đặt Stage cha làm chủ để khi tắt giao diện chính thì tắt luôn giao diện phóng to
+                if (thumbnailScrollPane != null && thumbnailScrollPane.getScene() != null) {
+                    galleryStage.initOwner(thumbnailScrollPane.getScene().getWindow());
+                }
+
+                // Hiển thị cửa sổ lên
+                galleryStage.show();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                System.err.println("Lỗi khi nạp giao diện phóng to ảnh: " + e.getMessage());
+            }
+        }
+        }
 }

@@ -12,10 +12,12 @@ import auction.common.model.notifications.Notification;
 import auction.common.model.notifications.SystemNotification;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -42,11 +44,16 @@ public class NotificationViewController implements Cleanable {
     @FXML
     private VBox vboxMainNotifications;
     private Consumer<Notification> realtimeCallback;
+    @FXML private Button btnAllread;
+    @FXML private Button btnUnread;
+    private boolean isFilteringUnread = false;
 
     @FXML
     public void initialize(){
         setupRealtimeNotification();
-        loadNotifications();
+        switchButtonStyle(btnAllread, true);
+        switchButtonStyle(btnUnread, false);
+        loadNotifications(false);
         if (headerMenuController != null) {
             headerMenuController.hideSearchBar();
         }
@@ -57,6 +64,16 @@ public class NotificationViewController implements Cleanable {
     public void cleanup() {
         if (realtimeCallback != null) {
             NotificationSubscriptionManager.getInstance().unsubscribe(realtimeCallback);
+        }
+    }
+    private void switchButtonStyle(Button button, boolean isActive) {
+        button.getStyleClass().remove("fb-button-active");
+        button.getStyleClass().remove("fb-button-normal");
+
+        if (isActive) {
+            button.getStyleClass().add("fb-button-active");
+        } else {
+            button.getStyleClass().add("fb-button-normal");
         }
     }
 
@@ -123,7 +140,7 @@ public class NotificationViewController implements Cleanable {
             defaultAvatar = getClass().getResource("/auction/img/345629.png").toExternalForm();
 
         } else if (note instanceof ItemNotification itemNote) {
-            defaultAvatar = getClass().getResource("/auction/img/itemnotif.jpg").toExternalForm();
+            defaultAvatar = getClass().getResource("/auction/img/box.png").toExternalForm();
         } else if (note instanceof SystemNotification) {
             defaultAvatar = getClass().getResource("/auction/img/warn.jpg").toExternalForm();
         }
@@ -181,6 +198,9 @@ public class NotificationViewController implements Cleanable {
     private void setupRealtimeNotification() {
         this.realtimeCallback = newNotif -> {
             Platform.runLater(() -> {
+                if (isFilteringUnread && newNotif.isRead()) {
+                    return;
+                }
                 HBox newNotificationItem = createNotificationItemRow(newNotif);
 
                 // Chèn lên đầu danh sách (dưới chữ "Mới")
@@ -194,7 +214,7 @@ public class NotificationViewController implements Cleanable {
         NotificationSubscriptionManager.getInstance().subscribe(realtimeCallback);
     }
 
-    public void loadNotifications() {
+    public void loadNotifications(boolean unreadOnly) {
         // 1. Xóa danh sách cũ đi để tải mới
         vboxMainNotifications.getChildren().clear();
 
@@ -216,6 +236,10 @@ public class NotificationViewController implements Cleanable {
                     List<Notification> notifications = (List<Notification>) response.getData();
                     if (notifications != null) {
                         for (Notification note : notifications) {
+                            // 🔥 THÊM ĐÚNG DÒNG NÀY: Kiểm tra điều kiện lọc chưa đọc
+                            if (unreadOnly && note.isRead()) {
+                                continue;
+                            }
                             HBox notificationItem = createNotificationItemRow(note);
                             uiRows.add(notificationItem);
                         }
@@ -235,5 +259,30 @@ public class NotificationViewController implements Cleanable {
         });
 
         new Thread(loadNotifTask).start();
+    }
+    @FXML
+    public void handleAllClick(ActionEvent event) {
+        // Thay đổi class CSS để chuyển đổi trạng thái hiển thị sáng/tối giống FB
+        switchButtonStyle(btnAllread, true);
+        switchButtonStyle(btnUnread, false);
+        isFilteringUnread = false;
+        // --- VIẾT CODE LOAD TOÀN BỘ THÔNG BÁO CỦA BẠN TẠI ĐÂY ---
+        System.out.println("Đang lọc hiển thị tất cả thông báo...");
+        loadNotifications(false); // Ví dụ hàm load dữ liệu
+    }
+
+    /**
+     * Hành động khi click vào nút "Chưa đọc"
+     */
+    @FXML
+    public void handleUnreadClick(ActionEvent event) {
+        // Thay đổi class CSS sang active
+        switchButtonStyle(btnUnread, true);
+        switchButtonStyle(btnAllread, false);
+        isFilteringUnread = true;
+        loadNotifications(true);
+        // --- VIẾT CODE LỌC THÔNG BÁO CHƯA ĐỌC CỦA BẠN TẠI ĐÂY ---
+        System.out.println("Đang lọc hiển thị thông báo chưa đọc...");
+        // loadNotifications(true); // Ví dụ hàm load dữ liệu lọc
     }
 }

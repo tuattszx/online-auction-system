@@ -27,7 +27,8 @@ public class ViewManager {
             "item-view.fxml",
             "cart-view.fxml",
             "main-view.fxml",
-            "admin-view.fxml"
+            "admin-view.fxml",
+            "gallery-overlay.fxml"
     );
     /**
      * Lấy view từ cache hoặc load từ FXML file

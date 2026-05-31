@@ -1,22 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
-<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.shape.Circle?>
-<?import javafx.scene.text.Font?>
 
+<?import java.net.URL?>
 <AnchorPane prefHeight="800.0" prefWidth="1200.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auction.client.controllers.NotificationViewController">
+    <stylesheets>
+        <URL value="@../css/notification.css" />
+    </stylesheets>
     <children>
         <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <children>
@@ -45,8 +42,8 @@
                                         <Insets bottom="10.0" left="16.0" right="16.0" top="10.0" />
                                     </padding>
                                     <children>
-                                        <Button mnemonicParsing="false" style="-fx-background-color: #e7f3ff; -fx-background-radius: 18; -fx-text-fill: #1877f2; -fx-font-weight: bold; -fx-padding: 6 12 6 12; -fx-cursor: hand;" text="%notiview.label.all" />
-                                        <Button mnemonicParsing="false" style="-fx-background-color: transparent; -fx-background-radius: 18; -fx-text-fill: #050505; -fx-font-weight: bold; -fx-padding: 6 12 6 12; -fx-cursor: hand;" text="%notiview.label.haven't" />
+                                        <Button fx:id="btnAllread" mnemonicParsing="false" onAction="#handleAllClick" text="%notiview.label.all" />
+                                        <Button fx:id="btnUnread" mnemonicParsing="false" onAction="#handleUnreadClick" text="%notiview.label.haven't" />
                                     </children>
                                 </HBox>
 
@@ -59,7 +56,7 @@
                                             <children>
                                                 <Label style="-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #050505;" text="%notiview.label.new">
                                                     <VBox.margin>
-                                                        <Insets left="16.0" top="10.0" bottom="5.0"/>
+                                                        <Insets bottom="5.0" left="16.0" top="10.0" />
                                                     </VBox.margin>
                                                 </Label>
                                             </children>
