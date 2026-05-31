@@ -209,22 +209,20 @@ public class ClientHandler implements Runnable {
         // Lấy thông tin đăng nhập từ dữ liệu trong Message
         Account accReq = (Account) msg.getData();
 
-        // 1. Thay vì gọi CheckLogin, ta gọi hàm tìm User chỉ bằng Username
-        User user = userDao.findUserByUsername(accReq.getUsername());
-        // 2. Tiến hành kiểm tra: User có tồn tại VÀ mật khẩu thô khớp với mật khẩu băm trong DB không
-        if (user != null && BCrypt.checkpw(accReq.getPassword(), user.getPassword())) {
+        // Gọi UserDao (nằm trong package auction.server.dao của bạn)
+        User user = userDao.CheckLogin(accReq.getUsername(), accReq.getPassword());
 
+        if (user != null) {
             msg.setStatus("SUCCESS");
-            this.loggedInUser = user;
+            this.loggedInUser=user;
             msg.setData(user);
-
         } else {
-            // Trường hợp không tìm thấy user hoặc sai mật khẩu đều nhảy vào đây
             msg.setStatus("FAILED");
         }
 
         out.writeObject(msg);
-        out.flush();}
+        out.flush();
+    }
 
     private void handleRegister(Message msg, ObjectOutputStream out) throws IOException {
         // Ép kiểu về User vì Client sẽ gửi đối tượng User sang

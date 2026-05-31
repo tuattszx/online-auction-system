@@ -22,12 +22,16 @@ import org.mockito.junit.jupiter.*;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import java.lang.reflect.Method;
+import java.util.Map;
+
 import org.mockito.ArgumentCaptor;
 
 public class ClientHandlerTest {
@@ -132,29 +136,23 @@ public class ClientHandlerTest {
 
     @Test
     public void testHandleLogin_Success() throws Exception {
-        System.out.println("Dang chay test: Login Success");
-
+        System.out.println("danng chay test 1");
         // 1. Chuẩn bị dữ liệu giả lập (Given)
-        String rawPassword = "password123";
-        // Băm mật khẩu bằng BCrypt giống y hệt như mật khẩu được lưu trong DB thật
-        String hashedPassword = org.mindrot.jbcrypt.BCrypt.hashpw(rawPassword, org.mindrot.jbcrypt.BCrypt.gensalt());
-
-        Account loginAcc = new Account("admin", rawPassword); // Client gửi mật khẩu thô
-        Message msgRequest = new Message("LOGIN", loginAcc);
+        Account loginAcc = new Account("admin", "password123");
+        Message msgRequest = new Message("LOGIN",loginAcc);
 
         User expectedUser = new User();
         expectedUser.setUsername("admin");
         expectedUser.setEmail("admin@auction.com");
-        expectedUser.setPassword(hashedPassword); // Thiết lập mật khẩu đã băm cho User trả về từ DB
 
-        // MOCK: Khi tìm kiếm bằng username "admin", trả về đối tượng user có pass đã băm
-        when(mockUserDao.findUserByUsername("admin")).thenReturn(expectedUser);
+        // Mock hành vi của DAO: khi truyền đúng u/p thì trả về User
+        when(mockUserDao.CheckLogin("admin", "password123")).thenReturn(expectedUser);
 
         // 2. Client gửi message tới Server (When)
         testClientOut.writeObject(msgRequest);
         testClientOut.flush();
 
-        // Chạy ClientHandler trong một Thread riêng
+        // Chạy ClientHandler trong 1 Thread riêng vì vòng lặp `while(true)` sẽ block main thread
         Thread handlerThread = new Thread(clientHandler);
         handlerThread.start();
         testClientIn = new ObjectInputStream(pipeFromServer);
@@ -169,19 +167,16 @@ public class ClientHandlerTest {
 
         User loggedInUser = (User) msgResponse.getData();
         assertEquals("admin", loggedInUser.getUsername());
-        assertEquals("admin", clientHandler.getLoggedInUser().getUsername()); // Kiểm tra state của Handler đã cập nhật
+        assertEquals("admin", clientHandler.getLoggedInUser().getUsername()); // Kiểm tra state được lưu
     }
 
     @Test
-    public void testHandleLogin_Failed_UserNotFound() throws Exception {
-        System.out.println("Dang chay test: Login Failed (User Not Found)");
-
-        // 1. Chuẩn bị dữ liệu: Tài khoản không tồn tại
-        Account loginAcc = new Account("wrong_user", "any_password");
-        Message msgRequest = new Message("LOGIN", loginAcc);
-
-        // MOCK: Trả về null khi tìm kiếm username này
-        when(mockUserDao.findUserByUsername("wrong_user")).thenReturn(null);
+    public void testHandleLogin_Failed() throws Exception {
+        // 1. Chuẩn bị dữ liệu sai
+        Account loginAcc = new Account("wrong_user", "wrong_pass");
+        Message msgRequest = new Message("LOGIN",loginAcc);
+        // Mock hành vi DAO: Trả về null khi sai tài khoản
+        when(mockUserDao.CheckLogin("wrong_user", "wrong_pass")).thenReturn(null);
 
         // 2. Gửi request
         testClientOut.writeObject(msgRequest);
@@ -1876,52 +1871,54 @@ public class ClientHandlerTest {
 
     @Test
     public void testHandleGetCustomers_NoImport_Success() throws Exception {
-        // 1. Chuẩn bị dữ liệu: Client gửi lên sellerId dạng String theo đúng logic hàm parse
-        String sellerIdStr = "12";
         int sellerId = 12;
-        Message msgRequest = new Message("GET_CUSTOMERS", sellerIdStr);
+        Message msgRequest = new Message("GET_CUSTOMERS", sellerId);
         ObjectOutputStream mockOut = mock(ObjectOutputStream.class);
 
-        // Giả lập danh sách khách hàng trả về từ DAO
-        User customer1 = new User();
-        customer1.setId(101);
-        customer1.setUsername("customer_alpha");
+        List<Object[]> mockCustomers = new ArrayList<>();
+        Object[] customerData = new Object[]{101, "customer_alpha", "alpha@gmail.com"};
+        mockCustomers.add(customerData);
 
-        java.util.List<User> mockCustomers = java.util.List.of(customer1);
-        //when(mockItemDao.getCustomersBySellerId(sellerId)).thenReturn(mockCustomers);
+        // Stub hành vi cho mockItemDao trả về đúng kiểu List<Object[]>
+        when(mockItemDao.getCustomersBySellerId(sellerId)).thenReturn(mockCustomers);
 
-        // Bắt gói tin ghi ra stream bằng doAnswer (thay cho ArgumentCaptor)
+        // Bắt gói tin ghi ra stream bằng doAnswer
         final Message[] capturedResponse = new Message[1];
         doAnswer(invocation -> {
             capturedResponse[0] = invocation.getArgument(0);
             return null;
         }).when(mockOut).writeObject(any(Message.class));
 
-        // 2. Thực thi qua Reflection (Đường dẫn đầy đủ, không cần import thêm)
+        // 2. Thực thi qua Reflection
         java.lang.reflect.Method method = ClientHandler.class.getDeclaredMethod(
                 "handleGetCustomers", Message.class, ObjectOutputStream.class
         );
         method.setAccessible(true);
         method.invoke(clientHandler, msgRequest, mockOut);
 
-        // 3. Assert kết quả nhanh trên bộ nhớ RAM
-        assertNotNull(capturedResponse[0]);
+        // 3. Assert kết quả kiểm thử (Then)
+        assertNotNull(capturedResponse[0], "Response message không được null");
         assertEquals("SUCCESS", capturedResponse[0].getStatus());
 
-        java.util.List<User> actualCustomers = (java.util.List<User>) capturedResponse[0].getData();
+        // Ép kiểu về List<Object[]> để kiểm tra tính toàn vẹn của dữ liệu dữ liệu
+        List<Object[]> actualCustomers = (List<Object[]>) capturedResponse[0].getData();
         assertEquals(1, actualCustomers.size());
-        assertEquals("customer_alpha", actualCustomers.get(0).getUsername());
+
+        Object[] actualCustomer = actualCustomers.get(0);
+        assertEquals(101, actualCustomer[0]);
+        assertEquals("customer_alpha", actualCustomer[1]);
+
+        // Xác minh tầng DAO đã được gọi chính xác 1 lần
         verify(mockItemDao, times(1)).getCustomersBySellerId(sellerId);
     }
 
     @Test
     public void testHandleGetCustomers_NoImport_Exception() throws Exception {
-        // 1. Chuẩn bị dữ liệu lỗi: Ép DAO ném ra Exception
-        String sellerIdStr = "5";
         int sellerId = 5;
-        Message msgRequest = new Message("GET_CUSTOMERS", sellerIdStr);
+        Message msgRequest = new Message("GET_CUSTOMERS", sellerId);
         ObjectOutputStream mockOut = mock(ObjectOutputStream.class);
 
+        // Giả lập ép DAO ném ra ngoại lệ khi truy vấn
         when(mockItemDao.getCustomersBySellerId(sellerId))
                 .thenThrow(new RuntimeException("SQL Connection Error"));
 
@@ -1931,21 +1928,21 @@ public class ClientHandlerTest {
             return null;
         }).when(mockOut).writeObject(any(Message.class));
 
-        // 2. Thực thi
+        // 2. Thực thi qua Reflection
         java.lang.reflect.Method method = ClientHandler.class.getDeclaredMethod(
                 "handleGetCustomers", Message.class, ObjectOutputStream.class
         );
         method.setAccessible(true);
         method.invoke(clientHandler, msgRequest, mockOut);
 
-        // 3. Kiểm tra khối catch bắt lỗi chính xác
-        assertNotNull(capturedResponse[0]);
+        assertNotNull(capturedResponse[0], "Response message không được null");
         assertEquals("ERROR", capturedResponse[0].getStatus());
-        assertTrue(((String) capturedResponse[0].getData()).contains("SQL Connection Error"));
+
+        String errorMsg = (String) capturedResponse[0].getData();
+        assertTrue(errorMsg.contains("SQL Connection Error"), "Thông báo lỗi trả về không khớp");
     }
     @Test
     public void testHandleGetSellerRevenue_NoImport_Success() throws Exception {
-        // 1. Chuẩn bị dữ liệu: Client gửi lên sellerId dạng String ("15")
         String sellerIdStr = "15";
         int sellerId = 15;
         Message msgRequest = new Message("GET_REVENUE", sellerIdStr);
@@ -2112,42 +2109,73 @@ public class ClientHandlerTest {
     }
     @Test
     public void testHandleGetDashboardStats_NoImport_Success() throws Exception {
+        System.out.println("Dang chay test: Get Dashboard Stats Success");
+
         // 1. Chuẩn bị dữ liệu giả lập (Given)
         Message msgRequest = new Message("GET_DASHBOARD_STATS", null);
         ObjectOutputStream mockOut = mock(ObjectOutputStream.class);
 
-        // Giả lập mảng Object trả về từ userDao và itemDao đúng kiểu dữ liệu trong code gốc
-        Object[] mockUserStats = new Object[]{ 15000000L, 120 }; // totalRevenue (long), totalUsers (int)
-        Object[] mockItemStats = new Object[]{ 45, 85.5 };     // liveAuctions (int), successRate (double)
+        // Giả lập dữ liệu cho map phân phối danh mục (categoryDistribution)
+        Map<Integer, Integer> mockCategoryDistribution = new HashMap<>();
+        mockCategoryDistribution.put(1, 10); // Category ID 1 có 10 items
+        mockCategoryDistribution.put(2, 25); // Category ID 2 có 25 items
 
+        // Giả lập dữ liệu cho danh sách xu hướng doanh thu (revenueTrend)
+        List<Object[]> mockRevenueTrend = new ArrayList<>();
+        mockRevenueTrend.add(new Object[]{"2026-01", 5000000L});
+        mockRevenueTrend.add(new Object[]{"2026-02", 10000000L});
+
+        // SỬA LỖI: Tạo mảng Object đầy đủ số lượng phần tử mà code thực tế yêu cầu
+        Object[] mockUserStats = new Object[]{ 15000000L, 120 }; // index 0: revenue, index 1: users
+        Object[] mockItemStats = new Object[]{
+                45,                         // index 0: liveAuctions (int)
+                85.5,                       // index 1: successRate (double)
+                mockCategoryDistribution,   // index 2: categoryDistribution (Map)
+                mockRevenueTrend            // index 3: revenueTrend (List)
+        };
+
+        // Stub dữ liệu cho các Mock DAO
         when(mockUserDao.getDashboardStats()).thenReturn(mockUserStats);
         when(mockItemDao.getDashboardStats()).thenReturn(mockItemStats);
 
-        // Bắt gói tin ghi ra stream bằng doAnswer
+        // Bắt gói tin phản hồi ghi ra stream
         final Message[] capturedResponse = new Message[1];
         doAnswer(invocation -> {
             capturedResponse[0] = invocation.getArgument(0);
             return null;
         }).when(mockOut).writeObject(any(Message.class));
 
-        // 2. Thực thi qua Reflection (When)
+        // 2. Thực thi thông qua Reflection (When)
         java.lang.reflect.Method method = ClientHandler.class.getDeclaredMethod(
                 "handleGetDashboardStats", Message.class, ObjectOutputStream.class
         );
         method.setAccessible(true);
         method.invoke(clientHandler, msgRequest, mockOut);
 
-        // 3. Assert kiểm tra các trường dữ liệu gom trong Map (Then)
-        assertNotNull(capturedResponse[0]);
+        // 3. Assert kiểm tra tính toàn vẹn của dữ liệu thu được (Then)
+        assertNotNull(capturedResponse[0], "Phản hồi từ server không được null");
         assertEquals("SUCCESS", capturedResponse[0].getStatus());
 
-        java.util.Map<String, Object> actualStats = (java.util.Map<String, Object>) capturedResponse[0].getData();
+        // Kiểm tra cấu trúc Map tổng hợp trả về cho Client
+        Map<String, Object> actualStats = (Map<String, Object>) capturedResponse[0].getData();
         assertNotNull(actualStats);
+
+        // Kiểm tra các chỉ số cơ bản
         assertEquals(15000000L, actualStats.get("totalRevenue"));
-        assertEquals(45, actualStats.get("liveAuctions"));
         assertEquals(120, actualStats.get("totalUsers"));
+        assertEquals(45, actualStats.get("liveAuctions"));
         assertEquals(85.5, actualStats.get("successRate"));
 
+        // Kiểm tra cấu trúc dữ liệu phức tạp đi kèm
+        Map<Integer, Integer> actualDist = (Map<Integer, Integer>) actualStats.get("categoryDistribution");
+        assertEquals(2, actualDist.size());
+        assertEquals(10, actualDist.get(1));
+
+        List<Object[]> actualTrend = (List<Object[]>) actualStats.get("revenueTrend");
+        assertEquals(2, actualTrend.size());
+        assertEquals("2026-01", actualTrend.get(0)[0]);
+
+        // Xác minh xem các hàm DAO đã được gọi chuẩn xác chưa
         verify(mockUserDao, times(1)).getDashboardStats();
         verify(mockItemDao, times(1)).getDashboardStats();
     }
