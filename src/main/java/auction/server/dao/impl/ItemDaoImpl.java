@@ -352,7 +352,7 @@ public class ItemDaoImpl implements ItemDao {
                 }
             }
 
-            Map<Integer, Integer> categoryDistribution = new HashMap<>();
+            Map<String, Integer> categoryDistribution = new HashMap<>();
             String sqlChart = "SELECT id_category, COUNT(*) AS total_items FROM item_category GROUP BY id_category";
             try (PreparedStatement stmt = conn.prepareStatement(sqlChart);
                  ResultSet rs = stmt.executeQuery()) {
@@ -360,14 +360,14 @@ public class ItemDaoImpl implements ItemDao {
                 while (rs.next()) {
                     int catId = rs.getInt("id_category");
                     int count = rs.getInt("total_items");
-                    categoryDistribution.put(catId, count);
+                    categoryDistribution.put(String.valueOf(catId), count);
                 }
 
             } catch (SQLException e) {
                 e.printStackTrace();
             }
 
-            List<Object[]> trendData = new ArrayList<>();
+            List<List<Object>> trendData = new ArrayList<>();
             String sqlRevenueChart = "SELECT DATE(end_time) AS close_date, SUM(current_price) AS daily_revenue " +
                     "FROM ITEMS " +
                     "WHERE (status = 'CLOSED' OR status = 'DELETED') " +
@@ -384,7 +384,10 @@ public class ItemDaoImpl implements ItemDao {
                     long dailyRevenue = rs.getLong("daily_revenue");
 
                     String labelDate = chartDateFormat.format(dbDate);
-                    trendData.add(new Object[]{ labelDate, dailyRevenue });
+                    List<Object> dataPoint = new ArrayList<>();
+                    dataPoint.add(labelDate);
+                    dataPoint.add(dailyRevenue);
+                    trendData.add(dataPoint);
                 }
 
             } catch (SQLException e) {

@@ -320,7 +320,7 @@ public class AdminController {
         adminTable.setItems(filteredUserList);
     }
 
-    private void setupPieChart(Map<Integer,Integer> categoryDistribution) {
+    private void setupPieChart(Map<String,Integer> categoryDistribution) {
         ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
         categoryDistribution.forEach((catIdKey, countVal) -> {
             int catId = Integer.parseInt(catIdKey.toString());
@@ -649,21 +649,27 @@ public class AdminController {
                         lblLiveAuctions.setText(String.valueOf(((Number) stats.get("liveAuctions")).intValue()));
                         lblUsers.setText(String.format("%,d", ((Number) stats.get("totalUsers")).intValue()));
                         lblSuccessRate.setText(String.format("%.1f%%", ((Number) stats.get("successRate")).doubleValue()));
-                        setupPieChart((Map<Integer, Integer>) stats.get("categoryDistribution"));
+                        setupPieChart((Map<String, Integer>) stats.get("categoryDistribution"));
                         if (stats.containsKey("revenueTrend")) {
                             revenueChart.getData().clear();
 
                             javafx.scene.chart.XYChart.Series<String, Number> series = new javafx.scene.chart.XYChart.Series<>();
 
-                            List<ArrayList<Object>> trendList = (List<ArrayList<Object>>) stats.get("revenueTrend");
+                            List<?> trendList = (List<?>) stats.get("revenueTrend");
 
-                            for (Object itemObj : trendList) {
-                                List<Object> dataPoint = (List<Object>) itemObj;
-                                String dayLabel = (String) dataPoint.get(0);
-                                Number dailyAmount = (Number) dataPoint.get(1);
-                                series.getData().add(new javafx.scene.chart.XYChart.Data<>(dayLabel, dailyAmount));
+                            if (trendList != null) {
+                                for (Object itemObj : trendList) {
+                                    List<?> dataPoint = (List<?>) itemObj;
+
+                                    if (dataPoint != null && dataPoint.size() >= 2) {
+                                        String dayLabel = String.valueOf(dataPoint.get(0));
+
+                                        Number dailyAmount = (Number) dataPoint.get(1);
+                                        series.getData().add(new javafx.scene.chart.XYChart.Data<>(dayLabel, dailyAmount));
+                                    }
+                                }
                             }
-                            revenueChart.setData(FXCollections.observableArrayList(series));
+                            revenueChart.getData().add(series);
                         }
                     }
                     loadUsersData();
