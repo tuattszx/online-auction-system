@@ -3,6 +3,7 @@ package auction.server.dao.impl;
 import auction.common.model.users.User;
 import auction.server.DatabaseManager;
 import auction.server.dao.UserDao;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -105,19 +106,34 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public User CheckLogin(String userName, String password){
-        String sql="SELECT * FROM users WHERE username=? AND password=?";
-        try(Connection conn=DatabaseManager.getInstance().getConnection();
-            PreparedStatement pstmt= conn.prepareStatement(sql)) {
+    public User CheckLogin(String userName, String password) {
+        // BƯỚC 1: Chỉ tìm kiếm theo username, không đưa password vào câu SQL
+        String sql = "SELECT * FROM users WHERE username = ?";
+
+        try (Connection conn = DatabaseManager.getInstance().getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
             pstmt.setString(1, userName);
-            pstmt.setString(2, password);
+
             try (ResultSet rs = pstmt.executeQuery()) {
-                if (rs.next()) return mapResultSetToUser(rs);
+                if (rs.next()) {
+                    // Lấy chuỗi mật khẩu đã băm đang lưu trong Database ra
+                    String hashedPasswordInDB = rs.getString("password");
+
+                    // BƯỚC 2: Dùng BCrypt.checkpw để tự giải mã muối và so sánh
+                    // Tham số 1: mật khẩu thô người dùng nhập
+                    // Tham số 2: mật khẩu đã băm lấy từ DB
+                    if (BCrypt.checkpw(password, hashedPasswordInDB)) {
+                        // Nếu khớp, tiến hành map dữ liệu thành đối tượng User và trả về
+                        return mapResultSetToUser(rs);
+                    }
+                }
             }
-        }
-        catch (SQLException e){
+        } catch (SQLException e) {
             System.err.println("Lỗi checkLogin: " + e.getMessage());
         }
+
+        // Trả về null nếu không tìm thấy username HOẶC mật khẩu nhập sai
         return null;
     }
 
