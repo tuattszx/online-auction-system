@@ -8,6 +8,7 @@ import auction.common.model.items.AuctionItem;
 import auction.common.model.items.Item;
 import auction.common.model.users.User;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -17,6 +18,11 @@ public class AuctionManager {
     public static AuctionManager getInstance() {
         if (instance == null) instance = new AuctionManager();
         return instance;
+    }
+
+    public CompletableFuture<List<Item>> getAllItemsAsync(){
+        return ClientNetwork.getInstance().sendRequestAsync(new Message("GET_ALL_ITEMS",null))
+                .thenApply(res -> (res != null && "SUCCESS".equals(res.getStatus()) ? (List<Item>) res.getData() : new ArrayList<>()));
     }
 
     public CompletableFuture<Item> getLatestItemAsync(int itemId) {

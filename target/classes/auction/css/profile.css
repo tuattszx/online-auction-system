@@ -1,0 +1,238 @@
+/* =========================================
+   PROFILE & SELLER VIEW STYLES
+   ========================================= */
+
+/* Profile Panes */
+.profile-pane {
+    -fx-background-color: white;
+    -fx-border-color: white;
+    -fx-spacing: 3;
+}
+
+.profile-pane-section-title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+}
+
+.profile-section-label {
+    -fx-text-fill: #7f8c8d;
+    -fx-font-size: 10px;
+}
+
+.profile-info-value {
+    -fx-font-size: 17px;
+    -fx-text-fill: #2c3e50;
+}
+
+/* Address Fields */
+.address-field-label {
+    -fx-text-fill: #2c3e50;
+    -fx-font-size: 10px;
+}
+
+.address-input {
+    -fx-background-color: #f0f2f5;
+    -fx-border-color: transparent;
+    -fx-background-radius: 0;
+    -fx-min-height: 35;
+}
+
+.address-textarea {
+    -fx-background-color: #f0f2f5;
+    -fx-border-color: #f0f2f5;
+    -fx-background-radius: 0;
+    -fx-control-inner-background: #f0f2f5;
+    -fx-border-width: 0;
+}
+
+/* Navbar */
+.profile-navbar {
+    -fx-background-color: white;
+    -fx-border-color: #34495e;
+    -fx-border-width: 0 0 2 0;
+}
+
+.profile-navbar-logo {
+    -fx-text-fill: #2125ff;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.profile-navbar-link {
+    -fx-text-fill: #0052FF;
+    -fx-font-weight: bold;
+    -fx-font-size: 15px;
+    -fx-cursor: hand;
+}
+
+.profile-navbar-link:hover {
+    -fx-underline: true;
+}
+
+/* Seller Page Left Menu */
+.seller-menu {
+    -fx-background-color: #34495e;
+    -fx-padding: 20 10;
+    -fx-spacing: 10;
+}
+
+.seller-menu-button {
+    -fx-max-width: Infinity;
+    -fx-text-fill: #bdc3c7;
+    -fx-alignment: CENTER_LEFT;
+    -fx-background-color: transparent;
+    -fx-cursor: hand;
+}
+
+.seller-menu-button-active {
+    -fx-background-color: #2980b9;
+    -fx-text-fill: white;
+}
+
+.seller-menu-button:hover {
+    -fx-background-color: rgba(41, 128, 185, 0.3);
+}
+
+/* Email/Notification Settings */
+.notification-toggle-container {
+    -fx-spacing: 15;
+    -fx-alignment: CENTER_LEFT;
+}
+
+.notification-title {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+}
+
+.notification-description {
+    -fx-font-size: 11px;
+    -fx-text-fill: #7f8c8d;
+}
+
+/* Verification Section */
+.verification-status {
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #24b47e;
+}
+
+.verification-badge {
+    -fx-text-fill: #24b47e;
+    -fx-effect: dropshadow(gaussian, rgba(36, 180, 126, 0.3), 5, 0, 0, 0);
+}
+.scroll-pane {
+    -fx-background-radius: 15;
+    -fx-border-radius: 15;
+    -fx-background-color: transparent; /* Quan trọng: Để nền trong suốt */
+    -fx-overflow-hidden: true; /* Giúp hỗ trợ cắt nội dung */
+}
+
+/* Bo tròn cả vùng Viewport (vùng chứa nội dung trực tiếp) */
+.scroll-pane > .viewport {
+    -fx-background-color: transparent;
+    -fx-background-radius: 15;
+}
+
+/* Bo tròn cho StackPane và HBox bên trong để đồng bộ */
+.scroll-pane .stack-pane,
+.scroll-pane .hbox {
+    -fx-background-radius: 15;
+    -fx-background-color: white; /* Hoặc màu nền của bạn */
+}
+/* ==========================================================================
+   1. PHONG CÁCH THANH NHẬP LIỆU (TEXT FIELD)
+   ========================================================================== */
+.text-field {
+    -fx-background-color:  #e8f0fe; /* Nền xám trắng siêu nhẹ, tạo chiều sâu */
+    -fx-background-radius: 8;      /* Bo góc vừa vặn hiện đại */
+    -fx-border-color: #e2e8f0;     /* Viền xám mờ tinh tế */
+    -fx-border-radius: 8;
+    -fx-border-width: 1;
+    -fx-padding: 10 14 10 14;      /* Tăng khoảng trống bên trong cho chữ dễ đọc */
+    -fx-text-fill: #334155;        /* Màu chữ xám than sang trọng, không dùng đen tuyền */
+    -fx-font-family: "Segoe UI", sans-serif;
+    -fx-font-size: 14px;
+    -fx-transition: all 0.2s ease-in-out; /* Hiệu ứng mượt mà khi click */
+}
+
+/* Hiệu ứng khi người dùng click chuột vào ô nhập (Focus) */
+.text-field:focused {
+    -fx-background-color: #ffffff; /* Đổi sang nền trắng tinh khiết */
+    -fx-border-color: #0052ff;     /* Viền chuyển sang màu xanh thương hiệu */
+    /* Đổ bóng nhòe ánh xanh xung quanh ô nhập (Glow Effect) */
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 82, 255, 0.15), 6, 0, 0, 0);
+}
+
+/* ==========================================================================
+   2. PHONG CÁCH THANH CHỌN (COMBO BOX)
+   ========================================================================== */
+.combo-box {
+    -fx-background-color: #f8fafc;
+    -fx-background-radius: 8;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 8;
+    -fx-border-width: 1;
+    -fx-padding: 5 8 5 12;          /* Cân đối khoảng cách */
+    -fx-font-family: "Segoe UI", sans-serif;
+    -fx-font-size: 14px;
+}
+
+/* Tiêu đề hiển thị bên trong ComboBox */
+.combo-box .label {
+    -fx-text-fill: #334155;
+}
+
+/* Hiệu ứng khi click vào ComboBox */
+.combo-box:focused {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #0052ff;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 82, 255, 0.15), 6, 0, 0, 0);
+}
+
+/* Custom lại cái mũi tên tam giác chỉ xuống cho thanh thoát */
+.combo-box .arrow-button {
+    -fx-background-color: transparent; /* Xóa nền xám thô của mũi tên */
+    -fx-padding: 0 8 0 8;
+}
+.combo-box .arrow {
+    -fx-background-color: #64748b; /* Nhuộm màu xám thanh lịch cho mũi tên */
+    -fx-shape: "M 0 0 L 4 4 L 8 0 Z"; /* Định hình lại mũi tên mảnh mai hơn */
+}
+
+/* ==========================================================================
+   3. PHONG CÁCH DANH SÁCH SỔ XUỐNG (COMBO BOX POPUP)
+   ========================================================================== */
+/* Định dạng khung cửa sổ danh sách khi xổ xuống */
+.combo-box-popup .list-view {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 8;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 8;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(three-pass-box, rgba(15, 23, 42, 0.08), 12, 0, 0, 4); /* Đổ bóng rớt xuống */
+    -fx-padding: 4;
+}
+
+/* Định dạng từng dòng item quốc gia bên trong danh sách */
+.combo-box-popup .list-cell {
+    -fx-background-color: transparent;
+    -fx-padding: 8 12 8 12;
+    -fx-text-fill: #334155;
+    -fx-background-radius: 4; /* Bo góc nhẹ cho dòng được chọn */
+}
+
+/* Khi di chuột qua từng quốc gia (Hover) */
+.combo-box-popup .list-cell:hover {
+    -fx-background-color: #f1f5f9; /* Nền xám sáng nhẹ */
+    -fx-text-fill: #0f172a;
+}
+
+/* Khi một quốc gia được CLICK CHỌN (Sửa dứt điểm dải màu xanh đậm hệ thống ở hình cũ) */
+.combo-box-popup .list-cell:selected {
+    -fx-background-color: #e3f2fd; /* Đổi sang màu nền xanh lam nhạt dịu mát y hệt menu của bạn */
+    -fx-text-fill: #0052ff;        /* Chữ chuyển sang màu xanh thương hiệu đậm */
+    -fx-font-weight: bold;
+}
+

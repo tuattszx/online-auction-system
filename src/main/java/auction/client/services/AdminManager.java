@@ -56,13 +56,12 @@ public class AdminManager {
         return ClientNetwork.getInstance().sendRequestAsync(new Message("CONFIRM_ITEM", payload));
     }
 
-    public CompletableFuture<List<Item>> getAllItemsAsync(){
-        return ClientNetwork.getInstance().sendRequestAsync(new Message("GET_ALL_ITEMS",null))
-                .thenApply(res -> (res != null && "SUCCESS".equals(res.getStatus()) ? (List<Item>) res.getData() : new ArrayList<>()));
-    }
-
     public CompletableFuture<List<Transaction>> getAllTransactionsAsync(){
         return ClientNetwork.getInstance().sendRequestAsync(new Message("GET_ALL_TRANSACTIONS",null))
                 .thenApply(rs -> (rs != null && "SUCCESS".equals(rs.getStatus()) ? (List<Transaction>) rs.getData() : new ArrayList<>()));
+    }
+
+    public CompletableFuture<Message> cancelAuctionAsync(int itemId,String reason) {
+        return ClientNetwork.getInstance().sendRequestAsync(new Message("CANCEL_AUCTION", new Object[]{itemId,reason}));
     }
 }

@@ -1,8 +1,6 @@
 package auction.client.controllers;
 
-import auction.client.services.AuctionTimerManager;
-import auction.client.services.Cleanable;
-import auction.client.services.LanguageManager;
+import auction.client.services.*;
 import auction.client.session.DataSession;
 import auction.common.model.items.ItemImage;
 import javafx.animation.Animation;
@@ -121,13 +119,18 @@ public class MainViewController implements Cleanable {
         Task<List<Item>> loadTask = new Task<>() {
             @Override
             protected List<Item> call() throws Exception {
-                // Gửi request thông qua kết nối Socket
-                Message response = network.sendRequest(new Message("GET_ALL_ITEMS", null));
-
-                if (response == null || !"SUCCESS".equals(response.getStatus())) {
-                    throw new RuntimeException("Server không phản hồi hoặc có lỗi xảy ra");
-                }
-                return (List<Item>) response.getData();
+                return AuctionManager.getInstance().getAllItemsAsync()
+                        .thenApply(response -> {
+                            if (response != null) {
+                                return (List<Item>) response;
+                            } else {
+                                return null;
+                            }
+                        })
+                        .exceptionally(ex -> {
+                            return null;
+                        })
+                        .join();
             }
         };
 

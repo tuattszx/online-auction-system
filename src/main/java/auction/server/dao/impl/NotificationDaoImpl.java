@@ -162,6 +162,30 @@ public class NotificationDaoImpl implements NotificationDAO {
         return 0;
     }
 
+    public boolean readAllByUserId(int userId){
+        String sql = "UPDATE NOTIFICATIONS SET is_read = 1 WHERE user_id = ?";
+        try (Connection conn = DatabaseManager.getInstance().getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, userId);
+            return pstmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean deleteAllByUserId(int userId) {
+        String sql = "DELETE FROM NOTIFICATIONS WHERE user_id = ?";
+        try (Connection conn = DatabaseManager.getInstance().getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, userId);
+            return pstmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     @Override
     public boolean add(Notification notification) {
         // Tận dụng chính hàm Batch chạy cho 1 phần tử đơn lẻ

@@ -1,0 +1,447 @@
+/* =========================================
+   1. RESET & CÁC THÀNH PHẦN CƠ BẢN
+   ========================================= */
+.forgot-btn {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-background-insets: 0;
+    -fx-border-radius: 3px;
+    -fx-background-radius: 3px;
+    -fx-text-fill: #555;
+}
+
+
+
+.label-account {
+    -fx-font-family: "Montserrat";
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+}
+
+.forgot-btn:hover {
+    -fx-background-color: #f0f0f0;
+    -fx-text-fill: #0078d4;
+}
+
+.button {
+    -fx-background-radius: 15;
+    -fx-border-radius: 15;
+}
+
+.button:hover {
+    -fx-cursor: hand;
+    -fx-opacity: 0.8;
+}
+
+.text-input {
+    -fx-background-radius: 7;
+    -fx-border-radius: 7;
+}
+
+/* =========================================
+   2. THANH ĐIỀU HƯỚNG (NAVBAR)
+   ========================================= */
+.navbar {
+    -fx-background-color: #1a237e; /* Xanh đậm UET/Midnight Blue */
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 10, 0, 0, 5);
+}
+
+.logo-text {
+    -fx-text-fill: white;
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* =========================================
+   3. CỤM TÌM KIẾM LIỀN KHỐI (CATEGORY + SEARCH)
+   ========================================= */
+/* Menu danh mục bên trái */
+.category-menu {
+    -fx-background-color: #f0f2f5;
+    -fx-background-radius: 20 0 0 20; /* Bo góc trái */
+    -fx-padding: 0 15;
+    -fx-pref-height: 40;
+    -fx-cursor: hand;
+    -fx-background-insets: 0;
+}
+
+.category-menu .label {
+    -fx-text-fill: #333;
+    -fx-font-weight: bold;
+}
+
+/* Ô nhập liệu tìm kiếm ở giữa */
+.search-field {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 0; /* Vuông để dính liền */
+    -fx-border-color: #f0f2f5;
+    -fx-border-width: 1 0 1 0; /* Chỉ để viền trên và dưới */
+    -fx-pref-height: 40;
+    -fx-font-size: 14px;
+    -fx-background-insets: 0;
+    -fx-padding: 0 10;
+}
+
+.search-field:focused {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #ffca28; /* Highlight màu vàng khi gõ */
+}
+
+/* Nút tìm kiếm bên phải */
+.search-button {
+    -fx-background-color: #ffca28; /* Màu vàng nhấn */
+    -fx-text-fill: #1a237e;
+    -fx-background-radius: 0 20 20 0; /* Bo góc phải */
+    -fx-pref-height: 40;
+    -fx-padding: 0 20;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-background-insets: 0;
+}
+
+.search-button:hover {
+    -fx-background-color: #ffd54f;
+}
+
+/* =========================================
+   4. TÀI KHOẢN & SỐ DƯ
+   ========================================= */
+.balance-label {
+    -fx-text-fill: #cfd8dc;
+    -fx-font-size: 11px;
+}
+
+.balance-amount {
+    -fx-text-fill: #2ecc71; /* Xanh lá tươi */
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+
+.username-text {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+}
+
+.profile-container {
+    -fx-cursor: hand;
+    -fx-padding: 5;
+    -fx-background-radius: 25;
+}
+
+.profile-container:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.15);
+}
+
+/* =========================================
+   5. CARD SẢN PHẨM (AUCTION CARD)
+   ========================================= */
+.auction-card {
+    -fx-background-color: white;
+    -fx-background-radius: 12;
+    -fx-border-color: #eef0f2;
+    -fx-border-radius: 12;
+    -fx-padding: 15;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 8, 0, 0, 4);
+
+    /* Cố định kích thước để hàng lối thẳng tắp */
+    -fx-min-width: 200;
+    -fx-max-width: 200;
+    -fx-min-height: 260;
+}
+
+.auction-card:hover {
+    -fx-effect: dropshadow(gaussian, rgba(26, 35, 126, 0.2), 15, 0, 0, 6);
+    -fx-border-color: #1a237e;
+    -fx-scale-x: 1.03;
+    -fx-scale-y: 1.03;
+    -fx-cursor: hand;
+}
+
+.item-name {
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+    -fx-padding: 10 0 5 0;
+}
+
+.item-price {
+    -fx-font-size: 14px;
+    -fx-text-fill: #e74c3c; /* Màu đỏ giá tiền */
+    -fx-font-weight: bold;
+}
+
+.bid-button-small {
+    -fx-background-color: #1a237e;
+    -fx-text-fill: white;
+    -fx-background-radius: 8;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+/* =========================================
+   6. SCROLLPANE & CÁC THÀNH PHẦN KHÁC
+   ========================================= */
+.scroll-pane {
+    -fx-background-color: transparent;
+    -fx-background: #f4f7f6; /* Nền trang xám nhạt */
+}
+
+.searchable-combo-box .combo-box-base,
+.searchable-combo-box .text-field {
+    -fx-background-color: #f0f2f5 !important;
+    -fx-background-insets: 0;
+    -fx-background-radius: 5;
+}
+
+.searchable-combo-box {
+    -fx-background-color: #f0f2f5 !important;
+    -fx-border-color: transparent;
+}
+
+.sort-combo {
+    -fx-background-color: #f8f9fa;
+    -fx-border-color: #ced4da;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-pref-width: 175;
+    -fx-cursor: hand;
+}
+
+.sort-combo:hover {
+    -fx-border-color: #1a237e;
+}
+
+/* Tùy chọn bên trong danh sách thả xuống */
+.sort-combo .list-cell {
+    -fx-padding: 5 10;
+}
+
+/* Sidebar Menu Buttons */
+.admin-menu-btn {
+    -fx-background-color: transparent;
+    -fx-text-fill: #88a1b9;
+    -fx-font-size: 16px;
+    -fx-padding: 12 15;
+    -fx-cursor: hand;
+    -fx-background-radius: 10;
+    -fx-transition: 0.3s;
+}
+
+.admin-menu-btn:hover {
+    -fx-background-color: rgba(0, 210, 255, 0.1);
+    -fx-text-fill: #00d2ff;
+}
+
+.admin-menu-btn-active {
+    -fx-background-color: linear-gradient(to right, #00d2ff, #3a7bd5);
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-padding: 12 15;
+    -fx-background-radius: 10;
+}
+
+/* Customizing the Table (Màu xanh đen trong suốt) */
+.admin-table {
+    -fx-background-color: rgba(255, 255, 255, 0.05);
+    -fx-background-radius: 15;
+    -fx-border-color: rgba(0, 210, 255, 0.3);
+    -fx-border-radius: 15;
+    -fx-padding: 5;
+}
+
+.admin-table .column-header-background {
+    -fx-background-color: transparent;
+}
+
+.admin-table .column-header {
+    -fx-background-color: rgba(0, 210, 255, 0.2);
+    -fx-size: 45;
+}
+
+.admin-table .column-header .label {
+    -fx-text-fill: #00d2ff;
+    -fx-font-weight: bold;
+}
+
+.admin-table .table-row-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-border-color: rgba(255, 255, 255, 0.05);
+    -fx-border-width: 0 0 1 0;
+}
+
+.admin-table .table-row-cell:filled:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.1);
+}
+
+.admin-table .table-cell {
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+}
+
+/* Tái sử dụng login-button của bạn nhưng với hiệu ứng Admin */
+.login-button {
+    /* Giữ nguyên thuộc tính cũ của bạn, chỉ cần đổi màu nếu muốn */
+    -fx-cursor: hand;
+    -fx-font-weight: bold;
+}
+
+/* Hiệu ứng cho nút Quay lại */
+.back-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #00d2ff;
+    -fx-border-color: #00d2ff;
+    -fx-border-radius: 20;
+    -fx-cursor: hand;
+    -fx-transition: 0.3s;
+}
+
+.back-button:hover {
+    -fx-background-color: rgba(0, 210, 255, 0.1);
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+}
+
+/* Hiệu ứng Glassmorphism cho TableView */
+.admin-table {
+    -fx-background-color: rgba(255, 255, 255, 0.07);
+    -fx-background-radius: 15;
+    -fx-border-color: rgba(255, 255, 255, 0.1);
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.4), 10, 0, 0, 0);
+}
+
+/* Hiệu ứng Hover cho các dòng trong bảng */
+.table-row-cell:hover {
+    -fx-background-color: rgba(0, 210, 255, 0.15);
+    -fx-text-fill: white;
+}
+
+/* Nút bấm có hiệu ứng Glow (Phê duyệt/Khóa) */
+.btn-approve {
+    -fx-background-color: linear-gradient(to right, #00b09b, #96c93d);
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 176, 155, 0.5), 10, 0, 0, 0);
+}
+
+.btn-lock {
+    -fx-background-color: linear-gradient(to right, #ff416c, #ff4b2b);
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-effect: dropshadow(gaussian, rgba(255, 65, 108, 0.5), 10, 0, 0, 0);
+}
+
+/* Nút Quay lại */
+.back-button {
+    -fx-background-color: rgba(255, 255, 255, 0.1);
+    -fx-text-fill: #00d2ff;
+    -fx-border-color: #00d2ff;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-cursor: hand;
+    -fx-transition: all 0.3s ease-in-out;
+}
+
+.back-button:hover {
+    -fx-background-color: #00d2ff;
+    -fx-text-fill: white;
+    -fx-effect: dropshadow(gaussian, #00d2ff, 15, 0, 0, 0);
+}
+
+.btn-approve:hover {
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+    -fx-effect: dropshadow(gaussian, #00b09b, 10, 0, 0, 0);
+}
+
+.btn-lock:hover {
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+    -fx-effect: dropshadow(gaussian, #ff416c, 10, 0, 0, 0);
+}
+
+/* Sửa lỗi trùng màu chữ và nền cho ô tìm kiếm Admin */
+.admin-search-field {
+    -fx-background-color: rgba(255, 255, 255, 0.15); /* Nền hơi trong suốt */
+    -fx-text-fill: white; /* Chữ hiển thị màu trắng */
+    -fx-prompt-text-fill: #adb5bd; /* Chữ gợi ý màu xám nhạt */
+    -fx-background-radius: 20;
+    -fx-border-color: #00d2ff; /* Viền màu xanh neon */
+    -fx-border-radius: 20;
+    -fx-padding: 0 15;
+    -fx-transition: all 0.3s;
+}
+
+.admin-search-field:focused {
+    -fx-background-color: rgba(255, 255, 255, 0.2);
+    -fx-border-color: #00d2ff;
+    /* Hiệu ứng phát sáng khi click vào */
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 210, 255, 0.5), 10, 0, 0, 0);
+}
+/* Màu chủ đạo xanh Catawiki */
+.cat-btn {
+    -fx-background-color: transparent;
+    -fx-text-fill: #333;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-border-color: transparent;
+    -fx-border-width: 0 0 2 0;
+}
+.cat-btn:hover {
+    -fx-text-fill: #003adb;
+    -fx-border-color: #003adb;
+}
+
+/* Thẻ sản phẩm */
+.auction-card {
+    -fx-background-color: white;
+    -fx-background-radius: 10;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);
+    -fx-cursor: hand;
+    -fx-transition: all 0.2s;
+}
+.auction-card:hover {
+    -fx-translate-y: -5;
+}
+
+
+.item-name {
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-text-fill: #333;
+}
+
+.item-price {
+    -fx-text-fill: #003adb;
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+}
+
+.item-time {
+    -fx-text-fill: #888;
+    -fx-font-size: 11px;
+}
+
+.fav-heart {
+    -fx-background-color: white;
+    -fx-background-radius: 20;
+    -fx-padding: 5;
+    -fx-translate-x: -10;
+    -fx-translate-y: 10;
+}
+
+.sort-combo {
+    -fx-background-color: white;
+    -fx-border-color: #ddd;
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+}
+.my-custom-region {
+    -fx-background-color: #e8f0fe;
+}

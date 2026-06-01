@@ -2,6 +2,8 @@ package auction.client.controllers;
 
 import auction.client.ClientNetwork;
 import auction.client.services.AdminManager;
+import auction.client.services.AuctionManager;
+import auction.client.services.Cleanable;
 import auction.client.session.DataSession;
 import auction.client.utils.ToastManager;
 import auction.common.message.Message;
@@ -53,7 +55,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class AdminController {
+public class AdminController implements Cleanable {
     @FXML private LineChart revenueChart;
     @FXML Label lblTotalRevenue;
     @FXML Label lblLiveAuctions;
@@ -207,6 +209,14 @@ public class AdminController {
         loadDashboardStatistics();
         loadAllAuctionsFromServer();
         loadAllTransactionsFromServer();
+    }
+
+    public void cleanup() {
+        adminAuctionTable.setItems(null);
+        adminTransactionTable.setItems(null);
+
+        auctionMasterData.clear();
+        transactionMasterData.clear();
     }
 
     // --- CÁC THÀNH PHẦN MỚI CHO SIDEBAR ---
@@ -1030,11 +1040,26 @@ public class AdminController {
     }
 
     private void handleAdminCancelAuction(Item item) {
-        //
+        String reason = ViewManager.showInputDialog("Cảnh báo", "Nhập nội dung gửi tới :");
+
+        AdminManager.getInstance().cancelAuctionAsync(item.getId(),reason)
+                .thenAcceptAsync(response -> {
+                    Stage currentStage= (Stage) btnManageAuctions.getScene().getWindow();
+                    if (response != null && "SUCCESS".equals(response.getStatus())) {
+                        ToastManager.showToast(currentStage, ToastManager.ToastType.SUCCESS,(String) response.getData());
+                        loadAllAuctionsFromServer();
+                    } else {
+                        ToastManager.showToast(currentStage, ToastManager.ToastType.WARNING,"Không thể hủy cuộc đấu giá. Vui lòng thử lại!");
+                    }
+                }, Platform::runLater)
+                .exceptionally(ex -> {
+                    Platform.runLater(() -> ViewManager.showAlert(Alert.AlertType.ERROR, "Lỗi", "Lỗi hệ thống: " + ex.getMessage()));
+                    return null;
+                });
     }
 
     private void loadAllAuctionsFromServer() {
-        AdminManager.getInstance().getAllItemsAsync()
+        AuctionManager.getInstance().getAllItemsAsync()
                 .thenAcceptAsync(items ->{
                     auctionMasterData.clear();
                     if (items != null) {

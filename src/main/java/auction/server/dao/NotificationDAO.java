@@ -10,4 +10,6 @@ public interface NotificationDAO extends GenericDAO<Notification, Integer> {
         List<Notification> getNotificationsByUserId(int userId);
         boolean insertNotificationsBatch(Set<Integer> userIds, Notification notification);
         int countUnreadByUserId(int userId);
+        boolean deleteAllByUserId(int userId);
+        boolean readAllByUserId(int userId);
 }

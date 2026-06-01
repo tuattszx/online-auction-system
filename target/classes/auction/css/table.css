@@ -1,0 +1,99 @@
+/* ============================================================
+   1. CẤU HÌNH TỔNG THỂ BẢNG (MODERN TABLE)
+   ============================================================ */
+.modern-table {
+    -fx-background-color: white;
+    -fx-background-radius: 15;
+    -fx-border-radius: 15;
+    -fx-border-color: #eee;
+    -fx-padding: 0;
+}
+.modern-table .column-header-background {
+    -fx-background-color: transparent;
+    -fx-border-color: #eee;
+    -fx-border-width: 0 0 1 0;
+}
+
+.modern-table .column-header {
+    -fx-background-color: transparent;
+    -fx-size: 50;
+}
+
+.modern-table .table-row-cell:filled:selected {
+    -fx-background-color: #f4f8fb !important;
+}
+
+.modern-table .table-row-cell:selected .table-cell {
+    -fx-text-fill: #000000;
+}
+
+.status-label {
+    -fx-padding: 5 12;
+    -fx-background-radius: 15;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-alignment: center;
+}
+
+/* Dùng selector cực mạnh để khóa màu chữ và nền */
+.modern-table .table-row-cell .status-label.status-winning,
+.modern-table .table-row-cell:selected .status-label.status-winning {
+    -fx-background-color: #e6f7ef;
+    -fx-text-fill: #00a854;
+}
+
+.modern-table .table-row-cell .status-label.status-losing,
+.modern-table .table-row-cell:selected .status-label.status-losing {
+    -fx-background-color: #feeef0 ;
+    -fx-text-fill: #e74c3c;
+}
+
+.modern-table .table-row-cell .status-label.status-participate,
+.modern-table .table-row-cell:selected .status-label.status-participate {
+    -fx-background-color: #f0f2f5;
+    -fx-text-fill: #555 ;
+}
+/* 1. Định dạng vùng nền của thanh cuộn (Track) */
+.modern-table .scroll-bar:vertical,
+.modern-table .scroll-bar:horizontal {
+    -fx-background-color: transparent; /* Nền trong suốt cho sạch */
+}
+
+/* 2. Định dạng cục kéo (Thumb) */
+.modern-table .scroll-bar .thumb {
+    -fx-background-color: #dcdde1; /* Màu xám nhạt hiện đại */
+    -fx-background-insets: 2;
+    -fx-background-radius: 10; /* Bo tròn cực mạnh */
+}
+
+/* 3. Hiệu ứng khi di chuột vào cục kéo */
+.modern-table .scroll-bar .thumb:hover {
+    -fx-background-color: #b2bec3; /* Đậm hơn một chút khi hover */
+}
+
+/* 4. Hiệu ứng khi đang nhấn giữ cục kéo */
+.modern-table .scroll-bar .thumb:pressed {
+    -fx-background-color: #636e72;
+}
+
+/* 5. Ẩn hai nút mũi tên ở hai đầu thanh cuộn (Làm thanh cuộn gọn hơn) */
+.modern-table .scroll-bar .increment-button,
+.modern-table .scroll-bar .decrement-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+.modern-table .scroll-bar .increment-arrow,
+.modern-table .scroll-bar .decrement-arrow {
+    -fx-shape: " "; /* Xóa hình mũi tên */
+    -fx-padding: 0;
+}
+
+/* 6. Chỉnh độ rộng của thanh cuộn cho mảnh lại */
+.modern-table .scroll-bar:vertical {
+    -fx-pref-width: 8; /* Chỉ để 8px cho tinh tế */
+}
+
+.modern-table .scroll-bar:horizontal {
+    -fx-pref-height: 8;
+}

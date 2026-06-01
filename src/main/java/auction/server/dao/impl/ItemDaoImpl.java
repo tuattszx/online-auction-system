@@ -353,7 +353,7 @@ public class ItemDaoImpl implements ItemDao {
             }
 
             Map<String, Integer> categoryDistribution = new HashMap<>();
-            String sqlChart = "SELECT id_category, COUNT(*) AS total_items FROM item_category GROUP BY id_category";
+            String sqlChart = "SELECT id_category, COUNT(*) AS total_items FROM ITEM_CATEGORIES GROUP BY id_category";
             try (PreparedStatement stmt = conn.prepareStatement(sqlChart);
                  ResultSet rs = stmt.executeQuery()) {
 
@@ -826,6 +826,49 @@ public class ItemDaoImpl implements ItemDao {
             if (conn != null) try { conn.close(); } catch (SQLException e) {}
         }
     }
+
+    public boolean cancelAuction(int itemId){
+        Connection conn = null;
+        try  {
+            conn = DatabaseManager.getInstance().getConnection();
+
+            int idBidder = 0;
+            long currentPrice = 0;
+            String selectSql = "SELECT id_current_bidder, current_price FROM ITEMS WHERE id = ?";
+            try (PreparedStatement ps = conn.prepareStatement(selectSql)) {
+                ps.setInt(1, itemId);
+                ResultSet rs = ps.executeQuery();
+                if (rs.next()) {
+                    idBidder = rs.getInt("id_current_bidder");
+                    currentPrice = rs.getLong("current_price");
+                }
+            }
+
+            if (idBidder != 0) {
+                String sqlUnfreeze = "UPDATE users SET frozen_balance = frozen_balance - ? WHERE ID = ?";
+                try (PreparedStatement psUnfreeze = conn.prepareStatement(sqlUnfreeze)) {
+                    psUnfreeze.setLong(1, currentPrice);
+                    psUnfreeze.setInt(2, idBidder);
+                    psUnfreeze.executeUpdate();
+                }
+
+                String sqlClearBidder = "UPDATE ITEMS SET id_current_bidder = NULL WHERE id = ?";
+                try (PreparedStatement psClear = conn.prepareStatement(sqlClearBidder)) {
+                    psClear.setInt(1, itemId);
+                    psClear.executeUpdate();
+                }
+            }
+            return updateStatus(itemId,"DELETED");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        } finally {
+            if (conn != null) {
+                try { conn.close(); } catch (SQLException e) { e.printStackTrace(); }
+            }
+        }
+    }
+
     public long getTotalRevenueBySellerId(int sellerId) {
         long totalRevenue = 0;
         // Truy vấn trực tiếp trường total_expenses từ bảng users theo ID của Seller

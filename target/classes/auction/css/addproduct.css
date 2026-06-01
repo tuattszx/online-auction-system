@@ -1,0 +1,245 @@
+/* ==========================================================================
+   1. GIAO DIỆN CHUNG & NỀN FORM (PANEL & CONTAINER)
+   ========================================================================== */
+.root {
+    -fx-font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    -fx-background-color: #f8fafc; /* Nền xám mây rất dịu cho toàn trang */
+}
+
+/* Khung trắng bo góc chứa toàn bộ form nhập liệu */
+.form-container {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.02), 10, 0, 0, 4);
+}
+
+/* ==========================================================================
+   2. Ô NHẬP LIỆU (TEXT FIELD, TEXT AREA & CHECK COMBO BOX)
+   ========================================================================== */
+/* Định dạng chuẩn cho ô nhập tên, mô tả, giá */
+.text-field, .text-area {
+    -fx-background-color: #ffffff !important;
+    -fx-border-color: #dee2e6 !important; /* Viền xám mảnh nguyên bản */
+    -fx-border-width: 1.2 !important;
+    -fx-border-radius: 8 !important;       /* Bo góc 8px hiện đại */
+    -fx-background-radius: 8 !important;
+    -fx-padding: 8 12 8 12 !important;
+    -fx-text-fill: #334155 !important;
+    -fx-prompt-text-fill: #94a3b8 !important;
+}
+
+/* Trạng thái khi click vào (Focus) - Đồng bộ hiệu ứng viền xanh dương */
+.text-field:focused, .text-area:focused {
+    -fx-border-color: #1a73e8 !important;
+    -fx-effect: dropshadow(three-pass-box, rgba(26, 115, 232, 0.15), 6, 0, 0, 0) !important;
+}
+
+/* ==========================================================================
+   BỘ CẬP NHẬT ĐẶC TRỊ - ÉP HIỂN THỊ TRÒN PHẲNG CHO Ô TÍCH CHỌN (CHECKBOX)
+   ========================================================================== */
+
+/* Nhắm trực tiếp vào tất cả ô vuông checkbox xuất hiện bên trong danh sách xổ xuống */
+.combo-box-popup .list-cell .check-box .box,
+.check-combo-box .list-cell .check-box .box,
+.check-combo-box,
+.check-combo-box .check-list-cell .check-box .box {
+    -fx-background-radius: 6 !important;      /* Tạo độ bo tròn góc mềm mại */
+    -fx-border-radius: 6 !important;
+    -fx-border-color: #cbd5e1 !important;     /* Viền xám mảnh chuẩn Modern UI */
+    -fx-background-color: #ffffff !important; /* Nền trong trắng tinh khôi */
+    -fx-padding: 4 !important;                /* Tạo độ rộng vừa vặn cho ô tích */
+    -fx-background-insets: 0 !important;       /* Triệt tiêu bóng mờ 3D mặc định */
+}
+.combo-box {
+    -fx-background-color:  #e8f0fe; /* Thay bằng màu bạn muốn đổi (ví dụ #ffffff là màu trắng) */
+    -fx-background-insets: 0;
+    -fx-background-radius: 5px;   /* Bo góc phần nền */
+}
+/* Khi ô CheckBox được tích chọn (Selected) */
+.combo-box-popup .list-cell .check-box:selected .box,
+.check-combo-box .list-cell .check-box:selected .box,
+.check-combo-box .check-list-cell .check-box:selected .box {
+    -fx-background-color: #1a73e8 !important; /* Đổi sang màu xanh công nghệ phẳng */
+    -fx-border-color: #1a73e8 !important;
+}
+
+/* Định hình lại dấu tích chữ V bên trong thành màu trắng mảnh sắc nét */
+.combo-box-popup .list-cell .check-box:selected .mark,
+.check-combo-box .list-cell .check-box:selected .mark,
+.check-combo-box .check-list-cell .check-box:selected .mark {
+    -fx-background-color: #ffffff !important;
+    -fx-shape: "M1.5 4.5L4 7L9 2" !important; /* Vẽ lại nét chữ V thanh mảnh hiện đại */
+}
+
+/* ==========================================================================
+   XÓA BỎ LỚP NỀN XANH ĐẬM CỦA HỆ THỐNG KHI CLICK CHỌN DÒNG
+   ========================================================================== */
+.combo-box-popup .list-cell:filled:selected,
+.check-combo-box .list-cell:filled:selected,
+.check-combo-box .check-list-cell:filled:selected {
+    -fx-background-color: #f1f5f9 !important; /* Nền xám Slate dịu nhẹ thay vì xanh thô của hệ thống */
+    -fx-text-fill: #1a73e8 !important;        /* Màu chữ chuyển xanh chủ đạo */
+}
+
+.combo-box-popup .list-cell:filled:hover,
+.check-combo-box .list-cell:filled:hover,
+.check-combo-box .check-list-cell:filled:hover {
+    -fx-background-color: #f8fafc !important; /* Hiệu ứng hover mượt mà */
+    -fx-text-fill: #1a73e8 !important;
+}
+
+/* ==========================================================================
+   3. BỘ CHỌN THỜI GIAN PHẲNG (DATE PICKER & TIME SPINNER)
+   ========================================================================== */
+/* Container bao bọc (HBox thời gian) */
+.time-picker-container {
+    -fx-background-color: transparent !important;
+    -fx-padding: 0 !important;
+}
+
+/* Ô chọn ngày */
+.date-picker {
+    -fx-background-color: transparent !important;
+    -fx-background-insets: 0 !important;
+}
+.date-picker > .text-field {
+    -fx-background-radius: 8 0 0 8 !important; /* Bo trái góc nối tiếp nút lịch */
+    -fx-border-radius: 8 0 0 8 !important;
+    -fx-border-color: #dee2e6 !important;
+}
+.date-picker:focused > .text-field {
+    -fx-border-color: #1a73e8 !important;
+}
+/* Nút icon cuốn lịch bên phải */
+.date-picker > .arrow-button {
+    -fx-background-color: #1a73e8 !important; /* Xanh mượt */
+    -fx-background-radius: 0 8 8 0 !important;
+    -fx-cursor: hand;
+}
+.date-picker > .arrow-button > .arrow {
+    -fx-background-color: #ffffff !important;
+}
+
+/* Ô tăng giảm Giờ/Phút/Giây (Spinner) */
+.spinner {
+    -fx-background-color: #ffffff !important;
+    -fx-background-radius: 8 !important;
+    -fx-border-color: #dee2e6 !important;
+    -fx-border-width: 1.2 !important;
+    -fx-border-radius: 8 !important;
+}
+.spinner:focused {
+    -fx-border-color: #1a73e8 !important;
+}
+.spinner > .text-field {
+    -fx-background-color: transparent !important;
+    -fx-alignment: CENTER !important;
+    -fx-font-weight: bold !important;
+    -fx-text-fill: #334155 !important;
+}
+/* Làm phẳng hoàn toàn nút mũi tên nhỏ của Spinner */
+.spinner > .increment-arrow-button,
+.spinner > .decrement-arrow-button {
+    -fx-background-color: transparent !important;
+    -fx-background-insets: 0 !important;
+    -fx-cursor: hand !important;
+}
+.spinner > .increment-arrow-button:hover,
+.spinner > .decrement-arrow-button:hover {
+    -fx-background-color: #f1f5f9 !important; /* Hover xám mây */
+}
+.spinner > .increment-arrow-button > .arrow,
+.spinner > .decrement-arrow-button > .arrow {
+    -fx-background-color: #64748b !important;
+}
+
+/* ==========================================================================
+   4. BẢNG HIỂN THỊ DANH SÁCH SẢN PHẨM (TABLE VIEW)
+   ========================================================================== */
+/* Tổng thể bảng phẳng sạch sẽ */
+.table-view {
+    -fx-background-color: transparent !important;
+    -fx-border-color: #e2e8f0 !important;
+    -fx-border-width: 1 !important;
+    -fx-border-radius: 8 !important;
+    -fx-background-radius: 8 !important;
+    -fx-padding: 0 !important;
+}
+
+/* Thanh tiêu đề cột (Header) */
+.table-view .column-header-background {
+    -fx-background-color: #f8fafc !important; /* Nền xám mây nhạt cho thanh tiêu đề */
+    -fx-background-radius: 8 8 0 0 !important;
+    -fx-border-color: transparent transparent #e2e8f0 transparent !important;
+}
+.table-view .column-header {
+    -fx-background-color: transparent !important;
+    -fx-size: 45 !important; /* Tăng độ cao tiêu đề cho thoáng đãng */
+}
+.table-view .column-header .label {
+    -fx-text-fill: #475569 !important; /* Chữ xám tối mạnh mẽ */
+    -fx-font-weight: bold !important;
+    -fx-font-size: 13px !important;
+}
+
+/* Các ô dữ liệu trên từng dòng (Cells) */
+.table-row-cell {
+    -fx-background-color: #ffffff !important;
+    -fx-border-color: transparent transparent #f1f5f9 transparent !important; /* Viền ngang siêu mảnh phân cách dòng */
+}
+.table-row-cell:filled:hover {
+    -fx-background-color: #f8fafc !important; /* Highlight dòng nhẹ nhàng khi rê chuột qua */
+}
+.table-view .table-cell {
+    -fx-padding: 12 15 12 15 !important; /* Độ rộng tạo khoảng cách dễ đọc dữ liệu */
+    -fx-text-fill: #334155 !important;
+    -fx-font-size: 13.5px !important;
+    -fx-alignment: CENTER-LEFT;
+}
+
+/* Xóa bỏ thanh cuộn thừa hoặc các ô trống cuối bảng */
+.table-view .placeholder .label {
+    -fx-text-fill: #94a3b8 !important; /* Màu cho chữ "No content in table" */
+    -fx-font-size: 14px !important;
+}
+
+/* ==========================================================================
+   5. HỆ THỐNG NÚT BẤM HIỆN ĐẠI (BUTTONS)
+   ========================================================================== */
+/* Nút bấm chính (Ví dụ: Create Product, Browse Files) */
+.button {
+    -fx-background-color: #1a73e8;           /* Màu xanh thương hiệu phẳng */
+    -fx-text-fill: #ffffff;
+    -fx-font-weight: bold;
+    -fx-font-size: 13.5px;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-padding: 8 20 8 20;
+    -fx-cursor: hand;
+    -fx-transition: all 0.2s;
+}
+
+/* Hiệu ứng khi rê chuột qua nút */
+.button:hover {
+    -fx-background-color: #1557b0;           /* Đậm hơn một chút tinh tế */
+}
+
+/* Hiệu ứng khi ấn nút */
+.button:pressed {
+    -fx-scale-x: 0.98;                        /* Thu nhỏ nút rất khẽ tạo cảm giác vật lý sinh động */
+    -fx-scale-y: 0.98;
+}
+
+/* Nút phụ hoặc nút hủy (Nếu có) */
+.button-secondary {
+    -fx-background-color: #ffffff;
+    -fx-text-fill: #475569;
+    -fx-border-color: #cbd5e1;
+    -fx-border-width: 1.2;
+}
+.button-secondary:hover {
+    -fx-background-color: #f8fafc;
+}

@@ -1,9 +1,12 @@
 package auction.common.model.items; // Sửa lại tên package cho đúng với cấu trúc dự án của bạn
 
+import auction.common.model.BaseEntity;
+
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
-public class Transaction {
-    private int id;          // Mã giao dịch (Có thể dùng chuỗi số tự tăng hoặc UUID)
+public class Transaction extends BaseEntity {
+    private static final long serialVersionUID = 1L;
     private int userId;      // ID người gửi (Người thực hiện giao dịch)
     private String userName;
     private int receiverId;  // ID người
@@ -19,7 +22,7 @@ public class Transaction {
 
     // 2. Hàm khởi tạo đầy đủ tham số để nạp dữ liệu nhanh
     public Transaction(int id, int userId,String userName, int receiverId,String receiverName,int itemId, String itemName, long amount, LocalDateTime time) {
-        this.id=id;
+        super(id);
         this.userId=userId;
         this.userName=userName;
         this.receiverId=receiverId;
@@ -31,12 +34,6 @@ public class Transaction {
     }
 
     // 3. Các hàm Getter và Setter (Bắt buộc phải có đúng tên để PropertyValueFactory ánh xạ lên bảng)
-    public int getId() {
-        return id;
-    }
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public int getUserId() {
         return userId;

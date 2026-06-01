@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.URL?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import org.controlsfx.control.CheckComboBox?>
+
+<BorderPane prefHeight="885.0" prefWidth="1225.0" style="-fx-background-color: #f4f4f4;" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auction.client.controllers.SellerController">
+    <stylesheets>
+        <URL value="@../css/addproduct.css" />
+    </stylesheets>
+
+
+    <top>
+        <fx:include fx:id="headerMenu" source="Header-menu.fxml" />    </top>
+
+    <left>
+          <VBox alignment="TOP_CENTER" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="668.0" prefWidth="240.0" spacing="8.0" style="-fx-background-color: #f8f9fa; -fx-background-radius: 0 16 0 0; -fx-border-color: #e8f0fe; -fx-border-width: 1; -fx-border-radius: 0 16 0 0;">
+              <padding>
+                  <Insets left="12.0" right="12.0" top="25.0" />
+              </padding>
+              <children>
+                  <HBox fx:id="btnNavMyProducts" alignment="CENTER_LEFT" onMouseClicked="#handleSidebarClick" prefHeight="42.0" prefWidth="216.0" spacing="12.0" style="-fx-background-color: #e8f0fe; -fx-background-radius: 8;">
+                      <padding>
+                          <Insets left="15.0" right="15.0" />
+                      </padding>
+                      <children>
+                          <Region fx:id="myProductsIndicator" minHeight="-Infinity" prefHeight="18.0" prefWidth="4.0" style="-fx-background-color: #1a73e8; -fx-background-radius: 2;" />
+                          <Label fx:id="lblMyProducts" style="-fx-text-fill: #1a73e8; -fx-font-weight: bold;" text="%sellerdemo.button.myproduct">
+                              <font>
+                                  <Font name="Segoe UI" size="14.0" />
+                              </font>
+                          </Label>
+                      </children>
+                      <cursor>
+                          <Cursor fx:constant="HAND" />
+                      </cursor>
+                  </HBox>
+
+                  <HBox fx:id="btnNavAdd" alignment="CENTER_LEFT" onMouseClicked="#handleSidebarClick" prefHeight="42.0" prefWidth="216.0" spacing="12.0" style="-fx-background-radius: 8; -fx-background-color: transparent;">
+                      <padding>
+                          <Insets left="15.0" right="15.0" />
+                      </padding>
+                      <children>
+                          <Region fx:id="addIndicator" minHeight="-Infinity" prefHeight="18.0" prefWidth="4.0" style="-fx-background-color: #1a73e8; -fx-background-radius: 2;" visible="false" />
+                          <Label fx:id="lblAddProduct" style="-fx-text-fill: #495057;" text="%sellerdemo.button.addproduct">
+                              <font>
+                                  <Font name="Segoe UI" size="14.0" />
+                              </font>
+                          </Label>
+                      </children>
+                      <cursor>
+                          <Cursor fx:constant="HAND" />
+                      </cursor>
+                  </HBox>
+
+                  <HBox fx:id="btnNavCustomers" alignment="CENTER_LEFT" onMouseClicked="#handleSidebarClick" prefHeight="42.0" prefWidth="216.0" spacing="12.0" style="-fx-background-radius: 8; -fx-background-color: transparent;">
+                      <padding>
+                          <Insets left="15.0" right="15.0" />
+                      </padding>
+                      <children>
+                          <Region fx:id="customersIndicator" minHeight="-Infinity" prefHeight="18.0" prefWidth="4.0" style="-fx-background-color: #1a73e8; -fx-background-radius: 2;" visible="false" />
+                          <Label fx:id="lblCustomers" style="-fx-text-fill: #495057;" text="%sellerdemo.button.customers">
+                              <font>
+                                  <Font name="Segoe UI" size="14.0" />
+                              </font>
+                          </Label>
+                      </children>
+                      <cursor>
+                          <Cursor fx:constant="HAND" />
+                      </cursor>
+                  </HBox>
+
+                  <HBox fx:id="btnNavConfig" alignment="CENTER_LEFT" onMouseClicked="#handleSidebarClick" prefHeight="42.0" prefWidth="216.0" spacing="12.0" style="-fx-background-radius: 8; -fx-background-color: transparent;">
+                      <padding>
+                          <Insets left="15.0" right="15.0" />
+                      </padding>
+                      <children>
+                          <Region fx:id="configIndicator" minHeight="-Infinity" prefHeight="18.0" prefWidth="4.0" style="-fx-background-color: #1a73e8; -fx-background-radius: 2;" visible="false" />
+                          <Label fx:id="lblConfig" style="-fx-text-fill: #495057;" text="%sellerdemo.button.configuration">
+                              <font>
+                                  <Font name="Segoe UI" size="14.0" />
+                              </font>
+                          </Label>
+                      </children>
+                      <cursor>
+                          <Cursor fx:constant="HAND" />
+                      </cursor>
+                  </HBox>
+
+                  <Region prefHeight="348.0" prefWidth="214.0" VBox.vgrow="ALWAYS" />
+              </children>
+          </VBox>    </left>
+
+    <center>
+        <ScrollPane fitToWidth="true" prefHeight="839.0" prefWidth="1026.0" style="-fx-background-color: transparent; -fx-background: #f4f4f4;" stylesheets="@../css/labelstatus.css">
+         <StackPane prefHeight="768.0" prefWidth="1024.0">
+            <children>
+                <VBox fx:id="vboxMyProducts" prefHeight="859.0" prefWidth="1010.0" spacing="25" style="-fx-padding: 35; -fx-background-color: #f8f9fa;" visible="false" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+
+                    <HBox alignment="CENTER_LEFT" spacing="20">
+                        <VBox spacing="5">
+                            <Label style="-fx-text-fill: #2d3436; -fx-font-weight: bold;" text="%sellerdemo.label.productlist">
+                                <font>
+                                    <Font name="Segoe UI" size="26.0" />
+                                </font>
+                            </Label>
+                            <Label style="-fx-text-fill: #636e72; -fx-font-size: 14px;" text="%sellerdemo.label.manageandtrack" />
+                        </VBox>
+                        <Region HBox.hgrow="ALWAYS" />
+                        <Button graphicTextGap="10" onAction="#handleShowAddProduct" style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-padding: 12 25; -fx-background-radius: 10; -fx-font-weight: bold; -fx-cursor: hand; -fx-effect: dropshadow(three-pass-box, rgba(52, 152, 219, 0.3), 10, 0, 0, 4);" text="%sellerdemo.button.CreateProduct">
+                            <font>
+                                <Font size="14.0" />
+                            </font>
+                        </Button>
+                    </HBox>
+
+                    <HBox alignment="CENTER_LEFT" style="-fx-background-color: white; -fx-background-radius: 15; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 15, 0, 0, 5); -fx-padding: 20;">
+                        <children>
+                            <HBox alignment="CENTER" spacing="15" style="-fx-background-color: rgba(52, 152, 219, 0.1); -fx-background-radius: 12; -fx-padding: 15;">
+                                <children>
+                                    <Label fx:id="lblCurrencyIcon" style="-fx-text-fill: #3498db; -fx-font-weight: bold;" text="">
+                                        <font>
+                                            <Font name="Segoe UI" size="28.0" />
+                                        </font>
+                                    </Label>
+                                    <VBox alignment="CENTER_LEFT">
+                                        <children>
+                                            <Label style="-fx-text-fill: #636e72; -fx-font-size: 14px;" text="%sellerdemo.label.totalamount" />
+                                            <Label fx:id="lblTotalRevenue" style="-fx-text-fill: #2d3436; -fx-font-weight: bold;" text="1,234,567,890">
+                                                <font>
+                                                    <Font name="Segoe UI" size="30.0" />
+                                                </font>
+                                            </Label>
+                                        </children>
+                                    </VBox>
+                                </children>
+                            </HBox>
+                        </children>
+                    </HBox>
+
+                    <VBox prefHeight="761.0" prefWidth="939.0" style="-fx-background-color: white; -fx-background-radius: 15; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 15, 0, 0, 5); -fx-padding: 15;" VBox.vgrow="ALWAYS">
+                        <TableView fx:id="productTable" prefHeight="616.0" prefWidth="909.0" style="-fx-background-color: transparent;" styleClass="modern-table" stylesheets="@../css/table.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1">
+                            <columns>
+                                <TableColumn fx:id="colSn" prefWidth="60.0" style="-fx-alignment: CENTER;" text="#" />
+
+                                <TableColumn fx:id="colName" prefWidth="190.0" style="-fx-alignment: CENTER;" text="%sellerdemo.label.Name" />
+
+                                <TableColumn fx:id="colStartingPrice" prefWidth="130.0" style="-fx-alignment: CENTER;" text="%sellerdemo.label.StartingPrice" />
+
+                                <TableColumn fx:id="colCurrentPrice" prefWidth="130.0" style="-fx-alignment: CENTER;" text="%sellerdemo.label.CurrentPrice" />
+
+                                <TableColumn fx:id="colStatus" prefWidth="120.0" style="-fx-alignment: CENTER;" text="%sellerdemo.label.Status" />
+
+                                <TableColumn fx:id="colSold" prefWidth="100.0" style="-fx-alignment: CENTER;" text="%sellerdemo.label.Sold" />
+
+                                <TableColumn fx:id="colAction" prefWidth="150.0" style="-fx-alignment: CENTER;" text="%sellerdemo.label.Action" />
+                            </columns>
+                            <columnResizePolicy>
+                                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                            </columnResizePolicy>
+                        </TableView>
+                    </VBox>
+                </VBox>                <VBox fx:id="vboxAddProduct" spacing="25" style="-fx-padding: 40; -fx-background-color: #f8f9fa;" stylesheets="@../css/addproduct.css" visible="false" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+
+                    <VBox spacing="5">
+                        <Label style="-fx-text-fill: #2d3436; -fx-font-weight: bold;" text="%sellerdemo.label.CreateNewProduct">
+                            <font>
+                                <Font name="Segoe UI" size="26.0" />
+                            </font>
+                        </Label>
+                        <Label style="-fx-text-fill: #636e72; -fx-font-size: 14px;" text="%sellerdemo.label.pleasefill" />
+                    </VBox>
+
+                    <GridPane hgap="20" style="-fx-background-color: white; -fx-padding: 30; -fx-background-radius: 15; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 15, 0, 0, 5);" stylesheets="@../css/addproduct.css" vgap="20">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="50" />
+                            <ColumnConstraints percentWidth="50" />
+                        </columnConstraints>
+
+                        <VBox spacing="8" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                            <Label style="-fx-font-weight: bold; -fx-text-fill: #444;" text="%sellerdemo.label.Title" />
+                            <TextField fx:id="txtTitle" prefHeight="40" promptText="%sellerdemo.textfield.ProductName" style="-fx-background-radius: 8; -fx-border-color: #dee2e6; -fx-border-radius: 8; -fx-background-color: white;" />
+                        </VBox>
+
+                        <VBox prefHeight="48.0" prefWidth="407.0" spacing="8" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                            <Label style="-fx-font-weight: bold; -fx-text-fill: #444;" text="%sellerdemo.label.category" />
+                            <CheckComboBox fx:id="categoryComboBox" prefHeight="42.0" prefWidth="433.0" stylesheets="@../css/addproduct.css" VBox.vgrow="ALWAYS">
+                            </CheckComboBox>
+                        </VBox>
+
+                        <VBox spacing="8" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="1">
+                            <Label style="-fx-font-weight: bold; -fx-text-fill: #444;" text="%sellerdemo.label.Dimensions" />
+                            <HBox spacing="15">
+                                <VBox spacing="5" HBox.hgrow="ALWAYS">
+                                    <Label style="-fx-font-size: 11; -fx-text-fill: #636e72;" text="%sellerdemo.label.Height" />
+                                    <TextField fx:id="txtHeight" prefHeight="40" promptText="cm" style="-fx-background-radius: 8; -fx-border-color: #dee2e6; -fx-border-radius: 8;" />
+                                </VBox>
+                                <VBox spacing="5" HBox.hgrow="ALWAYS">
+                                    <Label style="-fx-font-size: 11; -fx-text-fill: #636e72;" text="%sellerdemo.label.Length" />
+                                    <TextField fx:id="txtLength" prefHeight="40" promptText="cm" style="-fx-background-radius: 8; -fx-border-color: #dee2e6; -fx-border-radius: 8;" />
+                                </VBox>
+                                <VBox spacing="5" HBox.hgrow="ALWAYS">
+                                    <Label style="-fx-font-size: 11; -fx-text-fill: #636e72;" text="%sellerdemo.label.Width" />
+                                    <TextField fx:id="txtWidth" prefHeight="40" promptText="cm" style="-fx-background-radius: 8; -fx-border-color: #dee2e6; -fx-border-radius: 8;" />
+                                </VBox>
+                            </HBox>
+                        </VBox>
+
+                        <VBox spacing="8" GridPane.columnIndex="0" GridPane.rowIndex="2">
+                            <Label style="-fx-font-weight: bold; -fx-text-fill: #444;" text="%sellerdemo.label.Weight" />
+                            <TextField fx:id="txtWeight" prefHeight="40" promptText="kg" style="-fx-background-radius: 8; -fx-border-color: #dee2e6; -fx-border-radius: 8;" />
+                        </VBox>
+                        <VBox spacing="8" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                            <Label style="-fx-font-weight: bold; -fx-text-fill: #444;" text="%sellerdemo.label.Price" />
+                            <TextField fx:id="txtPrice" prefHeight="40" promptText="\$0.00" style="-fx-background-radius: 8; -fx-border-color: #dee2e6; -fx-border-radius: 8;" />
+                        </VBox>
+
+                        <HBox spacing="20" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="3">
+                            <VBox spacing="8" HBox.hgrow="ALWAYS">
+                                <Label style="-fx-font-weight: bold; -fx-text-fill: #444;" text="%sellerdemo.label.StartDateandTime" />
+                                <HBox alignment="CENTER_LEFT" spacing="8" style="-fx-background-color: #f1f3f5; -fx-padding: 8; -fx-background-radius: 8;">
+                                    <DatePicker fx:id="startDatePicker" prefHeight="35" prefWidth="130" style="-fx-background-radius: 5;" />
+                                    <Spinner fx:id="startHour" editable="true" prefHeight="38.0" prefWidth="78.0" />
+                                    <Label style="-fx-font-weight: bold;" text=":" />
+                                    <Spinner fx:id="startMin" editable="true" prefHeight="38.0" prefWidth="78.0" />
+                                    <Label style="-fx-font-weight: bold;" text=":" />
+                                    <Spinner fx:id="startSec" editable="true" prefHeight="38.0" prefWidth="78.0" />
+                                </HBox>
+                            </VBox>
+
+                            <VBox spacing="8" HBox.hgrow="ALWAYS">
+                                <Label style="-fx-font-weight: bold; -fx-text-fill: #444;" text="%sellerdemo.label.EndDateandTime" />
+                                <HBox alignment="CENTER_LEFT" spacing="8" style="-fx-background-color: #f1f3f5; -fx-padding: 8; -fx-background-radius: 8;">
+                                    <DatePicker fx:id="endDatePicker" prefHeight="35" prefWidth="130" style="-fx-background-radius: 5;" />
+                                    <Spinner fx:id="endHour" editable="true" prefHeight="38.0" prefWidth="78.0" />
+                                    <Label style="-fx-font-weight: bold;" text=":" />
+                                    <Spinner fx:id="endMin" editable="true" prefHeight="38.0" prefWidth="78.0" />
+                                    <Label style="-fx-font-weight: bold;" text=":" />
+                                    <Spinner fx:id="endSec" editable="true" prefHeight="38.0" prefWidth="78.0" />
+                                </HBox>
+                            </VBox>
+                        </HBox>
+
+                        <VBox spacing="8" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="4">
+                            <Label style="-fx-font-weight: bold; -fx-text-fill: #444;" text="%sellerdemo.label.Description" />
+                            <TextArea fx:id="txtDescription" prefHeight="100" promptText="%sellerdemo.textarea.Enterproductdetails" style="-fx-background-radius: 8; -fx-border-color: #dee2e6; -fx-border-radius: 8;" wrapText="true" />
+                        </VBox>
+
+                        <VBox alignment="CENTER" spacing="12" style="-fx-border-color: #3498db; -fx-border-style: dashed; -fx-border-width: 1.5; -fx-border-radius: 10; -fx-padding: 25; -fx-background-color: #f0f7ff;" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="5">
+                            <Label fx:id="lblFileName" style="-fx-font-size: 14px; -fx-font-weight: bold;" text="%sellerdemo.label.draganddrop" textFill="#2980b9" />
+                            <Button onAction="#handleBrowseFiles" style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-background-radius: 20; -fx-padding: 8 20;" text="%sellerdemo.button.BrowseFiles" />
+                            <ProgressBar fx:id="progressbar" prefHeight="10.0" prefWidth="600.0" progress="0.0" style="-fx-accent: #27ae60;" />
+                        </VBox>
+                        <rowConstraints>
+                            <RowConstraints />
+                            <RowConstraints />
+                            <RowConstraints />
+                            <RowConstraints minHeight="80.0" />
+                            <RowConstraints />
+                            <RowConstraints />
+                        </rowConstraints>
+                    </GridPane>
+
+                    <HBox alignment="CENTER_RIGHT" spacing="15">
+                        <Button onAction="#clearFields" prefHeight="45" prefWidth="120" style="-fx-background-color: transparent; -fx-text-fill: #e74c3c; -fx-border-color: #e74c3c; -fx-border-radius: 10; -fx-font-weight: bold;" text="%sellerdemo.button.Cancel" />
+                        <Button onAction="#handleSaveProduct" prefHeight="45" prefWidth="180" style="-fx-background-color: #2ecc71; -fx-text-fill: white; -fx-background-radius: 10; -fx-font-weight: bold; -fx-effect: dropshadow(three-pass-box, rgba(46, 204, 113, 0.4), 10, 0, 0, 4);" text="%sellerdemo.button.Save" />
+                    </HBox>
+                </VBox>
+                <VBox fx:id="vboxCustomers" spacing="25" style="-fx-padding: 40; -fx-background-color: #f8f9fa;" stylesheets="@../css/addproduct.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+                    <padding>
+                        <Insets bottom="30.0" left="40.0" right="40.0" top="30.0" />
+                    </padding>
+                    <children>
+                        <VBox spacing="5.0">
+                            <Label text="%sellerdemo.label.CustomerList" textFill="#1e293b">
+                                <font><Font name="System Bold" size="28.0" /></font>
+                            </Label>
+                            <Label text="%sellerdemo.label.Managelist" textFill="#64748b" />
+                        </VBox>
+
+                        <VBox style="-fx-background-color: #ffffff; -fx-background-radius: 12; -fx-border-color: #f1f5f9; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 10, 0, 0, 5);" VBox.vgrow="ALWAYS">
+                            <padding><Insets bottom="10.0" left="10.0" right="10.0" top="10.0" /></padding>
+                            <TableView fx:id="customerTable" style="-fx-background-color: transparent;" VBox.vgrow="ALWAYS">
+                                <columns>
+                                    <TableColumn fx:id="colId" prefWidth="60.0" text="#" />
+                                    <TableColumn fx:id="collName" prefWidth="220.0" text="%sellerdemo.label.Name" />
+                                    <TableColumn fx:id="colPhone" prefWidth="180.0" text="%sellerdemo.label.Phone" />
+                                    <TableColumn fx:id="colProductName" prefWidth="250.0" text="Sản phẩm đã mua" />
+                                    <TableColumn fx:id="collAction" prefWidth="150.0" text="%sellerdemo.label.Action" />
+                                </columns>
+                                <columnResizePolicy>
+                                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                                </columnResizePolicy>
+                            </TableView>
+                        </VBox>
+                    </children>
+                </VBox>
+            </children>
+         </StackPane>
+        </ScrollPane>
+    </center>
+</BorderPane>

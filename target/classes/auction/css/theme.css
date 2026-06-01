@@ -1,0 +1,312 @@
+/* =========================================
+   THEME - COLORS, FONTS & GLOBAL STYLING
+   ========================================= */
+
+/* Color Palette */
+:root {
+    /* Primary Colors */
+    -fx-primary-color: #0052FF;
+    -fx-primary-dark: #0041CC;
+
+    /* Secondary Colors */
+    -fx-secondary-color: #2980b9;
+    -fx-secondary-dark: #1f618d;
+
+    /* Success/Accent Colors */
+    -fx-success-color: #27ae60;
+    -fx-warning-color: #f39c12;
+    -fx-danger-color: #e74c3c;
+    -fx-info-color: #3498db;
+
+    /* Neutral Colors */
+    -fx-dark-gray: #2c3e50;
+    -fx-medium-gray: #34495e;
+    -fx-light-gray: #95a5a6;
+    -fx-lighter-gray: #bdc3c7;
+    -fx-lightest-gray: #ecf0f1;
+    -fx-bg-light: #f4f7f6;
+
+    /* Neon/Admin Colors */
+    -fx-neon-cyan: #00d2ff;
+    -fx-neon-blue: #3a7bd5;
+}
+
+/* Typography */
+.font-title-large {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+}
+
+.font-title-medium {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+}
+
+.font-title-small {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+
+.font-subtitle {
+    -fx-font-size: 14px;
+    -fx-font-weight: normal;
+    -fx-text-fill: #7f8c8d;
+}
+
+.font-label {
+    -fx-font-size: 12px;
+    -fx-text-fill: #495057;
+}
+
+.font-caption {
+    -fx-font-size: 10px;
+    -fx-text-fill: #6b7c93;
+}
+
+/* Backgrounds */
+.bg-primary {
+    -fx-background-color: white;
+}
+
+.bg-secondary {
+    -fx-background-color: #f4f7f6;
+}
+
+.bg-dark {
+    -fx-background-color: #34495e;
+}
+
+.bg-admin-gradient {
+    -fx-background-color: linear-gradient(to bottom right, #0f2027, #203a43, #2b5268);
+}
+
+/* Text Colors */
+.text-primary {
+    -fx-text-fill: #2c3e50;
+}
+
+.text-secondary {
+    -fx-text-fill: #7f8c8d;
+}
+
+.text-light {
+    -fx-text-fill: white;
+}
+
+.text-success {
+    -fx-text-fill: #27ae60;
+}
+
+.text-danger {
+    -fx-text-fill: #e74c3c;
+}
+
+.text-info {
+    -fx-text-fill: #3498db;
+}
+
+/* Padding & Spacing */
+.p-small {
+    -fx-padding: 10;
+}
+
+.p-medium {
+    -fx-padding: 15;
+}
+
+.p-large {
+    -fx-padding: 20;
+}
+
+.p-xlarge {
+    -fx-padding: 30;
+}
+
+.spacing-small {
+    -fx-spacing: 5;
+}
+
+.spacing-medium {
+    -fx-spacing: 10;
+}
+
+.spacing-large {
+    -fx-spacing: 15;
+}
+
+.spacing-xlarge {
+    -fx-spacing: 20;
+}
+
+/* Border & Shadow Effects */
+.border-light {
+    -fx-border-color: #ecf0f1;
+}
+
+.border-medium {
+    -fx-border-color: #bdc3c7;
+}
+
+.border-dark {
+    -fx-border-color: #34495e;
+}
+
+.shadow-small {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 3, 0, 0, 1);
+}
+
+.shadow-medium {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 8, 0, 0, 3);
+}
+
+.shadow-large {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 15, 0, 0, 6);
+}
+
+/* Corners & Radius */
+.corner-small {
+    -fx-background-radius: 5;
+}
+
+.corner-medium {
+    -fx-background-radius: 10;
+}
+
+.corner-large {
+    -fx-background-radius: 15;
+}
+
+.corner-pill {
+    -fx-background-radius: 20;
+}
+
+/* Opacity States */
+.opacity-disabled {
+    -fx-opacity: 0.5;
+}
+
+.opacity-hover {
+    -fx-opacity: 0.8;
+}
+
+.opacity-active {
+    -fx-opacity: 1.0;
+}
+
+/* Login Theme */
+.root-pane {
+    -fx-background-image: url("../img/login.png");
+    -fx-background-size: cover;
+    -fx-background-position: center;
+}
+
+.label-account {
+    -fx-font-family: "Montserrat";
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+}
+
+.forgot-btn {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-background-insets: 0;
+    -fx-border-radius: 3px;
+    -fx-background-radius: 3px;
+    -fx-text-fill: #555;
+}
+
+.forgot-btn:hover {
+    -fx-background-color: #f0f0f0;
+    -fx-text-fill: #0078d4;
+}
+
+/* Navbar */
+.navbar {
+    -fx-background-color: #1a237e;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 10, 0, 0, 5);
+}
+
+.logo-text {
+    -fx-text-fill: white;
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Balance Display */
+.balance-label {
+    -fx-text-fill: #cfd8dc;
+    -fx-font-size: 11px;
+}
+
+.balance-amount {
+    -fx-text-fill: #2ecc71;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+
+.username-text {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+}
+
+.profile-container {
+    -fx-cursor: hand;
+    -fx-padding: 5;
+    -fx-background-radius: 25;
+}
+
+.profile-container:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.15);
+}
+
+/* Category Menu */
+.category-menu {
+    -fx-background-color: #f0f2f5;
+    -fx-background-radius: 20 0 0 20;
+    -fx-padding: 0 15;
+    -fx-pref-height: 40;
+    -fx-cursor: hand;
+    -fx-background-insets: 0;
+}
+
+.category-menu .label {
+    -fx-text-fill: #333;
+    -fx-font-weight: bold;
+}
+
+/* Search Field */
+.search-field {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 0;
+    -fx-border-color: #f0f2f5;
+    -fx-border-width: 1 0 1 0;
+    -fx-pref-height: 40;
+    -fx-font-size: 14px;
+    -fx-background-insets: 0;
+    -fx-padding: 0 10;
+}
+
+.search-field:focused {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #ffca28;
+}
+
+/* Search Button */
+.search-button {
+    -fx-background-color: #ffca28;
+    -fx-text-fill: #1a237e;
+    -fx-background-radius: 0 20 20 0;
+    -fx-pref-height: 40;
+    -fx-padding: 0 20;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-background-insets: 0;
+}
+
+.search-button:hover {
+    -fx-background-color: #ffd54f;
+}
+

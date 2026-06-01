@@ -23,6 +23,7 @@ public interface ItemDao extends GenericDAO<Item, Integer> {
     void checkAndTriggerAutomaticBids(int itemId);
     List<Object[]> getCustomersBySellerId(int sellerId);
     long getTotalRevenueBySellerId(int sellerId);
+    boolean cancelAuction(int itemId);
 
     Object[] getDashboardStats();
 }

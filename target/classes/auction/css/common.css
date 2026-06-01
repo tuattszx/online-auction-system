@@ -1,0 +1,102 @@
+/* =========================================
+   COMMON STYLES - SHARED ACROSS ALL PAGES
+   ========================================= */
+
+/* Reset & Base */
+.button {
+    -fx-background-radius: 15;
+    -fx-border-radius: 15;
+}
+
+.button:hover {
+    -fx-cursor: hand;
+    -fx-opacity: 0.8;
+}
+
+.text-input {
+    -fx-background-radius: 7;
+    -fx-border-radius: 7;
+}
+
+/* Standard Button Styles */
+.primary-button {
+    -fx-background-color: #0052FF;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 10 20;
+    -fx-background-radius: 5;
+}
+
+.primary-button:hover {
+    -fx-background-color: #0041CC;
+}
+
+.secondary-button {
+    -fx-background-color: #e74c3c;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 10 20;
+    -fx-background-radius: 5;
+}
+
+.secondary-button:hover {
+    -fx-background-color: #c0392b;
+}
+
+/* Link Text */
+.link-text {
+    -fx-text-fill: #1541c5;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+.link-text:hover {
+    -fx-text-fill: #0f2bb8;
+    -fx-underline: true;
+}
+
+/* Divider Line */
+.divider-line {
+    -fx-background-color: lightgray;
+}
+
+/* Input Fields */
+.form-input {
+    -fx-background-color: #f0f2f5;
+    -fx-border-color: transparent;
+    -fx-background-radius: 0;
+    -fx-padding: 0 10;
+}
+
+.form-input:focused {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #0052FF;
+}
+
+/* Sidebar Styles */
+.sidebar {
+    -fx-background-color: #34495e;
+    -fx-text-fill: white;
+}
+
+.sidebar-item {
+    -fx-text-fill: white;
+    -fx-cursor: hand;
+    -fx-padding: 12 15;
+}
+
+.sidebar-item:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-indicator {
+    -fx-background-color: white;
+    -fx-min-width: 2;
+}
+
+/* Scrollpane */
+.scroll-pane {
+    -fx-background-color: transparent;
+    -fx-background: #f4f7f6;
+}
+

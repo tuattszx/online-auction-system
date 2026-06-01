@@ -1,0 +1,117 @@
+/* =========================================================================
+   CẤU HÌNH TỔNG THỂ BẢNG THEO PHONG CÁCH FLAT (BẢNG 2)
+   ========================================================================= */
+.table-view {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #E2E8F0; /* Viền xám rất mảnh bọc ngoài */
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 0;
+}
+
+/* 🔑 QUAN TRỌNG: Ẩn hoàn toàn các đường viền dọc phân tách cột */
+.table-view .table-cell {
+    -fx-border-color: #F1F5F9; /* Chỉ giữ lại đường kẻ ngang cực mờ */
+    -fx-border-width: 0 0 1 0;
+    -fx-padding: 14 12 14 12; /* Tăng độ cao dòng cho thoáng giống bảng 2 */
+    -fx-text-fill: #334155;
+    -fx-font-size: 13px;
+}
+
+/* =========================================================================
+   THANH TIÊU ĐỀ (HEADER) PHẲNG KHÔNG GRADIENT
+   ========================================================================= */
+.table-view .column-header-background {
+    -fx-background-color: #F8FAFC; /* Màu nền xám trắng cực nhạt hoàn toàn phẳng giống bảng 2 */
+    -fx-background-radius: 8 8 0 0;
+    -fx-border-color: #E2E8F0;
+    -fx-border-width: 0 0 1 0; /* Đường kẻ dưới header */
+    -fx-padding: 8 0 8 0;
+}
+
+/* Loại bỏ viền dọc giữa các ô tiêu đề */
+.table-view .column-header {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent; /* 🔑 Xóa vạch chia cắt dọc trên tiêu đề */
+}
+
+/* Chữ tiêu đề viết đậm, màu xám xanh thẫm hiện đại */
+.table-view .column-header .label {
+    -fx-text-fill: #475569;
+    -fx-font-family: "System";
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+    -fx-alignment: CENTER; /* Đã căn giữa theo yêu cầu trước */
+}
+
+/* =========================================================================
+   CẤU HÌNH CÁC HÀNG (ROWS)
+   ========================================================================= */
+.table-row-cell {
+    -fx-background-color: #FFFFFF; /* Mặc định nền trắng */
+}
+
+/* 🔑 Nếu bạn muốn dòng chẵn lẻ xen kẽ siêu mờ như bảng 2: */
+.table-row-cell:odd {
+    -fx-background-color: #F8FAFC;
+}
+
+/* Hiệu ứng di chuột nhẹ nhàng */
+.table-row-cell:hover {
+    -fx-background-color: #F1F5F9;
+    -fx-cursor: hand;
+}
+
+/* Khi click chọn hàng */
+.table-row-cell:selected {
+    -fx-background-color: #E2E8F0;
+}
+.table-row-cell:selected .table-cell {
+    -fx-text-fill: #0F172A;
+}
+
+/* =========================================================================
+   NÚT DẤU CỘNG (+) QUẢN LÝ CỘT PHẲNG THEO HEADER ĐỔI MÀU
+   ========================================================================= */
+.table-view .show-hide-columns-button {
+    -fx-background-color: #F8FAFC; /* Tiệp màu phẳng với header mới */
+    -fx-border-color: #E2E8F0;
+    -fx-border-width: 0 0 1 0;
+    -fx-cursor: hand;
+}
+.table-view .show-hide-column-image {
+    -fx-background-color: #64748B; /* Màu dấu cộng xám nhẹ tinh tế */
+}
+.table-view .show-hide-columns-button:hover {
+    -fx-background-color: #F1F5F9;
+}
+/* =========================================================================
+   TÙY CHỈNH GIAO DIỆN AREA CHART (MÀU XANH THƯƠNG HIỆU CỦA APP)
+   ========================================================================= */
+
+/* 1. Định dạng đường nét vẽ chính (Đường Line phía trên cùng) */
+.chart-series-area-line {
+    -fx-stroke: #0052FF;             /* Màu xanh dương đậm tiệp với nút của bạn */
+    -fx-stroke-width: 2.5px;         /* Độ dày đường vẽ vừa phải, sắc nét */
+}
+
+/* 2. Định dạng vùng đổ bóng phía dưới đường vẽ (Area Fill) */
+.chart-series-area-fill {
+    /* Sử dụng hiệu ứng Gradient chuyển màu mượt mà từ trên xuống dưới */
+    -fx-fill: linear-gradient(to bottom,
+    rgba(0, 82, 255, 0.4) 0%,    /* Phía sát đường vẽ: xanh rõ hơn (độ mờ 40%) */
+    rgba(0, 82, 255, 0.05) 100%  /* Phía dưới đáy: mờ dần về gần như trong suốt */
+    );
+}
+.chart {
+    -fx-create-symbols: false;
+}
+/* Làm mờ các đường lưới nền (Grid Lines) cho biểu đồ đỡ bị rối mắt */
+.chart-alternative-row-visible {
+    -fx-fill: transparent;
+}
+.chart-horizontal-grid-lines, .chart-vertical-grid-lines {
+    -fx-stroke: #f1f5f9;             /* Màu xám cực nhẹ giúp biểu đồ trông "thoáng" hơn */
+    -fx-stroke-width: 0.8px;
+}

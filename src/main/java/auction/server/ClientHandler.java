@@ -180,7 +180,15 @@ public class ClientHandler implements Runnable {
                         case "UPDATE_PASSWORD":
                             handleUpdatePassword(msg,out);
                             break;
-
+                        case "CANCEL_AUCTION":
+                            handleCancelAuction(msg,out);
+                            break;
+                        case "CLEAR_ALL_NOTIF":
+                            handleClearAllNotifByUserId(msg,out);
+                            break;
+                        case "READ_ALL_NOTIF":
+                            handleReadAllNotifByUserId(msg,out);
+                            break;
                             // Thêm các case khác như BID, VIEW_PRODUCT...
                     }
                 }
@@ -769,7 +777,7 @@ public class ClientHandler implements Runnable {
     private void handleDeleteItem(Message msg, ObjectOutputStream out) throws IOException{
         try{
             int idItem=(int) msg.getData();
-            boolean isDeleted = itemDao.delete(idItem);
+            boolean isDeleted = itemDao.cancelAuction(idItem);
             msg.setStatus(isDeleted ? "SUCCESS" : "FAILED");
         }catch (Exception e){
             e.printStackTrace();
@@ -1188,6 +1196,78 @@ public class ClientHandler implements Runnable {
         } catch (Exception e){
             msg.setStatus("ERROR");
             e.printStackTrace();
+        } finally {
+            out.writeObject(msg);
+            out.flush();
+            out.reset();
+        }
+    }
+
+    private void handleCancelAuction(Message msg, ObjectOutputStream out) throws IOException {
+        try {
+            Object[] payload = (Object[]) msg.getData();
+            int itemId = (int) payload[0];
+            String reason = (String) payload[1];
+            boolean isCancelled = itemDao.cancelAuction(itemId);
+
+            if (isCancelled) {
+                msg.setStatus("SUCCESS");
+                msg.setData("Đấu giá đã được hủy thành công.");
+                NotificationService.handleSendMessageRejectItem(itemDao.getById(itemId), reason, LocalDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh")));
+            } else {
+                msg.setStatus("FAILED");
+                msg.setData("Không tìm thấy sản phẩm hoặc sản phẩm không thể hủy.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            msg.setStatus("ERROR");
+            msg.setData("Lỗi hệ thống Server: " + e.getMessage());
+        } finally {
+            out.writeObject(msg);
+            out.flush();
+            out.reset();
+        }
+    }
+
+    private void handleClearAllNotifByUserId(Message msg, ObjectOutputStream out) throws IOException {
+        try {
+            int userId = (int) msg.getData();
+            boolean isCleared = notificationDao.deleteAllByUserId(userId);
+
+            if (isCleared) {
+                msg.setStatus("SUCCESS");
+                msg.setData("Đã xóa tất cả dữ liệu thành công.");
+            } else {
+                msg.setStatus("FAILED");
+                msg.setData("Không thể xóa dữ liệu. Vui lòng thử lại.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            msg.setStatus("ERROR");
+            msg.setData("Lỗi hệ thống Server: " + e.getMessage());
+        } finally {
+            out.writeObject(msg);
+            out.flush();
+            out.reset();
+        }
+    }
+
+    private void handleReadAllNotifByUserId(Message msg, ObjectOutputStream out) throws IOException {
+        try {
+            int userId = (int) msg.getData();
+            boolean isUpdated = notificationDao.readAllByUserId(userId);
+
+            if (isUpdated) {
+                msg.setStatus("SUCCESS");
+                msg.setData("Đã đánh dấu tất cả thông báo là đã đọc.");
+            } else {
+                msg.setStatus("FAILED");
+                msg.setData("Không thể cập nhật thông báo. Vui lòng thử lại.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            msg.setStatus("ERROR");
+            msg.setData("Lỗi hệ thống Server: " + e.getMessage());
         } finally {
             out.writeObject(msg);
             out.flush();
