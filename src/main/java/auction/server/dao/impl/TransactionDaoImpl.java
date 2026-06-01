@@ -4,10 +4,7 @@ import auction.common.model.items.Transaction;
 import auction.server.DatabaseManager;
 import auction.server.dao.TransactionDao;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -59,10 +56,10 @@ public class TransactionDaoImpl implements TransactionDao {
 
         transaction.setAmount(rs.getLong("amount"));
 
-        if (rs.getObject("created_at") != null) {
-            transaction.setTime(rs.getObject("created_at", LocalDateTime.class));
+        Timestamp time = rs.getTimestamp("created_at");
+        if (time != null) {
+            transaction.setTime(time.toLocalDateTime());
         }
-
         return transaction;
     }
 }

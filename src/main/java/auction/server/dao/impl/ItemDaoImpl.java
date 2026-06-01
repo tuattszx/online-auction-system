@@ -636,7 +636,7 @@ public class ItemDaoImpl implements ItemDao {
                 "MAX(b.bid_amount) as your_max_bid " +
                 "FROM ITEMS i " +
                 "JOIN BIDS b ON i.id = b.id_item " +
-                "WHERE b.id_user = ? " +
+                "WHERE b.id_user = ? and i.status not in ('DELETED','UNAPPROVED')" +
                 "GROUP BY i.id, i.name, i.current_price, i.end_time";
 
         try (Connection conn = DatabaseManager.getInstance().getConnection();

@@ -2008,7 +2008,7 @@ public class ClientHandlerTest {
         // 1. Chuẩn bị dữ liệu: payload gồm [itemId, isApproved]
         int itemId = 42;
         boolean isApproved = true;
-        Object[] payload = new Object[]{itemId, isApproved};
+        Object[] payload = new Object[]{itemId, isApproved,""};
 
         Message msgRequest = new Message("CONFIRM_ITEM", payload);
         ObjectOutputStream mockOut = mock(ObjectOutputStream.class);
@@ -2048,7 +2048,7 @@ public class ClientHandlerTest {
         // 1. Chuẩn bị dữ liệu từ chối: [itemId, false]
         int itemId = 42;
         boolean isApproved = false;
-        Object[] payload = new Object[]{itemId, isApproved};
+        Object[] payload = new Object[]{itemId, isApproved,""};
 
         Message msgRequest = new Message("CONFIRM_ITEM", payload);
         ObjectOutputStream mockOut = mock(ObjectOutputStream.class);
@@ -2082,7 +2082,7 @@ public class ClientHandlerTest {
     public void testHandleConfirmItem_NoImport_Exception() throws Exception {
         // 1. Ép tầng DAO ném lỗi hệ thống mạng/DB để test khối catch
         int itemId = 99;
-        Object[] payload = new Object[]{itemId, true};
+        Object[] payload = new Object[]{itemId, true,""};
 
         Message msgRequest = new Message("CONFIRM_ITEM", payload);
         ObjectOutputStream mockOut = mock(ObjectOutputStream.class);

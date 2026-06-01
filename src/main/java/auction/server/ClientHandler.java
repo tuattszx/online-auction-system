@@ -1188,9 +1188,10 @@ public class ClientHandler implements Runnable {
         } catch (Exception e){
             msg.setStatus("ERROR");
             e.printStackTrace();
+        } finally {
+            out.writeObject(msg);
+            out.flush();
+            out.reset();
         }
-        out.writeObject(msg);
-        out.flush();
-        out.reset();
     }
 }
