@@ -27,7 +27,7 @@
                      <content>
                         <HBox fx:id="categoryBar" alignment="CENTER" spacing="100.0" style="-fx-background-color: white; -fx-padding: 0 60 0 20;">
                            <children>
-                              <VBox alignment="CENTER" minWidth="80.0" onMouseClicked="#handleThisWeekClick" spacing="5" style="-fx-border-color: #0052ff; -fx-border-width: 0 0 3 0; -fx-cursor: hand;">
+                              <VBox fx:id="vboxThisweek" alignment="CENTER" minWidth="80.0" onMouseClicked="#handleThisWeekClick" spacing="5" style="-fx-border-color: #0052ff; -fx-border-width: 0 0 3 0; -fx-cursor: hand;">
                                  <children>
                                     <Label style="-fx-text-fill: #0052ff;" text="⚖" textFill="#0052ff" />
                                     <Label style="-fx-font-weight: bold; -fx-text-fill: #0052ff;" text="%mainview.label.thisweek" textFill="#0052ff">

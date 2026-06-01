@@ -147,7 +147,7 @@
                               <Insets left="50.0" right="50.0" />
                            </padding>
                         </VBox>
-                        <VBox fx:id="verifyCodeVBox" alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" prefHeight="500.0" prefWidth="400.0" spacing="20.0" visible="false" managed="false">
+                        <VBox fx:id="verifyCodeVBox" alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" managed="false" prefHeight="500.0" prefWidth="400.0" spacing="20.0" visible="false">
                            <children>
                               <VBox alignment="CENTER" spacing="8.0">
                                  <children>
@@ -156,7 +156,7 @@
                                           <Font name="System Bold" size="32.0" />
                                        </font>
                                     </Label>
-                                    <Label text="Please enter the 6-digit code sent to your email" textFill="#666666" textAlignment="CENTER" wrapText="true">
+                                    <Label text="Please enter the 6-digit code sent to your email" textAlignment="CENTER" textFill="#666666" wrapText="true">
                                        <font>
                                           <Font size="16.0" />
                                        </font>
@@ -217,7 +217,7 @@
                               <Insets left="50.0" right="50.0" />
                            </padding>
                         </VBox>
-                        <VBox fx:id="newPasswordVBox" alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" prefHeight="500.0" prefWidth="400.0" spacing="20.0" visible="false" managed="false">
+                        <VBox fx:id="newPasswordVBox" alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" managed="false" prefHeight="500.0" prefWidth="400.0" spacing="20.0" visible="false">
                            <children>
                               <VBox alignment="CENTER" spacing="8.0">
                                  <children>
@@ -226,7 +226,7 @@
                                           <Font name="System Bold" size="32.0" />
                                        </font>
                                     </Label>
-                                    <Label text="Please enter your new password to secure your account" textFill="#666666" textAlignment="CENTER" wrapText="true">
+                                    <Label text="Please enter your new password to secure your account" textAlignment="CENTER" textFill="#666666" wrapText="true">
                                        <font>
                                           <Font size="16.0" />
                                        </font>

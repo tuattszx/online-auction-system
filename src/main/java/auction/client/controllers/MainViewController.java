@@ -37,7 +37,7 @@ import javafx.scene.paint.Color;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainViewController extends ProfileController implements Cleanable {
+public class MainViewController implements Cleanable {
     // public Label lbbalance;
     @FXML
     private TextField txtsearch;
@@ -51,6 +51,8 @@ public class MainViewController extends ProfileController implements Cleanable {
     private ScrollPane scrollCategories; // Phải trùng với fx:id="scrollCategories" trong FXML
     @FXML
     protected HeaderMenuController headerMenuController;
+    @FXML
+    private VBox vboxThisweek;
 
     private static final String ACTIVE_CATEGORY_STYLE = "-fx-border-color: #0052ff; -fx-border-width: 0 0 3 0;";
     // SỬA LỖI: Khai báo biến network
@@ -469,6 +471,13 @@ public class MainViewController extends ProfileController implements Cleanable {
     @FXML
     private void handleThisWeekClick(MouseEvent event) {
         loadItems();
+        for (Node node : categoryBar.getChildren()) {
+            if (node instanceof VBox) {
+                node.setStyle("");
+            }
+        }
+        vboxThisweek.setStyle(ACTIVE_CATEGORY_STYLE);
+
     }
 
     @FXML

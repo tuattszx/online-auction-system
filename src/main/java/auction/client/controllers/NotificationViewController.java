@@ -21,6 +21,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -38,18 +40,72 @@ import java.util.function.Consumer;
 import static auction.client.utils.ServerTimeSync.formatRelativeTime;
 
 public class NotificationViewController implements Cleanable {
-    @FXML private HBox searchBar; // Liên kết với thanh tìm kiếm
+    @FXML
+    private HBox searchBar; // Liên kết với thanh tìm kiếm
     @FXML
     private HeaderMenuController headerMenuController;
     @FXML
     private VBox vboxMainNotifications;
     private Consumer<Notification> realtimeCallback;
-    @FXML private Button btnAllread;
-    @FXML private Button btnUnread;
+    @FXML
+    private Button btnAllread;
+    @FXML
+    private Button btnUnread;
+    @FXML
+    private Label threedot; // Nút ba chấm trên giao diện
+
+    @FXML
+    private VBox menuOverlay; // Khung hộp menu chứa 2 lựa chọn
+
+    @FXML
+    private HBox btnMarkAllRead; // Dòng Đánh dấu tất cả là đã đọc
+
+    @FXML
+    private HBox btnClearAllNoti; // Dòng Xóa tất cả
+
+    // Giả sử gốc ngoài cùng của file FXML là AnchorPane, bạn gán fx:id cho nó là rootPane để bắt sự kiện click ra ngoài
+    @FXML
+    private AnchorPane rootPane;
     private boolean isFilteringUnread = false;
 
     @FXML
-    public void initialize(){
+    public void initialize() {
+        menuOverlay.setVisible(false);
+
+        // 2. Khi click vào bất kỳ vùng trống nào trên rootPane (ngoài menu), thực hiện ẩn menu
+        rootPane.setOnMouseClicked(event -> {
+            if (menuOverlay.isVisible()) {
+                menuOverlay.setVisible(false);
+            }
+        });
+        threedot.setOnMouseClicked(event -> {
+            // Đảo ngược trạng thái Hiện/Ẩn của menu
+            boolean isNowVisible = !menuOverlay.isVisible();
+            menuOverlay.setVisible(isNowVisible);
+
+            if (isNowVisible) {
+                menuOverlay.toFront();
+            }
+
+            // Ngăn sự kiện click sủi bọt ra rootPane (tránh việc vừa mở xong lại bị đóng ngay lập tức)
+            event.consume();
+        });
+
+        // 4. Bắt sự kiện click chuột cho 2 dòng lựa chọn bên trong Menu
+        btnMarkAllRead.setOnMouseClicked(event -> {
+            handleMarkAllAsRead();
+            menuOverlay.setVisible(false); // Xử lý xong tự đóng menu
+            event.consume();
+        });
+
+        btnClearAllNoti.setOnMouseClicked(event -> {
+            handleDeleteAllNotify();
+            menuOverlay.setVisible(false); // Xử lý xong tự đóng menu
+            event.consume();
+        });
+
+        // Ngăn chặn việc click trực tiếp vào khoảng trắng bên trong hộp menu làm ẩn chính nó
+        menuOverlay.setOnMouseClicked(MouseEvent::consume);
         setupRealtimeNotification();
         switchButtonStyle(btnAllread, true);
         switchButtonStyle(btnUnread, false);
@@ -66,6 +122,7 @@ public class NotificationViewController implements Cleanable {
             NotificationSubscriptionManager.getInstance().unsubscribe(realtimeCallback);
         }
     }
+
     private void switchButtonStyle(Button button, boolean isActive) {
         button.getStyleClass().remove("fb-button-active");
         button.getStyleClass().remove("fb-button-normal");
@@ -113,11 +170,11 @@ public class NotificationViewController implements Cleanable {
 
         Label lblTime = new Label(timeStr);
         lblTime.setStyle("-fx-font-size: 12px; -fx-text-fill: #65676b;");
-        if(isUnread) {
+        if (isUnread) {
             lblTime.setStyle("-fx-font-size: 12px; -fx-text-fill: #1877f2; -fx-font-weight: bold;");
         }
 
-        textContainer.getChildren().addAll(titleFlow,messageFlow, lblTime);
+        textContainer.getChildren().addAll(titleFlow, messageFlow, lblTime);
 
         row.getChildren().addAll(avatar, textContainer);
 
@@ -171,14 +228,14 @@ public class NotificationViewController implements Cleanable {
 
                     AuctionManager.getInstance().getLatestItemAsync(bidNote.getItemId())
                             .thenAccept(item -> {
-                                        Platform.runLater(() -> {
-                                            if (item != null) {
-                                                DataSession.getInstance().setSelectedItem(item);
-                                                ViewManager.switchScene(e, "item-view.fxml", "Chi tiết: " + item.getName());
-                                            } else {
-                                                System.err.println("Không tìm thấy sản phẩm!");
-                                            }
-                                        });
+                                Platform.runLater(() -> {
+                                    if (item != null) {
+                                        DataSession.getInstance().setSelectedItem(item);
+                                        ViewManager.switchScene(e, "item-view.fxml", "Chi tiết: " + item.getName());
+                                    } else {
+                                        System.err.println("Không tìm thấy sản phẩm!");
+                                    }
+                                });
                             });
                 }
 
@@ -229,9 +286,9 @@ public class NotificationViewController implements Cleanable {
             @Override
             protected List<HBox> call() throws Exception {
                 Message request = new Message("GET_MESSAGE", DataSession.getInstance().getLoggedInUser().getId());
-                Message response=ClientNetwork.getInstance().sendRequest(request);
+                Message response = ClientNetwork.getInstance().sendRequest(request);
 
-                List<HBox> uiRows=new ArrayList<>();
+                List<HBox> uiRows = new ArrayList<>();
                 if (response != null && "SUCCESS".equals(response.getStatus())) {
                     List<Notification> notifications = (List<Notification>) response.getData();
                     if (notifications != null) {
@@ -247,7 +304,8 @@ public class NotificationViewController implements Cleanable {
                 }
                 return uiRows;
             }
-        };;
+        };
+        ;
 
         loadNotifTask.setOnSucceeded(event -> {
             List<HBox> readyRows = loadNotifTask.getValue();
@@ -260,6 +318,7 @@ public class NotificationViewController implements Cleanable {
 
         new Thread(loadNotifTask).start();
     }
+
     @FXML
     public void handleAllClick(ActionEvent event) {
         // Thay đổi class CSS để chuyển đổi trạng thái hiển thị sáng/tối giống FB
@@ -284,5 +343,71 @@ public class NotificationViewController implements Cleanable {
         // --- VIẾT CODE LỌC THÔNG BÁO CHƯA ĐỌC CỦA BẠN TẠI ĐÂY ---
         System.out.println("Đang lọc hiển thị thông báo chưa đọc...");
         // loadNotifications(true); // Ví dụ hàm load dữ liệu lọc
+    }
+
+    /**
+     * Hàm xử lý khi bấm "Đánh dấu tất cả là đã đọc"
+     */
+    private void handleMarkAllAsRead() {
+        System.out.println("LOG: Người dùng bấm Đánh dấu tất cả là đã đọc");
+
+        new Thread(() -> {
+            try {
+                // Lấy ID của người dùng hiện tại đang đăng nhập trong hệ thống của bạn
+
+                // BƯỚC 1: Truyền mã lệnh "READ_ALL_NOTIF" kèm theo ID người dùng lên Server
+                Message request = new Message("READ_ALL_NOTIF", DataSession.getInstance().getLoggedInUser().getId());
+                Message response = ClientNetwork.getInstance().sendRequest(request);
+
+                // BƯỚC 2: Khi nhận phản hồi thành công, cập nhật lại giao diện trên UI Thread
+                Platform.runLater(() -> {
+                    if (response != null && "SUCCESS".equals(response.getStatus())) {
+                        // Gọi hàm tải lại danh sách thông báo đã có sẵn trong controller của bạn
+                        loadNotifications(isFilteringUnread);
+                    } else {
+                        System.err.println("LỖI: Server không thể cập nhật trạng thái đọc thông báo.");
+                    }
+                });
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
+
+    /**
+     * Hàm xử lý khi bấm "Xóa tất cả"
+     */
+    private void handleDeleteAllNotify() {
+        System.out.println("LOG: Người dùng bấm Xóa tất cả thông báo");
+
+        new Thread(() -> {
+            try {
+                // Lấy ID của người dùng hiện tại đang đăng nhập trong hệ thống của bạn
+
+                // BƯỚC 1: Truyền mã lệnh "CLEAR_ALL_NOTIF" kèm theo ID người dùng lên Server
+                Message request = new Message("CLEAR_ALL_NOTIF", DataSession.getInstance().getLoggedInUser().getId());
+                Message response = ClientNetwork.getInstance().sendRequest(request);
+
+                // BƯỚC 2: Khi nhận phản hồi thành công, dọn dẹp sạch sẽ giao diện hiển thị
+                Platform.runLater(() -> {
+                    if (response != null && "SUCCESS".equals(response.getStatus())) {
+                        // Xóa toàn bộ các phần tử hiển thị trong danh sách VBox của bạn
+                        vboxMainNotifications.getChildren().clear();
+
+                        // Thêm lại tiêu đề chữ "Mới" để giữ đúng thiết kế ban đầu
+                        Label lblMoi = new Label("Mới");
+                        lblMoi.setStyle("-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #050505;");
+                        VBox.setMargin(lblMoi, new Insets(10, 0, 5, 16));
+                        vboxMainNotifications.getChildren().add(lblMoi);
+                    } else {
+                        System.err.println("LỖI: Server không thể thực hiện xóa tất cả thông báo.");
+                    }
+                });
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }).start();
     }
 }

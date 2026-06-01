@@ -17,6 +17,8 @@ import org.mindrot.jbcrypt.BCrypt;
 
 import javax.swing.text.View;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 public class LoginController {
     @FXML
@@ -35,6 +37,8 @@ public class LoginController {
     @FXML
     private Button btnSignUp;
     @FXML
+    private Button btnVerify;
+    @FXML
     private Button btnForgotPassword;
     @FXML
     private Label lbError;
@@ -48,9 +52,13 @@ public class LoginController {
     @FXML private PasswordField txtConfirmNewPassword;
     @FXML private Button btnResetPassword;
     @FXML private Button btnCancelReset;
+    private List<VBox> vBoxes;
     ClientNetwork network = ClientNetwork.getInstance();
     @FXML
     public void initialize() {
+        lbError.setVisible(false);
+        vBoxes= Arrays.asList(loginVBox,resetPasswordVBox,verifyCodeVBox,newPasswordVBox);
+        btnVerify.setStyle("-fx-background-color: #0052ff");
         changeImage("/auction/img/pxfuel.jpg");
         loadingIndicator.setVisible(false);
         resetPasswordVBox.setVisible(false);
@@ -75,8 +83,10 @@ public class LoginController {
 
     @FXML
     public void onForgotButtonClick(ActionEvent event){
-        loginVBox.setVisible(false);
-        loginVBox.setManaged(false);
+        for (VBox x:vBoxes){
+            x.setVisible(false);
+            x.setManaged(false);
+        }
         resetPasswordVBox.setVisible(true);
         resetPasswordVBox.setManaged(true);
     }
@@ -165,10 +175,12 @@ public class LoginController {
         }
     }
     public void onBackToLoginClick(ActionEvent event){
+        for (VBox x:vBoxes){
+            x.setVisible(false);
+            x.setManaged(false);
+        }
         loginVBox.setVisible(true);
         loginVBox.setManaged(true);
-        resetPasswordVBox.setVisible(false);
-        resetPasswordVBox.setManaged(false);
     }
     @FXML
     public void onVerifyCodeClick(ActionEvent event) {
@@ -221,9 +233,10 @@ public class LoginController {
     }
     @FXML
     public void onBackToResetClick(ActionEvent event) {
-        verifyCodeVBox.setVisible(false);
-        verifyCodeVBox.setManaged(false);
-
+        for (VBox x:vBoxes){
+            x.setVisible(false);
+            x.setManaged(false);
+        }
         resetPasswordVBox.setVisible(true);
         resetPasswordVBox.setManaged(true);
     }
@@ -268,12 +281,11 @@ public class LoginController {
         String newPass = txtNewPassword.getText().trim();
         String confirmPass = txtConfirmNewPassword.getText().trim();
 
-        // 1. Kiểm tra dữ liệu thô tại chỗ (Client-side validation) giống đăng ký
-//        if (newPass.length() < 6) {
-//            Alert alert = new Alert(Alert.AlertType.WARNING, "Mật khẩu mới phải từ 6 ký tự trở lên!");
-//            alert.show();
-//            return;
-//        }
+        if (newPass.length() < 6) {
+            Alert alert = new Alert(Alert.AlertType.WARNING, "Mật khẩu mới phải từ 6 ký tự trở lên!");
+            alert.show();
+            return;
+        }
 
         if (!newPass.equals(confirmPass)) {
             Alert alert = new Alert(Alert.AlertType.WARNING, "Mật khẩu xác nhận không trùng khớp!");

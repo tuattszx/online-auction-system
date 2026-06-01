@@ -45,6 +45,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.function.Consumer;
 
 public class ItemviewController implements Cleanable {
@@ -597,11 +598,11 @@ public class ItemviewController implements Cleanable {
                 autoBidPopup = new Popup();
                 autoBidPopup.setAutoHide(true);
             }
-
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/auction/view/autobidding-view.fxml"));
-
-            Parent root = loader.load(); // Load để sinh ra giao diện và controller riêng của nó
-
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/auction/view/autobidding-view.fxml"),
+                    auction.client.services.LanguageManager.getBundle()
+            );
+            Parent root = loader.load();
             // 🔑 LẤY CONTROLLER CỦA POPUP RA ĐỂ TRUYỀN DỮ LIỆU
             AutoBidController popupController = loader.getController();
             popupController.setInitData(autoBidPopup, currentItem.getCurrentPrice(),currentItem.getId(),this);
@@ -614,6 +615,7 @@ public class ItemviewController implements Cleanable {
 
         } catch (IOException e) {
             e.printStackTrace();
+            e.getMessage();
             System.err.println("Lỗi mở popup AutoBid!");
         }
     }
