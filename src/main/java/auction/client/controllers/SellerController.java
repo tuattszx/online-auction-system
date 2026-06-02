@@ -96,10 +96,10 @@ public class SellerController {
     @FXML
     private TableColumn<Item, String> colStatus;
     @FXML
-    private TableColumn<Item, Object> colSold; // Dùng Object hoặc Void để tự render đồ họa
+    private TableColumn<Item, Object> colSold;
     @FXML
     private TableColumn<Item, Void> colAction;
-    // Khai báo các VBox nội dung (phần bên phải)
+
     @FXML
     ProgressBar progressbar;
 
@@ -112,8 +112,6 @@ public class SellerController {
     @FXML
     private VBox vboxCustomers;
 
-    // Khai báo các nút bấm menu bên trái để đổi style khi click
-    // 1. Khai báo chuẩn kiểu dữ liệu HBox theo FXML mới
     @FXML
     private HBox btnNavMyProducts;
     @FXML
@@ -121,7 +119,6 @@ public class SellerController {
     @FXML
     private HBox btnNavCustomers;
 
-    // 2. Khai báo các vệt dọc định vị
     @FXML
     private Region myProductsIndicator;
     @FXML
@@ -129,7 +126,6 @@ public class SellerController {
     @FXML
     private Region customersIndicator;
 
-    // 3. Khai báo các nhãn Label để đổi màu chữ động
     @FXML
     private Label lblMyProducts;
     @FXML
@@ -142,7 +138,6 @@ public class SellerController {
     private Label lblCurrencyIcon;
     @FXML
     private Label lblTotalRevenue;
-
 
     @FXML
     private TableView<Object[]> customerTable;
@@ -160,6 +155,10 @@ public class SellerController {
     private TextField searchField;
     @FXML
     private Button addCustomerBtn;
+
+    // 🌟 Inject VBox đóng vai trò làm lớp phủ mờ chặn tương tác
+    @FXML
+    private VBox loadingIndicator;
 
     private ObservableList<Object[]> masterData = FXCollections.observableArrayList();
 
@@ -182,19 +181,16 @@ public class SellerController {
         loadSellerProducts();
         showMyProducts();
         progressbar.setVisible(false);
-        // Cấu hình cho Giờ (0 - 23)
+
         startHour.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 23, 0));
         endHour.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 23, 0));
 
-        // Cấu hình cho Phút (0 - 59)
         startMin.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, 0));
         endMin.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, 0));
 
-        // Cấu hình cho Giây (0 - 59)
         startSec.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, 0));
         endSec.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, 0));
 
-        // 1. Cấu hình Binding dữ liệu dựa trên các thuộc tính của class User của bạn
         colId.setCellFactory(column -> new TableCell<Object[], Integer>() {
             @Override
             protected void updateItem(Integer item, boolean empty) {
@@ -206,24 +202,21 @@ public class SellerController {
                 }
             }
         });
-        // Gộp FirstName và LastName lại để hiển thị ở cột Name cho đẹp
+
         collName.setCellValueFactory(cellData -> {
             Object[] user = cellData.getValue();
-            String fullName =((User) user[0]).getUsername();
+            String fullName = ((User) user[0]).getUsername();
             return new SimpleStringProperty(fullName.trim());
         });
 
         colPhone.setCellValueFactory(cellData -> new SimpleStringProperty(((User) cellData.getValue()[0]).getPhoneNumber()));
+        colProductName.setCellValueFactory(cellData -> new SimpleStringProperty((String) cellData.getValue()[1]));
 
-        colProductName.setCellValueFactory( cellData -> new SimpleStringProperty((String) cellData.getValue()[1]));
-
-        // 2. Cấu hình cột Action sinh tự động 2 nút bấm MO... và DE... đồng bộ như bên Product View
         setupActionColumn();
         loadSellerRevenue();
     }
 
     private void setupTableColumns() {
-        // Cột STT tăng dần tự động
         colSn.setCellFactory(column -> new TableCell<>() {
             @Override
             protected void updateItem(Integer item, boolean empty) {
@@ -236,7 +229,6 @@ public class SellerController {
             }
         });
 
-        // Ánh xạ các thuộc tính cơ bản
         colName.setCellValueFactory(new PropertyValueFactory<>("name"));
 
         colStartingPrice.setCellValueFactory(new PropertyValueFactory<>("startingPrice"));
@@ -259,10 +251,8 @@ public class SellerController {
 
         colStatus.setCellValueFactory(new PropertyValueFactory<>("status"));
 
-        // 🔥 LOGIC CỘT SOLD: Nếu status = 'CLOSED' và có currentBidderId != null -> Hiện dấu tích xanh
         colSold.setCellFactory(column -> new TableCell<>() {
             private final Label lblCheck = new Label("✓");
-
             {
                 lblCheck.setStyle("-fx-text-fill: #2ecc71; -fx-font-weight: bold;");
             }
@@ -283,7 +273,6 @@ public class SellerController {
             }
         });
 
-        // 🔥 CỘT HÀNH ĐỘNG: Tạo nút Modify (Sửa) và DELETE (Xóa) chuyên nghiệp
         colAction.setCellFactory(param -> new TableCell<>() {
             private final Button btnModify = new Button("MODIFY");
             private final Button btnDelete = new Button("DELETE");
@@ -364,9 +353,8 @@ public class SellerController {
             return;
         }
         isEditMode = true;
-        editingItemId = item.getId(); // Giữ lại ID gốc để làm mấu chốt WHERE gửi lên Server khi ấn Save
+        editingItemId = item.getId();
 
-        // Bơm ngược thông tin chuỗi thô
         txtTitle.setText(item.getName());
         txtPrice.setText(String.valueOf(item.getStartingPrice()));
         txtDescription.setText(item.getDescription());
@@ -386,7 +374,6 @@ public class SellerController {
             }
         }
 
-        // Bơm ngược Thời gian bắt đầu
         if (item.getStartTime() != null) {
             startDatePicker.setValue(item.getStartTime().toLocalDate());
             startHour.getValueFactory().setValue(item.getStartTime().getHour());
@@ -394,7 +381,6 @@ public class SellerController {
             startSec.getValueFactory().setValue(item.getStartTime().getSecond());
         }
 
-        // Bơm ngược Thời gian kết thúc
         if (item.getEndTime() != null) {
             endDatePicker.setValue(item.getEndTime().toLocalDate());
             endHour.getValueFactory().setValue(item.getEndTime().getHour());
@@ -417,7 +403,6 @@ public class SellerController {
 
                     Platform.runLater(() -> {
                         if (response != null && "SUCCESS".equals(response.getStatus())) {
-                            // Cập nhật nóng UI bằng cách gán status thành DELETED
                             item.setStatus("DELETED");
                             productTable.refresh();
                             ViewManager.showAlert(Alert.AlertType.INFORMATION, "Thành công", "Đã xóa sản phẩm thành công!");
@@ -432,22 +417,17 @@ public class SellerController {
 
     @FXML
     private void handleSidebarClick(MouseEvent event) {
-        // Lấy đúng HBox vừa được bấm chuột vào
         HBox clickedBox = (HBox) event.getSource();
-
-        // Bước A: Đưa tất cả các Tab về trạng thái trống (Xóa màu xanh cũ)
         resetAllSidebarItems();
 
-        // Bước B: Kích hoạt hiệu ứng màu sắc cho Tab được chọn
         if (clickedBox == btnNavMyProducts) {
-            btnNavMyProducts.setStyle("-fx-background-color: #e8f0fe; -fx-background-radius: 8;"); // Nền xanh nhạt bạn thích
-            myProductsIndicator.setVisible(true); // Hiện vệt xanh đậm
-            lblMyProducts.setStyle("-fx-text-fill: #1a73e8; -fx-font-weight: bold;"); // Chữ xanh đậm bold
+            btnNavMyProducts.setStyle("-fx-background-color: #e8f0fe; -fx-background-radius: 8;");
+            myProductsIndicator.setVisible(true);
+            lblMyProducts.setStyle("-fx-text-fill: #1a73e8; -fx-font-weight: bold;");
 
             isEditMode = false;
             editingItemId = -1;
-            showMyProducts();// Gọi hàm hiển thị giao diện của bạn
-
+            showMyProducts();
             handleShowMyProducts(null);
         } else if (clickedBox == btnNavAdd) {
             btnNavAdd.setStyle("-fx-background-color: #e8f0fe; -fx-background-radius: 8;");
@@ -457,15 +437,13 @@ public class SellerController {
             clearFields();
             isEditMode = false;
             editingItemId = -1;
-            showMyProducts();
-            handleShowAddProduct(null);
-
+            showAddProduct();
         } else if (clickedBox == btnNavCustomers) {
             btnNavCustomers.setStyle("-fx-background-color: #e8f0fe; -fx-background-radius: 8;");
             customersIndicator.setVisible(true);
             lblCustomers.setStyle("-fx-text-fill: #1a73e8; -fx-font-weight: bold;");
-            isEditMode=false;
-            editingItemId=-1;
+            isEditMode = false;
+            editingItemId = -1;
 
             handleShowCustomers(null);
 
@@ -482,8 +460,6 @@ public class SellerController {
 
                     if (currentStatus.equals("PENDING") || currentStatus.equals("OPEN") || currentStatus.equals("CLOSED")) {
                         productTable.setCursor(Cursor.WAIT);
-
-                        // Đồng bộ lưu thông tin vào Session chung của hệ thống trước khi nhảy cảnh
                         DataSession.getInstance().setSelectedItem(selected);
 
                         try {
@@ -498,19 +474,15 @@ public class SellerController {
         });
     }
 
-    // Hàm dọn dẹp trạng thái màu sắc khi chuyển đổi qua lại giữa các tab
     private void resetAllSidebarItems() {
-        // Reset nền HBox
         btnNavMyProducts.setStyle("-fx-background-color: transparent;");
         btnNavAdd.setStyle("-fx-background-color: transparent;");
         btnNavCustomers.setStyle("-fx-background-color: transparent;");
 
-        // Ẩn toàn bộ các vệt màu dọc
         myProductsIndicator.setVisible(false);
         addIndicator.setVisible(false);
         customersIndicator.setVisible(false);
 
-        // Trả chữ về màu xám thường thanh lịch
         lblMyProducts.setStyle("-fx-text-fill: #495057; -fx-font-weight: normal;");
         lblAddProduct.setStyle("-fx-text-fill: #495057; -fx-font-weight: normal;");
         lblCustomers.setStyle("-fx-text-fill: #495057; -fx-font-weight: normal;");
@@ -529,15 +501,9 @@ public class SellerController {
 
     @FXML
     private void handleShowCustomers(ActionEvent event) {
-        // TODO: Implement customers view
         vboxAddProduct.setVisible(false);
-        vboxAddProduct.setManaged(false);
-
         vboxMyProducts.setVisible(false);
-        vboxMyProducts.setManaged(false);
-
         vboxCustomers.setVisible(true);
-        vboxCustomers.setManaged(true);
         setActiveButton(btnNavCustomers);
         onCustomersTabSelected();
     }
@@ -545,43 +511,28 @@ public class SellerController {
 
     private void showAddProduct() {
         vboxAddProduct.setVisible(true);
-        vboxAddProduct.setManaged(true);
-
         vboxMyProducts.setVisible(false);
-        vboxMyProducts.setManaged(false);
         vboxCustomers.setVisible(false);
-        vboxCustomers.setManaged(false);
-
         setActiveButton(btnNavAdd);
     }
 
     private void showMyProducts() {
         vboxMyProducts.setVisible(true);
-        vboxMyProducts.setManaged(true);
-
         vboxAddProduct.setVisible(false);
-        vboxAddProduct.setManaged(false);
-
         vboxCustomers.setVisible(false);
-        vboxCustomers.setManaged(false);
-
         setActiveButton(btnNavMyProducts);
-
     }
 
     private void setActiveButton(HBox activeBtn) {
-        // Reset all buttons to inactive state
         btnNavAdd.setStyle("-fx-background-color: transparent; -fx-text-fill: #bdc3c7;");
         btnNavMyProducts.setStyle("-fx-background-color: transparent; -fx-text-fill: #bdc3c7;");
         btnNavCustomers.setStyle("-fx-background-color: transparent; -fx-text-fill: #bdc3c7;");
 
-        // Set active button style
         activeBtn.setStyle("-fx-background-color:  #e8f0fe; -fx-text-fill:  #1a73e8; -fx-font: bold");
     }
 
     @FXML
     private void handleBrowseFiles(ActionEvent event) {
-
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Chọn ảnh sản phẩm");
         fileChooser.getExtensionFilters().add(
@@ -596,7 +547,6 @@ public class SellerController {
             StringBuilder errorLog = new StringBuilder();
 
             for (File file : files) {
-                // 1. Kiểm tra định dạng qua ImageService (đã viết ở các bước trước)
                 if (!ImageService.isValidImage(file)) {
                     errorLog.append("- ").append(file.getName()).append(": Sai định dạng hoặc quá 5MB\n");
                     continue;
@@ -609,7 +559,6 @@ public class SellerController {
                 lblFileName.setText("Choosed " + validFiles.size() + " valid images");
             }
 
-            // Nếu có file lỗi thì thông báo cho người dùng biết
             if (errorLog.length() > 0) {
                 ViewManager.showAlert(Alert.AlertType.WARNING, "Cảnh báo file",
                         "Một số file bị bỏ qua do không hợp lệ:\n" + errorLog.toString());
@@ -620,13 +569,11 @@ public class SellerController {
     @FXML
     private void handleSaveProduct(ActionEvent event) {
         try {
-            // 1. Thu thập dữ liệu từ các TextField/ComboBox/DatePicker
             String name = txtTitle.getText().trim();
             String priceText = txtPrice.getText().trim();
             String description = txtDescription.getText();
             List<String> checkedCategories = new ArrayList<>(categoryComboBox.getCheckModel().getCheckedItems());
 
-            // 2. Validation (Kiểm tra dữ liệu đầu vào)
             if (name.isEmpty() || priceText.isEmpty() || checkedCategories.isEmpty()) {
                 ViewManager.showAlert(Alert.AlertType.WARNING, "Thiếu thông tin", "Vui lòng nhập Tên, Giá khởi điểm và chọn ít nhất một danh mục!");
                 return;
@@ -636,7 +583,9 @@ public class SellerController {
                 return;
             }
 
-            // 3. Khởi tạo đối tượng Item (Common Model)
+            // 🌟 KÍCH HOẠT LỚP PHỦ MỜ (Chặn đứng hoàn toàn click chuột của người dùng)
+            loadingIndicator.setVisible(true);
+
             Item newItem = new Item();
             newItem.setName(name);
             newItem.setDescription(description);
@@ -644,35 +593,28 @@ public class SellerController {
             newItem.setCurrentPrice(Long.parseLong(priceText));
             newItem.setSellerId(DataSession.getInstance().getLoggedInUser().getId());
 
-            // Set kích thước
             newItem.setLength(txtLength.getText().isEmpty() ? 0 : Double.parseDouble(txtLength.getText()));
             newItem.setWidth(txtWidth.getText().isEmpty() ? 0 : Double.parseDouble(txtWidth.getText()));
             newItem.setHeight(txtHeight.getText().isEmpty() ? 0 : Double.parseDouble(txtHeight.getText()));
             newItem.setWeight(txtWeight.getText().isEmpty() ? 0 : Double.parseDouble(txtWeight.getText()));
 
-            // Set thời gian (LocalDateTime)
             if (startDatePicker.getValue() != null) {
                 int h = startHour.getValue();
                 int m = startMin.getValue();
                 int s = startSec.getValue();
-
                 newItem.setStartTime(startDatePicker.getValue().atTime(h, m, s));
             }
             if (endDatePicker.getValue() != null) {
                 int h = endHour.getValue();
                 int m = endMin.getValue();
                 int s = endSec.getValue();
-
                 newItem.setEndTime(endDatePicker.getValue().atTime(h, m, s));
             }
 
             if (newItem.getStartTime() != null && newItem.getEndTime() != null) {
-//                if (newItem.getStartTime().isBefore(LocalDateTime.now().plusDays(1))) {
-//                    ViewManager.showAlert(Alert.AlertType.WARNING, "Lỗi thời gian", "Thời gian bắt đầu phải sau hiện tại ít nhất 1 ngày!");
-//                    return;
-//                }
                 if (newItem.getEndTime().isBefore(newItem.getStartTime())) {
                     ViewManager.showAlert(Alert.AlertType.WARNING, "Lỗi thời gian", "Thời gian kết thúc phải sau thời gian bắt đầu!");
+                    loadingIndicator.setVisible(false); // Ẩn lớp phủ nếu validation lỗi
                     return;
                 }
             }
@@ -682,7 +624,6 @@ public class SellerController {
                 newItem.setId(editingItemId);
                 task = new UploadItemTask(newItem, selectedFiles, checkedCategories, true);
             } else {
-                // NẾU LÀ THÊM MỚI TOÀN CỤC: Gọi Task đẩy luồng tải ảnh Cloudinary của bạn lên
                 task = new UploadItemTask(newItem, selectedFiles, checkedCategories);
             }
             progressbar.setVisible(true);
@@ -691,11 +632,11 @@ public class SellerController {
             task.setOnSucceeded(e -> {
                 progressbar.setVisible(false);
                 progressbar.progressProperty().unbind();
+                loadingIndicator.setVisible(false); // 🌟 ẨN LỚP PHỦ KHI HOÀN THÀNH THÀNH CÔNG
 
                 showMyProducts();
                 Message response = task.getValue();
                 if (response != null && "SUCCESS".equals(response.getStatus())) {
-                    // Không dùng Alert gây gián đoạn màn hình, nạp lại dữ liệu và chuyển tab nhẹ nhàng
                     loadSellerProducts();
                     clearFields();
                 } else {
@@ -707,6 +648,7 @@ public class SellerController {
             task.setOnFailed(e -> {
                 progressbar.setVisible(false);
                 progressbar.progressProperty().unbind();
+                loadingIndicator.setVisible(false); // 🌟 ẨN LỚP PHỦ KHI HOÀN THÀNH THẤT BẠI
                 ViewManager.showAlert(Alert.AlertType.ERROR, "Lỗi", "Gặp sự cố hệ thống khi xử lý!");
             });
 
@@ -714,8 +656,10 @@ public class SellerController {
             thread.setDaemon(true);
             thread.start();
         } catch (NumberFormatException e) {
+            loadingIndicator.setVisible(false); // Ẩn lớp phủ nếu bắt được lỗi định dạng
             ViewManager.showAlert(Alert.AlertType.ERROR, "Lỗi định dạng", "Giá và kích thước phải là số hợp lệ!");
         } catch (Exception e) {
+            loadingIndicator.setVisible(false); // Ẩn lớp phủ khi lỗi crash bất ngờ
             ViewManager.showAlert(Alert.AlertType.ERROR, "Lỗi hệ thống", e.getMessage());
             e.printStackTrace();
         } finally {
@@ -723,9 +667,6 @@ public class SellerController {
         }
     }
 
-    /**
-     * Hàm hỗ trợ reset các trường nhập liệu sau khi lưu thành công
-     */
     @FXML
     private void clearFields() {
         isEditMode = false;
@@ -757,7 +698,6 @@ public class SellerController {
             private final javafx.scene.layout.HBox container = new javafx.scene.layout.HBox(btnMore);
 
             {
-                // Thiết kế style phẳng cho nút giống hệt mã gốc của bạn
                 btnMore.setStyle("-fx-background-color: #e2e8f0; -fx-text-fill: #475569; -fx-background-radius: 6; -fx-font-weight: bold; -fx-cursor: hand;");
                 btnMore.setPrefWidth(65);
                 container.setAlignment(javafx.geometry.Pos.CENTER);
@@ -781,37 +721,24 @@ public class SellerController {
                 }
             }
 
-            // Hàm xử lý load luồng giao diện tùy biến (Custom Popup View)
             private void openCustomerDetailPopup(User selectedUser) {
                 try {
                     ViewManager.removeView("customer-detail-popup.fxml");
-                    // Khởi tạo luồng nạp giao diện FXML popup tùy chỉnh
-                    // Hãy thay đổi đường dẫn "/auction/client/views/customer-detail-popup.fxml"
-                    // sao cho khớp chính xác với cấu trúc thư mục tài nguyên của bạn
                     Parent popupRoot = ViewManager.getView("customer-detail-popup.fxml");
 
-
-                    // Lấy instance Controller của popup vừa được khởi tạo ra để truyền đối tượng User sang
                     CustomerDetailPopupController controller = (CustomerDetailPopupController) popupRoot.getUserData();
                     controller.setCustomerData(selectedUser);
 
-                    // Tạo một Stage mới (Cửa sổ độc lập nhỏ)
                     Stage popupStage = new Stage();
                     popupStage.setTitle(LanguageManager.getString("sellerdemo.label.custumer") + " - " + selectedUser.getUsername());
 
-                    // Thiết lập chế độ Modality để khóa màn hình cha phía sau cho tới khi đóng popup
                     popupStage.initModality(Modality.APPLICATION_MODAL);
-                    // Lấy Stage gốc của bảng chính làm Stage cha
                     popupStage.initOwner(btnMore.getScene().getWindow());
-
-                    // Tùy chọn: Loại bỏ thanh viền tiêu đề Windows cũ kỹ nếu muốn tự custom nút đóng mở
-                    // popupStage.initStyle(StageStyle.UNDECORATED);
 
                     Scene scene = new Scene(popupRoot);
                     popupStage.setScene(scene);
-                    popupStage.setResizable(false); // Không cho người dùng co giãn kích thước popup
+                    popupStage.setResizable(false);
 
-                    // Hiển thị cửa sổ popup lên và đợi người dùng thao tác xong
                     popupStage.showAndWait();
 
                 } catch (Exception ex) {
@@ -822,10 +749,7 @@ public class SellerController {
         });
     }
 
-
     private void loadRealData() {
-        // 1. Lấy thông tin Seller đang đăng nhập từ lớp DataSession (hoặc Session của bạn)
-        // Giả định phương thức lấy User hiện tại là DataSession.getCurrentUser() hoặc tương đương
         User currentSeller = DataSession.getInstance().getLoggedInUser();
 
         if (currentSeller == null) {
@@ -835,19 +759,12 @@ public class SellerController {
 
         int sellerId = currentSeller.getId();
 
-        // 2. Chạy Thread riêng để gửi request qua Socket (Tránh đơ giao diện UI chính)
         new Thread(() -> {
-            // Đóng gói request gửi đi (Lệnh lệnh xử lý lấy khách hàng của Seller)
             Message request = new Message("GET_CUSTOMERS", sellerId);
-
-            // Gửi và nhận phản hồi trực tiếp từ Server qua hàm sendRequest() của bạn
             Message response = ClientNetwork.getInstance().sendRequest(request);
 
-            // 3. Quay trở lại luồng UI để cập nhật dữ liệu lên TableView
             Platform.runLater(() -> {
                 if (response != null && "SUCCESS".equals(response.getStatus())) {
-
-                    // Nhận danh sách khách hàng ép kiểu List<User> trả về từ gói tin response
                     List<Object[]> realCustomers = (List<Object[]>) response.getData();
 
                     masterData.clear();
@@ -858,23 +775,20 @@ public class SellerController {
                     }
 
                     customerTable.setItems(masterData);
-                    customerTable.refresh(); // Làm mới lại bảng dữ liệu
-
+                    customerTable.refresh();
                 } else {
-                    // Hiển thị thông báo lỗi bằng ViewManager giống cấu trúc mẫu của bạn
                     ViewManager.showAlert(Alert.AlertType.ERROR, "Lỗi",
                             response != null ? (String) response.getData() : "Không thể lấy danh sách khách hàng từ Server!");
                 }
             });
         }).start();
     }
-    public void onCustomersTabSelected() {
-        // Làm sạch bảng trước khi tải mới để tránh hiển thị đè dữ liệu cũ
-        masterData.clear();
 
-        // Gọi hàm chạy Thread gửi nhận qua Socket TiDB như bình thường
+    public void onCustomersTabSelected() {
+        masterData.clear();
         loadRealData();
     }
+
     public void loadSellerRevenue() {
         if (DataSession.getInstance().getLoggedInUser() == null) return;
         int sellerId = DataSession.getInstance().getLoggedInUser().getId();
@@ -886,8 +800,6 @@ public class SellerController {
             Platform.runLater(() -> {
                 if (response != null && "SUCCESS".equals(response.getStatus())) {
                     long totalMoney = (long) response.getData();
-
-                    // Định dạng hiển thị số kèm ký hiệu Việt Nam Đồng
                     lblTotalRevenue.setText(String.valueOf(totalMoney));
                 } else {
                     lblTotalRevenue.setText("0");
