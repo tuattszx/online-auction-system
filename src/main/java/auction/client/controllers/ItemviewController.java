@@ -1,10 +1,7 @@
 package auction.client.controllers;
 
 import auction.client.ClientNetwork;
-import auction.client.services.AuctionManager;
-import auction.client.services.AuctionSubscriptionManager;
-import auction.client.services.AuctionTimerManager;
-import auction.client.services.Cleanable;
+import auction.client.services.*;
 import auction.client.session.DataSession;
 import auction.client.utils.ToastManager;
 import auction.common.message.BidUpdateNotification;
@@ -147,7 +144,7 @@ public class ItemviewController implements Cleanable {
         // Initialize bidTable columns
         colBidder.setCellValueFactory(cellData -> {
             String bidderName = cellData.getValue().getBidderName();
-            return new SimpleStringProperty(bidderName != null ? bidderName : "Unknown");
+            return new SimpleStringProperty(bidderName != null ? bidderName : LanguageManager.getString("itemview.unknown"));
         });
         colTime.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getBidTime().toString()));
         colPrice.setCellValueFactory(cellData -> new SimpleStringProperty(String.format("%,d $", cellData.getValue().getBidAmount())));
@@ -316,10 +313,10 @@ public class ItemviewController implements Cleanable {
         User currentUser = DataSession.getInstance().getLoggedInUser();
 
         if ("PENDING".equals(selectedItem.getStatus())) {
-            showBidError("Phiên đấu giá chưa bắt đầu!", false);
+            showBidError(LanguageManager.getString("itemview.startyet"), false);
             return;
         } else if ("CLOSED".equals(selectedItem.getStatus())) {
-            showBidError("Phiên đấu giá đã kết thúc!", false);
+            showBidError(LanguageManager.getString("itemview.ended"), false);
             return;
         }
 
@@ -335,14 +332,14 @@ public class ItemviewController implements Cleanable {
 
                             if ("SUCCESS".equals(response.getStatus())) {
                                 txtBid.clear();
-                                showBidError("Đặt giá thành công!", true);
+                                showBidError(LanguageManager.getString("itemview.bidsucess"), true);
 
                                     // Lấy Stage gốc thông qua linh kiện giao diện có sẵn
                                     Stage currentStage = (Stage) txtBid.getScene().getWindow();
 
                                     // Bắn thông báo nổi lên góc màn hình
                                 // Hiện mẫu Thành công (Success)
-                                ToastManager.showToast(currentStage, ToastManager.ToastType.SUCCESS, "Success: Updated your bid");
+                                ToastManager.showToast(currentStage, ToastManager.ToastType.SUCCESS, LanguageManager.getString("itemview.sucesssss"));
 
 
                             } else {
@@ -360,26 +357,26 @@ public class ItemviewController implements Cleanable {
             throws IllegalArgumentException {
 
         if (bidText == null || bidText.trim().isEmpty()) {
-            throw new IllegalArgumentException("Vui lòng nhập số tiền!");
+            throw new IllegalArgumentException(LanguageManager.getString("itemview.enterrrr"));
         }
 
         long amount;
         try {
             amount = Long.parseLong(bidText.trim());
         } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("Vui lòng chỉ nhập số!");
+            throw new IllegalArgumentException(LanguageManager.getString("itemview.enternb"));
         }
 
         if ("ADMIN".equals(userRole)) {
-            throw new IllegalArgumentException("Admin không thể đấu giá!");
+            throw new IllegalArgumentException(LanguageManager.getString("itemview.adminn"));
         }
 
         if (userId == sellerId) {
-            throw new IllegalArgumentException("Người bán không thể đặt giá cho chính sản phẩm của mình!");
+            throw new IllegalArgumentException(LanguageManager.getString("itemview.sellerrr"));
         }
 
         if (amount <= currentPrice) {
-            throw new IllegalArgumentException("Giá trả phải lớn hơn " + currentPrice + "$");
+            throw new IllegalArgumentException(LanguageManager.getString("itemview.higher") + currentPrice + "$");
         }
     }
     @FXML
@@ -583,12 +580,12 @@ public class ItemviewController implements Cleanable {
             return;
         }
         if ("ADMIN".contains(DataSession.getInstance().getLoggedInUser().getRole())) {
-            showBidError("Admin không thể cài đặt đấu giá tự động!", false);
+            showBidError(LanguageManager.getString("itemview.autooo"), false);
             return;
         }
 
         if (currentItem.getSellerId() == DataSession.getInstance().getLoggedInUser().getId()) {
-            showBidError("Người bán không thể cài đặt đấu giá tự động!", false);
+            showBidError(LanguageManager.getString("itemview.notauto"), false);
             return;
         }
 
@@ -702,7 +699,7 @@ public class ItemviewController implements Cleanable {
                 }
 
                 javafx.stage.Stage galleryStage = new javafx.stage.Stage();
-                galleryStage.setTitle("Gallery - View Images");
+                galleryStage.setTitle(LanguageManager.getString("itemview.library"));
 
                 // Thiết lập Scene cho Stage phụ
                 javafx.scene.Scene scene = new javafx.scene.Scene(overlayView);

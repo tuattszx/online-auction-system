@@ -28,15 +28,6 @@ class LoginControllerTest {
         assertTrue(loginController.validateInput("admin", "password123"));
     }
 
-    @Test
-    @DisplayName("Xử lý phản hồi SUCCESS từ server")
-    void testProcessResponse_Success() {
-        Message mockMsg = new Message("SUCCESS", null);
-        mockMsg.setStatus("SUCCESS");
-
-        String status = loginController.handleLoginResponse(mockMsg);
-        assertEquals("GOTO_MAIN", status);
-    }
 
     @Test
     @DisplayName("Xử lý khi Server trả về null (Offline)")

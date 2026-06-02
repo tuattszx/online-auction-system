@@ -58,7 +58,7 @@
                                         <Insets right="8.0" />
                                     </HBox.margin>
                                 </Label>
-                                <TextField fx:id="maxBidField" promptText="Ví dụ: 2,000" style="-fx-background-color: transparent; -fx-padding: 0; -fx-text-fill: #1E293B;" HBox.hgrow="ALWAYS">
+                                <TextField fx:id="maxBidField" promptText="%autoview.textfield.example" style="-fx-background-color: transparent; -fx-padding: 0; -fx-text-fill: #1E293B;" HBox.hgrow="ALWAYS">
                                     <font>
                                         <Font size="14.0" />
                                     </font>

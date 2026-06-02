@@ -265,6 +265,12 @@ public class LoginController {
         switch (response.getStatus()) {
             case "SUCCESS":
                 DataSession.getInstance().setLoggedInUser((User) response.getData());
+                if (DataSession.getInstance().getLoggedInUser().isBanned()) {
+                    ViewManager.showAlert(Alert.AlertType.WARNING, "Thất bại", "Tài khoản cua ban da bi BAN!");
+                    DataSession.getInstance().setLoggedInUser(null);
+                    return "WRONG_AUTH";
+                }
+
                 LanguageManager.setLocale(("English".equals(DataSession.getInstance().getLoggedInUser().getLanguage())) ? "en" : "vi");
                 return "GOTO_MAIN";
             case "FAILED":

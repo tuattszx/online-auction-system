@@ -123,7 +123,7 @@
                                  <children>
                                     <HBox alignment="CENTER_LEFT">
                                        <children>
-                                          <Label fx:id="itemName" prefHeight="28.0" prefWidth="199.0" style="-fx-font-weight: bold; -fx-font-size: 14px;" text="Product Name Example" wrapText="true" />
+                                          <Label fx:id="itemName" prefHeight="28.0" prefWidth="199.0" style="-fx-font-weight: bold; -fx-font-size: 14px;" text="%mainview.label.ProductNameExample" wrapText="true" />
                                           <Label prefHeight="30.0" prefWidth="47.0" style="-fx-background-color: white; -fx-text-fill: red; -fx-background-radius: 20; -fx-padding: 5; -fx-translate-x: 15; -fx-translate-y: 0;" text="‪‪❤︎‬">
                                              <font>
                                                 <Font size="18.0" />

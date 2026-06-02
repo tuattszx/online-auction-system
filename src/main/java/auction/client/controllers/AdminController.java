@@ -4,6 +4,7 @@ import auction.client.ClientNetwork;
 import auction.client.services.AdminManager;
 import auction.client.services.AuctionManager;
 import auction.client.services.Cleanable;
+import auction.client.services.LanguageManager;
 import auction.client.session.DataSession;
 import auction.client.utils.ToastManager;
 import auction.common.message.Message;
@@ -415,16 +416,16 @@ public class AdminController implements Cleanable {
 
     private String getCategoryLabelById(int catId) {
         switch (catId) {
-            case 30003: return "Nghệ thuật (🖼)";
-            case 30001: return "Nội thất (🛋)";
-            case 30004: return "Trang sức (💎)";
-            case 60001: return "Đồng hồ (⌚)";
-            case 60002: return "Thời trang (👜)";
-            case 60003: return "Tiền cổ (✪)";
-            case 30002: return "Xe cộ (🚗)";
-            case 60004: return "Rượu vang (🍷)";
-            case 60005: return "Sách báo (📚)";
-            default: return "Khác (📦)";
+            case 30003: return LanguageManager.getString("mainview.label.art")+"🖼";
+            case 30001: return LanguageManager.getString ("mainview.label.interiors")+"🛋";
+            case 30004: return LanguageManager.getString ("mainview.label.jewelry")+"💎";
+            case 60001: return LanguageManager.getString ("mainview.label.watch")+"⌚";
+            case 60002: return LanguageManager.getString ("mainview.label.coin")+"👜";
+            case 60003: return LanguageManager.getString ("mainview.label.ancientmoney")+"✪";
+            case 30002: return LanguageManager.getString ("mainview.label.car")+"🚗";
+            case 60004: return LanguageManager.getString("mainview.label.wine")+"🍷";
+            case 60005: return LanguageManager.getString("mainview.label.book")+"📚";
+            default: return LanguageManager.getString ("mainview.label.other")+"📦";
         }
     }
 
@@ -443,27 +444,27 @@ public class AdminController implements Cleanable {
 
     // Xử lý nút bấm phát thông báo Cảnh báo người dùng
     private void handleWarnUser(User user) {
-        String reason = ViewManager.showInputDialog("Cảnh báo", "Nhập nội dung cảnh báo gửi tới " + user.getUsername() + ":");
+        String reason = ViewManager.showInputDialog(LanguageManager.getString("mainview.warning"), LanguageManager.getString("mainview.warningenter") + user.getUsername() + ":");
         if (reason == null || reason.trim().isEmpty()) return;
 
         AdminManager.getInstance().warnUserAsync(user.getId(), reason)
                 .thenAcceptAsync(response -> {
                     Stage currentStage= (Stage) btnManageUsers.getScene().getWindow();
                     if (response != null && "SUCCESS".equals(response.getStatus())) {
-                        ToastManager.showToast(currentStage, ToastManager.ToastType.SUCCESS,"Đã gửi tin nhắn cảnh báo tới người dùng!");
+                        ToastManager.showToast(currentStage, ToastManager.ToastType.SUCCESS,LanguageManager.getString("mainview.warningmessage"));
                     } else {
-                        ToastManager.showToast(currentStage, ToastManager.ToastType.WARNING,"Server không thể xử lý yêu cầu cảnh báo!");
+                        ToastManager.showToast(currentStage, ToastManager.ToastType.WARNING,LanguageManager.getString("mainview.warningserver"));
                     }
                 }, Platform::runLater)
                 .exceptionally(ex -> {
-                    Platform.runLater(() -> ViewManager.showAlert(Alert.AlertType.ERROR, "Lỗi", "Lỗi kết nối mạng: " + ex.getMessage()));
+                    Platform.runLater(() -> ViewManager.showAlert(Alert.AlertType.ERROR, LanguageManager.getString("mainview.error"), LanguageManager.getString("mainview.errornetwork") + ex.getMessage()));
                     return null;
                 });
     }
 
     private void handleBanUser(User user) {
-        boolean confirm = ViewManager.confirmAlert("Xác nhận cấm",
-                "Hành động này sẽ cấm [" + user.getUsername() + "] Bạn có chắc không?");
+        boolean confirm = ViewManager.confirmAlert(LanguageManager.getString("mainview.confirmban"),
+                 LanguageManager.getString("mainview.prohibitedaction") + user.getUsername() + LanguageManager.getString("mainview.areyousure"));
         if (!confirm) return;
 
         AdminManager.getInstance().banUserAsync(user.getId())
@@ -472,20 +473,20 @@ public class AdminController implements Cleanable {
                     if (response != null && "SUCCESS".equals(response.getStatus())) {
                         user.setBanned(true);
                         adminTable.refresh();
-                        ToastManager.showToast(currentStage, ToastManager.ToastType.SUCCESS,"Đã cấm tài khoản thành công!");
+                        ToastManager.showToast(currentStage, ToastManager.ToastType.SUCCESS,LanguageManager.getString("mainview.accounthasban"));
                     } else {
-                        ToastManager.showToast(currentStage, ToastManager.ToastType.WARNING,"Không thể cấm người dùng. Vui lòng thử lại!");
+                        ToastManager.showToast(currentStage, ToastManager.ToastType.WARNING,LanguageManager.getString("mainview.usercannotban"));
                     }
                 }, Platform::runLater)
                 .exceptionally(ex -> {
-                    Platform.runLater(() -> ViewManager.showAlert(Alert.AlertType.ERROR, "Lỗi", "Lỗi hệ thống: " + ex.getMessage()));
+                    Platform.runLater(() -> ViewManager.showAlert(Alert.AlertType.ERROR, LanguageManager.getString("mainview.error"), LanguageManager.getString("mainview.errorsystem") + ex.getMessage()));
                     return null;
                 });
     }
 
     private void handleUnbanUser(User user) {
-        boolean confirm = ViewManager.confirmAlert("Xác nhận mở khóa",
-                "Bạn có chắc chắn muốn MỞ KHÓA lại cho tài khoản [" + user.getUsername() + "] không?");
+        boolean confirm = ViewManager.confirmAlert(LanguageManager.getString("mainview.confirmunlock"),
+                LanguageManager.getString("mainview.unlock") + user.getUsername() );
         if (!confirm) return;
 
         AdminManager.getInstance().unbanUserAsync(user.getId())
@@ -494,13 +495,13 @@ public class AdminController implements Cleanable {
                     if (response != null && "SUCCESS".equals(response.getStatus())) {
                         user.setBanned(false);
                         adminTable.refresh();
-                        ToastManager.showToast(currentStage, ToastManager.ToastType.SUCCESS,"Đã mở khóa tài khoản thành công!");
+                        ToastManager.showToast(currentStage, ToastManager.ToastType.SUCCESS,LanguageManager.getString("mainview.unlocksucsess"));
                     } else {
-                        ToastManager.showToast(currentStage, ToastManager.ToastType.WARNING,"Không thể mở khóa người dùng!");
+                        ToastManager.showToast(currentStage, ToastManager.ToastType.WARNING,LanguageManager.getString("mainview.unable"));
                     }
                 }, Platform::runLater)
                 .exceptionally(ex -> {
-                    Platform.runLater(() -> ViewManager.showAlert(Alert.AlertType.ERROR, "Lỗi", "Lỗi hệ thống: " + ex.getMessage()));
+                    Platform.runLater(() -> ViewManager.showAlert(Alert.AlertType.ERROR, LanguageManager.getString("mainview.error"), LanguageManager.getString("mainview.errorsystem") + ex.getMessage()));
                     return null;
                 });
     }
@@ -568,7 +569,7 @@ public class AdminController implements Cleanable {
 
     @FXML
     private void onSignOutClick(ActionEvent event){
-        if (!ViewManager.confirmAlert("Thông báo", "Bạn có chắc chắn muốn đăng xuất không?")) return;
+        if (!ViewManager.confirmAlert(LanguageManager.getString("mainview.notifi"), LanguageManager.getString("mainview.wantlogout"))) return;
         Task<Message> logoutTask = new Task<>() {
             @Override
             protected Message call() throws Exception {
@@ -578,10 +579,10 @@ public class AdminController implements Cleanable {
 
         logoutTask.setOnSucceeded(e -> {
             DataSession.getInstance().clear();
-            ViewManager.showAlert(Alert.AlertType.INFORMATION,"Thông báo", "Đăng xuất thành công!");
+            ViewManager.showAlert(Alert.AlertType.INFORMATION,LanguageManager.getString("mainview.notifi"), LanguageManager.getString("mainview.logoutsucess"));
             ViewManager.clearCache();
             network.close();
-            ViewManager.switchScene(event, "login-view.fxml", "Đăng nhập");
+            ViewManager.switchScene(event, "login-view.fxml", LanguageManager.getString("mainview.login"));
         });
 
         new Thread(logoutTask).start();
@@ -621,8 +622,8 @@ public class AdminController implements Cleanable {
             @Override
             public TableCell<Item, Void> call(TableColumn<Item, Void> param) {
                 return new TableCell<>() {
-                    private final Button btnApprove = new Button("Approve");
-                    private final Button btnReject = new Button("Reject");
+                    private final Button btnApprove = new Button(LanguageManager.getString("mainview.approve"));
+                    private final Button btnReject = new Button(LanguageManager.getString("mainview.reject"));
                     private final HBox container = new HBox(10, btnApprove, btnReject);
 
                     {
@@ -668,13 +669,13 @@ public class AdminController implements Cleanable {
      * Hàm gửi yêu cầu Approve/Reject lên Server qua Socket mạng
      */
     private void processProductApproval(Item item, String command, String targetStatus, boolean isapproved) {
-        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION, "Bạn có chắc chắn muốn thực hiện hành động này?", ButtonType.YES, ButtonType.NO);
-        confirm.setTitle("Xác nhận kiểm duyệt");
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION, LanguageManager.getString("mainview.areyouact"), ButtonType.YES, ButtonType.NO);
+        confirm.setTitle(LanguageManager.getString("mainview.censorship"));
         confirm.setHeaderText(null);
         confirm.showAndWait().ifPresent(res -> {
             if (res == ButtonType.YES) {
                 String reason = null;
-                if (!isapproved) reason = ViewManager.showInputDialog("Cảnh báo", "Nhập nội dung gửi tới :");
+                if (!isapproved) reason = ViewManager.showInputDialog(LanguageManager.getString("mainview.warning"), LanguageManager.getString("mainview.warningenter"));
 
                 AdminManager.getInstance().confirmItemAsync(item.getId(), isapproved, reason)
                         .thenAcceptAsync(response -> {
@@ -684,11 +685,11 @@ public class AdminController implements Cleanable {
                                 adminProductTable.refresh();
                                 ToastManager.showToast(currentStage, ToastManager.ToastType.SUCCESS,(String) response.getData());
                             } else {
-                                ToastManager.showToast(currentStage, ToastManager.ToastType.WARNING,"Lỗi hệ thống: Không thể xử lý phê duyệt.");
+                                ToastManager.showToast(currentStage, ToastManager.ToastType.WARNING,LanguageManager.getString("mainview.errornoapprove"));
                             }
                         }, Platform::runLater)
                         .exceptionally(ex -> {
-                            Platform.runLater(() -> ViewManager.showAlert(Alert.AlertType.ERROR, "Lỗi", "Lỗi kết nối: " + ex.getMessage()));
+                            Platform.runLater(() -> ViewManager.showAlert(Alert.AlertType.ERROR, LanguageManager.getString("mainview.error"), LanguageManager.getString("mainview.errornetwork") + ex.getMessage()));
                             return null;
                         });
             }
@@ -774,12 +775,12 @@ public class AdminController implements Cleanable {
 
         // --- 1. HEADER ---
         VBox header = new VBox(4);
-        Label titleLabel = new Label("Thông Tin Chi Tiết Sản Phẩm");
-        titleLabel.setFont(Font.font("System", FontWeight.BOLD, 18));
+        Label titleLabel = new Label(LanguageManager.getString("mainview.detail"));
+        titleLabel.setFont(Font.font(LanguageManager.getString("mainview.system"), FontWeight.BOLD, 18));
         titleLabel.setTextFill(Color.web("#1e293b"));
 
-        Label subTitleLabel = new Label("Xem thông tin và kiểm duyệt sản phẩm trên hệ thống");
-        subTitleLabel.setFont(Font.font("System", 13));
+        Label subTitleLabel = new Label(LanguageManager.getString("mainview.product"));
+        subTitleLabel.setFont(Font.font(LanguageManager.getString("mainview.system"), 13));
         subTitleLabel.setTextFill(Color.web("#64748b"));
         header.getChildren().addAll(titleLabel, subTitleLabel);
 
@@ -845,10 +846,10 @@ public class AdminController implements Cleanable {
         grid.getColumnConstraints().add(col1);
 
         // Tạo các nhãn thông tin (Dữ liệu cứng mẫu, bạn thay bằng product.get...() nhé)
-        addInfoRow(grid, 0, "Tên sản phẩm:", product.getName(), true, "#0f172a");
-        addInfoRow(grid, 1, "Người bán ID:", String.valueOf(product.getSellerId()), false, "#334155");
-        addInfoRow(grid, 2, "Giá khởi điểm:", String.valueOf(product.getStartingPrice()), true, "#0284c7"); // Chữ đậm màu xanh dương
-        addInfoRow(grid, 3, "Kích thước:", product.getLength()+" x " +product.getWidth()+" x "+product.getHeight()+ " cm", false, "#334155");
+        addInfoRow(grid, 0, LanguageManager.getString("mainview.namepro"), product.getName(), true, "#0f172a");
+        addInfoRow(grid, 1, LanguageManager.getString("mainview.sellerid"), String.valueOf(product.getSellerId()), false, "#334155");
+        addInfoRow(grid, 2, LanguageManager.getString("mainview.pri"), String.valueOf(product.getStartingPrice()), true, "#0284c7"); // Chữ đậm màu xanh dương
+        addInfoRow(grid, 3, LanguageManager.getString("mainview.size"), product.getLength()+" x " +product.getWidth()+" x "+product.getHeight()+ " cm", false, "#334155");
 
         bodyBox.getChildren().addAll(imageContainer, grid);
 
@@ -858,7 +859,7 @@ public class AdminController implements Cleanable {
         timeBox.setStyle("-fx-background-color: #f1f5f9; -fx-background-radius: 8;");
 
         HBox startRow = new HBox(10);
-        Label lblStartTitle = new Label("Thời gian bắt đầu:");
+        Label lblStartTitle = new Label(LanguageManager.getString("mainview.sttime"));
         lblStartTitle.setPrefWidth(110);
         lblStartTitle.setTextFill(Color.web("#64748b"));
         Label lblStartVal = new Label(); // product.getStartTime()
@@ -867,7 +868,7 @@ public class AdminController implements Cleanable {
         startRow.getChildren().addAll(lblStartTitle, lblStartVal);
 
         HBox endRow = new HBox(10);
-        Label lblEndTitle = new Label("Thời gian kết thúc:");
+        Label lblEndTitle = new Label(LanguageManager.getString("mainview.endtime"));
         lblEndTitle.setPrefWidth(110);
         lblEndTitle.setTextFill(Color.web("#64748b"));
         Label lblEndVal = new Label(); // product.getEndTime()
@@ -879,8 +880,8 @@ public class AdminController implements Cleanable {
 
         // --- 4. PHẦN MÔ TẢ ---
         VBox descBox = new VBox(6);
-        Label descTitle = new Label("Mô tả sản phẩm:");
-        descTitle.setFont(Font.font("System", FontWeight.BOLD, 12));
+        Label descTitle = new Label(LanguageManager.getString("mainview.prodes"));
+        descTitle.setFont(Font.font(LanguageManager.getString("mainview.system"), FontWeight.BOLD, 12));
         descTitle.setTextFill(Color.web("#64748b"));
 
         Label descValue = new Label();
@@ -899,7 +900,7 @@ public class AdminController implements Cleanable {
         btnClose.setStyle("-fx-background-color: #e2e8f0; -fx-text-fill: #475569; -fx-background-radius: 6; -fx-cursor: hand;");
         btnClose.setOnAction(e -> popupStage.close()); // Đóng popup khi nhấn
 
-        Button btnApprove = new Button("Duyệt");
+        Button btnApprove = new Button(LanguageManager.getString("mainview.browse"));
         btnApprove.setPrefSize(90, 36);
         btnApprove.setStyle("-fx-background-color: #10b981; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-cursor: hand;");
         btnApprove.setOnAction(e -> {
@@ -931,7 +932,7 @@ public class AdminController implements Cleanable {
         lblValue.setWrapText(true);
         lblValue.setTextFill(Color.web(hexColor));
         if (isBold) {
-            lblValue.setFont(Font.font("System", FontWeight.BOLD, 14));
+            lblValue.setFont(Font.font(LanguageManager.getString("mainview.system"), FontWeight.BOLD, 14));
         }
 
         grid.add(lblTitle, 0, row);
@@ -987,8 +988,8 @@ public class AdminController implements Cleanable {
 
         // C. Cột Nút Hành Động (Ví dụ: Nút Duyệt, Nút Hủy cuộc đấu giá)
         colAuctionAction.setCellFactory(param -> new TableCell<>() {
-            private final Button btnView = new Button("View");
-            private final Button btnCancel = new Button("Stop");
+            private final Button btnView = new Button(LanguageManager.getString("mainview.view"));
+            private final Button btnCancel = new Button(LanguageManager.getString("mainview.stop"));
             private final HBox container = new HBox(btnView, btnCancel);
 
             {
@@ -1023,11 +1024,11 @@ public class AdminController implements Cleanable {
     // Hàm phụ xử lý khi click nút trên dòng (Bạn tùy biến logic theo nhu cầu)
     private void handleAdminViewItemDetails(ActionEvent e,Item item) {
         DataSession.getInstance().setSelectedItem(item);
-        ViewManager.switchScene(e, "item-view.fxml", "Chi tiết");
+        ViewManager.switchScene(e, "item-view.fxml", LanguageManager.getString("mainview.detai"));
     }
 
     private void handleAdminCancelAuction(Item item) {
-        String reason = ViewManager.showInputDialog("Cảnh báo", "Nhập nội dung gửi tới :");
+        String reason = ViewManager.showInputDialog(LanguageManager.getString("mainview.warning"), LanguageManager.getString("mainview.warningenter"));
 
         AdminManager.getInstance().cancelAuctionAsync(item.getId(),reason)
                 .thenAcceptAsync(response -> {
@@ -1036,11 +1037,11 @@ public class AdminController implements Cleanable {
                         ToastManager.showToast(currentStage, ToastManager.ToastType.SUCCESS,(String) response.getData());
                         loadAllAuctionsFromServer();
                     } else {
-                        ToastManager.showToast(currentStage, ToastManager.ToastType.WARNING,"Không thể hủy cuộc đấu giá. Vui lòng thử lại!");
+                        ToastManager.showToast(currentStage, ToastManager.ToastType.WARNING,LanguageManager.getString("mainview.auct"));
                     }
                 }, Platform::runLater)
                 .exceptionally(ex -> {
-                    Platform.runLater(() -> ViewManager.showAlert(Alert.AlertType.ERROR, "Lỗi", "Lỗi hệ thống: " + ex.getMessage()));
+                    Platform.runLater(() -> ViewManager.showAlert(Alert.AlertType.ERROR, LanguageManager.getString("mainview.error"), LanguageManager.getString("mainview.errorsystem") + ex.getMessage()));
                     return null;
                 });
     }
