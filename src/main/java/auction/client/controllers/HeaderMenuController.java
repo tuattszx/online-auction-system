@@ -14,10 +14,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import javafx.stage.Window;
@@ -34,6 +31,8 @@ public class HeaderMenuController {
     @FXML private VBox vboxNotifItems;
     @FXML private StackPane badgeContainer;
     @FXML private Label lblBellBadge;
+    @FXML private Region regionsearch;
+    @FXML private Region regionsell;
 
     @FXML private HBox searchBar; // Liên kết với thanh tìm kiếm
 
@@ -122,9 +121,13 @@ public class HeaderMenuController {
             searchBar.setVisible(false);
             searchBar.setManaged(false); // Dòng này cực kỳ quan trọng: nó giúp các thành phần khác tự động tràn vào lấp chỗ trống, không để lại một khoảng trắng vô duyên.
         }
+        regionsearch.setVisible(false);
+        regionsearch.setManaged(false);
     }
     public void resetText(){
-        lbsell.setText("Bidder");
+        lbsell.setVisible(false);lbsell.setManaged(false);
+        regionsell.setVisible(false);
+        regionsell.setManaged(false);
     }
 
     private void updateBadgeUI() {

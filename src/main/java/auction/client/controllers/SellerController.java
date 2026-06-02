@@ -119,8 +119,6 @@ public class SellerController {
     private HBox btnNavAdd;
     @FXML
     private HBox btnNavCustomers;
-    @FXML
-    private HBox btnNavConfig;
 
     // 2. Khai báo các vệt dọc định vị
     @FXML
@@ -129,8 +127,6 @@ public class SellerController {
     private Region addIndicator;
     @FXML
     private Region customersIndicator;
-    @FXML
-    private Region configIndicator;
 
     // 3. Khai báo các nhãn Label để đổi màu chữ động
     @FXML
@@ -139,8 +135,6 @@ public class SellerController {
     private Label lblAddProduct;
     @FXML
     private Label lblCustomers;
-    @FXML
-    private Label lblConfig;
     @FXML
     private Label lblFileName;
     @FXML
@@ -474,12 +468,6 @@ public class SellerController {
 
             handleShowCustomers(null);
 
-        } else if (clickedBox == btnNavConfig) {
-            btnNavConfig.setStyle("-fx-background-color: #e8f0fe; -fx-background-radius: 8;");
-            configIndicator.setVisible(true);
-            lblConfig.setStyle("-fx-text-fill: #1a73e8; -fx-font-weight: bold;");
-
-            handleShowConfiguration(null);
         }
     }
 
@@ -515,19 +503,16 @@ public class SellerController {
         btnNavMyProducts.setStyle("-fx-background-color: transparent;");
         btnNavAdd.setStyle("-fx-background-color: transparent;");
         btnNavCustomers.setStyle("-fx-background-color: transparent;");
-        btnNavConfig.setStyle("-fx-background-color: transparent;");
 
         // Ẩn toàn bộ các vệt màu dọc
         myProductsIndicator.setVisible(false);
         addIndicator.setVisible(false);
         customersIndicator.setVisible(false);
-        configIndicator.setVisible(false);
 
         // Trả chữ về màu xám thường thanh lịch
         lblMyProducts.setStyle("-fx-text-fill: #495057; -fx-font-weight: normal;");
         lblAddProduct.setStyle("-fx-text-fill: #495057; -fx-font-weight: normal;");
         lblCustomers.setStyle("-fx-text-fill: #495057; -fx-font-weight: normal;");
-        lblConfig.setStyle("-fx-text-fill: #495057; -fx-font-weight: normal;");
     }
 
     @FXML
@@ -556,12 +541,6 @@ public class SellerController {
         onCustomersTabSelected();
     }
 
-    @FXML
-    private void handleShowConfiguration(ActionEvent event) {
-        // TODO: Implement configuration view
-        System.out.println("Showing Configuration view");
-        setActiveButton(btnNavConfig);
-    }
 
     private void showAddProduct() {
         vboxAddProduct.setVisible(true);
@@ -594,7 +573,6 @@ public class SellerController {
         btnNavAdd.setStyle("-fx-background-color: transparent; -fx-text-fill: #bdc3c7;");
         btnNavMyProducts.setStyle("-fx-background-color: transparent; -fx-text-fill: #bdc3c7;");
         btnNavCustomers.setStyle("-fx-background-color: transparent; -fx-text-fill: #bdc3c7;");
-        btnNavConfig.setStyle("-fx-background-color: transparent; -fx-text-fill: #bdc3c7;");
 
         // Set active button style
         activeBtn.setStyle("-fx-background-color:  #e8f0fe; -fx-text-fill:  #1a73e8; -fx-font: bold");

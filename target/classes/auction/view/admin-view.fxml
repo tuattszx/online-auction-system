@@ -18,7 +18,6 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
@@ -56,7 +55,7 @@
                 <Button fx:id="btnBack" alignment="BASELINE_LEFT" onAction="#handleBackToMain" prefHeight="45.0" prefWidth="230.0" style="-fx-background-color: transparent;">
                     <graphic>
                         <HBox alignment="CENTER_LEFT" spacing="10">
-                            <Label style="-fx-text-fill: #495057; -fx-font-size: 16;" text="←" />
+                            <Label prefHeight="26.0" prefWidth="23.0" style="-fx-text-fill: #495057; -fx-font-size: 16;" text="⏎" />
                             <Label fx:id="txtBack" style="-fx-text-fill: #495057; -fx-font-size: 14;" text="%adminview.label.returnsystem" />
                         </HBox>
                     </graphic>
@@ -108,17 +107,6 @@
                     </graphic>
                 </Button>
 
-                <Button fx:id="btnSettings" alignment="BASELINE_LEFT" onAction="#handleSettings" prefHeight="50.0" prefWidth="230.0">
-                    <graphic>
-                        <HBox alignment="CENTER_LEFT" spacing="10">
-                            <Label text="⚙️" />
-                            <Label fx:id="txtSettings" style="-fx-text-fill: #495057; -fx-font-size: 14;" text="%adminview.label.systemsettings" />
-                        </HBox>
-                    </graphic>
-                </Button>
-
-                <Pane VBox.vgrow="ALWAYS" />
-
                 <Button fx:id="btnSignOutClick" alignment="BASELINE_LEFT" onAction="#onSignOutClick" prefHeight="50.0" prefWidth="230.0" style="-fx-background-color: transparent;">
                     <graphic>
                         <HBox alignment="CENTER_LEFT" spacing="10">
@@ -132,11 +120,11 @@
     </left>
 
     <center>
-        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent; -fx-background: transparent; -fx-border-color: transparent;" BorderPane.alignment="CENTER">
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" style="-fx-background-color: transparent; -fx-background: transparent; -fx-border-color: transparent;" styleClass="scroll-bar" stylesheets="@../css/table.css" vbarPolicy="NEVER" BorderPane.alignment="CENTER">
             <content>
                 <StackPane style="-fx-background-color: transparent;">
                     <children>
-                        <VBox fx:id="VBoxUserManagement" spacing="25.0" visible="false">
+                        <VBox fx:id="VBoxUserManagement" spacing="25.0">
                             <padding>
                                 <Insets bottom="30.0" left="40.0" right="40.0" top="30.0" />
                             </padding>
@@ -157,7 +145,7 @@
                                         <TextField fx:id="txtSearch" prefHeight="40.0" prefWidth="280.0" promptText="%adminview.textfield.finduser" style="-fx-background-color: #ffffff; -fx-border-color: #cbd5e1; -fx-border-radius: 8; -fx-background-radius: 8; -fx-text-fill: #1e293b;" />
                                     </children>
                                 </HBox>
-                                <TableView fx:id="adminTable" prefHeight="669.0" style="-fx-background-color: #ffffff; -fx-background-radius: 12; -fx-border-color: #e2e8f0; -fx-border-radius: 12; -fx-padding: 5;" stylesheets="@../css/historytable.css" VBox.vgrow="ALWAYS">
+                                <TableView fx:id="adminTable" prefHeight="669.0" style="-fx-background-color: #ffffff; -fx-background-radius: 12; -fx-border-color: #e2e8f0; -fx-border-radius: 12; -fx-padding: 5;" VBox.vgrow="ALWAYS">
                                     <columns>
                                         <TableColumn fx:id="colId" prefWidth="60.0" text="%adminview.tablecolumn.stt" />
                                         <TableColumn fx:id="colUsername" prefWidth="130.0" text="%adminview.tablecolumn.loginname" />
@@ -176,6 +164,10 @@
                               <String fx:value="table-cell" />
                               <String fx:value="modern-table" />
                            </styleClass>
+                           <stylesheets>
+                              <URL value="@../css/historytable.css" />
+                              <URL value="@../css/table.css" />
+                           </stylesheets>
                                 </TableView>
 
                             </children>
@@ -322,7 +314,7 @@
                                 <TextField fx:id="txtSearchAuction" promptText="Tìm theo tên sản phẩm hoặc ID..." style="-fx-background-color: #ffffff; -fx-border-color: #cbd5e1; -fx-border-radius: 6; -fx-background-radius: 6; -fx-padding: 8 12; -fx-pref-width: 300;" />
                                 <ComboBox fx:id="cbStatusAuctionFilter" promptText="Lọc trạng thái" style="-fx-background-color: #ffffff; -fx-border-color: #cbd5e1; -fx-border-radius: 6; -fx-padding: 4 8;" />
                                 <Region HBox.hgrow="ALWAYS" />
-                                <Button fx:id="btnRefreshTable" style="-fx-background-color: #64748b; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-cursor: hand; -fx-padding: 8 16;" text="Làm mới bảng" />
+                                <Button fx:id="btnRefreshTable" onAction="#loadAllAuctionsFromServer" style="-fx-background-color: #64748b; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-cursor: hand; -fx-padding: 8 16;" text="Làm mới bảng" />
                             </HBox>
 
                             <TableView fx:id="adminAuctionTable" style="-fx-background-color: transparent; -fx-border-color: #e2e8f0; -fx-border-radius: 8;" stylesheets="@../css/historytable.css" VBox.vgrow="ALWAYS">
@@ -347,7 +339,7 @@
                             <HBox alignment="CENTER_LEFT" spacing="12">
                                 <TextField fx:id="txtSearchTransaction" promptText="Tìm theo mã GD, người gửi, người nhận hoặc mặt hàng..." style="-fx-background-color: #ffffff; -fx-border-color: #cbd5e1; -fx-border-radius: 6; -fx-background-radius: 6; -fx-padding: 8 12; -fx-pref-width: 380;" />
                                 <Region HBox.hgrow="ALWAYS" />
-                                <Button onAction="#handleRefreshTransactionTable" style="-fx-background-color: #64748b; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-cursor: hand; -fx-padding: 8 16;" text="Làm mới" />
+                                <Button onAction="#loadAllTransactionsFromServer" style="-fx-background-color: #64748b; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-cursor: hand; -fx-padding: 8 16;" text="Làm mới" />
                             </HBox>
 
                             <TableView fx:id="adminTransactionTable" style="-fx-background-color: transparent; -fx-border-color: #e2e8f0; -fx-border-radius: 8;" stylesheets="@../css/historytable.css" VBox.vgrow="ALWAYS">
