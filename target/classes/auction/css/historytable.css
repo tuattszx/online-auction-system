@@ -64,13 +64,6 @@
 }
 
 /* Khi click chọn hàng */
-.table-row-cell:selected {
-    -fx-background-color: #E2E8F0;
-}
-.table-row-cell:selected .table-cell {
-    -fx-text-fill: #0F172A;
-}
-
 /* =========================================================================
    NÚT DẤU CỘNG (+) QUẢN LÝ CỘT PHẲNG THEO HEADER ĐỔI MÀU
    ========================================================================= */

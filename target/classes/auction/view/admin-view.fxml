@@ -3,8 +3,8 @@
 <?import java.lang.String?>
 <?import java.net.URL?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.AreaChart?>
 <?import javafx.scene.chart.CategoryAxis?>
-<?import javafx.scene.chart.LineChart?>
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.chart.PieChart?>
 <?import javafx.scene.control.Button?>
@@ -124,7 +124,7 @@
             <content>
                 <StackPane style="-fx-background-color: transparent;">
                     <children>
-                        <VBox fx:id="VBoxUserManagement" spacing="25.0">
+                        <VBox fx:id="VBoxUserManagement" spacing="25.0" visible="false">
                             <padding>
                                 <Insets bottom="30.0" left="40.0" right="40.0" top="30.0" />
                             </padding>
@@ -173,7 +173,7 @@
                             </children>
                         </VBox>
 
-                        <VBox fx:id="VBoxOverview" layoutX="10.0" layoutY="10.0" spacing="25.0" visible="false">
+                        <VBox fx:id="VBoxOverview" layoutX="10.0" layoutY="10.0" spacing="25.0">
                             <padding>
                                 <Insets bottom="30.0" left="40.0" right="40.0" top="30.0" />
                             </padding>
@@ -241,14 +241,14 @@
                                     <VBox style="-fx-background-color: #ffffff; -fx-background-radius: 16; -fx-padding: 20; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.04), 10, 0, 0, 4);" HBox.hgrow="ALWAYS">
                                         <children>
                                             <Label style="-fx-text-fill: #1e293b; -fx-font-size: 16; -fx-font-weight: bold; -fx-padding: 0 0 10 0;" text="%adminview.label.revenuetrend(Weekly)" />
-                                            <LineChart fx:id="revenueChart" createSymbols="true" legendSide="BOTTOM" VBox.vgrow="ALWAYS">
+                                            <AreaChart fx:id="revenueChart" createSymbols="true" legendSide="BOTTOM" stylesheets="@../css/historytable.css" VBox.vgrow="ALWAYS">
                                                 <xAxis>
                                                     <CategoryAxis label="%adminview.label.dow" side="BOTTOM" tickLabelFill="#495057" />
                                                 </xAxis>
                                                 <yAxis>
-                                                    <NumberAxis label="%adminview.label.revenu" side="LEFT" tickLabelFill="#57231a"/>
+                                                    <NumberAxis label="%adminview.label.revenu" side="LEFT" tickLabelFill="#57231a" />
                                                 </yAxis>
-                                            </LineChart>
+                                            </AreaChart>
                                         </children>
                                     </VBox>
 
@@ -314,7 +314,7 @@
                                 <TextField fx:id="txtSearchAuction" promptText="%adminview.textfield.searchby" style="-fx-background-color: #ffffff; -fx-border-color: #cbd5e1; -fx-border-radius: 6; -fx-background-radius: 6; -fx-padding: 8 12; -fx-pref-width: 300;" />
                                 <ComboBox fx:id="cbStatusAuctionFilter" promptText="%adminview.combobox.statusfilter" style="-fx-background-color: #ffffff; -fx-border-color: #cbd5e1; -fx-border-radius: 6; -fx-padding: 4 8;" />
                                 <Region HBox.hgrow="ALWAYS" />
-                                <Button fx:id="btnRefreshTable" onAction="#loadAllAuctionsFromServer" style="-fx-background-color: #64748b; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-cursor: hand; -fx-padding: 8 16;" text="Làm mới bảng" />
+                                <Button fx:id="btnRefreshTable" onAction="#loadAllAuctionsFromServer" style="-fx-background-color: #64748b; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-cursor: hand; -fx-padding: 8 16;" text="Refresh the table" />
                             </HBox>
 
                             <TableView fx:id="adminAuctionTable" style="-fx-background-color: transparent; -fx-border-color: #e2e8f0; -fx-border-radius: 8;" stylesheets="@../css/historytable.css" VBox.vgrow="ALWAYS">
@@ -339,7 +339,7 @@
                             <HBox alignment="CENTER_LEFT" spacing="12">
                                 <TextField fx:id="txtSearchTransaction" promptText="%adminview.textfield.searchcode" style="-fx-background-color: #ffffff; -fx-border-color: #cbd5e1; -fx-border-radius: 6; -fx-background-radius: 6; -fx-padding: 8 12; -fx-pref-width: 380;" />
                                 <Region HBox.hgrow="ALWAYS" />
-                                <Button onAction="#loadAllTransactionsFromServer" style="-fx-background-color: #64748b; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-cursor: hand; -fx-padding: 8 16;" text="Làm mới" />
+                                <Button onAction="#loadAllTransactionsFromServer" style="-fx-background-color: #64748b; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-cursor: hand; -fx-padding: 8 16;" text="Refresh the table " />
                             </HBox>
 
                             <TableView fx:id="adminTransactionTable" style="-fx-background-color: transparent; -fx-border-color: #e2e8f0; -fx-border-radius: 8;" stylesheets="@../css/historytable.css" VBox.vgrow="ALWAYS">
@@ -348,7 +348,7 @@
                                     <TableColumn fx:id="colTxId" prefWidth="130" style="-fx-alignment: CENTER;" text="%adminview.tablecolumn.transactioncode" />
                                     <TableColumn fx:id="colTxUserId" prefWidth="120" style="-fx-alignment: CENTER;" text="%adminview.tablecolumn.sender" />
                                     <TableColumn fx:id="colTxReceiverId" prefWidth="120" style="-fx-alignment: CENTER;" text="%adminview.tablecolumn.receiver" />
-                                    <TableColumn fx:id="colTxItemName" prefWidth="180" text="Mặt Hàng Giao Dịch" />
+                                    <TableColumn fx:id="colTxItemName" prefWidth="180" text="Trading goods" />
                                     <TableColumn fx:id="colTxAmount" prefWidth="130" style="-fx-alignment: CENTER_RIGHT;" text="%adminview.tablecolumn.price" />
                                     <TableColumn fx:id="colTxTime" prefWidth="160" style="-fx-alignment: CENTER;" text="%adminview.tablecolumn.time" />
                                 </columns>

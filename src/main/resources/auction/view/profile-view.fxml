@@ -151,7 +151,7 @@
                      <content>
                         <StackPane style="-fx-border-radius: 15; -fx-background-radius: 15; -fx-background-color: white;">
                            <children>
-                              <VBox fx:id="paneAddresses" spacing="10.0" style="-fx-background-color: white; -fx-background-radius: 15; -fx-border-radius: 15;">
+                              <VBox fx:id="paneAddresses" spacing="10.0" style="-fx-background-color: white; -fx-background-radius: 15; -fx-border-radius: 15;" visible="false">
                                  <children>
                                     <Label text="%profile.label.address">
                                        <font>
@@ -250,8 +250,8 @@
                                                       <Image url="@../img/verified.png" />
                                                    </image>
                                                 </ImageView>
-                                                <TextFlow maxWidth="250.0" prefHeight="43.0" prefWidth="238.0" HBox.hgrow="ALWAYS">
-                                                   <Text style="-fx-fill: #24b47e; -fx-font-weight: bold;" text="%profile.label.Youremailsuccessfully">
+                                                <TextFlow maxWidth="250.0" prefHeight="63.0" prefWidth="188.0" HBox.hgrow="ALWAYS">
+                                                   <Text style="-fx-fill: #24b47e; -fx-font-weight: bold;" text="%profile.label.Youremailsuccessfully" wrappingWidth="222.5440673828125">
                                                       <font>
                                                          <Font size="11.0" />
                                                       </font>
@@ -483,7 +483,7 @@
                                     <Insets bottom="15.0" left="20.0" right="20.0" top="15.0" />
                                  </padding>
                               </VBox>
-                              <VBox fx:id="paneEmails" spacing="10.0" style="-fx-background-color: white; -fx-background-radius: 15; -fx-border-radius: 15;" visible="false">
+                              <VBox fx:id="paneEmails" spacing="10.0" style="-fx-background-color: white; -fx-background-radius: 15; -fx-border-radius: 15;">
                                  <children>
                                     <Label text="%profile.label.notification">
                                        <font>
@@ -509,7 +509,7 @@
                                                       </Label>
                                                    </children>
                                                 </VBox>
-                                                <ToggleSwitch>
+                                                <ToggleSwitch mouseTransparent="true" selected="true" stylesheets="@../css/toggle.css">
                                                    <cursor>
                                                       <Cursor fx:constant="HAND" />
                                                    </cursor>
@@ -537,7 +537,7 @@
                                                       </Label>
                                                    </children>
                                                 </VBox>
-                                                <ToggleSwitch>
+                                                <ToggleSwitch mouseTransparent="true" selected="true" stylesheets="@../css/toggle.css">
                                                    <cursor>
                                                       <Cursor fx:constant="HAND" />
                                                    </cursor>
@@ -565,7 +565,7 @@
                                                       </Label>
                                                    </children>
                                                 </VBox>
-                                                <ToggleSwitch>
+                                                <ToggleSwitch mouseTransparent="true" selected="true" stylesheets="@../css/toggle.css">
                                                    <cursor>
                                                       <Cursor fx:constant="HAND" />
                                                    </cursor>
@@ -593,7 +593,7 @@
                                                       </Label>
                                                    </children>
                                                 </VBox>
-                                                <ToggleSwitch>
+                                                <ToggleSwitch mouseTransparent="true" selected="true" stylesheets="@../css/toggle.css">
                                                    <cursor>
                                                       <Cursor fx:constant="HAND" />
                                                    </cursor>
@@ -603,14 +603,13 @@
                                        </children>
                                     </VBox>
                                     <Region prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: #e8f0fe;" />
-                                    <Button mnemonicParsing="false" onAction="#btnSaveSetting" prefHeight="40.0" prefWidth="101.0" style="-fx-border-radius: 4; -fx-background-radius: 4; -fx-background-color: #0052FF; -fx-text-fill: white;" text="%profile.label.change" />
                                     <Region prefHeight="233.0" prefWidth="414.0" />
                                  </children>
                                  <padding>
                                     <Insets bottom="15.0" left="20.0" right="20.0" top="15.0" />
                                  </padding>
                               </VBox>
-                              <VBox fx:id="panePayment" prefHeight="896.0" prefWidth="455.0" spacing="10.0" style="-fx-background-color: white; -fx-background-radius: 15; -fx-border-radius: 15;" StackPane.alignment="TOP_LEFT">
+                              <VBox fx:id="panePayment" prefHeight="896.0" prefWidth="455.0" spacing="10.0" style="-fx-background-color: white; -fx-background-radius: 15; -fx-border-radius: 15;" visible="false" StackPane.alignment="TOP_LEFT">
                                  <children>
                                     <Label text="%profile.label.payment">
                                        <font>

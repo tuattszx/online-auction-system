@@ -612,6 +612,10 @@ public class SellerController {
             }
 
             if (newItem.getStartTime() != null && newItem.getEndTime() != null) {
+//                if (newItem.getStartTime().isBefore(LocalDateTime.now().plusDays(1))) {
+//                    ViewManager.showAlert(Alert.AlertType.WARNING, "Lỗi thời gian", "Thời gian bắt đầu phải sau hiện tại ít nhất 1 ngày!");
+//                    return;
+//                }
                 if (newItem.getEndTime().isBefore(newItem.getStartTime())) {
                     ViewManager.showAlert(Alert.AlertType.WARNING, "Lỗi thời gian", "Thời gian kết thúc phải sau thời gian bắt đầu!");
                     loadingIndicator.setVisible(false); // Ẩn lớp phủ nếu validation lỗi

@@ -33,8 +33,8 @@ public class HeaderMenuController {
     @FXML private Label lblBellBadge;
     @FXML private Region regionsearch;
     @FXML private Region regionsell;
-
     @FXML private HBox searchBar; // Liên kết với thanh tìm kiếm
+    @FXML private HBox hboxheart;
 
 
     @FXML
@@ -164,15 +164,11 @@ public class HeaderMenuController {
 
     @FXML
     public void GoToFavoriteView(MouseEvent event){
+        hboxheart.getStyleClass().add("hbox-selected");
         ViewManager.switchScene(event,"favourite-view.fxml", " yêu thích");
 
     }
 
-    @FXML
-    void handleShowNotifications(MouseEvent event) {
-        // Ẩn/hiển thị cái pop-up notifPane nhỏ ở chuông
-        notifPane.setVisible(!notifPane.isVisible());
-    }
 
     @FXML
     public void onProfileClick(MouseEvent event) throws IOException {

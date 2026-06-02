@@ -13,7 +13,7 @@
         <URL value="@../css/notification.css" />
     </stylesheets>
     <children>
-    <HBox alignment="CENTER_LEFT" spacing="150.0">
+    <HBox spacing="220.0">
         <children>
             <Label prefHeight="30.0" prefWidth="114.0" style="-fx-font-size: 20px; -fx-text-fill: black; -fx-font-weight: bold;" text="Thông báo" textFill="WHITE" />
             <Label fx:id="lbshowmore" onMouseClicked="#switchNotificationview" style="-fx-text-fill: #2e89ff; -fx-cursor: hand;" text="...">

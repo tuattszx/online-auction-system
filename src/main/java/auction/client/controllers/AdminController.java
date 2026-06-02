@@ -31,6 +31,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
+import javafx.scene.chart.AreaChart;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
@@ -57,7 +58,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class AdminController implements Cleanable {
-    @FXML private LineChart revenueChart;
+    @FXML private AreaChart revenueChart;
     @FXML Label lblTotalRevenue;
     @FXML Label lblLiveAuctions;
     @FXML Label lblUsers;

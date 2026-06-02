@@ -99,4 +99,18 @@
     -fx-background-color: transparent;
     -fx-background: #f4f7f6;
 }
+/* Trạng thái mặc định khi chưa chọn (đặt viền trong suốt làm đệm để không bị giật giao diện) */
+#hboxcart, #hboxheart {
+    -fx-border-color: transparent;
+    -fx-border-width: 0 0 3px 0; /* Chỉ bật viền ở cạnh DƯỚI (độ dày 3px) */
+    -fx-cursor: hand;
+    -fx-padding: 0 0 2px 0;      /* Khoảng cách đẩy chữ/icon lên trên viền một chút */
+}
 
+/* Lớp Style được kích hoạt bằng Java khi người dùng Click */
+.hbox-selected {
+    -fx-border-color: #00c6ff !important; /* Đường gạch màu xanh Maldives */
+
+    /* Hiệu ứng gạch mờ xanh phát sáng (Glow) lan tỏa xung quanh cạnh dưới */
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 198, 255, 0.6), 8, 0.4, 0, 2);
+}
