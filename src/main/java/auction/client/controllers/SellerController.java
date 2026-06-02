@@ -1,6 +1,7 @@
 package auction.client.controllers;
 
 import auction.client.ClientNetwork;
+import auction.client.services.LanguageManager;
 import auction.client.services.UploadItemTask;
 import auction.client.session.DataSession;
 import auction.client.utils.ImageService;
@@ -117,8 +118,6 @@ public class SellerController {
     private HBox btnNavAdd;
     @FXML
     private HBox btnNavCustomers;
-    @FXML
-    private HBox btnNavConfig;
 
     @FXML
     private Region myProductsIndicator;
@@ -126,8 +125,6 @@ public class SellerController {
     private Region addIndicator;
     @FXML
     private Region customersIndicator;
-    @FXML
-    private Region configIndicator;
 
     @FXML
     private Label lblMyProducts;
@@ -135,8 +132,6 @@ public class SellerController {
     private Label lblAddProduct;
     @FXML
     private Label lblCustomers;
-    @FXML
-    private Label lblConfig;
     @FXML
     private Label lblFileName;
     @FXML
@@ -218,6 +213,7 @@ public class SellerController {
         colProductName.setCellValueFactory(cellData -> new SimpleStringProperty((String) cellData.getValue()[1]));
 
         setupActionColumn();
+        loadSellerRevenue();
     }
 
     private void setupTableColumns() {
@@ -392,8 +388,8 @@ public class SellerController {
             endSec.getValueFactory().setValue(item.getEndTime().getSecond());
         }
 
-        lblFileName.setText("(Chế độ chỉnh sửa thông tin - Giữ nguyên ảnh cũ nếu không chọn lại)");
-        showAddProduct();
+        lblFileName.setText(LanguageManager.getString("sellerdemo.label.modifymodetext"));
+        showAddProduct(); // Quay sang Tab Form
     }
 
     private void handleDeleteAction(Item item) {
@@ -450,12 +446,7 @@ public class SellerController {
             editingItemId = -1;
 
             handleShowCustomers(null);
-        } else if (clickedBox == btnNavConfig) {
-            btnNavConfig.setStyle("-fx-background-color: #e8f0fe; -fx-background-radius: 8;");
-            configIndicator.setVisible(true);
-            lblConfig.setStyle("-fx-text-fill: #1a73e8; -fx-font-weight: bold;");
 
-            handleShowConfiguration(null);
         }
     }
 
@@ -487,17 +478,14 @@ public class SellerController {
         btnNavMyProducts.setStyle("-fx-background-color: transparent;");
         btnNavAdd.setStyle("-fx-background-color: transparent;");
         btnNavCustomers.setStyle("-fx-background-color: transparent;");
-        btnNavConfig.setStyle("-fx-background-color: transparent;");
 
         myProductsIndicator.setVisible(false);
         addIndicator.setVisible(false);
         customersIndicator.setVisible(false);
-        configIndicator.setVisible(false);
 
         lblMyProducts.setStyle("-fx-text-fill: #495057; -fx-font-weight: normal;");
         lblAddProduct.setStyle("-fx-text-fill: #495057; -fx-font-weight: normal;");
         lblCustomers.setStyle("-fx-text-fill: #495057; -fx-font-weight: normal;");
-        lblConfig.setStyle("-fx-text-fill: #495057; -fx-font-weight: normal;");
     }
 
     @FXML
@@ -520,11 +508,6 @@ public class SellerController {
         onCustomersTabSelected();
     }
 
-    @FXML
-    private void handleShowConfiguration(ActionEvent event) {
-        System.out.println("Showing Configuration view");
-        setActiveButton(btnNavConfig);
-    }
 
     private void showAddProduct() {
         vboxAddProduct.setVisible(true);
@@ -544,7 +527,6 @@ public class SellerController {
         btnNavAdd.setStyle("-fx-background-color: transparent; -fx-text-fill: #bdc3c7;");
         btnNavMyProducts.setStyle("-fx-background-color: transparent; -fx-text-fill: #bdc3c7;");
         btnNavCustomers.setStyle("-fx-background-color: transparent; -fx-text-fill: #bdc3c7;");
-        btnNavConfig.setStyle("-fx-background-color: transparent; -fx-text-fill: #bdc3c7;");
 
         activeBtn.setStyle("-fx-background-color:  #e8f0fe; -fx-text-fill:  #1a73e8; -fx-font: bold");
     }
@@ -574,7 +556,7 @@ public class SellerController {
 
             if (!validFiles.isEmpty()) {
                 this.selectedFiles = validFiles;
-                lblFileName.setText("Đã chọn " + validFiles.size() + " ảnh hợp lệ");
+                lblFileName.setText("Choosed " + validFiles.size() + " valid images");
             }
 
             if (errorLog.length() > 0) {
@@ -699,7 +681,7 @@ public class SellerController {
         startDatePicker.setValue(null);
         endDatePicker.setValue(null);
         categoryComboBox.getCheckModel().clearChecks();
-        lblFileName.setText("Chưa chọn file");
+        lblFileName.setText(LanguageManager.getString("sellerdemo.label.filenotselected"));
         selectedFiles = null;
         startHour.getValueFactory().setValue(0);
         startMin.getValueFactory().setValue(0);
@@ -712,7 +694,7 @@ public class SellerController {
 
     private void setupActionColumn() {
         collAction.setCellFactory(param -> new TableCell<Object[], Void>() {
-            private final Button btnMore = new Button("MO...");
+            private final Button btnMore = new Button("MORE");
             private final javafx.scene.layout.HBox container = new javafx.scene.layout.HBox(btnMore);
 
             {
@@ -748,7 +730,7 @@ public class SellerController {
                     controller.setCustomerData(selectedUser);
 
                     Stage popupStage = new Stage();
-                    popupStage.setTitle("Hồ Sơ Khách Hàng - " + selectedUser.getUsername());
+                    popupStage.setTitle(LanguageManager.getString("sellerdemo.label.custumer") + " - " + selectedUser.getUsername());
 
                     popupStage.initModality(Modality.APPLICATION_MODAL);
                     popupStage.initOwner(btnMore.getScene().getWindow());

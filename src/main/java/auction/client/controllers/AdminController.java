@@ -146,6 +146,7 @@ public class AdminController implements Cleanable {
                 vboxAdminAuctions,
                 vboxAdminTransactions
         ));
+        handleSwitchHbox(VBoxOverview);
         // 1. Cấu hình các cột hiển thị dữ liệu text/số cơ bản
         colName.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getName()));
         colSeller.setCellValueFactory(cellData ->new SimpleStringProperty( String.valueOf(cellData.getValue().getSellerId()))); // Hoặc sellerName nếu có
@@ -180,12 +181,9 @@ public class AdminController implements Cleanable {
             }
         });
         btnApproveItems.getStyleClass().add("admin-menu-btn");
-       // btnApproveSeller.getStyleClass().add("admin-menu-btn");
-        btnSettings.getStyleClass().add("admin-menu-btn");
         btnManageAuctions.getStyleClass().add("admin-menu-btn");
         btnManageUsers.getStyleClass().add("admin-menu-btn");
         btnTransactionHistory.getStyleClass().add("admin-menu-btn");
-        //btnLockAccount.getStyleClass().add("admin-menu-btn");
         setActiveButton(btnDashboard);
         // Tạo dữ liệu PieChart mới bao gồm tất cả các thành phần bạn muốn
 
@@ -224,7 +222,7 @@ public class AdminController implements Cleanable {
     @FXML private Line sideLine;
     @FXML private Label lblAdminPanel;
     @FXML private Label txtBack, txtDashboard, txtManageUsers, txtApproveItems,
-            txtManageAuctions, txtTransactionHistory, txtSettings, txtSignOut;
+            txtManageAuctions, txtTransactionHistory, txtSignOut;
 
     private boolean isExpanded = true;
 
@@ -412,6 +410,7 @@ public class AdminController implements Cleanable {
                     )
             );
         }
+        categoryChart.setLabelsVisible(false);
     }
 
     private String getCategoryLabelById(int catId) {
@@ -509,7 +508,7 @@ public class AdminController implements Cleanable {
     private void setLabelsVisible(boolean visible) {
         Label[] labels = {lblAdminPanel, txtBack, txtDashboard, txtManageUsers,
                 txtApproveItems, txtManageAuctions, txtTransactionHistory,
-                txtSettings, txtSignOut};
+                 txtSignOut};
         for (Label l : labels) {
             if (l != null) {
                 l.setVisible(visible);
@@ -566,18 +565,6 @@ public class AdminController implements Cleanable {
         setActiveButton(btnTransactionHistory);
         handleSwitchHbox(vboxAdminTransactions);
     }
-    @FXML
-    private void handleRefreshTransactionTable(ActionEvent event) {
-        // Gửi Message yêu cầu cập nhật lịch sử giao dịch toàn sàn từ Server về đây...
-    }
-
-    @FXML
-    private void handleSettings(ActionEvent event) {
-        setActiveButton(btnSettings);
-    }
-
-    @FXML
-    private void handleApproveSeller(ActionEvent event) {}
 
     @FXML
     private void onSignOutClick(ActionEvent event){
@@ -605,7 +592,7 @@ public class AdminController implements Cleanable {
 
     private void setActiveButton(Button activeBtn) {
         Button[] allBtns = {btnDashboard, btnManageUsers, btnApproveItems,
-                btnManageAuctions, btnTransactionHistory, btnSettings};
+                btnManageAuctions, btnTransactionHistory};
 
         for (Button btn : allBtns) {
             btn.getStyleClass().remove("admin-menu-btn-active");
@@ -1058,7 +1045,7 @@ public class AdminController implements Cleanable {
                 });
     }
 
-    private void loadAllAuctionsFromServer() {
+    public void loadAllAuctionsFromServer() {
         AuctionManager.getInstance().getAllItemsAsync()
                 .thenAcceptAsync(items ->{
                     auctionMasterData.clear();
@@ -1185,7 +1172,7 @@ public class AdminController implements Cleanable {
         adminTransactionTable.setItems(filteredTransactionList);
     }
 
-    private void loadAllTransactionsFromServer() {
+    public void loadAllTransactionsFromServer() {
         AdminManager.getInstance().getAllTransactionsAsync()
                 .thenAcceptAsync(transactions -> {
 

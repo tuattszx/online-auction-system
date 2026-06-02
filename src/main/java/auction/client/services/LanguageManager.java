@@ -1,5 +1,7 @@
 package auction.client.services;
 
+import auction.client.session.DataSession;
+
 import java.util.Locale;
 import java.util.ResourceBundle;
 

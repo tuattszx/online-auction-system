@@ -32,7 +32,9 @@ import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 import javafx.scene.paint.Color;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class MainViewController implements Cleanable {
@@ -63,24 +65,44 @@ public class MainViewController implements Cleanable {
     public void initialize() {
         DataSession.getInstance().setMainViewController(this);
 
+        sortTime.getItems().addAll(LanguageManager.getString("mainview.label.timeUp"), LanguageManager.getString("mainview.label.timeDown"),LanguageManager.getString("mainview.label.allproduct"));
         // Cần ép kiểu String cho ComboBox để tránh lỗi type-safety
-        sortPrice.getItems().addAll(LanguageManager.getString("mainview.label.a_z"), LanguageManager.getString("mainview.label.z_a"));
+        sortPrice.getItems().addAll(LanguageManager.getString("mainview.label.priceUp"), LanguageManager.getString("mainview.label.priceDown"),LanguageManager.getString("mainview.label.allproduct"));
 
         // Gắn sự kiện lắng nghe khi người dùng chọn sắp xếp theo giá
+        sortTime.setOnAction(event -> handleSortTime());
         sortPrice.setOnAction(event -> handleSortPrice());
 
         // GỌI HÀM: Để tải dữ liệu ngay khi mở trang
         loadItems();
     }
 
+    private void handleSortTime() {
+        String selected = sortTime.getValue();
+        if (selected == null || filteredAssets == null || filteredAssets.isEmpty()) return;
+
+        if (selected.equals(LanguageManager.getString("mainview.label.timeUp"))) {
+            filteredAssets.sort((o1, o2) -> o1.getEndTime().compareTo(o2.getEndTime()));
+        } else if (selected.equals(LanguageManager.getString("mainview.label.timeDown"))) {
+            filteredAssets.sort((o1, o2) -> o2.getEndTime().compareTo(o1.getEndTime()));
+        } else if (selected.equals(LanguageManager.getString("mainview.label.allproduct"))) {
+            filteredAssets.sort((o1, o2) -> o2.getCreatedTime().compareTo(o1.getCreatedTime()));
+        }
+
+        // Sau khi sort xong, render lại danh sách đã sắp xếp
+        renderItems(filteredAssets);
+    }
+
     private void handleSortPrice() {
         String selected = sortPrice.getValue();
         if (selected == null || filteredAssets == null || filteredAssets.isEmpty()) return;
 
-        if (selected.equals(LanguageManager.getString("mainview.label.a_z"))) {
-            filteredAssets.sort((o1, o2) -> Double.compare(o1.getCurrentPrice(), o2.getCurrentPrice()));
-        } else if (selected.equals(LanguageManager.getString("mainview.label.z_a"))) {
-            filteredAssets.sort((o1, o2) -> Double.compare(o2.getCurrentPrice(), o1.getCurrentPrice()));
+        if (selected.equals(LanguageManager.getString("mainview.label.priceUp"))) {
+            filteredAssets.sort((o1, o2) -> Long.compare(o1.getCurrentPrice(), o2.getCurrentPrice()));
+        } else if (selected.equals(LanguageManager.getString("mainview.label.priceDown"))) {
+            filteredAssets.sort((o1, o2) -> Long.compare(o2.getCurrentPrice(), o1.getCurrentPrice()));
+        } else if (selected.equals(LanguageManager.getString("mainview.label.allproduct"))) {
+            filteredAssets.sort((o1, o2) -> o2.getCreatedTime().compareTo(o1.getCreatedTime()));
         }
 
         // Sau khi sort xong, render lại danh sách đã sắp xếp
@@ -350,7 +372,7 @@ public class MainViewController implements Cleanable {
         Label priceLabel = new Label(String.format("%,d $", item.getCurrentPrice()));
         priceLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 15px; -fx-text-fill: #0052ff;");
 
-        Button bidBtn = new Button("Đấu giá");
+        Button bidBtn = new Button(LanguageManager.getString("mainview.button.bid"));
         bidBtn.setPrefWidth(120);
         bidBtn.setStyle(
                 "-fx-background-color: #0052ff; " +

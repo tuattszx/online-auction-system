@@ -1,6 +1,7 @@
 package auction.client.controllers;
 
 import auction.client.ClientNetwork;
+import auction.client.services.LanguageManager;
 import auction.client.session.DataSession;
 import auction.common.message.Message;
 import auction.common.model.users.Account;
@@ -264,6 +265,7 @@ public class LoginController {
         switch (response.getStatus()) {
             case "SUCCESS":
                 DataSession.getInstance().setLoggedInUser((User) response.getData());
+                LanguageManager.setLocale(("English".equals(DataSession.getInstance().getLoggedInUser().getLanguage())) ? "en" : "vi");
                 return "GOTO_MAIN";
             case "FAILED":
                 ViewManager.showAlert(Alert.AlertType.WARNING, "Thất bại", "Tài khoản hoặc mật khẩu không chính xác!");

@@ -382,6 +382,7 @@ public class ItemDaoImpl implements ItemDao {
                 while (rs.next()) {
                     java.sql.Date dbDate = rs.getDate("close_date");
                     long dailyRevenue = rs.getLong("daily_revenue");
+                    dailyRevenue = (long) (dailyRevenue * 0.1);
 
                     String labelDate = chartDateFormat.format(dbDate);
                     List<Object> dataPoint = new ArrayList<>();
@@ -790,11 +791,20 @@ public class ItemDaoImpl implements ItemDao {
                     ps.executeUpdate();
                 }
 
+                long adminRevenue = (long) (finalPrice * 0.1);
+                long sellerRevenue = finalPrice - adminRevenue;
                 String sqlSeller = "UPDATE users SET BALANCE = BALANCE + ?, total_expenses = total_expenses + ? WHERE ID = ?";
                 try (PreparedStatement ps = conn.prepareStatement(sqlSeller)) {
-                    ps.setLong(1, finalPrice);
-                    ps.setLong(2, finalPrice);
+                    ps.setLong(1, sellerRevenue);
+                    ps.setLong(2, sellerRevenue);
                     ps.setInt(3, sellerId);
+                    ps.executeUpdate();
+                }
+
+                String sqlAdmin = "UPDATE users SET BALANCE = BALANCE + ?, total_expenses = total_expenses + ? WHERE ID = 1";
+                try (PreparedStatement ps = conn.prepareStatement(sqlAdmin)) {
+                    ps.setLong(1, adminRevenue);
+                    ps.setLong(2, adminRevenue);
                     ps.executeUpdate();
                 }
 
@@ -834,7 +844,7 @@ public class ItemDaoImpl implements ItemDao {
 
             int idBidder = 0;
             long currentPrice = 0;
-            String selectSql = "SELECT id_current_bidder, current_price FROM ITEMS WHERE id = ?";
+            String selectSql = "SELECT id_current_bidder, current_price FROM ITEMS WHERE id = ? and status = 'OPEN'";
             try (PreparedStatement ps = conn.prepareStatement(selectSql)) {
                 ps.setInt(1, itemId);
                 ResultSet rs = ps.executeQuery();
@@ -984,7 +994,7 @@ public class ItemDaoImpl implements ItemDao {
                 "JOIN users u ON a.id_user = u.id " +
                 "WHERE a.id_item = ? AND a.id_user != ? " +
                 "ORDER BY a.max_bid DESC, a.created_at ASC LIMIT 1";
-        String sqlGetCurrentState = "SELECT current_price, id_current_bidder, status FROM ITEMS WHERE id = ?";
+        String sqlGetCurrentState = "SELECT current_price, id_current_bidder, status FROM ITEMS WHERE id = ? FOR UPDATE ";
 
         while (true) {
             long currentPrice = 0;

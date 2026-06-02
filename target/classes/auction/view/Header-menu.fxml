@@ -37,7 +37,7 @@
                 <Image url="@../img/shopping-bag-fill.png" />
             </image>
         </ImageView>
-        <Region prefHeight="99.0" prefWidth="0.0" HBox.hgrow="ALWAYS" />
+        <Region fx:id="regionsearch" prefHeight="99.0" prefWidth="0.0" HBox.hgrow="ALWAYS" />
         <HBox fx:id="searchBar" alignment="CENTER_LEFT" maxHeight="40.0" prefHeight="40.0" prefWidth="395.0" style="-fx-background-color: #f0f7ff; -fx-background-radius: 20; -fx-border-color: #f0f7ff; -fx-border-radius: 20;">
             <children>
                 <ImageView fitHeight="28.0" fitWidth="46.0" pickOnBounds="true" preserveRatio="true">
@@ -51,7 +51,7 @@
                 <TextField fx:id="txtsearch" prefHeight="28.0" prefWidth="417.0" promptText="%mainview.textfield.searchforitem" style="-fx-background-color: transparent; -fx-border-color: transparent;" />
             </children>
         </HBox>
-        <Region prefHeight="99.0" prefWidth="0.0" HBox.hgrow="ALWAYS" />
+        <Region fx:id="regionsell" prefHeight="99.0" prefWidth="0.0" HBox.hgrow="ALWAYS" />
         <Label fx:id="lbsell" onMouseClicked="#onSellerClick" prefHeight="28.0" prefWidth="69.0" style="-fx-font-weight: bold; -fx-cursor: hand;" text="%mainview.label.sell" textFill="#0052ff">
             <font>
                 <Font size="14.0" />

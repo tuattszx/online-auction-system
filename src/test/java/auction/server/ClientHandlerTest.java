@@ -1319,7 +1319,7 @@ public class ClientHandlerTest {
         Message msgRequest = new Message("DELETE_ITEM", itemId);
 
         // Giả lập hành vi DAO: Khi gọi xóa itemId 456 thì trả về true (thành công)
-        when(mockItemDao.delete(itemId)).thenReturn(true);
+        when(mockItemDao.cancelAuction(itemId)).thenReturn(true);
 
         // 2. Client gửi dữ liệu đi trước (When)
         testClientOut.writeObject(msgRequest);
@@ -1347,7 +1347,7 @@ public class ClientHandlerTest {
         assertFalse(handlerThread.isAlive());
 
         // Xác minh hàm delete của DAO được gọi đúng 1 lần với đúng itemId
-        verify(mockItemDao, times(1)).delete(itemId);
+        verify(mockItemDao, times(1)).cancelAuction(itemId);
     }
     @Test
     public void testHandleDeleteItem_Failed() throws Exception {
@@ -1356,7 +1356,7 @@ public class ClientHandlerTest {
         Message msgRequest = new Message("DELETE_ITEM", itemId);
 
         // Giả lập hành vi DAO: Trả về false (xóa thất bại)
-        when(mockItemDao.delete(itemId)).thenReturn(false);
+        when(mockItemDao.cancelAuction(itemId)).thenReturn(false);
 
         // 2. Client gửi dữ liệu đi trước (When)
         testClientOut.writeObject(msgRequest);
@@ -1380,7 +1380,7 @@ public class ClientHandlerTest {
         handlerThread.join(2000);
         assertFalse(handlerThread.isAlive());
 
-        verify(mockItemDao, times(1)).delete(itemId);
+        verify(mockItemDao, times(1)).cancelAuction(itemId);
     }
     @Test
     public void testHandleDeleteItem_Exception_Error() throws Exception {
@@ -1389,7 +1389,7 @@ public class ClientHandlerTest {
         Message msgRequest = new Message("DELETE_ITEM", itemId);
 
         // Ép mockItemDao ném ra một ngoại lệ để nhảy vào block catch {}
-        when(mockItemDao.delete(itemId)).thenThrow(new RuntimeException("SQL syntax error or DB crash"));
+        when(mockItemDao.cancelAuction(itemId)).thenThrow(new RuntimeException("SQL syntax error or DB crash"));
 
         // 2. Client gửi dữ liệu đi trước (When)
         testClientOut.writeObject(msgRequest);
@@ -1417,7 +1417,7 @@ public class ClientHandlerTest {
         handlerThread.join(2000);
         assertFalse(handlerThread.isAlive());
 
-        verify(mockItemDao, times(1)).delete(itemId);
+        verify(mockItemDao, times(1)).cancelAuction(itemId);
     }
     @Test
     public void testHandleUpdateItem_Success() throws Exception {

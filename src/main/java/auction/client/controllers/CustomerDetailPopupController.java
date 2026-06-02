@@ -1,5 +1,6 @@
 package auction.client.controllers; // Cập nhật lại đúng package của bạn
 
+import auction.client.services.LanguageManager;
 import auction.common.model.users.User;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -25,11 +26,11 @@ public class CustomerDetailPopupController {
 
         String fullName = (user.getFirstName() != null ? user.getFirstName() : "") + " " +
                 (user.getLastName() != null ? user.getLastName() : "");
-        lblFullName.setText(fullName.trim().isEmpty() ? "Chưa cập nhật" : fullName.trim());
+        lblFullName.setText(fullName.trim().isEmpty() ? LanguageManager.getString("sellerdemo.label.notudated") : fullName.trim());
 
-        lblPhone.setText(user.getPhoneNumber() != null ? user.getPhoneNumber() : "Chưa cập nhật");
-        lblEmail.setText(user.getEmail() != null ? user.getEmail() : "Không có");
-        lblAddress.setText(user.getAddress() != null ? user.getAddress() : "Chưa cập nhật");
+        lblPhone.setText(user.getPhoneNumber() != null ? user.getPhoneNumber() : LanguageManager.getString("sellerdemo.label.notudated"));
+        lblEmail.setText(user.getEmail() != null ? user.getEmail() : LanguageManager.getString("sellerdemo.label.notudated"));
+        lblAddress.setText(user.getAddress() != null ? user.getAddress() : LanguageManager.getString("sellerdemo.label.notudated"));
 
     }
 

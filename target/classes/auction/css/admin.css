@@ -19,7 +19,7 @@
 }
 
 .admin-menu-btn-active {
-    -fx-background-color: linear-gradient(to right, #00d2ff, #3a7bd5);
+    -fx-background-color: linear-gradient(to right, #00c6ff, #0072ff);
     -fx-text-fill: white;
     -fx-font-size: 16px;
     -fx-font-weight: bold;
@@ -230,7 +230,7 @@
 
 /* Các nhãn chữ trong phần chú thích */
 .chart-legend-item {
-    -fx-text-fill: white; /* Đổi màu chữ chú thích thành trắng phù hợp nền tối */
+    -fx-text-fill: black; /* Đổi màu chữ chú thích thành trắng phù hợp nền tối */
     -fx-font-size: 13;
 }
 .check-combo-box,
