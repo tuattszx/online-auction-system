@@ -1,6 +1,7 @@
 package auction.client.controllers;
 
 import auction.client.ClientNetwork;
+import auction.client.services.LanguageManager;
 import auction.client.services.UploadItemTask;
 import auction.client.session.DataSession;
 import auction.client.utils.ImageService;
@@ -218,7 +219,7 @@ public class SellerController {
 
         // 2. Cấu hình cột Action sinh tự động 2 nút bấm MO... và DE... đồng bộ như bên Product View
         setupActionColumn();
-
+        loadSellerRevenue();
     }
 
     private void setupTableColumns() {
@@ -401,7 +402,7 @@ public class SellerController {
             endSec.getValueFactory().setValue(item.getEndTime().getSecond());
         }
 
-        lblFileName.setText("(Chế độ chỉnh sửa thông tin - Giữ nguyên ảnh cũ nếu không chọn lại)");
+        lblFileName.setText(LanguageManager.getString("sellerdemo.label.modifymodetext"));
         showAddProduct(); // Quay sang Tab Form
     }
 
@@ -605,7 +606,7 @@ public class SellerController {
 
             if (!validFiles.isEmpty()) {
                 this.selectedFiles = validFiles;
-                lblFileName.setText("Đã chọn " + validFiles.size() + " ảnh hợp lệ");
+                lblFileName.setText("Choosed " + validFiles.size() + " valid images");
             }
 
             // Nếu có file lỗi thì thông báo cho người dùng biết
@@ -739,7 +740,7 @@ public class SellerController {
         startDatePicker.setValue(null);
         endDatePicker.setValue(null);
         categoryComboBox.getCheckModel().clearChecks();
-        lblFileName.setText("Chưa chọn file");
+        lblFileName.setText(LanguageManager.getString("sellerdemo.label.filenotselected"));
         selectedFiles = null;
         startHour.getValueFactory().setValue(0);
         startMin.getValueFactory().setValue(0);
@@ -752,7 +753,7 @@ public class SellerController {
 
     private void setupActionColumn() {
         collAction.setCellFactory(param -> new TableCell<Object[], Void>() {
-            private final Button btnMore = new Button("MO...");
+            private final Button btnMore = new Button("MORE");
             private final javafx.scene.layout.HBox container = new javafx.scene.layout.HBox(btnMore);
 
             {
@@ -796,7 +797,7 @@ public class SellerController {
 
                     // Tạo một Stage mới (Cửa sổ độc lập nhỏ)
                     Stage popupStage = new Stage();
-                    popupStage.setTitle("Hồ Sơ Khách Hàng - " + selectedUser.getUsername());
+                    popupStage.setTitle(LanguageManager.getString("sellerdemo.label.custumer") + " - " + selectedUser.getUsername());
 
                     // Thiết lập chế độ Modality để khóa màn hình cha phía sau cho tới khi đóng popup
                     popupStage.initModality(Modality.APPLICATION_MODAL);
