@@ -48,7 +48,7 @@ Mở terminal/command prompt tại thư mục gốc của dự án (nơi chứa 
 
 - **Trên Windows:**
 ```cmd
-mvnw.cmd clean compile
+.\mvnw.cmd clean compile
 ```
 
 - **Trên macOS / Linux:**
@@ -62,7 +62,7 @@ Mở terminal và chạy lệnh sau (bạn có thể mở nhiều cửa sổ ter
 
 - **Trên Windows:**
 ```cmd
-mvnw.cmd exec:java -D"exec.mainClass"="auction.client.Launcher"
+.\mvnw.cmd exec:java -D"exec.mainClass"="auction.client.Launcher"
 ```
 
 - **Trên macOS / Linux:**
