@@ -72,7 +72,7 @@ mvnw.cmd exec:java -D"exec.mainClass"="auction.client.Launcher"
 
 ## 5. Danh sách chức năng đã hoàn thành
 - **Quản lý tài khoản:**
-  - Đăng nhập, Đăng ký tài khoản mới.
+  - Đăng nhập, Đăng ký tài khoản mới, Quên mật khẩu.
   - Chỉnh sửa hồ sơ cá nhân (Profile).
   - Phân quyền Admin với các chức năng quản trị chuyên biệt.
 - **Quản lý phiên đấu giá:**
@@ -86,4 +86,11 @@ mvnw.cmd exec:java -D"exec.mainClass"="auction.client.Launcher"
 - **Tương tác người dùng:**
   - Nhận thông báo (Notification) ngay lập tức khi: có người trả giá cao hơn, phiên đấu giá kết thúc, đăng sản phẩm thành công, v.v.
 - **Khác:**
-  - Hỗ trợ đa ngôn ngữ (Tiếng Anh, Tiếng Việt).
+  - Hỗ trợ đa ngôn ngữ (Tiếng Anh, Tiếng Việt)
+  - Thêm phần yêu thích để theo dõi sản phẩm.
+
+## 6. Link báo cáo và video
+- **Video demo:**
+  - https://drive.google.com/file/d/1EjPy2qiqYHpj6KI38e4qo5WZOZ0XiSaB/view
+- **Báo cáo chi tiết:**
+  - https://drive.google.com/drive/folders/1ISHC1Q30fGDaeuNsMRxvfkkCtVh6vDKD
